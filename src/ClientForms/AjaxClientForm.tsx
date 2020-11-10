@@ -42,6 +42,8 @@ export interface IProps {
     /**Метод вызовется когда нажали на кнопку "Сохранить". */
     onFinish?(data: Store): Promise<void>;
     onRendered?(): void;
+    /**Вызовется, когда какое-то поле было изменено. */
+    onFieldsWasModified?: (wasModified: boolean) => void;
 }
 export interface IClientTabProps {
     title?: string;
