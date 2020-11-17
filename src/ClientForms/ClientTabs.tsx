@@ -1,4 +1,4 @@
-import { Badge, Tabs } from "eos-webui-controls";
+import { Badge, Tabs } from "@eos/rc-controls";
 import React, { ReactElement, ReactText, useEffect, useImperativeHandle, useState } from "react";
 import FormRow, { IFormRow } from "./FormRow";
 

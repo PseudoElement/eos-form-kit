@@ -1,8 +1,9 @@
 import React from 'react'
 
-import 'eos-webui-formgen/dist/index.css'
 
-import { AjaxClientForm, FormMode, ConfigProvider as ConfigProviderInner } from "eos-webui-formgen";
+import "eos-webui-controls/dist/main.css";
+import { ConfigProvider } from 'eos-webui-controls';
+import { AjaxClientForm, FormMode } from "eos-webui-formgen";
 
 
 const App = () => {
@@ -50,7 +51,7 @@ const App = () => {
     }
 
     return (
-        <ConfigProviderInner>
+        <ConfigProvider>
             <AjaxClientForm
                 mode={FormMode.edit}
                 dataService={dataService}
@@ -72,7 +73,7 @@ const App = () => {
                     // }
                 }}
             />
-        </ConfigProviderInner>         
+        </ConfigProvider>
     );
 }
 

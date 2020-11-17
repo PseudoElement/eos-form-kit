@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, TextArea } from "eos-webui-controls";
+import { Form, TextArea } from "@eos/rc-controls";
 import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";

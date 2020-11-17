@@ -25,7 +25,7 @@
   },
   "peerDependencies": {
     "react": "^16.0.0",
-    "eos-webui-controls": "0.0.31-alpha"
+    "@eos/rc-controls": "^1.1.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -37,6 +37,7 @@
     "@types/react-dom": "^16.9.7",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",
+    "@eos/rc-controls": "^1.1.2",
     "microbundle-crl": "^0.13.10",
     "babel-eslint": "^10.0.3",
     "cross-env": "^7.0.2",

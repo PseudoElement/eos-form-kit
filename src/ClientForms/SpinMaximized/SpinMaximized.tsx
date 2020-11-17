@@ -1,4 +1,4 @@
-import { Spin } from "eos-webui-controls";
+import { Spin } from "@eos/rc-controls";
 import React from "react";
 
 function SpinMaximized(props: any) {
