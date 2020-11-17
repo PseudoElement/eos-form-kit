@@ -4,6 +4,7 @@ import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 
+/**Настройки целочисленного поля. */
 export interface IFieldInteger extends IField {
     /**Минимальное число. */
     min?: number;

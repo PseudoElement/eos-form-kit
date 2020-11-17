@@ -4,12 +4,13 @@ import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 
-
+/**Настройки поля типа "Выпадающий список"*/
 export interface IFieldSelect extends IField {
     /**Список значений в выпадающем списке. */
     values?: IOption[];
 }
 
+/**Значение в выпадающим списке. */
 export interface IOption {
     /**Значение. */
     key: string;
@@ -17,7 +18,7 @@ export interface IOption {
     value: string;
 }
 
-/**Полt типа "Выпадающий список". */
+/**Поле типа "Выпадающий список". */
 export const FieldSelect = React.forwardRef<any, IFieldSelect>((props: IFieldSelect, ref) => {
     let rules = [];
     if (props.required)

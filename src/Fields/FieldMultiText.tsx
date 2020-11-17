@@ -4,6 +4,7 @@ import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 
+/**Настройки мульти текстового поля. */
 export interface IFieldMultiText extends IField {
     /**Количество строк. */
     rows?: number;

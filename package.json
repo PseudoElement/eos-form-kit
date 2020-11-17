@@ -1,8 +1,8 @@
 {
-  "name": "eos-webui-formgen",
+  "name": "@eos/form-generator",
   "version": "1.0.0",
   "description": "Made with create-react-library",
-  "author": "",
+  "author": "Soldatov",
   "license": "MIT",
   "repository": "/eos-webui-formgen",
   "main": "dist/index.js",
