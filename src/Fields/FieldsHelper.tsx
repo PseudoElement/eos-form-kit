@@ -6,6 +6,7 @@ import { Rule } from "rc-field-form/lib/interface"
 export const DEFAULT_ICONS_COLOR = "#2196f3";
 const INTEGER_RULE_TYPE = "integer";
 
+/**Класс-помощник для работы с полями. */
 class FieldsHelper {
     /**Возвращает правило обязательности поля. */
     static getRequiredRule(requiredErrorText?: string): Rule {

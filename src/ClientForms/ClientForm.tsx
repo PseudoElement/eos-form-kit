@@ -8,7 +8,8 @@ import ClientTabs, { IClientTabs, IClientTabsApi } from "./ClientTabs";
 import SpinMaximized from "./SpinMaximized/SpinMaximized";
 import Skeleton from "./Skeleton/Skeleton";
 
-interface IClientForm {
+/**Настройки клиентской формы. */
+export interface IClientForm {
     /**Крутилка в виде спиннера. */
     isSpinLoading?: boolean;
     /**Крутилка в виде скелетона. */
@@ -54,6 +55,7 @@ interface IClientForm {
     /**Компонент вкладок */
     tabsComponent?: IClientTabs;
 }
+/**Настройки тулбары формы. */
 export interface IToolBar {
     /**
      * Разметка внутри тулбара.

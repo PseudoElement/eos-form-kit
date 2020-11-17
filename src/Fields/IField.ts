@@ -1,9 +1,7 @@
 import { FormMode } from "../ClientForms/FormMode";
 import fields from "./Fields";
-// import {Mode} from "../Common/store/types/For"
 
-//export const FIELD_NAME_STYLE: React.CSSProperties = { marginBottom: 0, textTransform: "uppercase" };
-
+/**Базовые настройки поля. */
 export default interface IField {
     /**Тип отрисовки поля. */
     mode: FormMode;
@@ -17,6 +15,8 @@ export default interface IField {
     required?: boolean | undefined;
     /**Сообщение об обязательности поля. */
     requiredMessage?: string | undefined;
+    /**Недоступно ли поле. */
     disabled?: boolean;
+    /**Значение по умолчанию. */
     value?: string;
 }

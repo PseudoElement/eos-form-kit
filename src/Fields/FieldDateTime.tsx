@@ -8,6 +8,7 @@ import { FieldsHelper } from "./FieldsHelper";
 
 const DATE_MOMENT_PATTERN = "DD.MM.yyyy";
 
+/**Настройки поля типа "Дата". */
 export interface IFieldDateTime extends IField {
     /**Тип отрисовки поля. */
     dateTimeMode?: DateTimeMode;
@@ -16,7 +17,10 @@ export interface IFieldDateTime extends IField {
     /**Максимально допустимая дата. */
     maxDate?: moment.Moment | number;
 }
+
+/**Режим работы поля типа "Дата". */
 export enum DateTimeMode {
+    /**Выбор полноценной даты без времени. */
     default = 0,
     /**Только год. */
     year = 1

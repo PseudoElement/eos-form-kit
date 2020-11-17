@@ -11,22 +11,24 @@ import { Store } from 'rc-field-form/lib/interface';
 
 // declare function getInitialValues3(): Promise<any>;
 
+/**DI объект для выполнения различных запросов. */
 export interface IDataService {
     /**Подгружает настройки для генератора форм. */
-    getContext(mode: FormMode): Promise<any>;
-    getInitialValues?(): Promise<any>;
+    getContextAsync(mode: FormMode): Promise<any>;
+    /**Метод возвращающий значения полей для формы.*/
+    getInitialValuesAsync?(): Promise<any>;
+    /**Метод, возвращающий наименование формы. */
     getTitle(): string;
-    // onSave?(data: Store, onSuccess: (data?: any) => void, onFailed: (err?: any) => void): void;
-    onSave?(data: Store): Promise<void>;
-
+    /**Обработчик события нажатия на кнопку "ОК". */
+    onSaveAsync?(data: Store): Promise<void>;
     /**Кастомная валидация. Вызовется после основной валидации полей. */
-    // onValidate?(data: Store, onSuccess: (data?: any) => void, onFailed: (err?: any) => void): void;
-    onValidate?(data: Store): Promise<boolean>;
+    onValidateAsync?(data: Store): Promise<boolean>;
     /**Позволяет модифицировать контекст формы прямо перед отрисовкой формы. */
-    modifyContext?(context: any): Promise<any>;
+    modifyContextAsync?(context: any): Promise<any>;
 }
 
-export interface IProps {
+/**Настройки генератора форм. */
+export interface IAjaxClientForm {
     /**Тип формы. */
     mode: FormMode;
     dataService: IDataService;
@@ -45,10 +47,15 @@ export interface IProps {
     /**Вызовется, когда какое-то поле было изменено. */
     onFieldsWasModified?: (wasModified: boolean) => void;
 }
+/**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
+    /**Наименование вкладки */
     title?: string;
+    /**Принудительная отрисовка вкладки, если она не активна. */
     forceRender?: boolean;
+    /**Кастомный тип отрисовки формы. */
     customType?: string;
+    /**true - если вкладки должна быть не кликабельна. */
     disabled?: boolean;
 }
 /**API для работы с клиентской формой. */
@@ -71,9 +78,8 @@ interface IClientFormProps {
     tabsComponent?: IClientTabs;
 }
 
-// const ClientForm = React.forwardRef<any, IClientForm>((props: IClientForm, ref) => {
-// const AjaxClientForm: FunctionComponent<IProps> = (props: IProps) => {
-const AjaxClientForm = React.forwardRef<any, IProps>((props: IProps, ref) => {
+/**Генератор форм выполняющий запрос за элементом и схемой через DI.*/
+const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClientForm, ref) => {
     const [schema, setSchema] = useState<any>(null);
     const [isFirstLoading, setFirstLoading] = useState(true);
     const [isSkeletonLoading, setSkeletonLoading] = useState(true);
@@ -134,8 +140,8 @@ const AjaxClientForm = React.forwardRef<any, IProps>((props: IProps, ref) => {
     }, [props.mode]);
 
     const onLoadItemSucceeded = async function (data: any) {
-        if (props.dataService.modifyContext) {
-            await props.dataService.modifyContext(schema);
+        if (props.dataService.modifyContextAsync) {
+            await props.dataService.modifyContextAsync(schema);
             setSchema({ ...schema });
         }
         setLoadingItem(false);
@@ -179,7 +185,7 @@ const AjaxClientForm = React.forwardRef<any, IProps>((props: IProps, ref) => {
     async function loadSchemaAsync(mode: FormMode) {
         setLoadSchema(false);
         setLoadingSchema(true);
-        const context = await props?.dataService?.getContext(mode);
+        const context = await props?.dataService?.getContextAsync(mode);
         setSchema(context);
         if (props.onContextLoaded)
             props.onContextLoaded(context);
@@ -189,8 +195,8 @@ const AjaxClientForm = React.forwardRef<any, IProps>((props: IProps, ref) => {
     async function loadItemAsync() {
         setLoadItem(false);
         setLoadingItem(true);
-        if (props.dataService.getInitialValues)
-            props.dataService.getInitialValues()
+        if (props.dataService.getInitialValuesAsync)
+            props.dataService.getInitialValuesAsync()
                 .then((initialValues: any) => {
                     onLoadItemSucceeded(initialValues);
                 });
@@ -331,8 +337,8 @@ const AjaxClientForm = React.forwardRef<any, IProps>((props: IProps, ref) => {
 
     async function onFinish(values: Store) {
         setSpinLoading(true);
-        if (props.dataService.onValidate) {
-            const isValid = await props.dataService.onValidate(values);
+        if (props.dataService.onValidateAsync) {
+            const isValid = await props.dataService.onValidateAsync(values);
             if (isValid) {
                 await ExecuteOnFinish(values);
             }
@@ -345,8 +351,8 @@ const AjaxClientForm = React.forwardRef<any, IProps>((props: IProps, ref) => {
         }
     }
     async function ExecuteOnFinish(values: Store) {
-        if (props.dataService.onSave) {
-            await props.dataService.onSave(values)
+        if (props.dataService.onSaveAsync) {
+            await props.dataService.onSaveAsync(values)
                 .then(onSaveSucceeded)
                 .catch(onSaveFailed);
         }

@@ -4,7 +4,7 @@ import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 
-
+/**Настройки поля галочки. */
 export interface IFieldCheckbox extends IField {
     /**Текст рядом с галочкой. */
     description?: string;

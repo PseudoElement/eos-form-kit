@@ -1,4 +1,6 @@
 import React from "react";
+
+/**Компонент "скелет". */
 function Skeleton() {
     return (
         <div style={{ position: "absolute", zIndex: 100, background: "rgba(245,245,245,0.75)", height: "600px", paddingTop: "100px" }}>

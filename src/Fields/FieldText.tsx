@@ -4,6 +4,9 @@ import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 
+/**
+ * Настройки текстового поля.
+ */
 export interface IFieldText extends IField {
     /**Отрисовать иконку очистки поля. */
     allowClear?: boolean;

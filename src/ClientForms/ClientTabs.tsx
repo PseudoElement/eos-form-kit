@@ -2,6 +2,7 @@ import { Badge, Tabs } from "@eos/rc-controls";
 import React, { ReactElement, ReactText, useEffect, useImperativeHandle, useState } from "react";
 import FormRow, { IFormRow } from "./FormRow";
 
+/**Настройки компонента вкладок. */
 export interface IClientTabs {
     className?: string;
     tabBarStyle?: React.CSSProperties;
@@ -9,9 +10,11 @@ export interface IClientTabs {
     tabs?: IClientTab[];
     onChange?: (activeKey: string) => void;
     onTabClick?: (key: string | number, e?: MouseEvent) => void;
+    /**Если передать информацию о полях, то вкладка будет автоматически раскрываться, если в ней не валидное поле. */
     fields?: IFieldsInfo[];
     invalidFields?: any;
 }
+/**Настройки вкладки. */
 export interface IClientTab {
     title?: string;
     key?: string;
@@ -153,6 +156,7 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
 
 export default ClientTabs;
 
+/**Настройки полей внутри компонента вкладок. */
 export interface IFieldsInfo {
     tabKey: string;
     fields: string[];
