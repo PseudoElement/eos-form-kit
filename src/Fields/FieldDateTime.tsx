@@ -9,7 +9,7 @@ import { FieldsHelper } from "./FieldsHelper";
 const DATE_MOMENT_PATTERN = "DD.MM.yyyy";
 
 /**Настройки поля типа "Дата". */
-export interface IFieldDateTime extends IField {
+export interface IDateTime extends IField {
     /**Тип отрисовки поля. */
     dateTimeMode?: DateTimeMode;
     /**Минимально допустимая для выбора дата. */
@@ -28,7 +28,7 @@ export enum DateTimeMode {
 
 
 /**Поле типа "Дата". */
-const FieldDateTime = React.forwardRef<any, IFieldDateTime>((props: IFieldDateTime, ref) => {
+export const DateTime = React.forwardRef<any, IDateTime>((props: IDateTime, ref) => {
     let rules = [];
     if (props.required)
         rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
@@ -176,5 +176,3 @@ function getPickerMode(mode?: DateTimeMode) {
             return undefined;
     }
 }
-
-export default FieldDateTime;

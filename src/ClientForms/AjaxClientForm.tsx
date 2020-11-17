@@ -1,6 +1,6 @@
 import { Form } from "@eos/rc-controls";
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
-import { IFieldSelect } from "../Fields/FieldSelect";
+import { ISelect } from "../Fields/FieldSelect";
 import IField from "../Fields/IField";
 import ClientForm, { IClientFormApi, IToolBar } from "./ClientForm";
 import { IClientTab, IClientTabs, IFieldsInfo } from "./ClientTabs";
@@ -322,7 +322,7 @@ const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClien
 
         switch (field.type) {
             case "FieldSelect":
-                let fieldSelectProps: IFieldSelect = field;
+                let fieldSelectProps: ISelect = field;
                 if (fieldSelectProps.values) {
                     for (let value of fieldSelectProps.values)
                         value.value = props.getResourceText(value.value);

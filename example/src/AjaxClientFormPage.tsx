@@ -1,13 +1,12 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 
 
 import "eos-webui-controls/dist/main.css";
-import { ConfigProvider } from 'eos-webui-controls';
 import { AjaxClientForm, FormMode } from "eos-webui-formgen";
 import { IDataService } from 'eos-webui-formgen/dist/ClientForms/AjaxClientForm';
 
 
-const App = () => {
+const AjaxClientFormPage: FunctionComponent = () => {
     // const ajaxClientFormApi = useRef<IAjaxClientFormApi>();
     const dataService: IDataService = {
         async getContextAsync(mode: FormMode) {
@@ -54,7 +53,6 @@ const App = () => {
 
 
     return (
-        <ConfigProvider>
             <AjaxClientForm
                 mode={FormMode.edit}
                 dataService={dataService}
@@ -76,8 +74,7 @@ const App = () => {
                     // }
                 }}
             />
-        </ConfigProvider>
     );
 }
 
-export default App
+export default AjaxClientFormPage;

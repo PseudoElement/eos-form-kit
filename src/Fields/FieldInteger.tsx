@@ -5,7 +5,7 @@ import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 
 /**Настройки целочисленного поля. */
-export interface IFieldInteger extends IField {
+export interface IInteger extends IField {
     /**Минимальное число. */
     min?: number;
     /**Максимальное число. */
@@ -19,7 +19,7 @@ export interface IFieldInteger extends IField {
 /**
  * Целочисленное поле.
  */
-const FieldInteger = React.forwardRef<any, IFieldInteger>((props: IFieldInteger, ref) => {
+export const Integer = React.forwardRef<any, IInteger>((props: IInteger, ref) => {
     let rules = [];
     if (props.required)
         rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
@@ -39,4 +39,8 @@ const FieldInteger = React.forwardRef<any, IFieldInteger>((props: IFieldInteger,
             );
     }
 });
-export default FieldInteger;
+
+/**Возвращает значение поля типа "Дата". */
+export function getFieldValueForClientRender() {
+    return 1;
+}
