@@ -47,7 +47,7 @@ export interface IAjaxClientForm {
     /**Вызовется, когда какое-то поле было изменено. */
     onFieldsWasModified?: (wasModified: boolean) => void;
 }
-/**Настройки вкладок генератор форм. */
+/**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
     /**Наименование вкладки */
     title?: string;

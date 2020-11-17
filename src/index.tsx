@@ -1,6 +1,10 @@
 /* eslint-disable prettier/prettier */
-export { default as AjaxClientForm, IAjaxClientForm, IClientTabProps, IDataService } from './ClientForms/AjaxClientForm';
+export { default as AjaxClientForm, IAjaxClientForm, IAjaxClientFormApi, IClientTabProps, IDataService } from './ClientForms/AjaxClientForm';
 export { default as ClientForm, IClientForm, IClientFormApi, IToolBar } from './ClientForms/ClientForm';
+export { default as ClientTabs, IClientTab, IClientTabsApi, IFieldsInfo } from './ClientForms/ClientTabs';
+export { default as FormCell, IFormCell, IWidthCell, IAutoCell, IThreeFieldsCell, CellType, WidthType } from './ClientForms/FormCell';
+export { default as FormRow, IFormRow, CellsType } from './ClientForms/FormRow';
+
 export { default as Skeleton } from './ClientForms/Skeleton/Skeleton';
 export { FormMode, parseFormMode } from './ClientForms/FormMode';
 
