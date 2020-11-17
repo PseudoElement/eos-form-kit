@@ -1,4 +1,4 @@
-import { Form, Checkbox } from "eos-webui-controls";
+import { Form, Checkbox } from "@eos/rc-controls";
 import React from "react";
 import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";

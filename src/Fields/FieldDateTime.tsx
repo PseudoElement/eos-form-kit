@@ -1,4 +1,4 @@
-import { DatePicker, Form } from "eos-webui-controls";
+import { DatePicker, Form } from "@eos/rc-controls";
 import React from "react";
 import moment from 'moment';
 import IField from "./IField";

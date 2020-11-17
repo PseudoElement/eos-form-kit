@@ -1,5 +1,5 @@
 import React, { FunctionComponent, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Button, Form, Row, Col, Space, EditIcon, CloseIcon, Typography, Divider } from 'eos-webui-controls';
+import { Button, Form, Row, Col, Space, EditIcon, CloseIcon, Typography, Divider } from "@eos/rc-controls";
 import { Store } from 'rc-field-form/lib/interface';
 import { FormMode } from "./FormMode";
 // import { ActionTarget } from "../Common/store/types";

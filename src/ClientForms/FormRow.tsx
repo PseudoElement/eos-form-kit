@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Row } from "eos-webui-controls";
+import { Row } from "@eos/rc-controls";
 import FormCell, { IFormCell, IAutoCell, IWidthCell, IThreeFieldsCell } from "./FormCell";
 
 export type CellsType = IFormCell | IAutoCell | IWidthCell | IThreeFieldsCell;

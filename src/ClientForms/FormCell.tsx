@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Col, Row, Space } from "eos-webui-controls";
+import { Col, Row, Space } from "@eos/rc-controls";
 import IField from "../Fields/IField";
 import fields from "../Fields/Fields";
 

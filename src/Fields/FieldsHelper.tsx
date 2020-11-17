@@ -1,6 +1,6 @@
 
 import React, { ReactElement, ReactNode } from "react";
-import { Form, Icon, InfoIcon, Input, Tooltip } from "eos-webui-controls";
+import { Form, Icon, InfoIcon, Input, Tooltip } from "@eos/rc-controls";
 import { Rule } from "rc-field-form/lib/interface"
 
 export const DEFAULT_ICONS_COLOR = "#2196f3";

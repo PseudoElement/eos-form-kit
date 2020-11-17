@@ -1,4 +1,4 @@
-import { Form } from "eos-webui-controls";
+import { Form } from "@eos/rc-controls";
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { IFieldSelect } from "../Fields/FieldSelect";
 import IField from "../Fields/IField";

@@ -18,7 +18,7 @@
     "@types/react": "file:../node_modules/@types/react",
     "@types/react-dom": "file:../node_modules/@types/react-dom",
     "eos-webui-formgen": "file:..",
-    "eos-webui-controls":"file:./node_modules/eos-webui-controls",
+    "eos-webui-controls": "file:../node_modules/@eos/rc-controls",
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
     "react-scripts": "file:../node_modules/react-scripts",
