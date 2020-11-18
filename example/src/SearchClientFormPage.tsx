@@ -1,9 +1,9 @@
-import React, { FunctionComponent } from 'react'
-import { SearchForm, IDataService } from "eos-webui-formgen";
+import React, { FunctionComponent, useRef } from 'react'
+import { SearchForm } from "eos-webui-formgen";
 
 
 const SearchClientFormPage: FunctionComponent = () => {
-    const dataSerive: IDataService = {
+    const dataSerive: SearchForm.IDataService = {
         async getContextAsync() {
             const newContext = {
                 "Fields": [
@@ -20,7 +20,10 @@ const SearchClientFormPage: FunctionComponent = () => {
             return newContext;
         }
     }
-
-    return (<SearchForm dataService={dataSerive} />);
+    const searchForm = useRef<SearchForm.IFormApi>();
+    const props: SearchForm.IForm = {
+        dataService: dataSerive
+    }
+    return (<SearchForm.Form  ref={searchForm} {...props} />);
 }
 export default SearchClientFormPage;

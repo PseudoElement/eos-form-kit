@@ -1,7 +1,7 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Store } from 'rc-field-form/lib/interface';
-import { Form } from "@eos/rc-controls";
-import ClientForm, { IClientFormApi } from '../ClientForms/ClientForm';
+import { Form as RcForm } from "@eos/rc-controls";
+import { Form as ClientForm, IFormApi as IClientFormApi} from '../ClientForms/ClientForm';
 import { FormMode } from '../ClientForms/FormMode';
 import { IClientTab, IClientTabs } from '../ClientForms/ClientTabs';
 import { InternalHelper } from '../InternalHelper';
@@ -10,7 +10,8 @@ import FormTitle, { IFormTitleApi } from './FormTitle';
 
 const DEFAULT_TITLE = "Поиск";
 
-export interface ISearchForm {
+/**Настройки формы поиска. */
+export interface IForm {
     /**DI получения данных. */
     dataService: IDataService;
 
@@ -38,6 +39,8 @@ export interface ISearchForm {
     /**Метод для получения кастомной вкладки. */
     getCustomtab?: (tab: IClientTabProps) => IClientTab | undefined;
 }
+
+/**DI объект для выполнения различных запросов. */
 export interface IDataService {
     /**Подгружает настройки для генератора форм. */
     getContextAsync(): Promise<any>;
@@ -51,18 +54,20 @@ export interface IDataService {
     modifyContextAsync?(context: any): Promise<any>;
 }
 
-export interface ISearchFormApi {
+/**API для работы с клиентской формой. */
+export interface IFormApi {
     clearFields(): void;
     search(): void;
     /**Возвращает ключ активной вкладки. */
     getActivatedTab(): string;
 }
 
-const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: React.MutableRefObject<ISearchFormApi>) => {
-    const selfRef = useRef<ISearchFormApi>();
-    const targetRef: React.MutableRefObject<ISearchFormApi> = ref ?? selfRef;
-    useImperativeHandle(targetRef, (): ISearchFormApi => {
-        const api: ISearchFormApi = {
+/**Форма поиска. */
+export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.MutableRefObject<IFormApi>) => {
+    const selfRef = useRef<IFormApi>();
+    const targetRef: React.MutableRefObject<IFormApi> = ref ?? selfRef;
+    useImperativeHandle(targetRef, (): IFormApi => {
+        const api: IFormApi = {
             clearFields() {
                 form?.resetFields();
             },
@@ -86,7 +91,7 @@ const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: 
     const [loadInitialValues, setLoadInitialValues] = useState(false);
     const [clientTabs, setClientTabs] = useState<IClientTabs>();
 
-    const [form] = Form.useForm();
+    const [form] = RcForm.useForm();
     const formInst = React.createRef();
     const clientFormApi = useRef<IClientFormApi>();
     const formTitleApi = useRef<IFormTitleApi>();
@@ -251,4 +256,3 @@ const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: 
     }
 
 });
-export default SearchForm;

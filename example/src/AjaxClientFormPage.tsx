@@ -3,12 +3,12 @@ import React, { FunctionComponent } from 'react'
 
 import "eos-webui-controls/dist/main.css";
 import { AjaxClientForm, FormMode } from "eos-webui-formgen";
-import { IDataService } from 'eos-webui-formgen/dist/ClientForms/AjaxClientForm';
+// import { IDataService } from 'eos-webui-formgen/dist/ClientForms/AjaxClientForm';
 
 
 const AjaxClientFormPage: FunctionComponent = () => {
     // const ajaxClientFormApi = useRef<IAjaxClientFormApi>();
-    const dataService: IDataService = {
+    const dataService: AjaxClientForm.IDataService = {
         async getContextAsync(mode: FormMode) {
             const dispContext = {
                 "Fields": [{ "disabled": true, "label": "inventory:fieldNames.parentName", "name": "parentName", "required": false, "requiredMessage": null, "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null }, { "disabled": false, "label": "inventory:fieldNames.ind", "name": "ind", "required": true, "requiredMessage": "inventory:formErrors.ind", "type": "FieldText", "value": null, "additionalText": null, "allowClear": true, "maxLength": 24 }, { "disabled": false, "label": "inventory:fieldNames.volumeNum", "name": "volumeNum", "required": false, "requiredMessage": null, "type": "FieldInteger", "value": null, "max": 32767, "min": 0, "showCounter": false }, { "disabled": false, "label": "inventory:fieldNames.keepCategory", "name": "keepCategory", "required": true, "requiredMessage": "inventory:formErrors.keepCategory", "type": "FieldSelect", "value": null, "values": [{ "key": "1", "value": "fields:keepCategory.1" }, { "key": "2", "value": "fields:keepCategory.2" }, { "key": "3", "value": "fields:keepCategory.3" }, { "key": "4", "value": "fields:keepCategory.4" }] }, { "disabled": false, "label": "inventory:fieldNames.name", "name": "name", "required": true, "requiredMessage": "inventory:formErrors.name", "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null }, { "disabled": false, "label": "inventory:fieldNames.note", "name": "note", "required": false, "requiredMessage": null, "type": "FieldMultiText", "value": null, "maxLength": null, "rows": null }, { "disabled": false, "label": "inventory:fieldNames.startYear", "name": "startYear", "required": true, "requiredMessage": "inventory:formErrors.startYear", "type": "FieldDateTime", "value": null, "dateTimeMode": 1, "maxDate": "2999", "minDate": "1753" }, { "disabled": false, "label": "inventory:fieldNames.endYear", "name": "endYear", "required": false, "requiredMessage": null, "type": "FieldDateTime", "value": null, "dateTimeMode": 1, "maxDate": "2999", "minDate": "1753" }],
@@ -53,7 +53,7 @@ const AjaxClientFormPage: FunctionComponent = () => {
 
 
     return (
-            <AjaxClientForm
+            <AjaxClientForm.Form
                 mode={FormMode.edit}
                 dataService={dataService}
                 getResourceText={name => name}
