@@ -1,15 +1,13 @@
 import React, { FunctionComponent, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Button, Form, Row, Col, Space, EditIcon, CloseIcon, Typography, Divider } from "@eos/rc-controls";
+import { Button, Form as RcForm, Row, Col, Space, EditIcon, CloseIcon, Typography, Divider } from "@eos/rc-controls";
 import { Store } from 'rc-field-form/lib/interface';
 import { FormMode } from "./FormMode";
-// import { ActionTarget } from "../Common/store/types";
-// import SimplePagination from "../Modules/ArchiveManagement/components/Pagination/SimplePagination";
 import ClientTabs, { IClientTabs, IClientTabsApi } from "./ClientTabs";
 import SpinMaximized from "./SpinMaximized/SpinMaximized";
 import Skeleton from "./Skeleton/Skeleton";
 
 /**Настройки клиентской формы. */
-export interface IClientForm {
+export interface IForm {
     /**Крутилка в виде спиннера. */
     isSpinLoading?: boolean;
     /**Крутилка в виде скелетона. */
@@ -71,7 +69,7 @@ export interface IToolBar {
 
 
 /**API для работы с клиентской формой. */
-export interface IClientFormApi {
+export interface IFormApi {
     /**Возвращает ключ активной вкладки. */
     getActivatedTab(): string;
     /**
@@ -84,14 +82,14 @@ export interface IClientFormApi {
 }
 
 /**Клиентская форма. */
-const ClientForm = React.forwardRef<any, IClientForm>((props: IClientForm, ref) => {
+export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
 
     const selfRef = useRef();
 
-    useImperativeHandle(ref ?? selfRef, (): IClientFormApi => {
-        const api: IClientFormApi = {
+    useImperativeHandle(ref ?? selfRef, (): IFormApi => {
+        const api: IFormApi = {
             getActivatedTab() {
                 return clientTabsApi.current?.getActivatedTab() || "";
             },
@@ -148,7 +146,7 @@ const ClientForm = React.forwardRef<any, IClientForm>((props: IClientForm, ref) 
             <Row style={{ height: "100%" }} justify="center">
                 <Col style={{ width: "800px", height: "100%", paddingTop: "20px" }}>
                     {props.isSkeletonLoading && <Skeleton />}
-                    <Form form={props.form}
+                    <RcForm form={props.form}
                         style={{ height: "100%" }}
                         ref={props.formInst}
                         name="basic" layout="vertical"
@@ -174,7 +172,7 @@ const ClientForm = React.forwardRef<any, IClientForm>((props: IClientForm, ref) 
                         }
                         <ToolBar {...props.toolbar}></ToolBar>
                         <ClientTabs ref={clientTabsApi} {...clientTabsProps} />
-                    </Form>
+                    </RcForm>
                 </Col>
             </Row>
         </SpinMaximized>
@@ -208,7 +206,6 @@ const ClientForm = React.forwardRef<any, IClientForm>((props: IClientForm, ref) 
     //     return DEFAULT_ACTIVE_KEY;
     // }
 });
-export default ClientForm;
 
 
 interface IEditFormTitle {
@@ -287,48 +284,3 @@ const ToolBar: FunctionComponent<IToolBar> = (props: IToolBar) => {
     else
         return (<div />);
 }
-
-
-
-
-// function loadTab(actionTarget: ActionTarget): string {
-//     if (actionTarget !== ActionTarget.None) {
-//         const sessionRow = sessionStorage.getItem(SESSION_STORAGE_TAB_KEY);
-//         if (sessionRow) {
-//             const tabs: ITabInfo[] = JSON.parse(sessionRow);
-//             if (tabs) {
-//                 for (let tab of tabs) {
-//                     if (tab.actionTarget == actionTarget)
-//                         return tab.activeTab;
-//                 }
-//             }
-
-//         }
-//     }
-//     return DEFAULT_ACTIVE_KEY;
-// }
-// function saveTab(actionTarget: ActionTarget, activeTab: string): void {
-//     let tabs: ITabInfo[] | null = null;
-//     const sessionRow = sessionStorage.getItem(SESSION_STORAGE_TAB_KEY);
-//     if (sessionRow)
-//         tabs = JSON.parse(sessionRow);
-//     if (!tabs)
-//         tabs = [];
-
-
-//     let tabInfo: ITabInfo | null = null;
-//     if (tabs) {
-//         for (let tab of tabs)
-//             if (tab.actionTarget === actionTarget) {
-//                 tabInfo = tab;
-//                 break;
-//             }
-//     }
-//     if (!tabInfo) {
-//         tabInfo = { actionTarget: actionTarget, activeTab: DEFAULT_ACTIVE_KEY };
-//         tabs.push(tabInfo);
-//     }
-
-//     tabInfo.activeTab = activeTab;
-//     sessionStorage.setItem(SESSION_STORAGE_TAB_KEY, JSON.stringify(tabs));
-// }

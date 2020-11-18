@@ -1,9 +1,10 @@
-import React, { FunctionComponent } from 'react'
-import { SearchForm, IDataService } from "eos-webui-formgen";
+import React, { FunctionComponent, useRef } from 'react'
+import { SearchForm } from "eos-webui-formgen";
 
 
 const SearchClientFormPage: FunctionComponent = () => {
-    const dataSerive: IDataService = {
+    //  DI объект(провайер) выполняющий различные запросы получения данных, валидации и т.д.
+    const dataSerive: SearchForm.IDataService = {
         async getContextAsync() {
             const newContext = {
                 "Fields": [
@@ -20,7 +21,15 @@ const SearchClientFormPage: FunctionComponent = () => {
             return newContext;
         }
     }
+    //  API для работы с формой поиска.
+    const searchForm = useRef<SearchForm.IFormApi>();
+    
+    //  Настройки формы поиска.
+    const props: SearchForm.IForm = {
+        dataService: dataSerive
 
-    return (<SearchForm dataService={dataSerive} />);
+    }
+    //  Компонент формы.
+    return (<SearchForm.Form  ref={searchForm} {...props} />);
 }
 export default SearchClientFormPage;

@@ -1,12 +1,10 @@
-import { Form } from "@eos/rc-controls";
+import { Form as RcForm } from "@eos/rc-controls";
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
-import ClientForm, { IClientFormApi, IToolBar } from "./ClientForm";
+import { Form as ClientForm, Form as IFormApi, IToolBar } from "./ClientForm";
 import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
 import { Store } from 'rc-field-form/lib/interface';
 import { InternalHelper } from '../InternalHelper';
-
-// declare function getInitialValues3(): Promise<any>;
 
 /**DI объект для выполнения различных запросов. */
 export interface IDataService {
@@ -25,7 +23,7 @@ export interface IDataService {
 }
 
 /**Настройки генератора форм. */
-export interface IAjaxClientForm {
+export interface IForm {
     /**Тип формы. */
     mode: FormMode;
     dataService: IDataService;
@@ -56,7 +54,7 @@ export interface IClientTabProps {
     disabled?: boolean;
 }
 /**API для работы с клиентской формой. */
-export interface IAjaxClientFormApi {
+export interface IFormApi {
     /**Возвращает ключ активной вкладки. */
     getActivatedTab(): string;
     /**
@@ -76,7 +74,7 @@ interface IClientFormProps {
 }
 
 /**Генератор форм выполняющий запрос за элементом и схемой через DI.*/
-const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClientForm, ref) => {
+export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     const [schema, setSchema] = useState<any>(null);
     const [isFirstLoading, setFirstLoading] = useState(true);
     const [isSkeletonLoading, setSkeletonLoading] = useState(true);
@@ -88,8 +86,8 @@ const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClien
     const [isLoadingItem, setLoadingItem] = useState(false);
     const [clientFormProps, setClientFormProps] = useState<IClientFormProps>({ mode: props.mode });
 
-    useImperativeHandle(ref, (): IAjaxClientFormApi => {
-        const api: IAjaxClientFormApi = {
+    useImperativeHandle(ref, (): IFormApi => {
+        const api: IFormApi = {
             getActivatedTab() {
                 return clientFormApi.current?.getActivatedTab() || "";
             },
@@ -158,9 +156,9 @@ const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClien
         loadItemAsync();
     }
 
-    const [form] = Form.useForm();
+    const [form] = RcForm.useForm();
     const formInst = React.createRef();
-    const clientFormApi = useRef<IClientFormApi>();
+    const clientFormApi = useRef<IFormApi>();
     return (
         <ClientForm
             ref={clientFormApi}
@@ -236,4 +234,3 @@ const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClien
         setSpinLoading(false);
     }
 })
-export default AjaxClientForm;
