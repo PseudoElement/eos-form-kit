@@ -25,7 +25,6 @@ export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
     let rules = [];
     if (props.required)
         rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
-
     const suffix: ReactNode | undefined = props.additionalText != undefined && props.additionalText != null && props.additionalText != "" ?
         FieldsHelper.getInputSuffix(props.additionalText, props.icon) :
         undefined;

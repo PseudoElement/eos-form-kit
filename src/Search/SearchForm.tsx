@@ -4,17 +4,36 @@ import { Form } from "@eos/rc-controls";
 import ClientForm, { IClientFormApi } from '../ClientForms/ClientForm';
 import { FormMode } from '../ClientForms/FormMode';
 import { IClientTab, IClientTabs } from '../ClientForms/ClientTabs';
-import { createTabsComponent } from '../InternalHelper';
+import { InternalHelper } from '../InternalHelper';
 import { IClientTabProps } from '../ClientForms/AjaxClientForm';
+import FormTitle, { IFormTitleApi } from './FormTitle';
 
 const DEFAULT_TITLE = "Поиск";
 
 export interface ISearchForm {
-    /**Наименование формы поиска. */
-    title?: string;
+    /**DI получения данных. */
     dataService: IDataService;
-    /**Обработчик события нажатия на кнопку "ОК". */
+
+    /**Текст заголовка. */
+    title?: string;
+    /**Текст кнопки "Очистить". */
+    clearTitle?: string;
+    /**Текст кнопки "Скрыть". */
+    closeTitle?: string;
+    /**Текст кнопки "Применить". */
+    searchTitle?: string;
+    /**Скрыть кнопку "Очитить". */
+    hideClearButton?: boolean;
+    /**Скрыть кнопку "Скрыть". */
+    hideCloseButton?: boolean;
+    /**Скрыть кнопку "Применить". */
+    hideSearchButton?: boolean;
+
+    /**Переопределяет клик по кнопке "Скрыть". */
+    onCloseClick?(event: any): void;
+    /**Обработчик события нажатия на кнопку "ОК" после валидации всех полей. */
     onSearchAsync?(values: Store): Promise<void>;
+
     getResourceText?: (name: string) => string;
     /**Метод для получения кастомной вкладки. */
     getCustomtab?: (tab: IClientTabProps) => IClientTab | undefined;
@@ -35,16 +54,23 @@ export interface IDataService {
 export interface ISearchFormApi {
     clearFields(): void;
     search(): void;
+    /**Возвращает ключ активной вкладки. */
+    getActivatedTab(): string;
 }
-// const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClientForm, ref) => {
-const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: any) => {
-    useImperativeHandle(ref, (): ISearchFormApi => {
+
+const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: React.MutableRefObject<ISearchFormApi>) => {
+    const selfRef = useRef<ISearchFormApi>();
+    const targetRef: React.MutableRefObject<ISearchFormApi> = ref ?? selfRef;
+    useImperativeHandle(targetRef, (): ISearchFormApi => {
         const api: ISearchFormApi = {
             clearFields() {
-
+                form?.resetFields();
             },
             search() {
-
+                form?.submit();
+            },
+            getActivatedTab() {
+                return clientFormApi?.current?.getActivatedTab() || "";
             }
         }
         return api;
@@ -63,6 +89,7 @@ const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: 
     const [form] = Form.useForm();
     const formInst = React.createRef();
     const clientFormApi = useRef<IClientFormApi>();
+    const formTitleApi = useRef<IFormTitleApi>();
 
     if (loadSchema)
         loadSchemaAsync();
@@ -71,14 +98,16 @@ const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: 
         loadInitialValuesAsync();
 
     useEffect(() => {
-        debugger;
         setLoadSchema(true);
     }, []);
+    useEffect(() => {
+        checkFieldsByFormRef();
+    }, [initialValues]);
 
     return (
         <ClientForm
             ref={clientFormApi}
-            title={props.title ?? DEFAULT_TITLE}
+            title={props?.title || DEFAULT_TITLE}
             initialValues={initialValues}
             formInst={formInst}
             form={form}
@@ -86,6 +115,19 @@ const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: 
             isSpinLoading={isSpinLoading}
             onFinish={onFinishAsync}
             tabsComponent={clientTabs}
+            onValuesChange={onValuesChange}
+            formTitle={<FormTitle
+                ref={formTitleApi}
+                title={props.title}
+                clearTitle={props.clearTitle}
+                closeTitle={props.closeTitle}
+                searchTitle={props.searchTitle}
+                hideClearButton={props.hideClearButton}
+                hideCloseButton={props.hideCloseButton}
+                hideSearchButton={props.hideSearchButton}
+                onCloseClick={props.onCloseClick}
+                onClearClick={onClearClick}
+            />}
         // toolbar={props.toolbar}
         />
     );
@@ -106,15 +148,20 @@ const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: 
         }
     }
     async function ExecuteOnFinish(values: Store) {
-        if (props.dataService.onSearchAsync) {
-            await props.dataService.onSearchAsync(values)
-                .then(onSaveSucceeded)
-                .catch(onSaveFailed);
+        if (props.dataService.onSearchAsync || props.onSearchAsync) {
+            if (props.dataService.onSearchAsync) {
+                await props.dataService.onSearchAsync(values)
+                    .then(onSaveSucceeded)
+                    .catch(onSaveFailed);
+            }
+            if (props.onSearchAsync)
+                await props.onSearchAsync(values)
+                    .then(onSaveSucceeded)
+                    .catch(onSaveFailed);
         }
-        if (props.onSearchAsync)
-            await props.onSearchAsync(values)
-                .then(onSaveSucceeded)
-                .catch(onSaveFailed);
+        else {
+            onSaveSucceeded();
+        }
     }
 
     function onSaveSucceeded() {
@@ -142,7 +189,6 @@ const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: 
         if (props.dataService.getContextAsync)
             props.dataService.getContextAsync()
                 .then((initialValues: any) => {
-                    debugger;
                     onLoadSchemaSucceededAsync(initialValues);
                 });
     }
@@ -150,7 +196,7 @@ const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: 
     async function onLoadInitialValuesSucceeded(initialValues: any) {
         setSpinLoading(false);
         setInitialValues(initialValues);
-        setClientTabs(createTabsComponent(schema, getResourceText, props.getCustomtab));
+        setClientTabs(InternalHelper.createTabsComponent(schema, getResourceText, props.getCustomtab));
     };
     async function onLoadSchemaSucceededAsync(schema: any) {
         if (props.dataService.modifyContextAsync) {
@@ -165,6 +211,43 @@ const SearchForm = React.forwardRef<any, ISearchForm>((props: ISearchForm, ref: 
 
     function getDefaultResourceText(value: string) {
         return value;
+    }
+
+    function checkFieldsByFormRef() {
+        if (isFieldsEmpty(form?.getFieldsValue())) {
+            formTitleApi?.current?.disableSearchButton();
+            formTitleApi?.current?.disableClearButton();
+        }
+        else {
+            formTitleApi?.current?.enableSearchButton();
+            formTitleApi?.current?.enableClearButton();
+        }
+    }
+    function onValuesChange(changedValues: any, values: any) {
+        let isEmpty = changedValues ? isFieldsEmpty(values) : isFieldsEmpty(values);
+        if (isEmpty) {
+            formTitleApi?.current?.disableSearchButton();
+            formTitleApi?.current?.disableClearButton();
+        }
+        else {
+            formTitleApi?.current?.enableSearchButton();
+            formTitleApi?.current?.enableClearButton();
+        }
+    }
+    function onClearClick() {
+        targetRef?.current?.clearFields();
+        checkFieldsByFormRef();
+    }
+
+    function isFieldsEmpty(values: any) {
+        let isEmpty = true;
+        if (values)
+            for (let i in values)
+                if (values[i] !== undefined && values[i] !== null && values[i] !== "") {
+                    isEmpty = false;
+                    break;
+                }
+        return isEmpty;
     }
 
 });

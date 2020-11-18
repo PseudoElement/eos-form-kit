@@ -1,13 +1,10 @@
 import { Form } from "@eos/rc-controls";
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
-import { ISelect } from "../Fields/FieldSelect";
-import IField from "../Fields/IField";
 import ClientForm, { IClientFormApi, IToolBar } from "./ClientForm";
-import { IClientTab, IClientTabs, IFieldsInfo } from "./ClientTabs";
-import { CellType, IAutoCell, IThreeFieldsCell, IWidthCell } from "./FormCell";
+import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
-import { CellsType, IFormRow } from "./FormRow";
 import { Store } from 'rc-field-form/lib/interface';
+import { InternalHelper } from '../InternalHelper';
 
 // declare function getInitialValues3(): Promise<any>;
 
@@ -149,7 +146,7 @@ const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClien
         const prps: IClientFormProps = {
             initialValues: data,
             mode: props.mode,
-            tabsComponent: createTabsComponent(),
+            tabsComponent: InternalHelper.createTabsComponent(schema, props.getResourceText, props.getCustomtab),
         };
         setClientFormProps(prps);
     };
@@ -203,136 +200,6 @@ const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClien
         else
             onLoadItemSucceeded({});
 
-    }
-    function createTabsComponent(): IClientTabs {
-        let fieldsInfo: IFieldsInfo[] = [];
-        let tabsComponent: IClientTabs = { tabs: [], fields: fieldsInfo };
-        if (schema && schema?.Tabs) {
-            for (let i = 0; i < schema?.Tabs?.length; i++) {
-                const tab = schema?.Tabs[i];
-                if (tab.CustomType) {
-                    if (props.getCustomtab) {
-                        const tabInfo: IClientTabProps = {
-                            customType: tab.CustomType,
-                            forceRender: tab.ForceRender,
-                            title: tab.Title,
-                            disabled: tab.Disabled,
-                        };
-                        const customTab = props.getCustomtab(tabInfo);
-                        if (customTab)
-                            tabsComponent?.tabs?.push(customTab);
-                    }
-                }
-                else {
-                    let tabFields: string[] = [];
-                    const rows: IFormRow[] = getTabRows(schema?.Mode, schema?.Fields, schema?.Tabs[i].Rows, tabFields);
-                    tabsComponent?.tabs?.push(
-                        {
-                            title: props.getResourceText(tab.Title),
-                            disabled: tab.Disabled,
-                            forceRender: tab.ForceRender,
-                            key: i.toString(),
-                            rows: rows
-                        }
-                    );
-                    fieldsInfo.push({ tabKey: i.toString(), fields: tabFields });
-                }
-            }
-        }
-        return tabsComponent;
-    }
-    function getTabRows(mode: FormMode, fields: any, rows: any, tabFields: string[]): IFormRow[] {
-        if (!tabFields)
-            tabFields = [];
-        let formRows: IFormRow[] = [];
-        if (fields && rows) {
-            for (let row of rows) {
-                let formRow: IFormRow = { cells: [] };
-                if (row && row.Cells) {
-                    for (let cell of row.Cells) {
-                        formRow?.cells?.push(getCell(mode, fields, cell, tabFields))
-                    }
-                }
-                formRows.push(formRow);
-            }
-        }
-        return formRows;
-    }
-    function getCell(mode: FormMode, fields: any, cell: any, tabFields: string[]): CellsType {
-        let result: CellsType;
-        let fieldNames: (string | undefined)[] = [];
-        switch (cell.Type) {
-            case CellType.threeFields:
-                let threeFields: IThreeFieldsCell = {
-                    type: CellType.autoCell,
-                    leftField: convertToField(mode, getField(fields, cell.LeftField)),
-                    middleText: cell.MiddleText,
-                    rightField: convertToField(mode, getField(fields, cell.LeftField)),
-                    width: cell.Width
-                }
-                fieldNames = [threeFields?.leftField?.name, threeFields?.leftField?.name];
-                result = threeFields;
-            case CellType.autoCell:
-                let autoCell: IAutoCell = {
-                    type: CellType.autoCell,
-                    fields: getFields(mode, fields, cell.Fields)
-                }
-                fieldNames = autoCell.fields?.map(field => field.name) || [];
-                result = autoCell;
-            case CellType.widthCell:
-            default:
-                let widthCell: IWidthCell = {
-                    type: CellType.widthCell,
-                    width: cell.Width,
-                    fields: getFields(mode, fields, cell.Fields)
-                }
-                fieldNames = widthCell.fields?.map(field => field.name) || [];
-                result = widthCell;
-        }
-        fieldNames.forEach(fieldName => {
-            if (fieldName != undefined)
-                tabFields.push(fieldName);
-        });
-        return result;
-    }
-    function getFields(mode: FormMode, fields: any, fieldNames: string[]): IField[] {
-        let result: IField[] = [];
-        for (let fieldName of fieldNames) {
-            const field = getField(fields, fieldName);
-            if (field)
-                result.push(convertToField(mode, field));
-        }
-        return result;
-    }
-    function getField(fields: any, fieldName: string): any | undefined {
-        if (fields && fieldName)
-            for (let field of fields) {
-                if (fieldName === field.name) {
-                    return field;
-                }
-            }
-    }
-
-    function convertToField(mode: FormMode, fieldSchema: any): IField {
-        let field: IField = { ...fieldSchema };
-        field.mode = field.disabled ? FormMode.display : mode;
-        field.type = fieldSchema.type;
-        field.label = props.getResourceText(fieldSchema.label);
-        field.requiredMessage = fieldSchema.requiredMessage ? props.getResourceText(fieldSchema.requiredMessage) : undefined;
-
-        switch (field.type) {
-            case "FieldSelect":
-                let fieldSelectProps: ISelect = field;
-                if (fieldSelectProps.values) {
-                    for (let value of fieldSelectProps.values)
-                        value.value = props.getResourceText(value.value);
-                }
-                break;
-            // case "FieldLookup":
-
-            //     break;
-        }
-        return field;
     }
 
     async function onFinish(values: Store) {

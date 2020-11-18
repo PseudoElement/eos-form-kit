@@ -51,8 +51,6 @@ const App = () => {
         }
     }
 
-
-
     return (
         <ConfigProvider>
             <AjaxClientForm
