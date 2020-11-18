@@ -9,7 +9,7 @@ import DisplayInput from "./LookupComponents/DisplayInput";
 /**
  * Настройки лукап поля.
  */
-export interface IFieldLookup extends IField {
+export interface ILookup extends IField {
     /**
      * useLazyQuery
      */
@@ -66,7 +66,7 @@ export function getFieldValueForPost(value: any) {
 /**
  * Лукап поле.
  */
-const FieldLookup = React.forwardRef<any, IFieldLookup>((props: IFieldLookup, ref) => {
+export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
 
     let rules = [];
     if (props.required)
@@ -99,4 +99,3 @@ const FieldLookup = React.forwardRef<any, IFieldLookup>((props: IFieldLookup, re
             );
     }
 });
-export default FieldLookup;

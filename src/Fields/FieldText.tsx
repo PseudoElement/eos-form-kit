@@ -7,7 +7,7 @@ import IField from "./IField";
 /**
  * Настройки текстового поля.
  */
-export interface IFieldText extends IField {
+export interface IText extends IField {
     /**Отрисовать иконку очистки поля. */
     allowClear?: boolean;
     /**Максимальное количество символов. */
@@ -21,11 +21,10 @@ export interface IFieldText extends IField {
 /**
  * Текстовое поле.
  */
-export const FieldText = React.forwardRef<any, IFieldText>((props: IFieldText, ref) => {
+export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
     let rules = [];
     if (props.required)
         rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
-
     const suffix: ReactNode | undefined = props.additionalText != undefined && props.additionalText != null && props.additionalText != "" ?
         FieldsHelper.getInputSuffix(props.additionalText, props.icon) :
         undefined;
@@ -43,5 +42,3 @@ export const FieldText = React.forwardRef<any, IFieldText>((props: IFieldText, r
             );
     }
 });
-
-export default FieldText;

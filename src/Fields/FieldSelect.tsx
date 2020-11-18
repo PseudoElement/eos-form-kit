@@ -1,11 +1,11 @@
-import { Form, Select } from "@eos/rc-controls";
+import { Form, Select as RcSelect} from "@eos/rc-controls";
 import React from "react";
 import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 
 /**Настройки поля типа "Выпадающий список"*/
-export interface IFieldSelect extends IField {
+export interface ISelect extends IField {
     /**Список значений в выпадающем списке. */
     values?: IOption[];
 }
@@ -19,7 +19,7 @@ export interface IOption {
 }
 
 /**Поле типа "Выпадающий список". */
-export const FieldSelect = React.forwardRef<any, IFieldSelect>((props: IFieldSelect, ref) => {
+export const Select = React.forwardRef<any, ISelect>((props: ISelect, ref) => {
     let rules = [];
     if (props.required)
         rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
@@ -28,14 +28,14 @@ export const FieldSelect = React.forwardRef<any, IFieldSelect>((props: IFieldSel
             // return FieldsHelper.getDisplayField(props.label, props.name);
             return (
                 <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules} >
-                    <Select disabled={true}
+                    <RcSelect disabled={true}
                         ref={ref}
                         required={props.required}
                     >
                         {props.values?.map(value => {
-                            return <Select.Option key={value.key} value={value.key}>{value.value}</Select.Option>
+                            return <RcSelect.Option key={value.key} value={value.key}>{value.value}</RcSelect.Option>
                         })}
-                    </Select>
+                    </RcSelect>
                 </Form.Item >
             );
         case FormMode.new:
@@ -43,17 +43,15 @@ export const FieldSelect = React.forwardRef<any, IFieldSelect>((props: IFieldSel
         default:
             return (
                 <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules} >
-                    <Select
+                    <RcSelect
                         ref={ref}
                         required={props.required}
                     >
                         {props.values?.map(value => {
-                            return <Select.Option key={value.key} value={value.key}>{value.value}</Select.Option>
+                            return <RcSelect.Option key={value.key} value={value.key}>{value.value}</RcSelect.Option>
                         })}
-                    </Select>
+                    </RcSelect>
                 </Form.Item >
             );
     }
 });
-
-export default FieldSelect;

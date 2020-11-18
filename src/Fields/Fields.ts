@@ -1,11 +1,11 @@
 
-import FieldDateTime from './FieldDateTime';
-import FieldInteger from './FieldInteger';
-import FieldMultiText from './FieldMultiText';
-import FieldSelect from './FieldSelect';
-import FieldText from './FieldText';
-import FieldLookup from './FieldLookup';
-import FieldCheckbox from './FieldCheckbox';
+import { DateTime as FieldDateTime } from './FieldDateTime';
+import { Integer as FieldInteger } from './FieldInteger';
+import { MultiText as FieldMultiText } from './FieldMultiText';
+import { Select as FieldSelect } from './FieldSelect';
+import { Text as FieldText } from './FieldText';
+import { Lookup as FieldLookup } from './FieldLookup';
+import { Checkbox as FieldCheckbox } from './FieldCheckbox';
 
 /**Типы доступных полей. */
 const fields = {

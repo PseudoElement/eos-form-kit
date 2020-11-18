@@ -5,7 +5,7 @@ import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 
 /**Настройки мульти текстового поля. */
-export interface IFieldMultiText extends IField {
+export interface IMultiText extends IField {
     /**Количество строк. */
     rows?: number;
     /**Максимальное количество символов. */
@@ -15,7 +15,7 @@ export interface IFieldMultiText extends IField {
 /**
  * Мульти текстовое поле.
  */
-const FieldMultiText = React.forwardRef<any, IFieldMultiText>((props: IFieldMultiText, ref) => {
+export const MultiText = React.forwardRef<any, IMultiText>((props: IMultiText, ref) => {
     const DEFAULT_ROWS = 6;
 
     let rules = [];
@@ -38,5 +38,3 @@ const FieldMultiText = React.forwardRef<any, IFieldMultiText>((props: IFieldMult
             );
     }
 });
-
-export default FieldMultiText;

@@ -54,6 +54,12 @@ export interface IClientForm {
 
     /**Компонент вкладок */
     tabsComponent?: IClientTabs;
+
+    /**Компонент заголовка формы. */
+    formTitle?: ReactNode | ReactNode[];
+
+    /**Обработчик события при изменении значений полей формы. */
+    onValuesChange?(changedValues: any, values: any): void;
 }
 /**Настройки тулбары формы. */
 export interface IToolBar {
@@ -152,15 +158,19 @@ const ClientForm = React.forwardRef<any, IClientForm>((props: IClientForm, ref) 
                                 props?.onFinish(values);
                         }}
                         onFinishFailed={onFinishFailed}
-                        // onValuesChange={(changedValues: any, values: any) => {
-                        onValuesChange={() => {
+                        onValuesChange={(changedValues: any, values: any) => {
                             setWasModified(true);
+                            if (props.onValuesChange)
+                                props.onValuesChange(changedValues, values);
                         }} >
                         {
-                            mode === FormMode.display
-                                ? <DispFormTitle title={props.title} onCancelClick={(e) => onCancelClick(e)}
-                                    onEditClick={props.onEditClick} />
-                                : <EditFormTitle title={props.title} onCancelClick={(e) => onCancelClick(e)} />
+                            props.formTitle ?
+                                props.formTitle :
+                                (
+                                    mode === FormMode.display
+                                        ? <DispFormTitle title={props.title} onCancelClick={(e) => onCancelClick(e)}
+                                            onEditClick={props.onEditClick} />
+                                        : <EditFormTitle title={props.title} onCancelClick={(e) => onCancelClick(e)} />)
                         }
                         <ToolBar {...props.toolbar}></ToolBar>
                         <ClientTabs ref={clientTabsApi} {...clientTabsProps} />
