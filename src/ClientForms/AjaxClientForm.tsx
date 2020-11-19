@@ -1,6 +1,6 @@
 import { Form as RcForm } from "@eos/rc-controls";
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
-import { Form as ClientForm, Form as IFormApi, IToolBar } from "./ClientForm";
+import { Form as ClientForm, IFormApi as IClientFormApi, IToolBar } from "./ClientForm";
 import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
 import { Store } from 'rc-field-form/lib/interface';
@@ -190,7 +190,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
 
     const [form] = RcForm.useForm();
     const formInst = React.createRef();
-    const clientFormApi = useRef<IFormApi>();
+    const clientFormApi = useRef<IClientFormApi>();
     return (
         <ClientForm
             ref={clientFormApi}

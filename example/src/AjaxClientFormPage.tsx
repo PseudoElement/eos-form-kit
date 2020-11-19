@@ -3,12 +3,11 @@ import React, { FunctionComponent, useRef } from 'react'
 
 import "eos-webui-controls/dist/main.css";
 import { AjaxClientForm, FormMode } from "eos-webui-formgen";
-// import { IDataService } from 'eos-webui-formgen/dist/ClientForms/AjaxClientForm';
+import { Button } from '@eos/rc-controls';
 
 
 const AjaxClientFormPage: FunctionComponent = () => {
     const E_DOCUMENT_LABEL = "Для электронных документов";
-    // const ajaxClientFormApi = useRef<IAjaxClientFormApi>();
     const dataService: AjaxClientForm.IDataService = {
         async getContextAsync(mode: FormMode) {
             const dispContext = {
@@ -46,6 +45,7 @@ const AjaxClientFormPage: FunctionComponent = () => {
                     ], "Title": "tabs:inventory"
                 }, { "ClassName": null, "CustomType": "InventoryFiles", "Disabled": true, "ForceRender": null, "Rows": null, "Title": "tabs:files" }]
             };
+            await sleep(1000);
             switch (mode) {
                 case FormMode.edit:
                     return editContext;
@@ -57,6 +57,7 @@ const AjaxClientFormPage: FunctionComponent = () => {
             }
         },
         async getInitialValuesAsync() {
+            await sleep(1000);
             return {};
         },
         getTitle: function () {
@@ -66,34 +67,35 @@ const AjaxClientFormPage: FunctionComponent = () => {
 
     const formApi = useRef<AjaxClientForm.IFormApi>();
 
-    // const [isHiddenLeftIcon, setHiddenLeftIcon] = useState(true);
-
     return (
-        <AjaxClientForm.Form
-            ref={formApi}
-            mode={FormMode.new}
-            dataService={dataService}
-            getResourceText={name => name}
-            enableLeftIcon={true}
-            leftIconTitle={E_DOCUMENT_LABEL}
-            isHiddenLeftIcon={true}
-            // isHiddenLeftIcon={isHiddenLeftIcon}
-            onValuesChange={(changedValues: any) => {
-                if (changedValues && changedValues.E_DOCUMENT !== undefined) {
-                    if (changedValues.E_DOCUMENT === true)
-                        formApi?.current?.showLeftIcon();
-                    else
-                        formApi?.current?.hideLeftIcon();
-                }  
-                // if (changedValues && changedValues.E_DOCUMENT !== undefined) {
-                //     if (changedValues.E_DOCUMENT === true)
-                //         setHiddenLeftIcon(false);
-                //     else
-                //         setHiddenLeftIcon(true);
-                // }
-            }}
-        />
+        <React.Fragment>
+            <Button onClick={() => {
+                formApi?.current?.showLoading();
+                setTimeout(() => { formApi?.current?.hideLoading(); }, 1500);
+            }}>Грузить</Button>
+            <AjaxClientForm.Form
+                ref={formApi}
+                mode={FormMode.new}
+                dataService={dataService}
+                getResourceText={name => name}
+                enableLeftIcon={true}
+                leftIconTitle={E_DOCUMENT_LABEL}
+                isHiddenLeftIcon={true}
+                onValuesChange={(changedValues: any) => {
+                    if (changedValues && changedValues.E_DOCUMENT !== undefined) {
+                        if (changedValues.E_DOCUMENT === true)
+                            formApi?.current?.showLeftIcon();
+                        else
+                            formApi?.current?.hideLeftIcon();
+                    }
+                }}
+            />
+        </React.Fragment>
     );
+
+    async function sleep(msec: number) {
+        return new Promise(resolve => setTimeout(resolve, msec));
+    }
 }
 
 export default AjaxClientFormPage;
