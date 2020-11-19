@@ -47,7 +47,7 @@ export interface IForm {
     isHiddenLeftIcon?: boolean;
     /**Текст по наведению на иконку @ перед наименованием */
     leftIconTitle?: string;
-    
+
     /**Обработчик события при изменении значений полей формы. */
     onValuesChange?(changedValues: any, values: any): void;
 }
@@ -111,7 +111,8 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     const [isLoadingItem, setLoadingItem] = useState(false);
     const [clientFormProps, setClientFormProps] = useState<IClientFormProps>({ mode: props.mode });
 
-    useImperativeHandle(ref, (): IFormApi => {
+    const selfRef = useRef();
+    useImperativeHandle(ref ?? selfRef, (): IFormApi => {
         const api: IFormApi = {
             getActivatedTab() {
                 return clientFormApi.current?.getActivatedTab() || "";
@@ -140,7 +141,6 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         }
         return api;
     });
-
 
     useLayoutEffect(() => {
         if (isLoadingSchema || isLoadingItem) {
