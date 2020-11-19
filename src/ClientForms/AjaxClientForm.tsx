@@ -41,6 +41,15 @@ export interface IForm {
     onRendered?(): void;
     /**Вызовется, когда какое-то поле было изменено. */
     onFieldsWasModified?: (wasModified: boolean) => void;
+    /**Включает отрисовку иконки @ перед наименованием. */
+    enableLeftIcon?: boolean;
+    /**При включенной отрисовке левой иконки @ перед наименование изначальная её скрытость. */
+    isHiddenLeftIcon?: boolean;
+    /**Текст по наведению на иконку @ перед наименованием */
+    leftIconTitle?: string;
+    
+    /**Обработчик события при изменении значений полей формы. */
+    onValuesChange?(changedValues: any, values: any): void;
 }
 /**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
@@ -76,6 +85,10 @@ export interface IFormApi {
     setTabCount(key: string, count?: number): void;
     /**Переполучает элемент и отрисовывает его заново. */
     reloadItem(): void;
+    /**Показывает иконку @. */
+    showLeftIcon(): void;
+    /**Скрывает иконку @. */
+    hideLeftIcon(): void;
 }
 
 
@@ -117,6 +130,12 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
                 if (schema) {
                     setLoadItem(true);
                 }
+            },
+            showLeftIcon() {
+                clientFormApi?.current?.showLeftIcon();
+            },
+            hideLeftIcon() {
+                clientFormApi?.current?.hideLeftIcon();
             }
         }
         return api;
@@ -191,6 +210,10 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             onFinish={onFinish}
             tabsComponent={clientFormProps.tabsComponent}
             toolbar={props.toolbar}
+            enableLeftIcon={props.enableLeftIcon}
+            leftIconTitle={props.leftIconTitle}
+            isHiddenLeftIcon={props.isHiddenLeftIcon}
+            onValuesChange={props.onValuesChange}
         />
     );
 

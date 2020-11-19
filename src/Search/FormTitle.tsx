@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Button, Row, Col, Space, Typography, Divider } from "@eos/rc-controls";
 
 /**Настройки компонента заголовка формы поиска. */
@@ -26,6 +26,14 @@ export interface IFormTitle {
     closeTitle?: string;
     /**Текст кнопки "Применить". */
     searchTitle?: string;
+
+
+    /**Скрыть кнопку "Очитить". */
+    disabledClearButton?: boolean;
+    /**Скрыть кнопку "Скрыть". */
+    disabledCloseButton?: boolean;
+    /**Скрыть кнопку "Применить". */
+    disabledSearchButton?: boolean;
 }
 
 export interface IFormTitleApi {
@@ -43,39 +51,35 @@ export interface IFormTitleApi {
     enableSearchButton(): void;
 }
 
-// const AjaxClientForm = React.forwardRef<any, IAjaxClientForm>((props: IAjaxClientForm, ref) => {
 /**Компонент заголовока формы поиска. */
 const FormTitle = React.forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
     const DEFAULT_TITLE = "Поиск";
-    const DEFAULT_CLEAR_TEXT = "Очистить";
-    const DEFAULT_CLOSE_TEXT = "Скрыть";
-    const DEFAULT_SEARCH_TEXT = "Применить";
     const { Paragraph } = Typography;
 
-    const [clearDisabled, setClearDisabled] = useState(false);
-    const [closeDisabled, setCloseDisabled] = useState(false);
-    const [searchDisabled, setSearchDisabled] = useState(false);
+    const clearApi = useRef<IButtonApi>();
+    const closeApi = useRef<IButtonApi>();
+    const searchApi = useRef<IButtonApi>();
 
     const selfRef = useRef();
     useImperativeHandle(ref ?? selfRef, (): IFormTitleApi => {
         const api: IFormTitleApi = {
             disableClearButton() {
-                setClearDisabled(true);
+                clearApi?.current?.disable();
             },
             enableClearButton() {
-                setClearDisabled(false);
+                clearApi?.current?.enable();
             },
             disableCloseButton() {
-                setCloseDisabled(true);
+                closeApi?.current?.disable();
             },
             enableCloseButton() {
-                setCloseDisabled(false);
+                closeApi?.current?.enable();
             },
             disableSearchButton() {
-                setSearchDisabled(true);
+                searchApi?.current?.disable();
             },
             enableSearchButton() {
-                setSearchDisabled(false);
+                searchApi?.current?.enable();
             }
         }
 
@@ -90,9 +94,9 @@ const FormTitle = React.forwardRef<any, IFormTitle>((props: IFormTitle, ref: any
                 </Col>
                 <Col flex="0 0 auto">
                     <Space size="small" direction="horizontal">
-                        <Button disabled={clearDisabled} onClick={props.onClearClick}>{props.clearTitle ?? DEFAULT_CLEAR_TEXT}</Button>
-                        <Button disabled={closeDisabled} onClick={props.onCloseClick}>{props.closeTitle ?? DEFAULT_CLOSE_TEXT}</Button>
-                        <Button disabled={searchDisabled} type="primary" htmlType="submit">{props.searchTitle ?? DEFAULT_SEARCH_TEXT}</Button>
+                        <ClearButton ref={clearApi} disabled={props.disabledClearButton} title={props.clearTitle} onClick={props.onClearClick} />
+                        <CloseButton ref={closeApi} disabled={props.disabledCloseButton} title={props.closeTitle} onClick={props.onCloseClick} />
+                        <SearchButton ref={searchApi} disabled={props.disabledSearchButton} title={props.searchTitle} />
                     </Space>
                 </Col>
             </Row>
@@ -101,3 +105,114 @@ const FormTitle = React.forwardRef<any, IFormTitle>((props: IFormTitle, ref: any
     )
 });
 export default FormTitle;
+
+interface IButtonApi {
+    enable(): void;
+    disable(): void;
+    setTitle(value: string): void;
+}
+interface IButton {
+    title?: string;
+    disabled?: boolean;
+    onClick?(event: any): void;
+}
+
+const ClearButton = React.forwardRef<any, IButton>((props: IButton, ref: any) => {
+    const DEFAULT_TITLE = "Очистить";
+
+    const [isDisabled, setDisabled] = useState(props.disabled);
+    const [title, setTitle] = useState(props.title);
+    const selfRef = useRef();
+
+    useImperativeHandle(ref ?? selfRef, () => {
+        const api: IButtonApi = {
+            enable() {
+                setDisabled(false);
+            },
+            disable() {
+                setDisabled(true);
+            },
+            setTitle(value: string) {
+                setTitle(value);
+            }
+        }
+        return api;
+    });
+
+    useEffect(() => {
+        setDisabled(props.disabled === true ? true : false);
+    }, [props.disabled]);
+    useEffect(() => {
+        setTitle(props.title);
+    }, [props.title]);
+
+    return (
+        <Button disabled={isDisabled} onClick={props.onClick}>{title ?? DEFAULT_TITLE}</Button>
+    );
+});
+const CloseButton = React.forwardRef<any, IButton>((props: IButton, ref: any) => {
+    const DEFAULT_TITLE = "Скрыть";
+
+    const [isDisabled, setDisabled] = useState(props.disabled);
+    const [title, setTitle] = useState(props.title);
+    const selfRef = useRef();
+
+    useImperativeHandle(ref ?? selfRef, () => {
+        const api: IButtonApi = {
+            enable() {
+                setDisabled(false);
+            },
+            disable() {
+                setDisabled(true);
+            },
+            setTitle(value: string) {
+                setTitle(value);
+            }
+        }
+        return api;
+    });
+
+    useEffect(() => {
+        setDisabled(props.disabled === true ? true : false);
+    }, [props.disabled]);
+    useEffect(() => {
+        setTitle(props.title);
+    }, [props.title]);
+
+    return (
+        <Button disabled={isDisabled} onClick={props.onClick}>{title ?? DEFAULT_TITLE}</Button>
+    );
+});
+const SearchButton = React.forwardRef<any, IButton>((props: IButton, ref: any) => {
+    const DEFAULT_TITLE = "Применить";
+
+    const [isDisabled, setDisabled] = useState(props.disabled);
+    const [title, setTitle] = useState(props.title);
+    const selfRef = useRef();
+
+    useImperativeHandle(ref ?? selfRef, () => {
+        const api: IButtonApi = {
+            enable() {
+                setDisabled(false);
+            },
+            disable() {
+                setDisabled(true);
+            },
+            setTitle(value: string) {
+                setTitle(value);
+            }
+        }
+        return api;
+    });
+
+    useEffect(() => {
+        setDisabled(props.disabled === true ? true : false);
+    }, [props.disabled]);
+    useEffect(() => {
+        setTitle(props.title);
+    }, [props.title]);
+
+    return (
+        <Button type="primary" htmlType="submit" disabled={isDisabled} onClick={props.onClick}>{title ?? DEFAULT_TITLE}</Button>
+    );
+});
