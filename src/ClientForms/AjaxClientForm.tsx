@@ -62,8 +62,20 @@ export interface IFormApi {
      * @param key Ключ вкладки.
      */
     activateTab(key?: string): void;
+    /**
+     * Проставляет имя вкладки.
+     * @param key Ключ вкладки.
+     * @param title Имя вкладки.
+     */
     setTabTitle(key: string, title: string): void;
+    /**
+     * Проставляет количество элементов рядом с наименованием вкладки.
+     * @param key Ключ вкладки.
+     * @param count Количество элементов.
+     */
     setTabCount(key: string, count?: number): void;
+    /**Переполучает элемент и отрисовывает его заново. */
+    reloadItem(): void;
 }
 
 
@@ -100,6 +112,11 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             setTabCount(key: string, count?: number) {
                 clientFormApi.current?.setTabCount(key, count);
+            },
+            reloadItem() {
+                if (schema) {
+                    setLoadItem(true);
+                }
             }
         }
         return api;
