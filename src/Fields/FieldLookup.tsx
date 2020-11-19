@@ -3,7 +3,7 @@ import { Form } from "@eos/rc-controls";
 import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
-import AjaxSelect, { GetOptionItems, IGetRequestData, IGetDataService } from "./LookupComponents/AjaxSelect";
+import { Select as AjaxSelect, GetOptionItems, IGetRequestData, IGetDataService } from "./LookupComponents/AjaxSelect";
 import DisplayInput from "./LookupComponents/DisplayInput";
 
 /**

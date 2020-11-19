@@ -16,6 +16,7 @@ export * as FieldLookup from './Fields/FieldLookup';
 export * as FieldMultiText from './Fields/FieldMultiText';
 export * as FieldSelect from './Fields/FieldSelect';
 export * as FieldText from './Fields/FieldText';
+export * as AjaxSelect from './Fields/LookupComponents/AjaxSelect';
 
 export { default as fields } from './Fields/fields';
 export { FieldsHelper } from './Fields/FieldsHelper';

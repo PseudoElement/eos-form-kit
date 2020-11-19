@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { Select, Spin } from "@eos/rc-controls";
+import { Select as RcSelect, Spin } from "@eos/rc-controls";
 
 /**
  * Структура и описание пропсов AjaxSelect
  */
-export interface IAjaxSelect {
+export interface ISelect {
     /**
      * Объект для осуществления запроса
      */
@@ -125,7 +125,10 @@ export interface IQuery {
     (query: any, queryOption?: any): any,
 }
 
-const AjaxSelect = React.forwardRef<any, IAjaxSelect>(({
+/**
+ * Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке
+ */
+export const Select = React.forwardRef<any, ISelect>(({
     getData,
     getOptionItems,
     onChange,
@@ -272,7 +275,7 @@ const AjaxSelect = React.forwardRef<any, IAjaxSelect>(({
 
     return (
         <Spin spinning={isLoading}>
-            <Select ref={ref}
+            <RcSelect ref={ref}
                 required={required}
                 showSearch={true}
                 // showArrow={false}
@@ -309,7 +312,7 @@ const AjaxSelect = React.forwardRef<any, IAjaxSelect>(({
                 }
             >
                 {/* {options} */}
-            </Select >
+            </RcSelect >
         </Spin>
     );
 
@@ -328,7 +331,4 @@ const AjaxSelect = React.forwardRef<any, IAjaxSelect>(({
     }
 });
 
-/**
- * Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке
- */
-export default AjaxSelect;
+
