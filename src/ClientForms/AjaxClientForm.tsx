@@ -89,6 +89,8 @@ export interface IFormApi {
     showLeftIcon(): void;
     /**Скрывает иконку @. */
     hideLeftIcon(): void;
+    hideLoading(): void;
+    showLoading(): void;
 }
 
 
@@ -137,6 +139,12 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             hideLeftIcon() {
                 clientFormApi?.current?.hideLeftIcon();
+            },
+            hideLoading() {
+                hideLoading();
+            },
+            showLoading() {
+                showLoading();
             }
         }
         return api;
@@ -144,22 +152,10 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
 
     useLayoutEffect(() => {
         if (isLoadingSchema || isLoadingItem) {
-            if (isFirstLoading) {
-                setSkeletonLoading(true);
-                setSpinLoading(false);
-            }
-            else {
-                setSkeletonLoading(false);
-                setSpinLoading(true);
-            }
+            showLoading();
         }
         else {
-            setSkeletonLoading(false);
-            setSpinLoading(false);
-            // setTimeout(() => {
-            //     if (props.onRendered)
-            //         props.onRendered();
-            // }, 0);
+            hideLoading();
             if (props.onRendered)
                 props.onRendered();
         }
@@ -272,5 +268,19 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     }
     function onSaveFailed() {
         setSpinLoading(false);
+    }
+    function hideLoading() {
+        setSkeletonLoading(false);
+        setSpinLoading(false);
+    }
+    function showLoading() {
+        if (isFirstLoading) {
+            setSkeletonLoading(true);
+            setSpinLoading(false);
+        }
+        else {
+            setSkeletonLoading(false);
+            setSpinLoading(true);
+        }
     }
 })

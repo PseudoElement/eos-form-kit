@@ -238,12 +238,6 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         }
         return false;
     }
-    // function getActiveTab(actionTarget: ActionTarget) {
-    //     const activeKey = loadTab(actionTarget);
-    //     if (activeKey !== DEFAULT_ACTIVE_KEY && isEnabledTab(activeKey))
-    //         return activeKey;
-    //     return DEFAULT_ACTIVE_KEY;
-    // }
 });
 
 
