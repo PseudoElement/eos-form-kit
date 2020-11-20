@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Select as RcSelect, Spin } from "@eos/rc-controls";
+import { AutoComplete as RcAutoComplete, Spin } from '@eos/rc-controls';
 
 /**
- * Структура и описание пропсов AjaxSelect
+ * Структура и описание пропсов AjaxAutoComplete
  */
-export interface ISelect {
+export interface IAutoComplete {
     /**
      * Объект для осуществления запроса
      */
@@ -55,10 +55,6 @@ export interface ISelect {
     required?: boolean;
 }
 
-
-/**
- * Метод для возврата объекта в парамерты запроса
- */
 export interface IGetRequestData {
     /**
      * Проброс строки в парамерты запроса
@@ -99,7 +95,7 @@ export interface IOptionItem {
 /**
  * Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке
  */
-export const Select = React.forwardRef<any, ISelect>(({
+export const AjaxAutoComplete = React.forwardRef<any, IAutoComplete>(({
     getData,
     getOptionItems,
     onChange,
@@ -108,10 +104,11 @@ export const Select = React.forwardRef<any, ISelect>(({
     fieldName,
     value,
     notFoundContent,
-    required,
+    // required,
     getDataService,
     optionsAmountLimit
 }, ref) => {
+
     /**
      * Объект значения
      */
@@ -121,6 +118,11 @@ export const Select = React.forwardRef<any, ISelect>(({
      * Объект индикатор загрузки
      */
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    /**
+     * Текстовое значение поля
+     */
+    // const [currentTextValue, setCurrentTextValue] = useState<string>(currentValue ? (currentValue.value ? currentValue.value : '') : '');
 
     /**
      * Значение имя поля по умолчанию
@@ -153,6 +155,7 @@ export const Select = React.forwardRef<any, ISelect>(({
      * Элементы выпадающего списка
      */
     const [items, setItems] = useState<IOptionItem[]>([]);
+
 
     /**
      * Запрос
@@ -197,12 +200,10 @@ export const Select = React.forwardRef<any, ISelect>(({
     /**
      * Параметры запроса
      */
-    // const [loadItemById, { loading: isLoading }] = getDataService?.loadDataAsync(getDataService?.query, {
-    //     // const [loadItemById, { called: isCalled, loading: isLoading, data: data }] = getDataService?.loadDataAsync(getDataService?.query, {
+    // const [loadItemById, { called: isCalled, loading: isLoading, data: data }] = getDataService?.loadDataAsync(getDataService?.query, {
     //     onCompleted: useCallback(
     //         (data: any) => {
     //             let items: IOptionItem[] = getOptionItems ? getOptionItems(data) : DEFAULT_GET_OPTION_ITEMS(data);
-    //             console.log('items', items)
     //             switch (true) {
     //                 case (items.length >= getDataService.resultsAmount):
     //                     // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
@@ -230,7 +231,7 @@ export const Select = React.forwardRef<any, ISelect>(({
     // });
 
     /**
-     * Очистка значения формы
+     * Вызывается при нажатии на крестик
      */
     let onClear = () => {
         setCurrentValue(undefined);
@@ -239,9 +240,7 @@ export const Select = React.forwardRef<any, ISelect>(({
             onChange(null);
     }
 
-    /**
-     * Отправка запроса на показ дополнительных вариантов введенного значения при фокусе на поле
-     */
+    /** Вызывается при фокусе и отображает список схожих элементов */ 
     let onFocus = () => {
         // Если поле со значением, то отправить запрос со значением на поиск
         if (currentValue?.value) {
@@ -249,15 +248,16 @@ export const Select = React.forwardRef<any, ISelect>(({
         } else {
             // Если без - пустую строку на показ всех доступных значений
             loadItemById(getData ? getData("") : DEFAULT_GET_DATA(""));
-        }
-    }
+        }    
+    } 
 
     /**
      * Обработчик ввода в поле
      * @param value строкове значение, передаваемое в запрос на поиск
      */
     let handleSearch = (value: string) => {
-        console.log('handleSearch', value);
+        value = value ? value : '';
+        // setCurrentTextValue(value)
         // Получить сделать запрос на получение данных по обрезанной строке
         loadItemById(getData ? getData(value.trim()) : DEFAULT_GET_DATA(value.trim()));
 
@@ -273,7 +273,11 @@ export const Select = React.forwardRef<any, ISelect>(({
 
             // Проставить объект IOptionItem в форму
             setValueToForm({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
-            // onSelectComponentChange(value, { value: value, label: value, item: { value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key } });
+            if (onChange) 
+                onChange({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
+        } else {
+            setCurrentValue(undefined);
+            setValueToForm(undefined);
         }
     }
 
@@ -282,54 +286,53 @@ export const Select = React.forwardRef<any, ISelect>(({
      * @param value строковое значение для проставки в поле
      * @param option объект {key, value, label(аналогичен value)}
      */
-    let onSelect = (value: any, option: any) => {
+    let onSelect = (
+        // value: any, 
+        option: any) => {
         setCurrentValue(option?.item);
         setValueToForm(option?.item);
         if (onChange)
             onChange(option?.item);
-        if (!value)
-            console.log(value);
     }
 
     return (
         <Spin spinning={isLoading}>
-            <RcSelect ref={ref}
-                required={required}
-                showSearch={true}
-                value={currentValue?.value}
+            <RcAutoComplete ref={ref}
+                // При возвращении контролу AutoComplete свойства для отображения красной точки обязательности заполнения поля при пустом его значении - раскомментить
+                // required={required}
+                // При появлении у контрола AutoComplete свойства для отображения иконки лупы - добавить
                 notFoundContent={notFoundContent}
-                handleSearch={handleSearch}
-                onFocus={onFocus}
-                onClear={onClear}
-                onSelect={onSelect}
-                delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
+                value={currentValue?.value}
                 allowClear={true}
+                onSelect={onSelect}
+                onFocus={onFocus}
+                delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
+                onClear={onClear}
+                onSearch={handleSearch}
                 options={
-                    queryAmountInfo === ""
+                    queryAmountInfo === ''  
                         ? items.map((item: IOptionItem) => {
-                            return {
-                                value: item?.value ?? `${item.key}`,
-                                label: item?.value ?? `${item.key}`,
-                                item: item,
-                                disabled: item?.disabled
-                            }
-                        })
-
-                        : [{
-                            label: queryAmountInfo,
-                            options: items.map((item: IOptionItem) => {
                                 return {
-                                    value: item.value ?? `${item.key}`,
+                                    value: item?.value ?? `${item.key}`,
                                     label: item?.value ?? `${item.key}`,
                                     item: item,
                                     disabled: item?.disabled
                                 }
                             })
-                        }]
-                }
-            >
-                {/* {options} */}
-            </RcSelect >
+                        
+                        : [{
+                                label: queryAmountInfo,
+                                options: items.map((item: IOptionItem) => {
+                                    return {
+                                        value: item.value ?? `${item.key}`,
+                                        label: item?.value ?? `${item.key}`,
+                                        item: item,
+                                        disabled: item?.disabled
+                                    }
+                                })
+                            }]
+                }>
+            </RcAutoComplete >
         </Spin>
     );
 

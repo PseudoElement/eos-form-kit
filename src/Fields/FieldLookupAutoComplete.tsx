@@ -3,13 +3,13 @@ import { Form } from "@eos/rc-controls";
 import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
-import { Select as AjaxSelect, GetOptionItems, IGetRequestData } from "./LookupComponents/AjaxSelect";
+import { AjaxAutoComplete, GetOptionItems, IGetRequestData } from "./LookupComponents/AjaxAutoComplete";
 import DisplayInput from "./LookupComponents/DisplayInput";
 
 /**
  * Настройки лукап поля.
  */
-export interface ILookup extends IField {
+export interface ILookupAutoComplete extends IField {
     /** Функция для обработки запроса */
     getDataService(data?: any): Promise<any>;
 
@@ -67,7 +67,7 @@ export function getFieldValueForPost(value: any) {
 /**
  * Лукап поле.
  */
-export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
+export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((props: ILookupAutoComplete, ref) => {
 
     let rules = [];
     if (props.required)
@@ -85,7 +85,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
         default:
             return (
                 <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <AjaxSelect
+                    <AjaxAutoComplete
                         getDataService={props.getDataService}
                         ref={ref}
                         form={props.form}
