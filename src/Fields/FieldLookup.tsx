@@ -11,8 +11,7 @@ import DisplayInput from "./LookupComponents/DisplayInput";
  */
 export interface ILookup extends IField {
     /** Функция для обработки запроса */
-    getDataService: IGetDataService;
-    // getDataService(data?: any): Promise<any>;
+    getDataService?: IGetDataService;
 
     /**
      * Функция для проставки параметров запроса

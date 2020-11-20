@@ -8,7 +8,7 @@ export interface ISelect {
     /**
      * Объект для осуществления запроса
      */
-    getDataService: IGetDataService;
+    getDataService?: IGetDataService;
 
     /**
      * Функция для проставки параметров запроса
@@ -169,7 +169,7 @@ export const Select = React.forwardRef<any, ISelect>(({
      */
     async function loadItemById(param?: any) {
         setIsLoading(true);
-        return getDataService.loadDataAsync(param).then(
+        return getDataService?.loadDataAsync(param).then(
             (data: any) => {
                 let items: IOptionItem[] = getOptionItems ? getOptionItems(data) : DEFAULT_GET_OPTION_ITEMS(data);
                 switch (true) {

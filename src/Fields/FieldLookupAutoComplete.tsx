@@ -12,7 +12,7 @@ import DisplayInput from "./LookupComponents/DisplayInput";
 export interface ILookupAutoComplete extends IField {
     /** Функция для обработки запроса */
     // getDataService(data?: any): Promise<any>;
-    getDataService: IGetDataService;
+    getDataService?: IGetDataService;
 
     /**
      * Функция для проставки параметров запроса
