@@ -1,4 +1,4 @@
-import { FormMode, FieldDateTime, AjaxSelect } from "eos-webui-formgen";
+import { FormMode, FieldDateTime, AjaxSelect, AjaxAutoComplete } from "eos-webui-formgen";
 
 class Helper {
     static getFields(mode: FormMode) {
@@ -62,14 +62,24 @@ class Helper {
                 "value": null,
                 "notFoundContent": "Нет элементов",
                 "dataService": {
-                    loadDataAsync: async () => {
-                        const result: AjaxSelect.IOptionItem[] = [
+                    loadDataAsync: async (search?: string) => {
+                        const result: AjaxAutoComplete.IOptionItem[] = [
                             { key: "1", value: "один" },
                             { key: "2", value: "два" },
                             { key: "3", value: "три" },
                             { key: "4", value: "четыре" }
                         ]
-                        return result;
+                        if (search) {
+                            return result.filter((item) => {
+                                if (item && item.value && item?.value?.indexOf(search) >= 0) {
+                                    return true;
+                                }
+                                return false;
+                            }) ?? [];
+                        }
+                        else {
+                            return result;
+                        }
                     },
                     resultsAmount: 3,
                 }

@@ -8,23 +8,10 @@ export interface IAutoComplete {
     /**
      * Объект для осуществления запроса
      */
-    getDataService?: IGetDataService;
+    dataService?: IDataService;
 
-    /**
-     * Функция для проставки параметров запроса
-     */
-    getData?: IGetRequestData;
-
-    /**
-     * Функция для проставки элементов списка
-     */
-    getOptionItems?: GetOptionItems;
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
-    /**
-     * Объект для отображения текста о количестве элементов
-     */
-    optionsAmountInfo?: any;
 
     /**
      * Передача formInst
@@ -52,23 +39,6 @@ export interface IAutoComplete {
     required?: boolean;
 }
 
-export interface IGetRequestData {
-    /**
-     * Проброс строки в парамерты запроса
-     */
-    (name: string): any;
-}
-
-/**
- * Метод для возврата объекта в элементы выпадающего списка
- */
-export interface GetOptionItems {
-    /**
-     * Парсинг полученного объекта в объект IOptionItem типа {key, value}
-     */
-    (data: any): IOptionItem[];
-}
-
 /**
  * Структура элемента выпадающего списка
  */
@@ -89,11 +59,11 @@ export interface IOptionItem {
     disabled?: boolean;
 }
 
-export interface IGetDataService {
+export interface IDataService {
     /**
      * Функция useLazyQuery для отправки и обработки запроса
      */
-    loadDataAsync(param?:any): Promise<any>;
+    loadDataAsync(search?: string): Promise<IOptionItem[]>;
 
     /**
      * Количество запрашивамых результатов
@@ -105,17 +75,13 @@ export interface IGetDataService {
  * Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке
  */
 export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
-    getData,
-    getOptionItems,
     onChange,
-    // передача функции useTranslate t(`Отображены первые ${getDataService.resultsAmount} результатов`;)
-    // optionsAmountInfo
     form,
     fieldName,
     value,
     notFoundContent,
     // required,
-    getDataService,
+    dataService: getDataService,
 }, ref) => {
 
     /**
@@ -139,18 +105,6 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
     const DEFAULT_FIELD_NAME: string = "";
 
     /**
-     * Проброс пустого массива в список при отсутствии запроса
-     * @param data не имеет значения
-     */
-    const DEFAULT_GET_OPTION_ITEMS = (data: any): IOptionItem[] => { return data ? [] : []; };
-
-    /**
-     * Проброс пустого значения в параметры запроса
-     * @param name не имеет значения
-     */
-    const DEFAULT_GET_DATA = (name: string): any => { return name ? null : null; };
-
-    /**
      * Сообщение об отображаемом количестве элементов в выпадающем списке
      */
     const [queryAmountInfo, setQueryAmountInfo] = useState<string>("");
@@ -170,11 +124,11 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
      * Запрос
      * @param param параметры запроса
      */
-    async function loadItemById(param?: any) {
+    async function loadItemById(search?: string) {
         setIsLoading(true);
-        return getDataService?.loadDataAsync(param).then(
-            (data: any) => {
-                let items: IOptionItem[] = getOptionItems ? getOptionItems(data) : DEFAULT_GET_OPTION_ITEMS(data);
+        return getDataService?.loadDataAsync(search).then(
+            (data: IOptionItem[]) => {
+                let items: IOptionItem[] = data;
                 switch (true) {
                     case (items.length >= getDataService.resultsAmount):
                         // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
@@ -198,48 +152,15 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
                 setIsLoading(false);
             }
         )
-        .catch(
-            (err: any) => {
-                console.error(err);
-                setQueryAmountInfo("");
-                setItems([]);
-                setIsLoading(false)
-            }
-        )
+            .catch(
+                (err: any) => {
+                    console.error(err);
+                    setQueryAmountInfo("");
+                    setItems([]);
+                    setIsLoading(false)
+                }
+            )
     }
-
-    /**
-     * Параметры запроса
-     */
-    // const [loadItemById, { called: isCalled, loading: isLoading, data: data }] = getDataService?.loadDataAsync(getDataService?.query, {
-    //     onCompleted: useCallback(
-    //         (data: any) => {
-    //             let items: IOptionItem[] = getOptionItems ? getOptionItems(data) : DEFAULT_GET_OPTION_ITEMS(data);
-    //             switch (true) {
-    //                 case (items.length >= getDataService.resultsAmount):
-    //                     // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
-    //                     let shortArray = items.slice(0, getDataService.resultsAmount - 1);
-    //                     const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: getDataService.resultsAmount - 1 });
-    //                     // Добавляет в выпадающий список надпись "Отображены первые 10 результатов"
-    //                     setQueryAmountInfo(QUERY_AMOUNT_INFO_TEXT);
-    //                     setItems([...shortArray]);
-    //                     break;
-    //                 case (items.length && items.length <= getDataService.resultsAmount - 1):
-    //                     // Убирает надпись "Отображены первые 10 результатов" при количестве элементов списка 10 и менее
-    //                     setQueryAmountInfo("");
-    //                     setItems(items);
-    //                     break;
-    //                 default:
-    //                     setQueryAmountInfo("");
-    //                     setItems([]);
-    //                     break;
-    //             }
-    //         }, []),
-    //     onError: useCallback((err: any) => {
-    //         console.error(err);
-    //         setItems([]);
-    //     }, []),
-    // });
 
     /**
      * Вызывается при нажатии на крестик
@@ -251,16 +172,16 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
             onChange(null);
     }
 
-    /** Вызывается при фокусе и отображает список схожих элементов */ 
+    /** Вызывается при фокусе и отображает список схожих элементов */
     let onFocus = () => {
         // Если поле со значением, то отправить запрос со значением на поиск
         if (currentValue?.value) {
-            loadItemById(getData ? getData(currentValue?.value.trim()) : DEFAULT_GET_DATA(currentValue?.value.trim()));
+            loadItemById(currentValue?.value?.trim());
         } else {
             // Если без - пустую строку на показ всех доступных значений
-            loadItemById(getData ? getData("") : DEFAULT_GET_DATA(""));
-        }    
-    } 
+            loadItemById("");
+        }
+    }
 
     /**
      * Обработчик ввода в поле
@@ -270,7 +191,7 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
         value = value ? value : '';
         // setCurrentTextValue(value)
         // Получить сделать запрос на получение данных по обрезанной строке
-        loadItemById(getData ? getData(value.trim()) : DEFAULT_GET_DATA(value.trim()));
+        loadItemById(value?.trim());
 
         // Приведение value полученных объектов к UpperCase для дальнейшего сравнения
         let options: any = items?.map(item => item.value?.toLocaleUpperCase());
@@ -284,7 +205,7 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
 
             // Проставить объект IOptionItem в форму
             setValueToForm({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
-            if (onChange) 
+            if (onChange)
                 onChange({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
         } else {
             setCurrentValue(undefined);
@@ -321,27 +242,27 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
                 onClear={onClear}
                 onSearch={handleSearch}
                 options={
-                    queryAmountInfo === ''  
+                    queryAmountInfo === ''
                         ? items.map((item: IOptionItem) => {
+                            return {
+                                value: item?.value ?? `${item.key}`,
+                                label: item?.value ?? `${item.key}`,
+                                item: item,
+                                disabled: item?.disabled
+                            }
+                        })
+
+                        : [{
+                            label: queryAmountInfo,
+                            options: items.map((item: IOptionItem) => {
                                 return {
-                                    value: item?.value ?? `${item.key}`,
+                                    value: item.value ?? `${item.key}`,
                                     label: item?.value ?? `${item.key}`,
                                     item: item,
                                     disabled: item?.disabled
                                 }
                             })
-                        
-                        : [{
-                                label: queryAmountInfo,
-                                options: items.map((item: IOptionItem) => {
-                                    return {
-                                        value: item.value ?? `${item.key}`,
-                                        label: item?.value ?? `${item.key}`,
-                                        item: item,
-                                        disabled: item?.disabled
-                                    }
-                                })
-                            }]
+                        }]
                 }>
             </RcAutoComplete >
         </Spin>

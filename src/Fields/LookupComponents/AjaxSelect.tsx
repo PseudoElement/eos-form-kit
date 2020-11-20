@@ -40,17 +40,6 @@ export interface ISelect {
     required?: boolean;
 }
 
-
-/**
- * Метод для возврата объекта в парамерты запроса
- */
-export interface IGetRequestData {
-    /**
-     * Проброс строки в парамерты запроса
-     */
-    (name: string): any;
-}
-
 /**
  * Структура элемента выпадающего списка
  */
