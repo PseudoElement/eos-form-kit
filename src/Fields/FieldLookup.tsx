@@ -3,7 +3,7 @@ import { Form } from "@eos/rc-controls";
 import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
-import { Select as AjaxSelect, GetOptionItems, IGetRequestData } from "./LookupComponents/AjaxSelect";
+import { Select as AjaxSelect, GetOptionItems, IGetRequestData, IGetDataService } from "./LookupComponents/AjaxSelect";
 import DisplayInput from "./LookupComponents/DisplayInput";
 
 /**
@@ -11,10 +11,8 @@ import DisplayInput from "./LookupComponents/DisplayInput";
  */
 export interface ILookup extends IField {
     /** Функция для обработки запроса */
-    getDataService(data?: any): Promise<any>;
-
-    /** Лимит на количество элементов списка */
-    optionsAmountLimit: number;
+    getDataService: IGetDataService;
+    // getDataService(data?: any): Promise<any>;
 
     /**
      * Функция для проставки параметров запроса
@@ -94,8 +92,8 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                         getOptionItems={props.getOptionItems}
                         required={props.required}
                         optionsAmountInfo={props.optionsAmountInfo}
-                        optionsAmountLimit={props.optionsAmountLimit}
                         onChange={props.onChange}
+                        notFoundContent={props.notFoundContent}
                     />
                 </Form.Item>
             );

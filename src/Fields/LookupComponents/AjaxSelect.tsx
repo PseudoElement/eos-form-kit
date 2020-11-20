@@ -8,10 +8,7 @@ export interface ISelect {
     /**
      * Объект для осуществления запроса
      */
-    getDataService(data?: any): Promise<any>;
-
-    /** Органичение на количество элементов списка */
-    optionsAmountLimit: number;
+    getDataService: IGetDataService;
 
     /**
      * Функция для проставки параметров запроса
@@ -96,6 +93,18 @@ export interface IOptionItem {
     disabled?: boolean;
 }
 
+export interface IGetDataService {
+    /**
+     * Функция useLazyQuery для отправки и обработки запроса
+     */
+    loadDataAsync(param?:any): Promise<any>;
+
+    /**
+     * Количество запрашивамых результатов
+     */
+    resultsAmount: number;
+}
+
 /**
  * Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке
  */
@@ -103,14 +112,14 @@ export const Select = React.forwardRef<any, ISelect>(({
     getData,
     getOptionItems,
     onChange,
-    optionsAmountInfo,
     form,
     fieldName,
     value,
     notFoundContent,
     required,
     getDataService,
-    optionsAmountLimit
+    // передача функции useTranslate t(`Отображены первые ${getDataService.resultsAmount} результатов`;)
+    // optionsAmountInfo
 }, ref) => {
     /**
      * Объект значения
@@ -160,19 +169,21 @@ export const Select = React.forwardRef<any, ISelect>(({
      */
     async function loadItemById(param?: any) {
         setIsLoading(true);
-        return getDataService(param).then(
+        return getDataService.loadDataAsync(param).then(
             (data: any) => {
                 let items: IOptionItem[] = getOptionItems ? getOptionItems(data) : DEFAULT_GET_OPTION_ITEMS(data);
                 switch (true) {
-                    case (items.length >= optionsAmountLimit):
+                    case (items.length >= getDataService.resultsAmount):
                         // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
-                        let shortArray = items.slice(0, optionsAmountLimit - 1);
-                        const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: optionsAmountLimit - 1 });
+                        let shortArray = items.slice(0, getDataService.resultsAmount - 1);
+                        // Использование useTranslate
+                        // const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: getDataService.resultsAmount - 1 });
+                        const QUERY_AMOUNT_INFO_TEXT: string = `Отображены первые ${getDataService.resultsAmount - 1} результатов`;
                         // Добавляет в выпадающий список надпись "Отображены первые 10 результатов"
                         setQueryAmountInfo(QUERY_AMOUNT_INFO_TEXT);
                         setItems([...shortArray]);
                         break;
-                    case (items.length && items.length <= optionsAmountLimit - 1):
+                    case (items.length && items.length <= getDataService.resultsAmount - 1):
                         // Убирает надпись "Отображены первые 10 результатов" при количестве элементов списка 10 и менее
                         setQueryAmountInfo("");
                         setItems(items);
@@ -188,6 +199,7 @@ export const Select = React.forwardRef<any, ISelect>(({
         .catch(
             (err: any) => {
                 console.error(err);
+                setQueryAmountInfo("");
                 setItems([]);
                 setIsLoading(false)
             }
@@ -257,7 +269,6 @@ export const Select = React.forwardRef<any, ISelect>(({
      * @param value строкове значение, передаваемое в запрос на поиск
      */
     let handleSearch = (value: string) => {
-        console.log('handleSearch', value);
         // Получить сделать запрос на получение данных по обрезанной строке
         loadItemById(getData ? getData(value.trim()) : DEFAULT_GET_DATA(value.trim()));
 

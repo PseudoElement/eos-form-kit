@@ -8,10 +8,7 @@ export interface IAutoComplete {
     /**
      * Объект для осуществления запроса
      */
-    getDataService(data?: any): Promise<any>;
-
-    /** Органичение на количество элементов списка */
-    optionsAmountLimit: number;
+    getDataService: IGetDataService;
 
     /**
      * Функция для проставки параметров запроса
@@ -92,21 +89,33 @@ export interface IOptionItem {
     disabled?: boolean;
 }
 
+export interface IGetDataService {
+    /**
+     * Функция useLazyQuery для отправки и обработки запроса
+     */
+    loadDataAsync(param?:any): Promise<any>;
+
+    /**
+     * Количество запрашивамых результатов
+     */
+    resultsAmount: number;
+}
+
 /**
  * Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке
  */
-export const AjaxAutoComplete = React.forwardRef<any, IAutoComplete>(({
+export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
     getData,
     getOptionItems,
     onChange,
-    optionsAmountInfo,
+    // передача функции useTranslate t(`Отображены первые ${getDataService.resultsAmount} результатов`;)
+    // optionsAmountInfo
     form,
     fieldName,
     value,
     notFoundContent,
     // required,
     getDataService,
-    optionsAmountLimit
 }, ref) => {
 
     /**
@@ -163,19 +172,20 @@ export const AjaxAutoComplete = React.forwardRef<any, IAutoComplete>(({
      */
     async function loadItemById(param?: any) {
         setIsLoading(true);
-        return getDataService(param).then(
+        return getDataService.loadDataAsync(param).then(
             (data: any) => {
                 let items: IOptionItem[] = getOptionItems ? getOptionItems(data) : DEFAULT_GET_OPTION_ITEMS(data);
                 switch (true) {
-                    case (items.length >= optionsAmountLimit):
+                    case (items.length >= getDataService.resultsAmount):
                         // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
-                        let shortArray = items.slice(0, optionsAmountLimit - 1);
-                        const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: optionsAmountLimit - 1 });
+                        let shortArray = items.slice(0, getDataService.resultsAmount - 1);
+                        // const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: getDataService.resultsAmount - 1 });
+                        const QUERY_AMOUNT_INFO_TEXT: string = `Отображены первые ${getDataService.resultsAmount - 1} результатов`;
                         // Добавляет в выпадающий список надпись "Отображены первые 10 результатов"
                         setQueryAmountInfo(QUERY_AMOUNT_INFO_TEXT);
                         setItems([...shortArray]);
                         break;
-                    case (items.length && items.length <= optionsAmountLimit - 1):
+                    case (items.length && items.length <= getDataService.resultsAmount - 1):
                         // Убирает надпись "Отображены первые 10 результатов" при количестве элементов списка 10 и менее
                         setQueryAmountInfo("");
                         setItems(items);
@@ -191,6 +201,7 @@ export const AjaxAutoComplete = React.forwardRef<any, IAutoComplete>(({
         .catch(
             (err: any) => {
                 console.error(err);
+                setQueryAmountInfo("");
                 setItems([]);
                 setIsLoading(false)
             }
