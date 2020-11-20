@@ -95,11 +95,12 @@ class InternalHelper {
                     type: CellType.autoCell,
                     leftField: this.convertToField(mode, this.getField(fields, cell.LeftField), getResourceText),
                     middleText: cell.MiddleText,
-                    rightField: this.convertToField(mode, this.getField(fields, cell.LeftField), getResourceText),
+                    rightField: this.convertToField(mode, this.getField(fields, cell.RightField), getResourceText),
                     width: cell.Width
                 }
                 fieldNames = [threeFields?.leftField?.name, threeFields?.leftField?.name];
                 result = threeFields;
+                break;
             case CellType.autoCell:
                 let autoCell: IAutoCell = {
                     type: CellType.autoCell,
@@ -107,6 +108,7 @@ class InternalHelper {
                 }
                 fieldNames = autoCell.fields?.map(field => field.name) || [];
                 result = autoCell;
+                break;
             case CellType.widthCell:
             default:
                 let widthCell: IWidthCell = {
@@ -116,6 +118,7 @@ class InternalHelper {
                 }
                 fieldNames = widthCell.fields?.map(field => field.name) || [];
                 result = widthCell;
+                break;
         }
         if (tabFields)
             fieldNames.forEach(fieldName => {
