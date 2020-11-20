@@ -3,7 +3,7 @@ import { Form } from "@eos/rc-controls";
 import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
-import { AutoComplete as AjaxAutoComplete, GetOptionItems, IGetRequestData, IGetDataService } from "./LookupComponents/AjaxAutoComplete";
+import { AutoComplete as AjaxAutoComplete, IDataService } from "./LookupComponents/AjaxAutoComplete";
 import DisplayInput from "./LookupComponents/DisplayInput";
 
 /**
@@ -12,17 +12,8 @@ import DisplayInput from "./LookupComponents/DisplayInput";
 export interface ILookupAutoComplete extends IField {
     /** Функция для обработки запроса */
     // getDataService(data?: any): Promise<any>;
-    getDataService?: IGetDataService;
+    dataService?: IDataService;
 
-    /**
-     * Функция для проставки параметров запроса
-     */
-    getData?: IGetRequestData;
-
-    /**
-     * Функция для проставки элементов списка
-     */
-    getOptionItems?: GetOptionItems;
 
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
@@ -84,14 +75,11 @@ export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((pr
             return (
                 <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
                     <AjaxAutoComplete
-                        getDataService={props.getDataService}
+                        dataService={props.dataService}
                         ref={ref}
                         form={props.form}
-                        getData={props.getData}
                         fieldName={props.name}
-                        getOptionItems={props.getOptionItems}
                         required={props.required}
-                        optionsAmountInfo={props.optionsAmountInfo}
                         onChange={props.onChange}
                         notFoundContent={props.notFoundContent}
                     />
