@@ -5,6 +5,7 @@ import { FormMode } from "./ClientForms/FormMode";
 import { CellsType, IFormRow } from "./ClientForms/FormRow";
 import { IFormRows } from "./ClientForms/FormRows";
 import { ISelect } from "./Fields/FieldSelect";
+import { ICheckbox } from "./Fields/FieldCheckbox";
 import IField from "./Fields/IField";
 
 class InternalHelper {
@@ -92,7 +93,7 @@ class InternalHelper {
         switch (cell.Type) {
             case CellType.threeFields:
                 let threeFields: IThreeFieldsCell = {
-                    type: CellType.autoCell,
+                    type: CellType.threeFields,
                     leftField: this.convertToField(mode, this.getField(fields, cell.LeftField), getResourceText),
                     middleText: cell.MiddleText,
                     rightField: this.convertToField(mode, this.getField(fields, cell.RightField), getResourceText),
@@ -158,6 +159,10 @@ class InternalHelper {
                     for (let value of fieldSelectProps.values)
                         value.value = getResourceText(value.value);
                 }
+                break;
+            case "FieldCheckbox":
+                let fieldCheckboxProps: ICheckbox = field;
+                fieldCheckboxProps.description = getResourceText(fieldCheckboxProps.description ?? "");
                 break;
         }
         return field;
