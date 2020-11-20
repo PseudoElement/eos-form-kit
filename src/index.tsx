@@ -6,6 +6,7 @@ export * as SearchForm from './Search/SearchForm';
 export { default as ClientTabs, IClientTabs, IClientTab, IClientTabsApi, IFieldsInfo } from './ClientForms/ClientTabs';
 export { default as FormCell, IFormCell, IWidthCell, IAutoCell, IThreeFieldsCell, CellType, WidthType } from './ClientForms/FormCell';
 export { default as FormRow, IFormRow } from './ClientForms/FormRow';
+export { default as FormRows, IFormRows } from './ClientForms/FormRows';
 
 export { default as Skeleton } from './ClientForms/Skeleton/Skeleton';
 export { FormMode, parseFormMode } from './ClientForms/FormMode';

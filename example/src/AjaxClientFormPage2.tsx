@@ -22,21 +22,21 @@ const AjaxClientFormPage2: FunctionComponent = () => {
     }, [id]);
 
     const dataService: AjaxClientForm.IDataService = {
-        async getContextAsync(mode: FormMode) {
+        async getContextAsync(mode: FormMode): Promise<AjaxClientForm.IContext> {
             const dispContext = {
                 "Fields": Helper.getFields(FormMode.display),
                 "Mode": FormMode.display,
-                "Tabs": Helper.getTabs()
+                "Rows": Helper.getRows()
             };
             const editContext = {
                 "Fields": Helper.getFields(FormMode.edit),
                 "Mode": FormMode.edit,
-                "Tabs": Helper.getTabs()
+                "Rows": Helper.getRows()
             };
             const newContext = {
                 "Fields": Helper.getFields(FormMode.new),
                 "Mode": FormMode.new,
-                "Tabs": Helper.getTabs()
+                "Rows": Helper.getRows()
             };
             await Helper.sleepAsync(100);
             switch (mode) {

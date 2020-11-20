@@ -1,13 +1,14 @@
-import { IClientTabProps } from "./ClientForms/AjaxClientForm";
+import { IClientTabProps, IContext } from "./ClientForms/AjaxClientForm";
 import { IClientTab, IClientTabs, IFieldsInfo } from "./ClientForms/ClientTabs";
 import { CellType, IAutoCell, IThreeFieldsCell, IWidthCell } from "./ClientForms/FormCell";
 import { FormMode } from "./ClientForms/FormMode";
 import { CellsType, IFormRow } from "./ClientForms/FormRow";
+import { IFormRows } from "./ClientForms/FormRows";
 import { ISelect } from "./Fields/FieldSelect";
 import IField from "./Fields/IField";
 
 class InternalHelper {
-    static createTabsComponent(schema: any, getResourceText: (name: string) => string, getCustomtab?: (tab: IClientTabProps) => IClientTab | undefined): IClientTabs {
+    static createTabsComponent(schema: IContext, getResourceText: (name: string) => string, getCustomtab?: (tab: IClientTabProps) => IClientTab | undefined): IClientTabs {
         let fieldsInfo: IFieldsInfo[] = [];
         let tabsComponent: IClientTabs = { tabs: [], fields: fieldsInfo };
         if (schema && schema?.Tabs) {
@@ -44,6 +45,13 @@ class InternalHelper {
         }
         return tabsComponent;
     }
+    static createFormRows(schema: IContext, getResourceText: (name: string) => string): IFormRows {
+        let result: IFormRows = {
+            rows: this.getRows(schema?.Mode, schema?.Fields, schema?.Rows, getResourceText)
+        };
+        return result;
+    }
+
 
     private static getTabRows(mode: FormMode, fields: any, rows: any, tabFields: string[], getResourceText: (name: string) => string): IFormRow[] {
         if (!tabFields)
@@ -62,7 +70,23 @@ class InternalHelper {
         }
         return formRows;
     }
-    private static getCell(mode: FormMode, fields: any, cell: any, tabFields: string[], getResourceText: (name: string) => string): CellsType {
+    private static getRows(mode: FormMode, fields: any, rows: any, getResourceText: (name: string) => string): IFormRow[] {
+        let formRows: IFormRow[] = [];
+        if (fields && rows) {
+            for (let row of rows) {
+                let formRow: IFormRow = { cells: [] };
+                if (row && row.Cells) {
+                    for (let cell of row.Cells) {
+                        formRow?.cells?.push(this.getCell(mode, fields, cell, null, getResourceText))
+                    }
+                }
+                formRows.push(formRow);
+            }
+        }
+        return formRows;
+    }
+
+    private static getCell(mode: FormMode, fields: any, cell: any, tabFields: string[] | null, getResourceText: (name: string) => string): CellsType {
         let result: CellsType;
         let fieldNames: (string | undefined)[] = [];
         switch (cell.Type) {
@@ -93,10 +117,11 @@ class InternalHelper {
                 fieldNames = widthCell.fields?.map(field => field.name) || [];
                 result = widthCell;
         }
-        fieldNames.forEach(fieldName => {
-            if (fieldName != undefined)
-                tabFields.push(fieldName);
-        });
+        if (tabFields)
+            fieldNames.forEach(fieldName => {
+                if (fieldName != undefined)
+                    tabFields.push(fieldName);
+            });
         return result;
     }
     private static getFields(mode: FormMode, fields: any, fieldNames: string[], getResourceText: (name: string) => string): IField[] {

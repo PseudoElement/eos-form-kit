@@ -45,6 +45,25 @@ class Helper {
             { "ClassName": null, "CustomType": "InventoryFiles", "Disabled": true, "ForceRender": null, "Rows": null, "Title": "Файлы" }];
         return json;
     }
+    static getRows() {
+        const rows = [
+            { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
+            { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
+            {
+                "Cells": [
+                    { "Type": 0, "Fields": ["ind"], "Width": 8 },
+                    { "Type": 0, "Fields": ["volumeNum"], "Width": 4 },
+                    { "Type": 0, "Fields": ["keepCategory"], "Width": 12 }]
+            },
+            { "Cells": [{ "Type": 0, "Fields": ["name"], "Width": 24 }] },
+            { "Cells": [{ "Type": 0, "Fields": ["note"], "Width": 24 }] },
+            {
+                "Cells": [
+                    { "Type": 0, "Fields": ["startYear"], "Width": 6 },
+                    { "Type": 0, "Fields": ["endYear"], "Width": 6 }]
+            }];
+        return rows;
+    }
     static getInitialValues(mode: FormMode, id: number) {
         switch (id) {
             case 1:
