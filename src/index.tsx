@@ -17,6 +17,8 @@ export * as FieldMultiText from './Fields/FieldMultiText';
 export * as FieldSelect from './Fields/FieldSelect';
 export * as FieldText from './Fields/FieldText';
 export * as AjaxSelect from './Fields/LookupComponents/AjaxSelect';
+export * as FieldLookupAutoComplete from './Fields/FieldLookupAutoComplete';
+export * as AjaxAutoComplete from './Fields/LookupComponents/AjaxAutoComplete';
 
 export { default as fields } from './Fields/fields';
 export { FieldsHelper } from './Fields/FieldsHelper';
