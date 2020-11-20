@@ -13,7 +13,7 @@ export interface IDataService {
     /**Метод возвращающий значения полей для формы.*/
     getInitialValuesAsync?(): Promise<any>;
     /**Метод, возвращающий наименование формы. */
-    getTitle(): string;
+    getTitle?(): string;
     /**Обработчик события нажатия на кнопку "ОК". */
     onSaveAsync?(data: Store): Promise<void>;
     /**Кастомная валидация. Вызовется после основной валидации полей. */
@@ -50,6 +50,8 @@ export interface IForm {
 
     /**Обработчик события при изменении значений полей формы. */
     onValuesChange?(changedValues: any, values: any): void;
+    /**true - если необходимо заблокировать отрисовку заголовка формы с кнопками. */
+    disableHeader?: boolean;
 }
 /**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
@@ -194,7 +196,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     return (
         <ClientForm
             ref={clientFormApi}
-            title={props.dataService.getTitle()}
+            title={props.dataService.getTitle ? props.dataService.getTitle() : undefined}
             initialValues={clientFormProps.initialValues}
             formInst={formInst}
             form={form}
@@ -210,6 +212,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             leftIconTitle={props.leftIconTitle}
             isHiddenLeftIcon={props.isHiddenLeftIcon}
             onValuesChange={props.onValuesChange}
+            disableHeader={props.disableHeader}
         />
     );
 
@@ -228,7 +231,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setLoadingItem(true);
         // if (clientFormProps.mode === FormMode.display)
         //     form?.resetFields();
-            
+
         if (props.dataService.getInitialValuesAsync)
             props.dataService.getInitialValuesAsync()
                 .then((initialValues: any) => {
