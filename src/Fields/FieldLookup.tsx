@@ -3,7 +3,7 @@ import { Form } from "@eos/rc-controls";
 import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
-import { Select as AjaxSelect, GetOptionItems, IGetRequestData, IGetDataService } from "./LookupComponents/AjaxSelect";
+import { Select as AjaxSelect, IDataService } from "./LookupComponents/AjaxSelect";
 import DisplayInput from "./LookupComponents/DisplayInput";
 
 /**
@@ -11,25 +11,10 @@ import DisplayInput from "./LookupComponents/DisplayInput";
  */
 export interface ILookup extends IField {
     /** Функция для обработки запроса */
-    getDataService?: IGetDataService;
-
-    /**
-     * Функция для проставки параметров запроса
-     */
-    getData?: IGetRequestData;
-
-    /**
-     * Функция для проставки элементов списка
-     */
-    getOptionItems?: GetOptionItems;
+    dataService: IDataService;
 
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
-
-    /**
-     * Объект для отображения текста о количестве элементов
-     */
-    optionsAmountInfo?: any;
 
     /**
      * Передача formInst
@@ -83,14 +68,11 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
             return (
                 <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
                     <AjaxSelect
-                        getDataService={props.getDataService}
+                        dataService={props.dataService}
                         ref={ref}
                         form={props.form}
-                        getData={props.getData}
                         fieldName={props.name}
-                        getOptionItems={props.getOptionItems}
                         required={props.required}
-                        optionsAmountInfo={props.optionsAmountInfo}
                         onChange={props.onChange}
                         notFoundContent={props.notFoundContent}
                     />

@@ -8,24 +8,12 @@ export interface ISelect {
     /**
      * Объект для осуществления запроса
      */
-    getDataService?: IGetDataService;
+    dataService?: IDataService;
 
-    /**
-     * Функция для проставки параметров запроса
-     */
-    getData?: IGetRequestData;
-
-    /**
-     * Функция для проставки элементов списка
-     */
-    getOptionItems?: GetOptionItems;
+  
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
-    /**
-     * Объект для отображения текста о количестве элементов
-     */
-    optionsAmountInfo?: any;
-
+  
     /**
      * Передача formInst
      */
@@ -64,16 +52,6 @@ export interface IGetRequestData {
 }
 
 /**
- * Метод для возврата объекта в элементы выпадающего списка
- */
-export interface GetOptionItems {
-    /**
-     * Парсинг полученного объекта в объект IOptionItem типа {key, value}
-     */
-    (data: any): IOptionItem[];
-}
-
-/**
  * Структура элемента выпадающего списка
  */
 export interface IOptionItem {
@@ -93,11 +71,11 @@ export interface IOptionItem {
     disabled?: boolean;
 }
 
-export interface IGetDataService {
+export interface IDataService {
     /**
      * Функция useLazyQuery для отправки и обработки запроса
      */
-    loadDataAsync(param?:any): Promise<any>;
+    loadDataAsync(search?: string): Promise<IOptionItem[]>;
 
     /**
      * Количество запрашивамых результатов
@@ -109,15 +87,13 @@ export interface IGetDataService {
  * Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке
  */
 export const Select = React.forwardRef<any, ISelect>(({
-    getData,
-    getOptionItems,
     onChange,
     form,
     fieldName,
     value,
     notFoundContent,
     required,
-    getDataService,
+    dataService: getDataService,
     // передача функции useTranslate t(`Отображены первые ${getDataService.resultsAmount} результатов`;)
     // optionsAmountInfo
 }, ref) => {
@@ -137,18 +113,6 @@ export const Select = React.forwardRef<any, ISelect>(({
     const DEFAULT_FIELD_NAME: string = "";
 
     /**
-     * Проброс пустого массива в список при отсутствии запроса
-     * @param data не имеет значения
-     */
-    const DEFAULT_GET_OPTION_ITEMS = (data: any): IOptionItem[] => { return data ? [] : []; };
-
-    /**
-     * Проброс пустого значения в параметры запроса
-     * @param name не имеет значения
-     */
-    const DEFAULT_GET_DATA = (name: string): any => { return name ? null : null; };
-
-    /**
      * Сообщение об отображаемом количестве элементов в выпадающем списке
      */
     const [queryAmountInfo, setQueryAmountInfo] = useState<string>("");
@@ -165,13 +129,13 @@ export const Select = React.forwardRef<any, ISelect>(({
 
     /**
      * Запрос
-     * @param param параметры запроса
+     * @search search параметры запроса
      */
-    async function loadItemById(param?: any) {
+    async function loadItemById(search?: string) {
         setIsLoading(true);
-        return getDataService?.loadDataAsync(param).then(
-            (data: any) => {
-                let items: IOptionItem[] = getOptionItems ? getOptionItems(data) : DEFAULT_GET_OPTION_ITEMS(data);
+        return getDataService?.loadDataAsync(search).then(
+            (data: IOptionItem[]) => {
+                let items: IOptionItem[] = data;
                 switch (true) {
                     case (items.length >= getDataService.resultsAmount):
                         // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
@@ -257,10 +221,10 @@ export const Select = React.forwardRef<any, ISelect>(({
     let onFocus = () => {
         // Если поле со значением, то отправить запрос со значением на поиск
         if (currentValue?.value) {
-            loadItemById(getData ? getData(currentValue?.value.trim()) : DEFAULT_GET_DATA(currentValue?.value.trim()));
+            loadItemById(currentValue?.value?.trim());
         } else {
             // Если без - пустую строку на показ всех доступных значений
-            loadItemById(getData ? getData("") : DEFAULT_GET_DATA(""));
+            loadItemById("");
         }
     }
 
@@ -270,7 +234,7 @@ export const Select = React.forwardRef<any, ISelect>(({
      */
     let handleSearch = (value: string) => {
         // Получить сделать запрос на получение данных по обрезанной строке
-        loadItemById(getData ? getData(value.trim()) : DEFAULT_GET_DATA(value.trim()));
+        loadItemById(value.trim());
 
         // Приведение value полученных объектов к UpperCase для дальнейшего сравнения
         let options: any = items?.map(item => item.value?.toLocaleUpperCase());
