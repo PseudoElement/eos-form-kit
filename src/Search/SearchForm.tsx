@@ -60,6 +60,8 @@ export interface IFormApi {
     search(): void;
     /**Возвращает ключ активной вкладки. */
     getActivatedTab(): string;
+    hideLoading(): void;
+    showLoading(): void;
 }
 
 /**Форма поиска. */
@@ -76,6 +78,12 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
             },
             getActivatedTab() {
                 return clientFormApi?.current?.getActivatedTab() || "";
+            },
+            hideLoading(){
+                setSpinLoading(false);
+            },
+            showLoading(){
+                setSpinLoading(true);
             }
         }
         return api;

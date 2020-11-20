@@ -1,5 +1,5 @@
 import { Form, Checkbox as RcCheckbox } from "@eos/rc-controls";
-import React from "react";
+import React, { useImperativeHandle } from "react";
 import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
@@ -13,10 +13,12 @@ export interface ICheckbox extends IField {
 /**
  * Поле галочка.
  */
-export const Checkbox = React.forwardRef<any, ICheckbox>((props: ICheckbox) => {
+export const Checkbox = React.forwardRef<any, ICheckbox>((props: ICheckbox, ref: any) => {
     let rules = [];
     if (props.required)
         rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
+
+    useImperativeHandle(ref, () => { });
 
     switch (props.mode) {
         case FormMode.display:

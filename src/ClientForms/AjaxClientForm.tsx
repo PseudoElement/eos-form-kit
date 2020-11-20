@@ -1,6 +1,6 @@
 import { Form as RcForm } from "@eos/rc-controls";
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
-import { Form as ClientForm, Form as IFormApi, IToolBar } from "./ClientForm";
+import { Form as ClientForm, IFormApi as IClientFormApi, IToolBar } from "./ClientForm";
 import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
 import { Store } from 'rc-field-form/lib/interface';
@@ -41,6 +41,15 @@ export interface IForm {
     onRendered?(): void;
     /**Вызовется, когда какое-то поле было изменено. */
     onFieldsWasModified?: (wasModified: boolean) => void;
+    /**Включает отрисовку иконки @ перед наименованием. */
+    enableLeftIcon?: boolean;
+    /**При включенной отрисовке левой иконки @ перед наименование изначальная её скрытость. */
+    isHiddenLeftIcon?: boolean;
+    /**Текст по наведению на иконку @ перед наименованием */
+    leftIconTitle?: string;
+
+    /**Обработчик события при изменении значений полей формы. */
+    onValuesChange?(changedValues: any, values: any): void;
 }
 /**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
@@ -76,6 +85,12 @@ export interface IFormApi {
     setTabCount(key: string, count?: number): void;
     /**Переполучает элемент и отрисовывает его заново. */
     reloadItem(): void;
+    /**Показывает иконку @. */
+    showLeftIcon(): void;
+    /**Скрывает иконку @. */
+    hideLeftIcon(): void;
+    hideLoading(): void;
+    showLoading(): void;
 }
 
 
@@ -98,7 +113,8 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     const [isLoadingItem, setLoadingItem] = useState(false);
     const [clientFormProps, setClientFormProps] = useState<IClientFormProps>({ mode: props.mode });
 
-    useImperativeHandle(ref, (): IFormApi => {
+    const selfRef = useRef();
+    useImperativeHandle(ref ?? selfRef, (): IFormApi => {
         const api: IFormApi = {
             getActivatedTab() {
                 return clientFormApi.current?.getActivatedTab() || "";
@@ -117,30 +133,29 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
                 if (schema) {
                     setLoadItem(true);
                 }
+            },
+            showLeftIcon() {
+                clientFormApi?.current?.showLeftIcon();
+            },
+            hideLeftIcon() {
+                clientFormApi?.current?.hideLeftIcon();
+            },
+            hideLoading() {
+                hideLoading();
+            },
+            showLoading() {
+                showLoading();
             }
         }
         return api;
     });
 
-
     useLayoutEffect(() => {
         if (isLoadingSchema || isLoadingItem) {
-            if (isFirstLoading) {
-                setSkeletonLoading(true);
-                setSpinLoading(false);
-            }
-            else {
-                setSkeletonLoading(false);
-                setSpinLoading(true);
-            }
+            showLoading();
         }
         else {
-            setSkeletonLoading(false);
-            setSpinLoading(false);
-            // setTimeout(() => {
-            //     if (props.onRendered)
-            //         props.onRendered();
-            // }, 0);
+            hideLoading();
             if (props.onRendered)
                 props.onRendered();
         }
@@ -175,7 +190,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
 
     const [form] = RcForm.useForm();
     const formInst = React.createRef();
-    const clientFormApi = useRef<IFormApi>();
+    const clientFormApi = useRef<IClientFormApi>();
     return (
         <ClientForm
             ref={clientFormApi}
@@ -191,6 +206,10 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             onFinish={onFinish}
             tabsComponent={clientFormProps.tabsComponent}
             toolbar={props.toolbar}
+            enableLeftIcon={props.enableLeftIcon}
+            leftIconTitle={props.leftIconTitle}
+            isHiddenLeftIcon={props.isHiddenLeftIcon}
+            onValuesChange={props.onValuesChange}
         />
     );
 
@@ -207,6 +226,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     async function loadItemAsync() {
         setLoadItem(false);
         setLoadingItem(true);
+        // if (clientFormProps.mode === FormMode.display)
+        //     form?.resetFields();
+            
         if (props.dataService.getInitialValuesAsync)
             props.dataService.getInitialValuesAsync()
                 .then((initialValues: any) => {
@@ -249,5 +271,19 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     }
     function onSaveFailed() {
         setSpinLoading(false);
+    }
+    function hideLoading() {
+        setSkeletonLoading(false);
+        setSpinLoading(false);
+    }
+    function showLoading() {
+        if (isFirstLoading) {
+            setSkeletonLoading(true);
+            setSpinLoading(false);
+        }
+        else {
+            setSkeletonLoading(false);
+            setSpinLoading(true);
+        }
     }
 })

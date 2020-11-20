@@ -16,9 +16,29 @@ interface IMenuItem {
 function getArchivist() {
     return [
         {
-            title: "Форма элемента с вкладками",
-            key: 'form',
-            url: '/form'
+            title: "Создание с вкладками",
+            key: 'formNew',
+            url: '/form/new'
+        },
+        {
+            title: "Изменение 1 с вкладками",
+            key: 'formEdit',
+            url: '/form/edit/1'
+        },
+        {
+            title: "Просмотр 1 с вкладками",
+            key: 'formDisp',
+            url: '/form/disp/1'
+        },
+        {
+            title: "Изменение 2 с вкладками",
+            key: 'formEdit2',
+            url: '/form/edit/2'
+        },
+        {
+            title: "Просмотр 2 с вкладками",
+            key: 'formDisp2',
+            url: '/form/disp/2'
         },
         {
             title: "Форма поиска",
@@ -44,7 +64,7 @@ ReactDOM.render(
             </Menu>
             <Switch>
                 <Route strict path="/search" component={SearchClientFormPage} />
-                <Route exact path="/form" component={AjaxClientFormPage} />
+                <Route exact path="/form/:mode/:id?" component={AjaxClientFormPage} />
                 <Route path="*" component={NotFoundPage} />
             </Switch>
         </BrowserRouter>
