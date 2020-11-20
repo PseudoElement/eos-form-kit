@@ -1,6 +1,7 @@
 import { Badge, Tabs } from "@eos/rc-controls";
 import React, { ReactElement, ReactText, useEffect, useImperativeHandle, useState } from "react";
-import FormRow, { IFormRow } from "./FormRow";
+import { IFormRow } from "./FormRow";
+import FormRows from "./FormRows";
 
 /**Настройки компонента вкладок. */
 export interface IClientTabs {
@@ -85,7 +86,6 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
         if (modifiedTabs)
             setTabs(modifiedTabs);
     }, [modifiedTabs]);
-    let key = 0;
     return (
         <Tabs
             style={{ width: "100%", background: "#fff" }}
@@ -109,17 +109,7 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
                     return (
                         <Tabs.TabPane disabled={tab.disabled} forceRender={tab.forceRender}
                             tab={<Badge count={tab.count} type="text">{tab.title}</Badge>} key={tab.key} >
-                            {tab.rows &&
-                                (
-                                    <div style={{ padding: "20px 20px 0 20px" }}>
-                                        {
-                                            tab.rows.map(row => {
-                                                return <FormRow key={key++} {...row} />
-                                            })
-                                        }
-                                    </div>
-                                )
-                            }
+                            { tab.rows && <FormRows rows={tab.rows} />}
                             { tab.children}
                         </Tabs.TabPane>
                     )

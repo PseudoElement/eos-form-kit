@@ -5,21 +5,34 @@ import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
 import { Store } from 'rc-field-form/lib/interface';
 import { InternalHelper } from '../InternalHelper';
+import { IFormRows } from "./FormRows";
 
 /**DI объект для выполнения различных запросов. */
 export interface IDataService {
     /**Подгружает настройки для генератора форм. */
-    getContextAsync(mode: FormMode): Promise<any>;
+    getContextAsync(mode: FormMode): Promise<any | IContext>;
     /**Метод возвращающий значения полей для формы.*/
     getInitialValuesAsync?(): Promise<any>;
     /**Метод, возвращающий наименование формы. */
-    getTitle(): string;
+    getTitle?(): string;
     /**Обработчик события нажатия на кнопку "ОК". */
     onSaveAsync?(data: Store): Promise<void>;
     /**Кастомная валидация. Вызовется после основной валидации полей. */
     onValidateAsync?(data: Store): Promise<boolean>;
     /**Позволяет модифицировать контекст формы прямо перед отрисовкой формы. */
     modifyContextAsync?(context: any): Promise<any>;
+}
+
+/**Контекст, который должна должен вернуть провайдер IDataService методом getContextAsync. */
+export interface IContext {
+    /**Список схем полей. */
+    Fields: any[];
+    /**Тип отрисовки формы. */
+    Mode: FormMode;
+    /**Список вкладок, если форма не должна содержать вкладки, то оставить пустым.*/
+    Tabs?: any[];
+    /**Список полей, если форма не должна содержать вкладки*/
+    Rows?: any[];
 }
 
 /**Настройки генератора форм. */
@@ -50,6 +63,8 @@ export interface IForm {
 
     /**Обработчик события при изменении значений полей формы. */
     onValuesChange?(changedValues: any, values: any): void;
+    /**true - если необходимо заблокировать отрисовку заголовка формы с кнопками. */
+    disableHeader?: boolean;
 }
 /**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
@@ -98,11 +113,12 @@ interface IClientFormProps {
     mode?: FormMode;
     initialValues?: any;
     tabsComponent?: IClientTabs;
+    rows?: IFormRows;
 }
 
 /**Генератор форм выполняющий запрос за элементом и схемой через DI.*/
 export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
-    const [schema, setSchema] = useState<any>(null);
+    const [schema, setSchema] = useState<IContext | null>(null);
     const [isFirstLoading, setFirstLoading] = useState(true);
     const [isSkeletonLoading, setSkeletonLoading] = useState(true);
     const [isSpinLoading, setSpinLoading] = useState(false);
@@ -169,14 +185,16 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     const onLoadItemSucceeded = async function (data: any) {
         if (props.dataService.modifyContextAsync) {
             await props.dataService.modifyContextAsync(schema);
-            setSchema({ ...schema });
+            setSchema({ ...schema } as IContext);
         }
         setLoadingItem(false);
         setFirstLoading(false);
+        const context: IContext | null = schema as IContext;
         const prps: IClientFormProps = {
             initialValues: data,
             mode: props.mode,
-            tabsComponent: InternalHelper.createTabsComponent(schema, props.getResourceText, props.getCustomtab),
+            tabsComponent: context.Tabs ? InternalHelper.createTabsComponent(context, props.getResourceText, props.getCustomtab) : undefined,
+            rows: context.Rows ? InternalHelper.createFormRows(context, props.getResourceText) : undefined,
         };
         setClientFormProps(prps);
     };
@@ -194,7 +212,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     return (
         <ClientForm
             ref={clientFormApi}
-            title={props.dataService.getTitle()}
+            title={props.dataService.getTitle ? props.dataService.getTitle() : undefined}
             initialValues={clientFormProps.initialValues}
             formInst={formInst}
             form={form}
@@ -205,11 +223,13 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             onCancelClick={props.onCancelClick}
             onFinish={onFinish}
             tabsComponent={clientFormProps.tabsComponent}
+            rows={clientFormProps.rows}
             toolbar={props.toolbar}
             enableLeftIcon={props.enableLeftIcon}
             leftIconTitle={props.leftIconTitle}
             isHiddenLeftIcon={props.isHiddenLeftIcon}
             onValuesChange={props.onValuesChange}
+            disableHeader={props.disableHeader}
         />
     );
 
@@ -228,7 +248,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setLoadingItem(true);
         // if (clientFormProps.mode === FormMode.display)
         //     form?.resetFields();
-            
+
         if (props.dataService.getInitialValuesAsync)
             props.dataService.getInitialValuesAsync()
                 .then((initialValues: any) => {

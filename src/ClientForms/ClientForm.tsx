@@ -5,6 +5,7 @@ import { FormMode } from "./FormMode";
 import ClientTabs, { IClientTabs, IClientTabsApi } from "./ClientTabs";
 import SpinMaximized from "./SpinMaximized/SpinMaximized";
 import Skeleton from "./Skeleton/Skeleton";
+import FormRows, { IFormRows } from "./FormRows";
 
 /**Настройки клиентской формы. */
 export interface IForm {
@@ -20,7 +21,7 @@ export interface IForm {
     /**
      * Заголовок формы.
      */
-    title: string;
+    title?: string;
     /**
      * Значения формы по умоланию.
      */
@@ -50,8 +51,10 @@ export interface IForm {
 
     tabBarStyle?: any;
 
-    /**Компонент вкладок */
+    /**Компонент вкладок. Можно не указывать, а передать rows. */
     tabsComponent?: IClientTabs;
+    /**Список строк с полями, необходимо указывать, если нет вкладок. */
+    rows?: IFormRows;
 
     /**Компонент заголовка формы. */
     formTitle?: ReactNode | ReactNode[];
@@ -65,6 +68,8 @@ export interface IForm {
     isHiddenLeftIcon?: boolean;
     /**Текст по наведению на иконку @ перед наименованием */
     leftIconTitle?: string;
+    /**true - если необходимо заблокировать отрисовку заголовка формы с кнопками. */
+    disableHeader?: boolean;
 }
 /**Настройки тулбары формы. */
 export interface IToolBar {
@@ -156,15 +161,18 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         }
     }, [props.mode]);
 
-    const clientTabsProps: IClientTabs = {
-        ...props.tabsComponent,
-        defaultActiveKey: props.tabsComponent?.defaultActiveKey,
-        invalidFields: invalidFields,
-        onChange: (activeKey: string) => {
-            if (props.tabsComponent && props.tabsComponent.onChange)
-                props.tabsComponent.onChange(activeKey);
-        }
-    };
+    const clientTabsProps: IClientTabs | null =
+        props.tabsComponent
+            ? {
+                ...props.tabsComponent,
+                defaultActiveKey: props.tabsComponent?.defaultActiveKey,
+                invalidFields: invalidFields,
+                onChange: (activeKey: string) => {
+                    if (props.tabsComponent && props.tabsComponent.onChange)
+                        props.tabsComponent.onChange(activeKey);
+                }
+            }
+            : null;
 
     return (
         <SpinMaximized spinning={props.isSpinLoading}>
@@ -186,31 +194,21 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
                             if (props.onValuesChange)
                                 props.onValuesChange(changedValues, values);
                         }} >
-                        {
-                            props.formTitle ?
-                                props.formTitle :
-                                (
-                                    mode === FormMode.display
-                                        ? <DispFormTitle
-                                            ref={formTitleApi}
-                                            title={props.title}
-                                            onCancelClick={(e) => onCancelClick(e)}
-                                            onEditClick={props.onEditClick}
-                                            enableLeftIcon={props.enableLeftIcon}
-                                            isHiddenLeftIcon={props.isHiddenLeftIcon}
-                                            leftIconTitle={props.leftIconTitle}
-                                        />
-                                        : <EditFormTitle
-                                            ref={formTitleApi}
-                                            title={props.title}
-                                            onCancelClick={(e) => onCancelClick(e)}
-                                            enableLeftIcon={props.enableLeftIcon}
-                                            isHiddenLeftIcon={props.isHiddenLeftIcon}
-                                            leftIconTitle={props.leftIconTitle}
-                                        />)
-                        }
+                        {!props.disableHeader &&
+                            <FormTitle
+                                formTitle={props.formTitle}
+                                mode={mode}
+                                ref={formTitleApi}
+                                title={props.title}
+                                onCancelClick={(e) => onCancelClick(e)}
+                                onEditClick={props.onEditClick}
+                                enableLeftIcon={props.enableLeftIcon}
+                                isHiddenLeftIcon={props.isHiddenLeftIcon}
+                                leftIconTitle={props.leftIconTitle}
+                            />}
                         <ToolBar {...props.toolbar}></ToolBar>
-                        <ClientTabs ref={clientTabsApi} {...clientTabsProps} />
+                        {clientTabsProps && <ClientTabs ref={clientTabsApi} {...clientTabsProps} />}
+                        {props.rows && <FormRows rows={props?.rows?.rows} />}
                     </RcForm>
                 </Col>
             </Row>
@@ -238,6 +236,51 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         }
         return false;
     }
+});
+
+
+interface IFormTitle {
+    mode: FormMode;
+    /**Компонент заголовка формы. */
+    formTitle?: ReactNode | ReactNode[];
+    title?: string;
+
+    /**Включает отрисовку иконки @ перед наименованием. */
+    enableLeftIcon?: boolean;
+    /**При включенной отрисовке левой иконки @ перед наименование изначальная её скрытость. */
+    isHiddenLeftIcon?: boolean;
+    /**Текст по наведению на иконку @ перед наименованием */
+    leftIconTitle?: string;
+    onCancelClick?(event: any): void;
+    onEditClick?(event: any): void;
+}
+
+const FormTitle = forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
+    return (
+        <React.Fragment>
+            {props.formTitle ?
+                props.formTitle :
+                (
+                    props.mode === FormMode.display
+                        ? <DispFormTitle
+                            ref={ref}
+                            title={props.title ?? ""}
+                            onCancelClick={props.onCancelClick}
+                            onEditClick={props.onEditClick}
+                            enableLeftIcon={props.enableLeftIcon}
+                            isHiddenLeftIcon={props.isHiddenLeftIcon}
+                            leftIconTitle={props.leftIconTitle}
+                        />
+                        : <EditFormTitle
+                            ref={ref}
+                            title={props.title ?? ""}
+                            onCancelClick={props.onCancelClick}
+                            enableLeftIcon={props.enableLeftIcon}
+                            isHiddenLeftIcon={props.isHiddenLeftIcon}
+                            leftIconTitle={props.leftIconTitle}
+                        />)}
+        </React.Fragment>
+    );
 });
 
 
