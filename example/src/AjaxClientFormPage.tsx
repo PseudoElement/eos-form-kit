@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useRef } from 'react'
+import React, { FunctionComponent, useEffect, useRef } from 'react'
 
 
 import "eos-webui-controls/dist/main.css";
@@ -16,6 +16,10 @@ const AjaxClientFormPage: FunctionComponent = () => {
     const { params } = useRouteMatch<IPageParams>();
     const mode: FormMode = parseFormMode(params.mode);
     const id: number | undefined = params?.id ? parseFloat(params?.id) : undefined;
+
+    useEffect(() => {
+        formApi?.current?.reloadItem();
+    }, [id]);
 
     const dataService: AjaxClientForm.IDataService = {
         async getContextAsync(mode: FormMode) {

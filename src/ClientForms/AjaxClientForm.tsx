@@ -226,6 +226,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     async function loadItemAsync() {
         setLoadItem(false);
         setLoadingItem(true);
+        // if (clientFormProps.mode === FormMode.display)
+        //     form?.resetFields();
+            
         if (props.dataService.getInitialValuesAsync)
             props.dataService.getInitialValuesAsync()
                 .then((initialValues: any) => {
