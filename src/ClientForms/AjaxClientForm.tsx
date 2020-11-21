@@ -1,11 +1,12 @@
 import { Form as RcForm } from "@eos/rc-controls";
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
-import { Form as ClientForm, IFormApi as IClientFormApi, IToolBar } from "./ClientForm";
+import { Form as ClientForm, IFormApi as IClientFormApi } from "./ClientForm";
 import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
 import { Store } from 'rc-field-form/lib/interface';
 import { InternalHelper } from '../InternalHelper';
 import { IFormRows } from "./FormRows";
+import { IToolBar } from "./ToolBar/ToolBar";
 
 /**DI объект для выполнения различных запросов. */
 export interface IDataService {

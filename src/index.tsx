@@ -7,6 +7,7 @@ export { default as ClientTabs, IClientTabs, IClientTab, IClientTabsApi, IFields
 export { default as FormCell, IFormCell, IWidthCell, IAutoCell, IThreeFieldsCell, CellType, WidthType } from './ClientForms/FormCell';
 export { default as FormRow, IFormRow } from './ClientForms/FormRow';
 export { default as FormRows, IFormRows } from './ClientForms/FormRows';
+export { default as ToolBar, IToolBar } from './ClientForms/ToolBar/ToolBar';
 
 export { default as Skeleton } from './ClientForms/Skeleton/Skeleton';
 export { FormMode, parseFormMode } from './ClientForms/FormMode';
