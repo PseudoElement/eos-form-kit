@@ -54,7 +54,7 @@ const AjaxClientFormPage: FunctionComponent = () => {
             return Helper.getInitialValues(mode, id ?? 0);
         },
         getTitle: function () {
-            return `Форма ${id ?? ""}`;
+            return getTitle();
         }
     }
 
@@ -80,11 +80,27 @@ const AjaxClientFormPage: FunctionComponent = () => {
                 }}
                 onCancelClick={() => {
                     formApi?.current?.showLoading();
-                    setTimeout(() => { formApi?.current?.hideLoading(); }, 1500);
+                    setTimeout(() => {
+                        formApi?.current?.hideLoading();
+                    }, 1500);
+                }}
+                onEditClick={() => {
+                    formApi?.current?.setTitle(getLoadingTitle());
+                    setTimeout(() => {
+                        formApi?.current?.setTitle(getTitle());
+                    }, 1500);
+
                 }}
             />
         </React.Fragment>
     );
+
+    function getTitle() {
+        return `Форма ${id ?? ""}`;
+    }
+    function getLoadingTitle() {
+        return `Грузится`;
+    }
 }
 
 export default AjaxClientFormPage;
