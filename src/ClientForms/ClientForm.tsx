@@ -1,11 +1,42 @@
-import React, { forwardRef, FunctionComponent, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { Button, Form as RcForm, Row, Col, Space, EditIcon, CloseIcon, Typography, Divider, EMailIcon } from "@eos/rc-controls";
+import React, { forwardRef, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { Form as RcForm, Row, Col } from "@eos/rc-controls";
 import { Store } from 'rc-field-form/lib/interface';
 import { FormMode } from "./FormMode";
 import ClientTabs, { IClientTabs, IClientTabsApi } from "./ClientTabs";
 import SpinMaximized from "./SpinMaximized/SpinMaximized";
 import Skeleton from "./Skeleton/Skeleton";
 import FormRows, { IFormRows } from "./FormRows";
+import FormTitle, { IFormTitleApi } from "./Title/FormTitle";
+import ToolBar, {IToolBar} from "./ToolBar/ToolBar";
+
+/**API для работы с клиентской формой. */
+export interface IFormApi {
+    /**Возвращает ключ активной вкладки. */
+    getActivatedTab(): string;
+    /**
+     * Делает вкладку активной.
+     * @param key Ключ вкладки.
+     */
+    activateTab(key?: string): void;
+    /**
+     * Проставляет имя вкладки.
+     * @param key Ключ вкладки.
+     * @param title Имя вкладки.
+     */
+    setTabTitle(key: string, title: string): void;
+    /**
+    * Проставляет количество элементов рядом с наименованием вкладки.
+    * @param key Ключ вкладки.
+    * @param count Количество элементов.
+    */
+    setTabCount(key: string, count?: number): void;
+    /**Показывает иконку @. */
+    showLeftIcon(): void;
+    /**Скрывает иконку @. */
+    hideLeftIcon(): void;
+    /**Устанавливает наименование заголовка. */
+    setTitle(title?: string): void;
+}
 
 /**Настройки клиентской формы. */
 export interface IForm {
@@ -71,44 +102,9 @@ export interface IForm {
     /**true - если необходимо заблокировать отрисовку заголовка формы с кнопками. */
     disableHeader?: boolean;
 }
-/**Настройки тулбары формы. */
-export interface IToolBar {
-    /**
-     * Разметка внутри тулбара.
-     */
-    children?: ReactNode;
-}
-
-
-/**API для работы с клиентской формой. */
-export interface IFormApi {
-    /**Возвращает ключ активной вкладки. */
-    getActivatedTab(): string;
-    /**
-     * Делает вкладку активной.
-     * @param key Ключ вкладки.
-     */
-    activateTab(key?: string): void;
-    /**
-     * Проставляет имя вкладки.
-     * @param key Ключ вкладки.
-     * @param title Имя вкладки.
-     */
-    setTabTitle(key: string, title: string): void;
-    /**
-    * Проставляет количество элементов рядом с наименованием вкладки.
-    * @param key Ключ вкладки.
-    * @param count Количество элементов.
-    */
-    setTabCount(key: string, count?: number): void;
-    /**Показывает иконку @. */
-    showLeftIcon(): void;
-    /**Скрывает иконку @. */
-    hideLeftIcon(): void;
-}
 
 /**Клиентская форма. */
-export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
+export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
 
@@ -134,6 +130,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             hideLeftIcon() {
                 formTitleApi?.current?.hideLeftIcon();
+            },
+            setTitle(title?: string) {
+                formTitleApi?.current?.setTitle(title);
             }
         }
         return api;
@@ -238,259 +237,3 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     }
 });
 
-
-interface IFormTitle {
-    mode: FormMode;
-    /**Компонент заголовка формы. */
-    formTitle?: ReactNode | ReactNode[];
-    title?: string;
-
-    /**Включает отрисовку иконки @ перед наименованием. */
-    enableLeftIcon?: boolean;
-    /**При включенной отрисовке левой иконки @ перед наименование изначальная её скрытость. */
-    isHiddenLeftIcon?: boolean;
-    /**Текст по наведению на иконку @ перед наименованием */
-    leftIconTitle?: string;
-    onCancelClick?(event: any): void;
-    onEditClick?(event: any): void;
-}
-
-const FormTitle = forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
-    return (
-        <React.Fragment>
-            {props.formTitle ?
-                props.formTitle :
-                (
-                    props.mode === FormMode.display
-                        ? <DispFormTitle
-                            ref={ref}
-                            title={props.title ?? ""}
-                            onCancelClick={props.onCancelClick}
-                            onEditClick={props.onEditClick}
-                            enableLeftIcon={props.enableLeftIcon}
-                            isHiddenLeftIcon={props.isHiddenLeftIcon}
-                            leftIconTitle={props.leftIconTitle}
-                        />
-                        : <EditFormTitle
-                            ref={ref}
-                            title={props.title ?? ""}
-                            onCancelClick={props.onCancelClick}
-                            enableLeftIcon={props.enableLeftIcon}
-                            isHiddenLeftIcon={props.isHiddenLeftIcon}
-                            leftIconTitle={props.leftIconTitle}
-                        />)}
-        </React.Fragment>
-    );
-});
-
-
-interface IFormTitleApi {
-    /**Показывает иконку @. */
-    showLeftIcon(): void;
-    /**Скрывает иконку @. */
-    hideLeftIcon(): void;
-}
-interface IEditFormTitle {
-    title: string;
-    onCancelClick?: (event: any) => void;
-
-    /**Включает отрисовку иконки @ перед наименованием. */
-    enableLeftIcon?: boolean;
-    /**При включенной отрисовке левой иконки @ перед наименование изначальная её скрытость. */
-    isHiddenLeftIcon?: boolean;
-    /**Текст по наведению на иконку @ перед наименованием */
-    leftIconTitle?: string;
-}
-const EditFormTitle = forwardRef<any, IEditFormTitle>((props: IEditFormTitle, ref: any) => {
-    const SAVE_TEXT = "Сохранить";
-    const { Paragraph } = Typography;
-
-    const selfRef = useRef();
-    const titleIconApi = useRef<ITitleIconApi>();
-    useImperativeHandle(ref ?? selfRef, () => {
-        const api: IFormTitleApi = {
-            showLeftIcon() {
-                if (props.enableLeftIcon)
-                    // setIconVisible(true);
-                    titleIconApi?.current?.show();
-            },
-            hideLeftIcon() {
-                if (props.enableLeftIcon)
-                    // setIconVisible(false);                    
-                    titleIconApi?.current?.hide();
-            }
-        }
-        return api;
-    });
-
-    useEffect(() => {
-        if (props.isHiddenLeftIcon) {
-            // setIconVisible(false);
-            titleIconApi?.current?.hide();
-        }
-        else {
-            // setIconVisible(true);
-            titleIconApi?.current?.show();
-        }
-    }, [props.isHiddenLeftIcon]);
-
-    return (
-        <React.Fragment>
-            <Row align="middle" style={{ margin: "", flexWrap: "nowrap", height: 48, background: "#f5f5f5" }} gutter={[40, 0]}>
-                <Col flex="auto" style={{ overflow: "hidden" }}>
-                    <Paragraph ellipsis style={{ fontSize: "18px", color: "#646464", margin: 0 }}>
-                        <TitleIcon
-                            ref={titleIconApi}
-                            enableLeftIcon={props.enableLeftIcon}
-                            isHiddenLeftIcon={props.isHiddenLeftIcon}
-                            leftIconTitle={props.leftIconTitle}
-                        />
-                        <span title={props.title} style={{ fontSize: "18px", color: "#646464", verticalAlign: "middle" }}>{props.title}</span>
-                    </Paragraph>
-                </Col>
-                <Col flex="0 0 auto">
-                    <Space size="small" direction="horizontal">
-                        <Button type="primary" htmlType="submit">{SAVE_TEXT}</Button>
-                        <Button onClick={props.onCancelClick} type="link"><CloseIcon /></Button>
-                    </Space>
-                </Col>
-            </Row>
-            <Divider style={{ margin: 0 }} />
-        </React.Fragment>
-    )
-});
-
-interface ITitleIcon {
-    enableLeftIcon?: boolean;
-    isHiddenLeftIcon?: boolean;
-    leftIconTitle?: string;
-}
-interface ITitleIconApi {
-    /**Показывает иконку @. */
-    show(): void;
-    /**Скрывает иконку @. */
-    hide(): void;
-}
-
-const TitleIcon = forwardRef<any, ITitleIcon>((props: ITitleIcon, ref: any) => {
-    const [isIconVisible, setIconVisible] = useState(props.isHiddenLeftIcon === true ? false : true);
-
-    const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, () => {
-        const api: ITitleIconApi = {
-            show() {
-                if (props.enableLeftIcon)
-                    setIconVisible(true);
-            },
-            hide() {
-                if (props.enableLeftIcon)
-                    setIconVisible(false);
-            }
-        }
-        return api;
-    });
-
-    return (
-        <React.Fragment>
-            {props.enableLeftIcon &&
-                <span title={props.leftIconTitle}>
-                    <EMailIcon visibility={isIconVisible ? "visible" : "hidden"} width={24} color={"#D32F2F"} style={{ verticalAlign: "middle", marginRight: 5 }} />
-                </span>
-            }
-        </React.Fragment>
-    )
-});
-
-
-interface IDispFormTitle {
-    title: string;
-    onEditClick?: (event: any) => void;
-    onCancelClick?: (event: any) => void;
-
-    /**Включает отрисовку иконки @ перед наименованием. */
-    enableLeftIcon?: boolean;
-    /**При включенной отрисовке левой иконки @ перед наименование изначальная её скрытость. */
-    isHiddenLeftIcon?: boolean;
-    /**Текст по наведению на иконку @ перед наименованием */
-    leftIconTitle?: string;
-}
-
-const DispFormTitle = forwardRef<any, IDispFormTitle>((props: IDispFormTitle, ref: any) => {
-    const { Paragraph } = Typography;
-    const [isIconVisible, setIconVisible] = useState(props.isHiddenLeftIcon === true ? false : true);
-
-    const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, () => {
-        const api: IFormTitleApi = {
-            showLeftIcon() {
-                if (props.enableLeftIcon)
-                    setIconVisible(true);
-            },
-            hideLeftIcon() {
-                if (props.enableLeftIcon)
-                    setIconVisible(false);
-            }
-        }
-        return api;
-    });
-
-    useEffect(() => {
-        if (props.isHiddenLeftIcon) {
-            setIconVisible(false);
-        }
-        else {
-            setIconVisible(true);
-        }
-    }, [props.isHiddenLeftIcon]);
-
-    return (
-        <div>
-            <Row align="middle" style={{ margin: "", flexWrap: "nowrap", height: 48, background: "#f5f5f5" }} gutter={[40, 0]}>
-                <Col flex="auto" style={{ overflow: "hidden" }}>
-                    <Paragraph ellipsis style={{ margin: 0 }}>
-                        {props.enableLeftIcon &&
-                            <span title={props.leftIconTitle}>
-                                <EMailIcon visibility={isIconVisible ? "visible" : "hidden"} width={24} color={"#D32F2F"} style={{ verticalAlign: "middle", marginRight: 5 }} />
-                            </span>
-                        }
-                        <span title={props.title} style={{ fontSize: "18px", color: "#646464", verticalAlign: "middle" }}>{props.title}</span>
-                    </Paragraph>
-                </Col>
-                <Col flex="0 0 auto">
-                    <Space size="small" direction="horizontal">
-                        {/* {(<SimplePagination actionTarget={props.actionTarget} />)} */}
-                        <Button onClick={props.onEditClick} type="link">
-                            <EditIcon />
-                        </Button>
-                        <Button onClick={props.onCancelClick} type="link">
-                            <CloseIcon />
-                        </Button>
-                    </Space>
-                </Col>
-            </Row>
-            <Divider style={{ margin: 0 }} />
-        </div>
-    );
-});
-
-
-
-const ToolBar: FunctionComponent<IToolBar> = (props: IToolBar) => {
-    if (props?.children)
-        return (
-            <div>
-                <Row style={{ height: 48, background: "#f5f5f5", padding: "0px 10px" }} >
-                    <Col flex="auto">
-                        {/* <Menu mode="horizontal" style={{ justifyContent: "flex-start" }}>
-                    {props?.children}
-                </Menu> */}
-                        {props?.children}
-
-                    </Col>
-                </Row>
-                <Divider style={{ margin: 0 }} />
-            </div>
-        );
-    else
-        return (<div />);
-}

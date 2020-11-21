@@ -1,11 +1,12 @@
 import { Form as RcForm } from "@eos/rc-controls";
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
-import { Form as ClientForm, IFormApi as IClientFormApi, IToolBar } from "./ClientForm";
+import { Form as ClientForm, IFormApi as IClientFormApi } from "./ClientForm";
 import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
 import { Store } from 'rc-field-form/lib/interface';
 import { InternalHelper } from '../InternalHelper';
 import { IFormRows } from "./FormRows";
+import { IToolBar } from "./ToolBar/ToolBar";
 
 /**DI объект для выполнения различных запросов. */
 export interface IDataService {
@@ -104,8 +105,12 @@ export interface IFormApi {
     showLeftIcon(): void;
     /**Скрывает иконку @. */
     hideLeftIcon(): void;
+    /**Скрывает анимация загрузки данных. */
     hideLoading(): void;
+    /**Показывает анимация загрузки данных. */
     showLoading(): void;
+    /**Устанавливает наименование заголовка. */
+    setTitle(title?: string): void;
 }
 
 
@@ -161,6 +166,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             showLoading() {
                 showLoading();
+            },
+            setTitle(title?: string) {
+                clientFormApi?.current?.setTitle(title);
             }
         }
         return api;
