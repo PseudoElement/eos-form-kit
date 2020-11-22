@@ -45,6 +45,7 @@ export interface IFormApi {
     setFieldValue(name: string, value?: any): void;
     disableField(name: string): void;
     enableField(name: string): void;
+    getFieldsValue(): Store;
 }
 
 /**Настройки клиентской формы. */
@@ -157,6 +158,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             enableField(name: string) {
                 formRowsApi?.current?.enableField(name);
                 clientTabsApi?.current?.enableField(name);
+            },
+            getFieldsValue(): Store {
+                return rcFormRef?.current?.getFieldsValue() || {};
             }
         }
         return api;

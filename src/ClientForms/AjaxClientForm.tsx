@@ -123,6 +123,7 @@ export interface IFormApi {
     setFieldValue(name: string, value?: any): void;
     disableField(name: string): void;
     enableField(name: string): void;
+    getFieldsValue(): Store;
 }
 
 
@@ -197,6 +198,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             enableField(name: string) {
                 clientFormApi?.current?.enableField(name);
             },
+            getFieldsValue(): Store {
+                return clientFormApi?.current?.getFieldsValue() || {};
+            }
         }
         return api;
     });
