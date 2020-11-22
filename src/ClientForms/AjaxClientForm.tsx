@@ -121,6 +121,8 @@ export interface IFormApi {
      * @param value Значение поля.
      */
     setFieldValue(name: string, value?: any): void;
+    disableField(name: string): void;
+    enableField(name: string): void;
 }
 
 
@@ -188,7 +190,13 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             setFieldValue(name: string, value?: any) {
                 clientFormApi?.current?.setFieldValue(name, value);
-            }
+            },
+            disableField(name: string) {
+                clientFormApi?.current?.disableField(name);
+            },
+            enableField(name: string) {
+                clientFormApi?.current?.enableField(name);
+            },
         }
         return api;
     });

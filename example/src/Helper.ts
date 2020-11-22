@@ -116,8 +116,9 @@ class Helper {
 
                 ],
                 "Title": "Раздел описи"
-            },
-            { "ClassName": null, "CustomType": "InventoryFiles", "Disabled": true, "ForceRender": null, "Rows": null, "Title": "Файлы" }];
+            }
+            // { "ClassName": null, "CustomType": "InventoryFiles", "Disabled": true, "ForceRender": null, "Rows": null, "Title": "Файлы" }
+        ];
         return json;
     }
     static getRows() {

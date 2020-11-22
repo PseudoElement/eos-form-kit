@@ -80,10 +80,18 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 isHiddenLeftIcon={true}
                 onValuesChange={(changedValues: any) => {
                     if (changedValues && changedValues.E_DOCUMENT !== undefined) {
-                        if (changedValues.E_DOCUMENT === true)
+                        if (changedValues.E_DOCUMENT === true){
                             formApi?.current?.showLeftIcon();
-                        else
+                            formApi?.current?.disableField("name");
+                            formApi?.current?.disableField("volumeNum");
+                            formApi?.current?.disableField("keepCategory");
+                        }
+                        else{
                             formApi?.current?.hideLeftIcon();
+                            formApi?.current?.enableField("name");
+                            formApi?.current?.enableField("volumeNum");
+                            formApi?.current?.enableField("keepCategory");
+                        }
                     }
                 }}
                 onFinish={async () => {
