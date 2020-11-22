@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Select as RcSelect, Spin } from "@eos/rc-controls";
 
 /**
@@ -10,10 +10,10 @@ export interface ISelect {
      */
     dataService?: IDataService;
 
-  
+
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
-  
+
     /**
      * Передача formInst
      */
@@ -91,6 +91,10 @@ export const Select = React.forwardRef<any, ISelect>(({
      */
     const [currentValue, setCurrentValue] = useState<IOptionItem | undefined>(value);
 
+    useEffect(() => {
+        setCurrentValue(value);
+    }, [value]);
+
     /**
      * Объект индикатор загрузки
      */
@@ -149,14 +153,14 @@ export const Select = React.forwardRef<any, ISelect>(({
                 setIsLoading(false);
             }
         )
-        .catch(
-            (err: any) => {
-                console.error(err);
-                setQueryAmountInfo("");
-                setItems([]);
-                setIsLoading(false)
-            }
-        )
+            .catch(
+                (err: any) => {
+                    console.error(err);
+                    setQueryAmountInfo("");
+                    setItems([]);
+                    setIsLoading(false)
+                }
+            )
     }
 
     /**

@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 /**API компонента отображения наименования формы. */
 export interface ITitleTextApi {
@@ -13,6 +13,10 @@ export interface ITitleText {
 const TitleText = forwardRef<any, ITitleText>((props: ITitleText, ref: any) => {
     const [title, setTitle] = useState(props.title);
     const selfRef = useRef();
+
+    useEffect(() => {
+        setTitle(props.title);
+    }, [props.title]);
 
     useImperativeHandle(ref ?? selfRef, () => {
         const api: ITitleTextApi = {
