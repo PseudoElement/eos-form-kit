@@ -67,6 +67,8 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onEditTitleClick={() => { formApi?.current?.setTitle("Грузится"); setTimeout(() => { formApi?.current?.setTitle(getTitle()); }, 1500); }}
                 onSkeletonLoadingClick={() => { formApi?.current?.showSkeletonLoading(); setTimeout(() => { formApi?.current?.hideLoading(); }, 1500); }}
                 onSpinnerClick={() => { formApi?.current?.showSpinLoading(); setTimeout(() => { formApi?.current?.hideLoading(); }, 1500); }}
+                onLookupSetClick={() => { formApi?.current?.setFieldValue("keepPeriod", { key: "2", value: "два" }); }}
+                onNameSetClick={() => { formApi?.current?.setFieldValue("name", "Новое наименование"); }}
             />
             <AjaxClientForm.Form
                 ref={formApi}
@@ -84,6 +86,10 @@ const AjaxClientFormApi: FunctionComponent = () => {
                             formApi?.current?.hideLeftIcon();
                     }
                 }}
+                onFinish={async () => {
+                    await Helper.sleepAsync(500);
+                    formApi?.current?.hideLoading();
+                }}
             />
         </React.Fragment >
     );
@@ -100,6 +106,8 @@ interface IButtonsPanel {
     onSkeletonLoadingClick?(): void;
     onSpinnerClick?(): void;
     onEditTitleClick?(): void;
+    onLookupSetClick?(): void;
+    onNameSetClick?(): void;
 }
 
 const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) => {
@@ -107,5 +115,7 @@ const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) =>
         <Button onClick={props.onSkeletonLoadingClick}>Скелетон</Button>
         <Button onClick={props.onSpinnerClick}>Спиннер</Button>
         <Button onClick={props.onEditTitleClick}>Заголовок</Button>
+        <Button onClick={props.onLookupSetClick}>Задать срок хранения</Button>
+        <Button onClick={props.onNameSetClick}>Задать наименование</Button>
     </div>);
 }

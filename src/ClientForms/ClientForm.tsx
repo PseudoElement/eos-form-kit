@@ -37,6 +37,12 @@ export interface IFormApi {
     hideLeftIcon(): void;
     /**Устанавливает наименование заголовка. */
     setTitle(title?: string): void;
+    /**
+     * Проставляет значение поля.
+     * @param name Имя поля.
+     * @param value Значение поля.
+     */
+    setFieldValue(name: string, value?: any): void;
 }
 
 /**Настройки клиентской формы. */
@@ -108,6 +114,7 @@ export interface IForm {
 export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
+    const [initialValues, setInitialValues] = useState(props.initialValues);
 
     const selfRef = useRef();
 
@@ -134,6 +141,12 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             },
             setTitle(title?: string) {
                 formTitleApi?.current?.setTitle(title);
+            },
+            setFieldValue(name: string, value?: any) {
+                const { ...fieldValues } = rcFormRef?.current?.getFieldsValue();
+                fieldValues[name] = value;
+                setInitialValues(fieldValues);
+                props?.form?.setFieldsValue(fieldValues);
             }
         }
         return api;
@@ -141,6 +154,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
 
     const clientTabsApi = useRef<IClientTabsApi>();
     const formTitleApi = useRef<IFormTitleApi>();
+    // setFieldsValue
+    const formRef = React.createRef();
+    const rcFormRef = props.formInst ?? formRef;
 
     const mode = props.mode ?? FormMode.new;
 
@@ -150,6 +166,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     }, [wasModified]);
     useEffect(() => {
         props?.form?.setFieldsValue(props.initialValues);
+        setInitialValues(props.initialValues);
         if (props.onInitialValuesChanged)
             props.onInitialValuesChanged(props.initialValues);
     }, [props.initialValues]);
@@ -184,9 +201,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                     </Animate>
                     <RcForm form={props.form}
                         style={{ height: "100%", display: props.isSkeletonLoading ? "none" : "" }}
-                        ref={props.formInst}
+                        ref={rcFormRef}
                         name="basic" layout="vertical"
-                        initialValues={props.initialValues}
+                        initialValues={initialValues}
                         onFinish={(values: Store) => {
                             if (props?.onFinish)
                                 props?.onFinish(values);

@@ -115,6 +115,12 @@ export interface IFormApi {
     showSpinLoading(): void;
     /**Устанавливает наименование заголовка. */
     setTitle(title?: string): void;
+    /**
+     * Проставляет значение поля.
+     * @param name Имя поля.
+     * @param value Значение поля.
+     */
+    setFieldValue(name: string, value?: any): void;
 }
 
 
@@ -179,6 +185,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             showSpinLoading() {
                 setSpinLoading(true);
+            },
+            setFieldValue(name: string, value?: any) {
+                clientFormApi?.current?.setFieldValue(name, value);
             }
         }
         return api;
