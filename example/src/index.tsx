@@ -6,6 +6,7 @@ import { BrowserRouter, Link, Route, Switch } from 'react-router-dom'
 import SearchClientFormPage from "./SearchClientFormPage";
 import AjaxClientFormPage from "./AjaxClientFormPage";
 import AjaxClientFormPage2 from "./AjaxClientFormPage2";
+import AjaxClientFormApi from "./AjaxClientFormApi";
 import NotFoundPage from "./NotFoundPage";
 import { ConfigProvider, Menu } from 'eos-webui-controls';
 
@@ -40,6 +41,11 @@ function getArchivist() {
             title: "Просмотр 2 с вкладками",
             key: 'formDisp2',
             url: '/form/disp/2'
+        },
+        {
+            title: "Апи формы",
+            key: 'formDisp3',
+            url: '/form3/edit/1'
         },
         {
             title: "Просмотр без шапки",
@@ -77,6 +83,7 @@ ReactDOM.render(
                 <Route strict path="/search" component={SearchClientFormPage} />
                 <Route exact path="/form/:mode/:id?" component={AjaxClientFormPage} />
                 <Route exact path="/form2/:mode/:id?" component={AjaxClientFormPage2} />
+                <Route exact path="/form3/:mode/:id?" component={AjaxClientFormApi} />
                 <Route path="*" component={NotFoundPage} />
             </Switch>
         </BrowserRouter>

@@ -1,5 +1,6 @@
+import React, { forwardRef, FunctionComponent, useImperativeHandle, useRef, useState } from "react";
+import Animate from "rc-animate";
 import { EMailIcon } from "@eos/rc-controls";
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
 
 /**API компонента отображения иконки перед наименование формы. */
 export interface ITitleIconApi {
@@ -39,10 +40,25 @@ const TitleIcon = forwardRef<any, ITitleIcon>((props: ITitleIcon, ref: any) => {
         <React.Fragment>
             {props.enableLeftIcon &&
                 <span title={props.leftIconTitle}>
-                    <EMailIcon visibility={isIconVisible ? "visible" : "hidden"} width={24} color={"#D32F2F"} style={{ verticalAlign: "middle", marginRight: 5 }} />
+                    <Animate showProp="visibility" transitionName="fade">
+                          <AnimatedEMailIcon key="1" visibility={isIconVisible} />
+                    </Animate>
                 </span>
             }
         </React.Fragment>
     )
 });
 export default TitleIcon;
+
+interface IAnimatedEMailIcon {
+    visible?: any;
+    visibility?: boolean;
+}
+const AnimatedEMailIcon: FunctionComponent<IAnimatedEMailIcon> = (props: IAnimatedEMailIcon) => {
+    return (<EMailIcon visibility={props.visibility ? "visible" : "hidden"} width={24} color={"#D32F2F"} style={{ verticalAlign: "middle", marginRight: 5 }} />
+    );
+}
+
+
+
+

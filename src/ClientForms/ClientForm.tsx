@@ -7,7 +7,8 @@ import SpinMaximized from "./SpinMaximized/SpinMaximized";
 import Skeleton from "./Skeleton/Skeleton";
 import FormRows, { IFormRows } from "./FormRows";
 import FormTitle, { IFormTitleApi } from "./Title/FormTitle";
-import ToolBar, {IToolBar} from "./ToolBar/ToolBar";
+import ToolBar, { IToolBar } from "./ToolBar/ToolBar";
+import Animate from "rc-animate";
 
 /**API для работы с клиентской формой. */
 export interface IFormApi {
@@ -177,9 +178,12 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         <SpinMaximized spinning={props.isSpinLoading}>
             <Row style={{ height: "100%" }} justify="center">
                 <Col style={{ width: "800px", height: "100%", paddingTop: "20px" }}>
-                    {props.isSkeletonLoading && <Skeleton />}
+                    {/* {props.isSkeletonLoading && <Skeleton />} */}
+                    <Animate showProp="visible" transitionName="fade">
+                        <Skeleton visible={props.isSkeletonLoading} />
+                    </Animate>
                     <RcForm form={props.form}
-                        style={{ height: "100%" }}
+                        style={{ height: "100%", display: props.isSkeletonLoading ? "none" : "" }}
                         ref={props.formInst}
                         name="basic" layout="vertical"
                         initialValues={props.initialValues}

@@ -105,10 +105,14 @@ export interface IFormApi {
     showLeftIcon(): void;
     /**Скрывает иконку @. */
     hideLeftIcon(): void;
-    /**Скрывает анимация загрузки данных. */
+    /**Скрывает анимацию загрузки данных. */
     hideLoading(): void;
-    /**Показывает анимация загрузки данных. */
+    /**Показывает анимацию загрузки данных. */
     showLoading(): void;
+    /**Показывает анимацию загрузки в виде скелетона. */
+    showSkeletonLoading(): void;
+    /**Показывает анимацию загрузки в виде спиннера. */
+    showSpinLoading(): void;
     /**Устанавливает наименование заголовка. */
     setTitle(title?: string): void;
 }
@@ -169,6 +173,12 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             setTitle(title?: string) {
                 clientFormApi?.current?.setTitle(title);
+            },
+            showSkeletonLoading() {
+                setSkeletonLoading(true);
+            },
+            showSpinLoading() {
+                setSpinLoading(true);
             }
         }
         return api;
