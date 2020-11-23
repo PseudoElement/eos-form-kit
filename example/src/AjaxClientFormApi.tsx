@@ -80,13 +80,13 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 isHiddenLeftIcon={true}
                 onValuesChange={(changedValues: any) => {
                     if (changedValues && changedValues.E_DOCUMENT !== undefined) {
-                        if (changedValues.E_DOCUMENT === true){
+                        if (changedValues.E_DOCUMENT === true) {
                             formApi?.current?.showLeftIcon();
                             formApi?.current?.disableField("name");
                             formApi?.current?.disableField("volumeNum");
                             formApi?.current?.disableField("keepCategory");
                         }
-                        else{
+                        else {
                             formApi?.current?.hideLeftIcon();
                             formApi?.current?.enableField("name");
                             formApi?.current?.enableField("volumeNum");
@@ -98,6 +98,8 @@ const AjaxClientFormApi: FunctionComponent = () => {
                     await Helper.sleepAsync(500);
                     formApi?.current?.hideLoading();
                 }}
+                disableEditButton={true}
+                disableCloseButton={true}
             />
         </React.Fragment >
     );

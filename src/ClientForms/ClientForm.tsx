@@ -111,6 +111,8 @@ export interface IForm {
     leftIconTitle?: string;
     /**true - если необходимо заблокировать отрисовку заголовка формы с кнопками. */
     disableHeader?: boolean;
+    disableEditButton?: boolean;
+    disableCloseButton?: boolean;
 }
 
 /**Клиентская форма. */
@@ -240,6 +242,8 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                                 enableLeftIcon={props.enableLeftIcon}
                                 isHiddenLeftIcon={props.isHiddenLeftIcon}
                                 leftIconTitle={props.leftIconTitle}
+                                disableEditButton={props.disableEditButton}
+                                disableCloseButton={props.disableCloseButton}
                             />}
                         <ToolBar {...props.toolbar}></ToolBar>
                         {clientTabsProps && <ClientTabs ref={clientTabsApi} {...clientTabsProps} />}

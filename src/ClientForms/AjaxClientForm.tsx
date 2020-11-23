@@ -66,6 +66,8 @@ export interface IForm {
     onValuesChange?(changedValues: any, values: any): void;
     /**true - если необходимо заблокировать отрисовку заголовка формы с кнопками. */
     disableHeader?: boolean;
+    disableEditButton?: boolean;
+    disableCloseButton?: boolean;
 }
 /**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
@@ -269,6 +271,8 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             isHiddenLeftIcon={props.isHiddenLeftIcon}
             onValuesChange={props.onValuesChange}
             disableHeader={props.disableHeader}
+            disableEditButton={props.disableEditButton}
+            disableCloseButton={props.disableCloseButton}
         />
     );
 

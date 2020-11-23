@@ -99,6 +99,8 @@ const AjaxClientFormPage: FunctionComponent = () => {
                     }, 1500);
 
                 }}
+                disableEditButton={true}
+                disableCloseButton={true}
             />
         </React.Fragment>
     );
