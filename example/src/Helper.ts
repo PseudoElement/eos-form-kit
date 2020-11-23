@@ -6,6 +6,55 @@ class Helper {
          * Огрничение на колиечество элементов запроса
          */
         const fields = [
+            { 
+                "disabled": false, 
+                "label": "inventory:fieldNames.keepPeriod", 
+                "name": "FieldLookupMulti", 
+                "required": false, 
+                "requiredMessage": "inventory:formErrors.keepPeriod", 
+                "type": "FieldLookupMulti", 
+                "value": null,
+                "notFoundContent": "Нет элементов",
+                "dataService": {
+                    loadDataAsync: async (search?: string) => {
+                        const result: AjaxSelect.IOptionItem[] = [
+                            { key: "6", value: "шесть" },
+                            { key: "7", value: "семь" },
+                            { key: "8", value: "восемь" },
+                            { key: "9", value: "девять" }
+                        ]
+                        if (search) {
+                            return result.filter((item) => {
+                                if (item && item.value && item?.value?.indexOf(search) >= 0) {
+                                    return true;
+                                }
+                                return false;
+                            }) ?? [];
+                        }
+                        else {
+                            return result;
+                        }
+                    },
+                    resultsAmount: 3,
+                },
+                "tableData": [
+                    {
+                      key: '1',
+                      name: 'фыфы'
+                    },
+                    {
+                      key: '23',
+                      name: 'John Brown'
+                    }
+                  ],
+                "tableColumns": [
+                    {
+                      title: 'name',
+                      dataIndex: 'name',
+                      key: 'name',
+                    }  
+                  ]
+            },
             { type: "FieldCheckbox", name: "E_DOCUMENT", label: " ", description: "Для электронных документов" },
             { "disabled": true, "label": "Находится в", "name": "parentName", "required": false, "requiredMessage": null, "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
             { "disabled": false, "label": "Номер", "name": "ind", "required": true, "requiredMessage": "inventory:formErrors.ind", "type": "FieldText", "value": null, "additionalText": null, "allowClear": true, "maxLength": 24 },
@@ -109,6 +158,7 @@ class Helper {
                 "Disabled": false,
                 "ForceRender": null,
                 "Rows": [
+                    { "Cells": [{ "Type": 0, "Fields": ["FieldLookupMulti"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
                     {
