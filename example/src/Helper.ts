@@ -22,6 +22,8 @@ class Helper {
             { "disabled": false, "label": "Примечание", "name": "note", "required": false, "requiredMessage": null, "type": "FieldMultiText", "value": null, "maxLength": null, "rows": null },
             { "disabled": false, "label": "Год начала", "name": "startYear", "required": true, "requiredMessage": "inventory:formErrors.startYear", "type": "FieldDateTime", "value": null, "dateTimeMode": 1, "maxDate": "2999", "minDate": "1753" },
             { "disabled": false, "label": "Год окончания", "name": "endYear", "required": false, "requiredMessage": null, "type": "FieldDateTime", "value": null, "dateTimeMode": 1, "maxDate": "2999", "minDate": "1753" },
+            { "disabled": false, "label": "Год начала", "name": "startYear2", "required": true, "requiredMessage": "inventory:formErrors.startYear", "type": "FieldDateTime", "value": null, "dateTimeMode": 1, "maxDate": "2999", "minDate": "1753" },
+            { "disabled": false, "label": "Год окончания", "name": "endYear2", "required": false, "requiredMessage": null, "type": "FieldDateTime", "value": null, "dateTimeMode": 1, "maxDate": "2999", "minDate": "1753" },
             {
                 "disabled": false,
                 "label": "Срок хранения",
@@ -105,7 +107,25 @@ class Helper {
                 "ForceRender": null,
                 "Rows": [
                     { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
-                    { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] }, { "Cells": [{ "Type": 0, "Fields": ["ind"], "Width": 8 }, { "Type": 0, "Fields": ["volumeNum"], "Width": 4 }, { "Type": 0, "Fields": ["keepCategory"], "Width": 12 }] }, { "Cells": [{ "Type": 0, "Fields": ["name"], "Width": 24 }] }, { "Cells": [{ "Type": 0, "Fields": ["note"], "Width": 24 }] }, { "Cells": [{ "Type": 0, "Fields": ["startYear"], "Width": 6 }, { "Type": 0, "Fields": ["endYear"], "Width": 6 }] },
+                    { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
+                    {
+                        "Cells": [{ "Type": 0, "Fields": ["ind"], "Width": 8 },
+                        { "Type": 0, "Fields": ["volumeNum"], "Width": 4 },
+                        { "Type": 0, "Fields": ["keepCategory"], "Width": 12 }]
+                    },
+                    { "Cells": [{ "Type": 0, "Fields": ["name"], "Width": 24 }] },
+                    { "Cells": [{ "Type": 0, "Fields": ["note"], "Width": 24 }] },
+                    {
+                        "Cells": [
+                            { "Type": 0, "Fields": ["startYear"], "Width": 6 },
+                            { "Type": 0, "Fields": ["endYear"], "Width": 6 }
+                        ]
+                    },
+                    {
+                        "Cells": [
+                            { "Type": 1, "Fields": ["startYear2","endYear2"] }
+                        ]
+                    },
                     // test lookup lookupAutoComplete
                     {
                         "Cells": [
