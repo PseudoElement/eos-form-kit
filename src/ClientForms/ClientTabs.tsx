@@ -1,7 +1,7 @@
 import { Badge, Tabs } from "@eos/rc-controls";
-import React, { ReactElement, ReactText, useEffect, useImperativeHandle, useState } from "react";
+import React, { ReactElement, ReactText, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { IFormRow } from "./FormRow";
-import FormRows from "./FormRows";
+import FormRows, { IFormRowsApi } from "./FormRows";
 
 /**Настройки компонента вкладок. */
 export interface IClientTabs {
@@ -37,10 +37,17 @@ export interface IClientTabsApi {
     activateTab(key?: string): void;
     setTabTitle(key: string, title: string): void;
     setTabCount(key: string, count?: number): void;
+    disableField(name: string): void;
+    enableField(name: string): void;
 }
 
 /**Компонент вкладок. */
 const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) => {
+    const [formRows] = useState<any[]>([props?.tabs?.length || 0]);
+    const length = props?.tabs?.length || 0;
+    for (let i = 0; i < length; i++)
+        formRows[i] = useRef<IFormRowsApi>();
+
     useImperativeHandle(ref, (): IClientTabsApi => {
         const api: IClientTabsApi = {
             getActivatedTab() {
@@ -67,6 +74,20 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
                             tab.count = count;
                     setModifiedTabs(modifiedTabs);
                 }
+            },
+            disableField(name: string) {
+                if (formRows)
+                    for (let formRow of formRows) {
+                        const api: React.MutableRefObject<IFormRowsApi> = formRow;
+                        api?.current?.disableField(name);
+                    }
+            },
+            enableField(name: string) {
+                if (formRows)
+                    for (let formRow of formRows) {
+                        const api: React.MutableRefObject<IFormRowsApi> = formRow;
+                        api?.current?.enableField(name);
+                    }
             }
         }
         return api
@@ -86,6 +107,8 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
         if (modifiedTabs)
             setTabs(modifiedTabs);
     }, [modifiedTabs]);
+
+    let i = 0;
     return (
         <Tabs
             style={{ width: "100%", background: "#fff" }}
@@ -109,7 +132,7 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
                     return (
                         <Tabs.TabPane disabled={tab.disabled} forceRender={tab.forceRender}
                             tab={<Badge count={tab.count} type="text">{tab.title}</Badge>} key={tab.key} >
-                            { tab.rows && <FormRows rows={tab.rows} />}
+                            { tab.rows && <FormRows ref={formRows[i++]} rows={tab.rows} />}
                             { tab.children}
                         </Tabs.TabPane>
                     )

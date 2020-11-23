@@ -5,7 +5,7 @@ import TitleText, { ITitleTextApi } from "./TitleText";
 import { IFormTitleApi } from "./FormTitle";
 
 /**API компонента отображения заголовка формы просмотра. */
-export interface IDispFormTitleApi extends IFormTitleApi{ }
+export interface IDispFormTitleApi extends IFormTitleApi { }
 
 /**Настройки компонента отображения заголовка формы просмотра. */
 export interface IDispFormTitle {
@@ -19,6 +19,8 @@ export interface IDispFormTitle {
     isHiddenLeftIcon?: boolean;
     /**Текст по наведению на иконку @ перед наименованием */
     leftIconTitle?: string;
+    disableEditButton?: boolean;
+    disableCloseButton?: boolean;
 }
 
 /**Компонент отображения заголовка формы просмотра. */
@@ -44,7 +46,6 @@ const DispFormTitle = forwardRef<any, IDispFormTitle>((props: IDispFormTitle, re
         }
         return api;
     });
-
     return (
         <div>
             <Row align="middle" style={{ margin: "", flexWrap: "nowrap", height: 48, background: "#f5f5f5" }} gutter={[40, 0]}>
@@ -57,12 +58,16 @@ const DispFormTitle = forwardRef<any, IDispFormTitle>((props: IDispFormTitle, re
                 <Col flex="0 0 auto">
                     <Space size="small" direction="horizontal">
                         {/* {(<SimplePagination actionTarget={props.actionTarget} />)} */}
-                        <Button onClick={props.onEditClick} type="link">
-                            <EditIcon />
-                        </Button>
-                        <Button onClick={props.onCancelClick} type="link">
-                            <CloseIcon />
-                        </Button>
+                        {!props.disableEditButton &&
+                            <Button onClick={props.onEditClick} type="link">
+                                <EditIcon />
+                            </Button>
+                        }
+                        {!props.disableCloseButton &&
+                            <Button onClick={props.onCancelClick} type="link">
+                                <CloseIcon />
+                            </Button>
+                        }
                     </Space>
                 </Col>
             </Row>

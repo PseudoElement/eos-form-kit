@@ -28,6 +28,9 @@ export interface IFormTitle {
     leftIconTitle?: string;
     onCancelClick?(event: any): void;
     onEditClick?(event: any): void;
+    
+    disableEditButton?: boolean;
+    disableCloseButton?: boolean;
 }
 
 /**Компонент отображения заголовка формы. */
@@ -45,7 +48,9 @@ const FormTitle = forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
                             onEditClick={props.onEditClick}
                             enableLeftIcon={props.enableLeftIcon}
                             isHiddenLeftIcon={props.isHiddenLeftIcon}
-                            leftIconTitle={props.leftIconTitle}
+                            leftIconTitle={props.leftIconTitle}                            
+                            disableEditButton={props.disableEditButton}
+                            disableCloseButton={props.disableCloseButton}
                         />
                         : <EditFormTitle
                             ref={ref}

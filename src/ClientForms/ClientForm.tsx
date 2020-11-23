@@ -5,7 +5,7 @@ import { FormMode } from "./FormMode";
 import ClientTabs, { IClientTabs, IClientTabsApi } from "./ClientTabs";
 import SpinMaximized from "./SpinMaximized/SpinMaximized";
 import Skeleton from "./Skeleton/Skeleton";
-import FormRows, { IFormRows } from "./FormRows";
+import FormRows, { IFormRows, IFormRowsApi } from "./FormRows";
 import FormTitle, { IFormTitleApi } from "./Title/FormTitle";
 import ToolBar, { IToolBar } from "./ToolBar/ToolBar";
 import Animate from "rc-animate";
@@ -43,6 +43,9 @@ export interface IFormApi {
      * @param value Значение поля.
      */
     setFieldValue(name: string, value?: any): void;
+    disableField(name: string): void;
+    enableField(name: string): void;
+    getFieldsValue(): Store;
 }
 
 /**Настройки клиентской формы. */
@@ -108,6 +111,8 @@ export interface IForm {
     leftIconTitle?: string;
     /**true - если необходимо заблокировать отрисовку заголовка формы с кнопками. */
     disableHeader?: boolean;
+    disableEditButton?: boolean;
+    disableCloseButton?: boolean;
 }
 
 /**Клиентская форма. */
@@ -147,6 +152,17 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                 fieldValues[name] = value;
                 setInitialValues(fieldValues);
                 props?.form?.setFieldsValue(fieldValues);
+            },
+            disableField(name: string) {
+                formRowsApi?.current?.disableField(name);
+                clientTabsApi?.current?.disableField(name);
+            },
+            enableField(name: string) {
+                formRowsApi?.current?.enableField(name);
+                clientTabsApi?.current?.enableField(name);
+            },
+            getFieldsValue(): Store {
+                return rcFormRef?.current?.getFieldsValue() || {};
             }
         }
         return api;
@@ -154,7 +170,8 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
 
     const clientTabsApi = useRef<IClientTabsApi>();
     const formTitleApi = useRef<IFormTitleApi>();
-    // setFieldsValue
+    const formRowsApi = useRef<IFormRowsApi>();
+
     const formRef = React.createRef();
     const rcFormRef = props.formInst ?? formRef;
 
@@ -225,10 +242,12 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                                 enableLeftIcon={props.enableLeftIcon}
                                 isHiddenLeftIcon={props.isHiddenLeftIcon}
                                 leftIconTitle={props.leftIconTitle}
+                                disableEditButton={props.disableEditButton}
+                                disableCloseButton={props.disableCloseButton}
                             />}
                         <ToolBar {...props.toolbar}></ToolBar>
                         {clientTabsProps && <ClientTabs ref={clientTabsApi} {...clientTabsProps} />}
-                        {props.rows && <FormRows rows={props?.rows?.rows} />}
+                        {props.rows && <FormRows ref={formRowsApi} rows={props?.rows?.rows} />}
                     </RcForm>
                 </Col>
             </Row>
