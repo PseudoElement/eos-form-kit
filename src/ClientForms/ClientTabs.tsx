@@ -131,7 +131,7 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
                 tabs && tabs.map(tab => {
                     return (
                         <Tabs.TabPane disabled={tab.disabled} forceRender={tab.forceRender}
-                            tab={<Badge count={tab.count} type="text">{tab.title}</Badge>} key={tab.key} >
+                            tab={<Badge count={tab.count ? tab.count : undefined} type="text">{tab.title}</Badge>} key={tab.key} >
                             { tab.rows && <FormRows rows={tab.rows} />}
                             { tab.children}
                         </Tabs.TabPane>
