@@ -61,10 +61,13 @@ class InternalHelper {
         if (fields && rows) {
             for (let row of rows) {
                 let formRow: IFormRow = { cells: [] };
-                if (row && row.Cells) {
-                    for (let cell of row.Cells) {
-                        formRow?.cells?.push(this.getCell(mode, fields, cell, tabFields, getResourceText))
-                    }
+                // formRow.title = row.Title;
+                if (row) {
+                    formRow.title = row.Title;
+                    if (row.Cells)
+                        for (let cell of row.Cells) {
+                            formRow?.cells?.push(this.getCell(mode, fields, cell, tabFields, getResourceText))
+                        }
                 }
                 formRows.push(formRow);
             }
@@ -76,10 +79,12 @@ class InternalHelper {
         if (fields && rows) {
             for (let row of rows) {
                 let formRow: IFormRow = { cells: [] };
-                if (row && row.Cells) {
-                    for (let cell of row.Cells) {
-                        formRow?.cells?.push(this.getCell(mode, fields, cell, null, getResourceText))
-                    }
+                if (row) {
+                    formRow.title = row.Title;
+                    if (row.Cells)
+                        for (let cell of row.Cells) {
+                            formRow?.cells?.push(this.getCell(mode, fields, cell, null, getResourceText))
+                        }
                 }
                 formRows.push(formRow);
             }

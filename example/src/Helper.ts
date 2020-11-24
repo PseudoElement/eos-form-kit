@@ -109,6 +109,7 @@ class Helper {
                     { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
                     {
+                        "Title":"Заглавие строки",
                         "Cells": [{ "Type": 0, "Fields": ["ind"], "Width": 8 },
                         { "Type": 0, "Fields": ["volumeNum"], "Width": 4 },
                         { "Type": 0, "Fields": ["keepCategory"], "Width": 12 }]
