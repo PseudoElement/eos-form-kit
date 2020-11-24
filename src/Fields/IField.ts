@@ -1,12 +1,6 @@
 import { FormMode } from "../ClientForms/FormMode";
 import fields from "./Fields";
 
-export interface IFieldApi {
-    focus?(): void;
-    disable?(): void;
-    enable?(): void;
-}
-
 /**Базовые настройки поля. */
 export default interface IField {
     /**Тип отрисовки поля. */

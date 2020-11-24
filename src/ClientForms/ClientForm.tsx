@@ -5,7 +5,7 @@ import { FormMode } from "./FormMode";
 import ClientTabs, { IClientTabs, IClientTabsApi } from "./ClientTabs";
 import SpinMaximized from "./SpinMaximized/SpinMaximized";
 import Skeleton from "./Skeleton/Skeleton";
-import FormRows, { IFormRows, IFormRowsApi } from "./FormRows";
+import FormRows, { IFormRows } from "./FormRows";
 import FormTitle, { IFormTitleApi } from "./Title/FormTitle";
 import ToolBar, { IToolBar } from "./ToolBar/ToolBar";
 import Animate from "rc-animate";
@@ -119,7 +119,6 @@ export interface IForm {
 export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
-    const [initialValues, setInitialValues] = useState(props.initialValues);
 
     const selfRef = useRef();
 
@@ -147,22 +146,23 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             setTitle(title?: string) {
                 formTitleApi?.current?.setTitle(title);
             },
-            setFieldValue(name: string, value?: any) {
-                const { ...fieldValues } = rcFormRef?.current?.getFieldsValue();
-                fieldValues[name] = value;
-                setInitialValues(fieldValues);
-                props?.form?.setFieldsValue(fieldValues);
+            setFieldValue() {
+                // const { ...fieldValues } = rcFormRef?.current?.getFieldsValue();
+                // fieldValues[name] = value;
+                // setInitialValues(fieldValues);
+                // props?.form?.setFieldsValue(fieldValues);
             },
-            disableField(name: string) {
-                formRowsApi?.current?.disableField(name);
-                clientTabsApi?.current?.disableField(name);
+            disableField() {
+                // formRowsApi?.current?.disableField(name);
+                // clientTabsApi?.current?.disableField(name);
             },
-            enableField(name: string) {
-                formRowsApi?.current?.enableField(name);
-                clientTabsApi?.current?.enableField(name);
+            enableField() {
+                // formRowsApi?.current?.enableField(name);
+                // clientTabsApi?.current?.enableField(name);
             },
             getFieldsValue(): Store {
-                return rcFormRef?.current?.getFieldsValue() || {};
+                // return rcFormRef?.current?.getFieldsValue() || {};
+                return {};
             }
         }
         return api;
@@ -170,10 +170,10 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
 
     const clientTabsApi = useRef<IClientTabsApi>();
     const formTitleApi = useRef<IFormTitleApi>();
-    const formRowsApi = useRef<IFormRowsApi>();
+    // const formRowsApi = useRef<IFormRowsApi>();
 
-    const formRef = React.createRef();
-    const rcFormRef = props.formInst ?? formRef;
+    // const formRef = React.createRef();
+    // const rcFormRef = props.formInst ?? formRef;
 
     const mode = props.mode ?? FormMode.new;
 
@@ -183,7 +183,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     }, [wasModified]);
     useEffect(() => {
         props?.form?.setFieldsValue(props.initialValues);
-        setInitialValues(props.initialValues);
+        // setInitialValues(props.initialValues);
         if (props.onInitialValuesChanged)
             props.onInitialValuesChanged(props.initialValues);
     }, [props.initialValues]);
@@ -218,9 +218,11 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                     </Animate>
                     <RcForm form={props.form}
                         style={{ height: "100%", display: props.isSkeletonLoading ? "none" : "" }}
-                        ref={rcFormRef}
+                        // ref={rcFormRef}
+                        ref={props.formInst}
                         name="basic" layout="vertical"
-                        initialValues={initialValues}
+                        // initialValues={initialValues}
+                        initialValues={props.initialValues}
                         onFinish={(values: Store) => {
                             if (props?.onFinish)
                                 props?.onFinish(values);
@@ -247,7 +249,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                             />}
                         <ToolBar {...props.toolbar}></ToolBar>
                         {clientTabsProps && <ClientTabs ref={clientTabsApi} {...clientTabsProps} />}
-                        {props.rows && <FormRows ref={formRowsApi} rows={props?.rows?.rows} />}
+                        {props.rows && <FormRows rows={props?.rows?.rows} />}
                     </RcForm>
                 </Col>
             </Row>

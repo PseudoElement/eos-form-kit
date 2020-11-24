@@ -1,6 +1,6 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { Col, Row, Space } from "@eos/rc-controls";
-import IField, { IFieldApi } from "../Fields/IField";
+import IField from "../Fields/IField";
 import fields from "../Fields/Fields";
 
 /**Допустимые значения ширины столбца. */
@@ -14,11 +14,6 @@ export enum CellType {
     autoCell = 1,
     /**В одном столбце два поля между которыми текст. */
     threeFields = 2
-}
-
-export interface IFormCellApi {
-    disableField(name: string): void;
-    enableField(name: string): void;
 }
 
 /**Настройки столбца. */
@@ -51,150 +46,70 @@ export interface IThreeFieldsCell extends IFormCell {
 }
 
 /**Компонент для отрисовки столбца внутри формы. */
-const FormCell = forwardRef<any, IFormCell | IWidthCell | IAutoCell | IThreeFieldsCell>((props: IFormCell | IWidthCell | IAutoCell | IThreeFieldsCell, ref) => {
+const FormCell: FunctionComponent<IFormCell | IWidthCell | IAutoCell | IThreeFieldsCell> = (props: IFormCell | IWidthCell | IAutoCell | IThreeFieldsCell) => {
     switch (props.type) {
         case CellType.autoCell:
             return (
-                <AutoCell ref={ref} {...props} />
+                <AutoCell  {...props} />
             );
         case CellType.threeFields:
             return (
-                <ThreeFieldsCell ref={ref} {...props} />
+                <ThreeFieldsCell {...props} />
             );
         case CellType.widthCell:
         default:
             return (
-                <WidthCell ref={ref} {...props} />
+                <WidthCell  {...props} />
             );
 
     }
-});
+}
 
 
-// const WidthCell: FunctionComponent<IWidthCell> = (props: IWidthCell) => {
-const WidthCell = forwardRef<any, IWidthCell>((props: IWidthCell, ref) => {
-    const [fieldRefs] = useState<any[]>([props?.fields?.length || 0]);
-    const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, () => {
-        const api: IFormCellApi = {
-            disableField(name: string) {
-                if (props && props?.fields)
-                    for (let i = 0; i < props?.fields?.length; i++)
-                        if (props?.fields[i].name === name && fieldRefs && fieldRefs.length > i) {
-                            const api: React.MutableRefObject<IFieldApi> = fieldRefs[i];
-                            if (api?.current?.disable)
-                                api?.current?.disable();
-                        }
-            },
-            enableField(name: string) {
-                if (props && props?.fields)
-                    for (let i = 0; i < props?.fields?.length; i++)
-                        if (props?.fields[i].name === name && fieldRefs && fieldRefs.length > i) {
-                            const api: React.MutableRefObject<IFieldApi> = fieldRefs[i];
-                            if (api?.current?.enable)
-                                api?.current?.enable();
-                        }
-            },
-        }
-        return api;
-    });
-
-    let i = 0;
+const WidthCell: FunctionComponent<IWidthCell> = (props: IWidthCell) => {
     return (
         <Col xs={props.width} md={props.width}>
             {
                 props.fields?.map(field => {
-                    const fieldRef = useRef<IFieldApi>();
-                    fieldRefs[i++] = fieldRef;
-                    return React.createElement(fields[field.type], { ...field, key: field.name, ref: fieldRef })
+                    return React.createElement(fields[field.type], { ...field, key: field.name })
                 })
             }
         </Col>
     );
-});
-const AutoCell = forwardRef<any, IAutoCell>((props: IAutoCell, ref) => {
-    const [fieldRefs] = useState<any[]>([props?.fields?.length || 0]);
-    const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, () => {
-        const api: IFormCellApi = {
-            disableField(name: string) {
-                if (props && props?.fields)
-                    for (let i = 0; i < props?.fields?.length; i++)
-                        if (props?.fields[i].name === name && fieldRefs && fieldRefs.length > i) {
-                            const api: React.MutableRefObject<IFieldApi> = fieldRefs[i];
-                            if (api?.current?.disable)
-                                api?.current?.disable();
-                        }
-            },
-            enableField(name: string) {
-                if (props && props?.fields)
-                    for (let i = 0; i < props?.fields?.length; i++)
-                        if (props?.fields[i].name === name && fieldRefs && fieldRefs.length > i) {
-                            const api: React.MutableRefObject<IFieldApi> = fieldRefs[i];
-                            if (api?.current?.enable)
-                                api?.current?.enable();
-                        }
-            },
-        }
-        return api;
-    });
-
-    let i = 0;
+}
+const AutoCell: FunctionComponent<IAutoCell> = (props: IAutoCell) => {
     return (
         <Col flex="auto">
             <Space size="middle" direction="horizontal">
                 {
                     props.fields?.map(field => {
-                        const fieldRef = useRef<IFieldApi>();
-                        fieldRefs[i++] = fieldRef;
-                        return React.createElement(fields[field.type], { ...field, key: field.name, ref: fieldRef })
+                        return React.createElement(fields[field.type], { ...field, key: field.name })
                     })
                 }
             </Space>
         </Col>
     );
-});
-const ThreeFieldsCell = forwardRef<any, IThreeFieldsCell>((props: IThreeFieldsCell, ref) => {
-    const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, () => {
-        const api: IFormCellApi = {
-            disableField(name: string) {
-                if (props?.leftField?.name === name && leftFieldRef?.current?.disable)
-                    leftFieldRef?.current?.disable();
-                if (props?.rightField?.name === name && rightFieldRef?.current?.disable)
-                    rightFieldRef?.current?.disable();
-            },
-            enableField(name: string) {
-                if (props?.leftField?.name === name && leftFieldRef?.current?.enable)
-                    leftFieldRef?.current?.enable();
-                if (props?.rightField?.name === name && rightFieldRef?.current?.enable)
-                    rightFieldRef?.current?.enable();
-            }
-        }
-        return api;
-    });
-    const leftFieldRef = useRef<IFieldApi>();
-    const rightFieldRef = useRef<IFieldApi>();
-
+}
+const ThreeFieldsCell: FunctionComponent<IThreeFieldsCell> = (props: IThreeFieldsCell) => {
     return (
         <Col xs={props.width} md={props.width} >
             <Row align="middle" style={{ flexWrap: "nowrap" }}>
                 <Col flex="auto">
                     {
                         props?.leftField &&
-                        React.createElement(fields[props?.leftField?.type], { ...props?.leftField, ref: leftFieldRef })
+                        React.createElement(fields[props?.leftField?.type], { ...props?.leftField })
                     }
                 </Col>
                 <Col flex="0 0 auto" style={{ padding: "0 5px 5px", alignSelf: "flex-end" }}><span>{props?.middleText}</span></Col>
                 <Col flex="auto">
                     {
                         props?.rightField &&
-                        React.createElement(fields[props?.rightField?.type], { ...props?.rightField, ref: rightFieldRef })
+                        React.createElement(fields[props?.rightField?.type], { ...props?.rightField, })
                     }
                 </Col>
             </Row>
         </Col>
     );
-});
+}
 
 export default FormCell;

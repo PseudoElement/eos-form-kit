@@ -181,7 +181,7 @@ class Helper {
                     "E_DOCUMENT": false,
                     "parentName": "Находися в 2-ом элементе",
                     "ind": "Номер 2",
-                    "volumeNum": 1,
+                    "volumeNum": 2,
                     "keepCategory": "2",
                     "name": "Наименование 2",
                     "note": "Примечание 2",
