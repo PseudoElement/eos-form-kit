@@ -124,6 +124,7 @@ export interface IForm {
 export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
+    const [rcFormDisplayStyle, setRcFormDisplayStyle] = useState<"none" | "">("none");
     // const [formContext, setFormContext] = useState(defaultContext);
 
     const selfRef = useRef();
@@ -220,11 +221,12 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         <SpinMaximized spinning={props.isSpinLoading}>
             <Row style={{ height: "100%" }} justify="center">
                 <Col style={{ width: "800px", height: "100%", paddingTop: "20px" }}>
-                    <Animate showProp="visible" transitionName="fade">
+                    <Animate showProp="visible" transitionName="fade" onEnd={() => { setRcFormDisplayStyle(props.isSkeletonLoading ? "none" : ""); }}>
                         <Skeleton visible={props.isSkeletonLoading} />
                     </Animate>
                     <RcForm form={props.form}
-                        style={{ height: "100%", display: props.isSkeletonLoading ? "none" : "" }}
+                        // style={{ height: "100%", display: props.isSkeletonLoading ? "none" : "" }}
+                        style={{ height: "100%", display: rcFormDisplayStyle }}
                         // ref={rcFormRef}
                         ref={props.formInst}
                         name="basic" layout="vertical"
@@ -263,7 +265,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
 
     const memoizedElements = useMemo(() => {
         return (elements)
-    }, [props.initialValues, props.mode, props.isSkeletonLoading, props.isSpinLoading]);
+    }, [props.initialValues, props.mode, props.isSkeletonLoading, props.isSpinLoading, rcFormDisplayStyle]);
     // const memoizedElements =elements;
 
     // return (<FormContext.Provider value={formContext}>{memoizedElements}</FormContext.Provider>);
