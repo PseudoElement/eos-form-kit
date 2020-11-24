@@ -35,7 +35,10 @@ class InternalHelper {
                         {
                             title: getResourceText(tab.Title),
                             disabled: tab.Disabled,
-                            forceRender: tab.ForceRender,
+                            //  Есть бага в библиотеке компонентов. Если в другой вкладке находится обязательное поле и вызывается сабмит,
+                            //  без захода на ту вкладку, то валидация выполнится. Поэтому для таких вкладок ставлю принудительную отрисовку.
+                            // forceRender: tab.ForceRender,
+                            forceRender: true,
                             key: i.toString(),
                             rows: rows
                         }
