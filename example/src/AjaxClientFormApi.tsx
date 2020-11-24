@@ -69,6 +69,20 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onSpinnerClick={() => { formApi?.current?.showSpinLoading(); setTimeout(() => { formApi?.current?.hideLoading(); }, 1500); }}
                 onLookupSetClick={() => { formApi?.current?.setFieldValue("keepPeriod", { key: "2", value: "два" }); }}
                 onNameSetClick={() => { formApi?.current?.setFieldValue("name", "Новое наименование"); }}
+                onTripleSkeletonLoadingClick={() => {
+                    formApi?.current?.showSkeletonLoading();
+                    setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);
+
+                    setTimeout(() => {
+                        formApi?.current?.showSkeletonLoading();
+                        setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);
+                    }, 500);
+
+                    setTimeout(() => {
+                        formApi?.current?.showSkeletonLoading();
+                        setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);
+                    }, 500);
+                } }
             />
             <AjaxClientForm.Form
                 ref={formApi}
@@ -114,6 +128,7 @@ export default AjaxClientFormApi;
 
 interface IButtonsPanel {
     onSkeletonLoadingClick?(): void;
+    onTripleSkeletonLoadingClick?(): void;
     onSpinnerClick?(): void;
     onEditTitleClick?(): void;
     onLookupSetClick?(): void;
@@ -123,6 +138,7 @@ interface IButtonsPanel {
 const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) => {
     return (<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Button onClick={props.onSkeletonLoadingClick}>Скелетон</Button>
+        <Button onClick={props.onTripleSkeletonLoadingClick}>3 скелетона</Button>
         <Button onClick={props.onSpinnerClick}>Спиннер</Button>
         <Button onClick={props.onEditTitleClick}>Заголовок</Button>
         <Button onClick={props.onLookupSetClick}>Задать срок хранения</Button>
