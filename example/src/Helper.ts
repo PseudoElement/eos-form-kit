@@ -10,6 +10,9 @@ class Helper {
             { "disabled": true, "label": "Находится в", "name": "parentName", "required": false, "requiredMessage": null, "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
             { "disabled": false, "label": "Номер", "name": "ind", "required": true, "requiredMessage": "inventory:formErrors.ind", "type": "FieldText", "value": null, "additionalText": null, "allowClear": true, "maxLength": 24 },
             { "disabled": false, "label": "Том", "name": "volumeNum", "required": false, "requiredMessage": null, "type": "FieldInteger", "value": null, "max": 32767, "min": 0, "showCounter": false },
+            { "disabled": true, "label": "Находится в", "name2": "parentName", "required": false, "requiredMessage": null, "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
+            { "disabled": false, "label": "Номер", "name": "ind2", "required": true, "requiredMessage": "inventory:formErrors.ind", "type": "FieldText", "value": null, "additionalText": null, "allowClear": true, "maxLength": 24 },
+            { "disabled": false, "label": "Том", "name": "volumeNum2", "required": false, "requiredMessage": null, "type": "FieldInteger", "value": null, "max": 32767, "min": 0, "showCounter": false },
             {
                 "disabled": false, "label": "Категория", "name": "keepCategory", "required": true, "requiredMessage": "inventory:formErrors.keepCategory", "type": "FieldSelect", "value": null,
                 "values": [
@@ -109,7 +112,7 @@ class Helper {
                     { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
                     {
-                        "Title":"Заглавие строки",
+                        "Title": "Заглавие строки",
                         "Cells": [{ "Type": 0, "Fields": ["ind"], "Width": 8 },
                         { "Type": 0, "Fields": ["volumeNum"], "Width": 4 },
                         { "Type": 0, "Fields": ["keepCategory"], "Width": 12 }]
@@ -124,7 +127,7 @@ class Helper {
                     },
                     {
                         "Cells": [
-                            { "Type": 1, "Fields": ["startYear2","endYear2"] }
+                            { "Type": 1, "Fields": ["startYear2", "endYear2"] }
                         ]
                     },
                     // test lookup lookupAutoComplete
@@ -137,6 +140,22 @@ class Helper {
 
                 ],
                 "Title": "Раздел описи"
+            },
+            {
+                "ClassName": null,
+                "CustomType": null,
+                "Disabled": false,
+                "ForceRender": null,
+                "Rows": [
+                    {
+                        "Title": "Заглавие строки 2",
+                        "Cells": [
+                            { "Type": 0, "Fields": ["ind2"], "Width": 8 },
+                            { "Type": 0, "Fields": ["volumeNum2"], "Width": 4 }]
+                    },
+                    { "Cells": [{ "Type": 0, "Fields": ["name2"], "Width": 24 }] }
+                ],
+                "Title": "Раздел описи2"
             }
             // { "ClassName": null, "CustomType": "InventoryFiles", "Disabled": true, "ForceRender": null, "Rows": null, "Title": "Файлы" }
         ];

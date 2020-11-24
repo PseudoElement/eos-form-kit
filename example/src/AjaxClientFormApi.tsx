@@ -85,6 +85,9 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 }}
                 onReloadClick={() => { formApi?.current?.reload(); }}
                 onReloadItemClick={() => { formApi?.current?.reloadItem(); }}
+                onSetFiveCountClick={() => { formApi?.current?.setTabCount("0", 5); }}
+                onClearCountClick={() => { formApi?.current?.setTabCount("0"); }}
+                onSetZeroCountClick={() => { formApi?.current?.setTabCount("0", 0); }}
             />
             <AjaxClientForm.Form
                 ref={formApi}
@@ -137,6 +140,9 @@ interface IButtonsPanel {
     onNameSetClick?(): void;
     onReloadItemClick?(): void;
     onReloadClick?(): void;
+    onSetFiveCountClick?(): void;
+    onClearCountClick?(): void;
+    onSetZeroCountClick?(): void;
 }
 
 const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) => {
@@ -149,5 +155,8 @@ const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) =>
         <Button onClick={props.onNameSetClick}>Задать наименование</Button>
         <Button onClick={props.onReloadItemClick}>ReloadItem</Button>
         <Button onClick={props.onReloadClick}>Reload</Button>
+        <Button onClick={props.onSetFiveCountClick}>SetCount(5)</Button>
+        <Button onClick={props.onClearCountClick}>SetCount(undefined)</Button>
+        <Button onClick={props.onSetZeroCountClick}>SetCount(0)</Button>
     </div>);
 }
