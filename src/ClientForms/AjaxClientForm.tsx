@@ -103,6 +103,8 @@ export interface IFormApi {
     setTabCount(key: string, count?: number): void;
     /**Переполучает элемент и отрисовывает его заново. */
     reloadItem(): void;
+    /**Переполучает схему и элемент. */
+    reload(): void;
     /**Показывает иконку @. */
     showLeftIcon(): void;
     /**Скрывает иконку @. */
@@ -164,6 +166,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             setTabCount(key: string, count?: number) {
                 clientFormApi.current?.setTabCount(key, count);
+            },
+            reload() {
+                setLoadSchema(true);
             },
             reloadItem() {
                 if (schema) {
@@ -234,8 +239,8 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         const prps: IClientFormProps = {
             initialValues: data,
             mode: props.mode,
-            tabsComponent: context.Tabs ? InternalHelper.createTabsComponent(context, props.getResourceText, props.getCustomtab) : undefined,
-            rows: context.Rows ? InternalHelper.createFormRows(context, props.getResourceText) : undefined,
+            tabsComponent: context && context.Tabs ? InternalHelper.createTabsComponent(context, props.getResourceText, props.getCustomtab) : undefined,
+            rows: context && context.Rows ? InternalHelper.createFormRows(context, props.getResourceText) : undefined,
         };
         setClientFormProps(prps);
     };

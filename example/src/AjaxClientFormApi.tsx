@@ -39,7 +39,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 "Mode": FormMode.new,
                 "Tabs": Helper.getTabs()
             };
-            await Helper.sleepAsync(100);
+            await Helper.sleepAsync(400);
             switch (mode) {
                 case FormMode.edit:
                     return editContext;
@@ -51,7 +51,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
             }
         },
         async getInitialValuesAsync() {
-            await Helper.sleepAsync(100);
+            await Helper.sleepAsync(400);
             return Helper.getInitialValues(mode, id ?? 0);
         },
         getTitle: function () {
@@ -69,6 +69,22 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onSpinnerClick={() => { formApi?.current?.showSpinLoading(); setTimeout(() => { formApi?.current?.hideLoading(); }, 1500); }}
                 onLookupSetClick={() => { formApi?.current?.setFieldValue("keepPeriod", { key: "2", value: "два" }); }}
                 onNameSetClick={() => { formApi?.current?.setFieldValue("name", "Новое наименование"); }}
+                onTripleSkeletonLoadingClick={() => {
+                    formApi?.current?.showSkeletonLoading();
+                    setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);
+
+                    setTimeout(() => {
+                        formApi?.current?.showSkeletonLoading();
+                        setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);
+                    }, 500);
+
+                    setTimeout(() => {
+                        formApi?.current?.showSkeletonLoading();
+                        setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);
+                    }, 500);
+                }}
+                onReloadClick={() => { formApi?.current?.reload(); }}
+                onReloadItemClick={() => { formApi?.current?.reloadItem(); }}
             />
             <AjaxClientForm.Form
                 ref={formApi}
@@ -114,18 +130,24 @@ export default AjaxClientFormApi;
 
 interface IButtonsPanel {
     onSkeletonLoadingClick?(): void;
+    onTripleSkeletonLoadingClick?(): void;
     onSpinnerClick?(): void;
     onEditTitleClick?(): void;
     onLookupSetClick?(): void;
     onNameSetClick?(): void;
+    onReloadItemClick?(): void;
+    onReloadClick?(): void;
 }
 
 const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) => {
     return (<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Button onClick={props.onSkeletonLoadingClick}>Скелетон</Button>
+        <Button onClick={props.onTripleSkeletonLoadingClick}>3 скелетона</Button>
         <Button onClick={props.onSpinnerClick}>Спиннер</Button>
         <Button onClick={props.onEditTitleClick}>Заголовок</Button>
         <Button onClick={props.onLookupSetClick}>Задать срок хранения</Button>
         <Button onClick={props.onNameSetClick}>Задать наименование</Button>
+        <Button onClick={props.onReloadItemClick}>ReloadItem</Button>
+        <Button onClick={props.onReloadClick}>Reload</Button>
     </div>);
 }
