@@ -5,6 +5,7 @@ import "eos-webui-controls/dist/main.css";
 import { AjaxClientForm, FormMode, parseFormMode } from "eos-webui-formgen";
 import { Helper } from './Helper';
 import { useRouteMatch } from 'react-router-dom';
+import { Store } from 'rc-field-form/lib/interface';
 
 interface IPageParams {
     id?: string;
@@ -72,13 +73,13 @@ const AjaxClientFormPage: FunctionComponent = () => {
                 isHiddenLeftIcon={true}
                 onValuesChange={(changedValues: any) => {
                     if (changedValues && changedValues.E_DOCUMENT !== undefined) {
-                        if (changedValues.E_DOCUMENT === true){
+                        if (changedValues.E_DOCUMENT === true) {
                             formApi?.current?.showLeftIcon();
                             formApi?.current?.disableField("name");
                             formApi?.current?.disableField("volumeNum");
                             formApi?.current?.disableField("keepCategory");
                         }
-                        else{
+                        else {
                             formApi?.current?.hideLeftIcon();
                             formApi?.current?.enableField("name");
                             formApi?.current?.enableField("volumeNum");
@@ -98,6 +99,9 @@ const AjaxClientFormPage: FunctionComponent = () => {
                         formApi?.current?.setTitle(getTitle());
                     }, 1500);
 
+                }}
+                onFinish={async (values: Store) => {
+                    console.log(values);
                 }}
                 disableEditButton={true}
                 disableCloseButton={true}

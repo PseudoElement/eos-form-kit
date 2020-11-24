@@ -1,4 +1,8 @@
-import React, { forwardRef, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, {
+    forwardRef, ReactNode, useEffect, useImperativeHandle,
+    useMemo,
+    useRef, useState
+} from "react";
 import { Form as RcForm, Row, Col } from "@eos/rc-controls";
 import { Store } from 'rc-field-form/lib/interface';
 import { FormMode } from "./FormMode";
@@ -9,6 +13,7 @@ import FormRows, { IFormRows } from "./FormRows";
 import FormTitle, { IFormTitleApi } from "./Title/FormTitle";
 import ToolBar, { IToolBar } from "./ToolBar/ToolBar";
 import Animate from "rc-animate";
+// import { FormContext, defaultContext } from "../Context/Context";
 
 /**API для работы с клиентской формой. */
 export interface IFormApi {
@@ -119,6 +124,8 @@ export interface IForm {
 export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
+    const [rcFormDisplayStyle, setRcFormDisplayStyle] = useState<"none" | "">("none");
+    // const [formContext, setFormContext] = useState(defaultContext);
 
     const selfRef = useRef();
 
@@ -145,6 +152,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             },
             setTitle(title?: string) {
                 formTitleApi?.current?.setTitle(title);
+                // formContext.formTitle = title;
+                // setFormContext({ ...formContext });
+                // setWasModified(true);
             },
             setFieldValue() {
                 // const { ...fieldValues } = rcFormRef?.current?.getFieldsValue();
@@ -171,7 +181,6 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const clientTabsApi = useRef<IClientTabsApi>();
     const formTitleApi = useRef<IFormTitleApi>();
     // const formRowsApi = useRef<IFormRowsApi>();
-
     // const formRef = React.createRef();
     // const rcFormRef = props.formInst ?? formRef;
 
@@ -208,20 +217,19 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             }
             : null;
 
-    return (
+    const elements =
         <SpinMaximized spinning={props.isSpinLoading}>
             <Row style={{ height: "100%" }} justify="center">
                 <Col style={{ width: "800px", height: "100%", paddingTop: "20px" }}>
-                    {/* {props.isSkeletonLoading && <Skeleton />} */}
-                    <Animate showProp="visible" transitionName="fade">
+                    <Animate showProp="visible" transitionName="fade" onEnd={() => { setRcFormDisplayStyle(props.isSkeletonLoading ? "none" : ""); }}>
                         <Skeleton visible={props.isSkeletonLoading} />
                     </Animate>
                     <RcForm form={props.form}
-                        style={{ height: "100%", display: props.isSkeletonLoading ? "none" : "" }}
+                        // style={{ height: "100%", display: props.isSkeletonLoading ? "none" : "" }}
+                        style={{ height: "100%", display: rcFormDisplayStyle }}
                         // ref={rcFormRef}
                         ref={props.formInst}
                         name="basic" layout="vertical"
-                        // initialValues={initialValues}
                         initialValues={props.initialValues}
                         onFinish={(values: Store) => {
                             if (props?.onFinish)
@@ -235,9 +243,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                         }} >
                         {!props.disableHeader &&
                             <FormTitle
+                                ref={formTitleApi}
                                 formTitle={props.formTitle}
                                 mode={mode}
-                                ref={formTitleApi}
                                 title={props.title}
                                 onCancelClick={(e) => onCancelClick(e)}
                                 onEditClick={props.onEditClick}
@@ -253,8 +261,16 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                     </RcForm>
                 </Col>
             </Row>
-        </SpinMaximized>
-    );
+        </SpinMaximized>;
+
+    const memoizedElements = useMemo(() => {
+        return (elements)
+    }, [props.initialValues, props.mode, props.isSkeletonLoading, props.isSpinLoading, rcFormDisplayStyle]);
+    // const memoizedElements =elements;
+
+    // return (<FormContext.Provider value={formContext}>{memoizedElements}</FormContext.Provider>);
+    return memoizedElements;
+
     function onCancelClick(e: Event) {
         if (mode !== FormMode.edit) {
             // saveTab(actionTarget, DEFAULT_ACTIVE_KEY);

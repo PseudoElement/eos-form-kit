@@ -142,7 +142,7 @@ interface IClientFormProps {
 export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     const [schema, setSchema] = useState<IContext | null>(null);
     const [isFirstLoading, setFirstLoading] = useState(true);
-    const [isSkeletonLoading, setSkeletonLoading] = useState(true);
+    const [isSkeletonLoading, setSkeletonLoading] = useState(false);
     const [isSpinLoading, setSpinLoading] = useState(false);
 
     const [loadSchema, setLoadSchema] = useState(false);
