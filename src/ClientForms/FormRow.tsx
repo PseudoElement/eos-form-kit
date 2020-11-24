@@ -1,6 +1,6 @@
-import React, { forwardRef, FunctionComponent, useImperativeHandle, useRef, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { Row, Typography } from "@eos/rc-controls";
-import FormCell, { IFormCell, IAutoCell, IWidthCell, IThreeFieldsCell, IFormCellApi } from "./FormCell";
+import FormCell, { IFormCell, IAutoCell, IWidthCell, IThreeFieldsCell } from "./FormCell";
 
 
 interface IFormRowTitle {
@@ -33,44 +33,19 @@ export interface IFormRow {
 }
 
 /**Компонент строки с полями внутри формы. */
-const FormRow = forwardRef<any, IFormRow>((props: IFormRow, ref) => {
-    const [cellRefs] = useState<any[]>([props.cells?.length || 0]);
-    const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, () => {
-        const api: IFormCellApi = {
-            disableField(name: string) {
-                if (cellRefs)
-                    for (let cellRef of cellRefs) {
-                        const api: React.MutableRefObject<IFormCellApi> = cellRef;
-                        api?.current?.disableField(name);
-                    }
-            },
-            enableField(name: string) {
-                if (cellRefs)
-                    for (let cellRef of cellRefs) {
-                        const api: React.MutableRefObject<IFormCellApi> = cellRef;
-                        api?.current?.enableField(name);
-                    }
-            }
-        }
-        return api;
-    });
-
+const FormRow: FunctionComponent<IFormRow> = (props: IFormRow) => {
     let key = 0;
-    let i = 0;
     return (
         <div>
             {props.title && <FormRowTitle title={props.title} />}
             <Row gutter={[20, 10]}>
                 {
                     props.cells?.map((cell: CellsType) => {
-                        const cellRef = useRef<IFormCellApi>();
-                        cellRefs[i++] = cellRef;
-                        return <FormCell key={key++} {...cell} ref={cellRef} />
+                        return <FormCell key={key++} {...cell} />
                     })
                 }
             </Row>
         </div>
     );
-});
+}
 export default FormRow;
