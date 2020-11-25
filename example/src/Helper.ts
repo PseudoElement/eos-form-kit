@@ -192,7 +192,13 @@ class Helper {
                     "name": "Наименование 1",
                     "note": "Примечание 1",
                     "startYear": FieldDateTime.getFieldValueForClientRender(mode, "2013", FieldDateTime.DateTimeMode.year),
-                    "endYear": FieldDateTime.getFieldValueForClientRender(mode, "2020", FieldDateTime.DateTimeMode.year)
+                    "endYear": FieldDateTime.getFieldValueForClientRender(mode, "2020", FieldDateTime.DateTimeMode.year),
+                    "startYear2": FieldDateTime.getFieldValueForClientRender(mode, "2013", FieldDateTime.DateTimeMode.year),
+                    "endYear2": FieldDateTime.getFieldValueForClientRender(mode, "2020", FieldDateTime.DateTimeMode.year),
+                    "name2": "Наименование 11",
+                    "ind2": "Номер 11",
+                    "volumeNum2": 11,
+                    "keepPeriod":{ key: "3", value: "три" }
                 }
                 return secondItem;
             case 2:
