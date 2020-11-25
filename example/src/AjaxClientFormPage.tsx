@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useEffect, useRef } from 'react'
+import { useHistory } from "react-router-dom";
 
 
 import "eos-webui-controls/dist/main.css";
@@ -14,6 +15,7 @@ interface IPageParams {
 
 const AjaxClientFormPage: FunctionComponent = () => {
     const E_DOCUMENT_LABEL = "Для электронных документов";
+    const history = useHistory();
     const { params } = useRouteMatch<IPageParams>();
     const mode: FormMode = parseFormMode(params.mode);
     const id: number | undefined = params?.id ? parseFloat(params?.id) : undefined;
@@ -39,7 +41,7 @@ const AjaxClientFormPage: FunctionComponent = () => {
                 "Mode": FormMode.new,
                 "Tabs": Helper.getTabs()
             };
-            await Helper.sleepAsync(100);
+            await Helper.sleepAsync(1000);
             switch (mode) {
                 case FormMode.edit:
                     return editContext;
@@ -51,11 +53,16 @@ const AjaxClientFormPage: FunctionComponent = () => {
             }
         },
         async getInitialValuesAsync() {
-            await Helper.sleepAsync(100);
+            await Helper.sleepAsync(1000);
             return Helper.getInitialValues(mode, id ?? 0);
         },
         getTitle: function () {
             return getTitle();
+        },
+        async onSaveAsync(values: Store) {
+            console.log(values);
+            await Helper.sleepAsync(1000);
+            history.push(`/form/disp/${id}`);
         }
     }
 
@@ -100,11 +107,6 @@ const AjaxClientFormPage: FunctionComponent = () => {
                     }, 1500);
 
                 }}
-                onFinish={async (values: Store) => {
-                    console.log(values);
-                }}
-                disableEditButton={true}
-                disableCloseButton={true}
             />
         </React.Fragment>
     );
