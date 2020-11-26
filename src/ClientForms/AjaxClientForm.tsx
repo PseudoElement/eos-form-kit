@@ -321,13 +321,14 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             onEditClick={props.onEditClick}
             onCancelClick={props.onCancelClick}
             onFinish={onFinish}
+            onValuesChange={props.onValuesChange}
+            onFieldsWasModified={props.onFieldsWasModified}
             tabsComponent={clientFormProps.tabsComponent}
             rows={clientFormProps.rows}
             toolbar={props.toolbar}
             enableLeftIcon={props.enableLeftIcon}
             leftIconTitle={props.leftIconTitle}
             isHiddenLeftIcon={props.isHiddenLeftIcon}
-            onValuesChange={props.onValuesChange}
             disableHeader={props.disableHeader}
             disableEditButton={props.disableEditButton}
             disableCloseButton={props.disableCloseButton}
