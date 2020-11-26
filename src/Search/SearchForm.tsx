@@ -1,7 +1,7 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Store } from 'rc-field-form/lib/interface';
 import { Form as RcForm } from "@eos/rc-controls";
-import { Form as ClientForm, IFormApi as IClientFormApi} from '../ClientForms/ClientForm';
+import { Form as ClientForm, IFormApi as IClientFormApi } from '../ClientForms/ClientForm';
 import { FormMode } from '../ClientForms/FormMode';
 import { IClientTab, IClientTabs } from '../ClientForms/ClientTabs';
 import { InternalHelper } from '../InternalHelper';
@@ -79,10 +79,10 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
             getActivatedTab() {
                 return clientFormApi?.current?.getActivatedTab() || "";
             },
-            hideLoading(){
+            hideLoading() {
                 setSpinLoading(false);
             },
-            showLoading(){
+            showLoading() {
                 setSpinLoading(true);
             }
         }
@@ -118,31 +118,32 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
     }, [initialValues]);
 
     return (
-        <ClientForm
-            ref={clientFormApi}
-            title={props?.title || DEFAULT_TITLE}
-            initialValues={initialValues}
-            formInst={formInst}
-            form={form}
-            mode={FormMode.new}
-            isSpinLoading={isSpinLoading}
-            onFinish={onFinishAsync}
-            tabsComponent={clientTabs}
-            onValuesChange={onValuesChange}
-            formTitle={<FormTitle
-                ref={formTitleApi}
-                title={props.title}
-                clearTitle={props.clearTitle}
-                closeTitle={props.closeTitle}
-                searchTitle={props.searchTitle}
-                hideClearButton={props.hideClearButton}
-                hideCloseButton={props.hideCloseButton}
-                hideSearchButton={props.hideSearchButton}
-                onCloseClick={props.onCloseClick}
-                onClearClick={onClearClick}
-            />}
-        // toolbar={props.toolbar}
-        />
+        <div>
+            <ClientForm
+                ref={clientFormApi}
+                title={props?.title || DEFAULT_TITLE}
+                initialValues={initialValues}
+                formInst={formInst}
+                form={form}
+                mode={FormMode.new}
+                isSpinLoading={isSpinLoading}
+                onFinish={onFinishAsync}
+                tabsComponent={clientTabs}
+                onValuesChange={onValuesChange}
+                formTitle={<FormTitle
+                    ref={formTitleApi}
+                    title={props.title}
+                    clearTitle={props.clearTitle}
+                    closeTitle={props.closeTitle}
+                    searchTitle={props.searchTitle}
+                    hideClearButton={props.hideClearButton}
+                    hideCloseButton={props.hideCloseButton}
+                    hideSearchButton={props.hideSearchButton}
+                    onCloseClick={props.onCloseClick}
+                    onClearClick={onClearClick}
+                />}
+                initialShownForm={true}
+            /></div>
     );
 
     async function onFinishAsync(values: Store) {

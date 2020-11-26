@@ -1,6 +1,6 @@
 import React, {
     forwardRef, ReactNode, useEffect, useImperativeHandle,
-    useMemo,
+    // useMemo,
     useRef, useState
 } from "react";
 import { Form as RcForm, Row, Col } from "@eos/rc-controls";
@@ -120,13 +120,18 @@ export interface IForm {
     disableCloseButton?: boolean;
     /**true если не надо обрезать пробелы по краям для всех текстовых значений. */
     noTrimFieldValues?: boolean;
+    /**
+     * Показана ли форма по умолчанию.
+     * Если false, то форма покажется только после скрытия скелетона.
+     */
+    initialShownForm?: boolean;
 }
 
 /**Клиентская форма. */
 export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
-    const [rcFormDisplayStyle, setRcFormDisplayStyle] = useState<"none" | "">("none");
+    const [rcFormDisplayStyle, setRcFormDisplayStyle] = useState<"none" | "">(props.initialShownForm ? "" : "none");
     // const [formContext, setFormContext] = useState(defaultContext);
 
     const selfRef = useRef();
@@ -223,7 +228,10 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         <SpinMaximized spinning={props.isSpinLoading}>
             <Row style={{ height: "100%" }} justify="center">
                 <Col style={{ width: "800px", height: "100%", paddingTop: "20px" }}>
-                    <Animate showProp="visible" transitionName="fade" onEnd={() => { setRcFormDisplayStyle(props.isSkeletonLoading ? "none" : ""); }}>
+                    <Animate showProp="visible" transitionName="fade"
+                        onEnd={() => {
+                            setRcFormDisplayStyle(props.isSkeletonLoading ? "none" : "");
+                        }}>
                         <Skeleton visible={props.isSkeletonLoading} />
                     </Animate>
                     <RcForm form={props.form}
@@ -271,10 +279,10 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             </Row>
         </SpinMaximized>;
 
-    const memoizedElements = useMemo(() => {
-        return (elements)
-    }, [props.initialValues, props.mode, props.isSkeletonLoading, props.isSpinLoading, rcFormDisplayStyle]);
-    // const memoizedElements =elements;
+    // const memoizedElements = useMemo(() => {
+    //     return (elements)
+    // }, [props.initialValues, props.mode, props.isSkeletonLoading, props.isSpinLoading, rcFormDisplayStyle]);
+    const memoizedElements = elements;
 
     // return (<FormContext.Provider value={formContext}>{memoizedElements}</FormContext.Provider>);
     return memoizedElements;
