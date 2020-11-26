@@ -8,8 +8,8 @@ class Helper {
         const fields = [
             { 
                 "disabled": false, 
-                "label": "inventory:fieldNames.keepPeriod", 
-                "name": "FieldLookupMulti", 
+                "label": null, 
+                "name": "multiLookupTest", 
                 "required": false, 
                 "requiredMessage": "inventory:formErrors.keepPeriod", 
                 "type": "FieldLookupMulti", 
@@ -37,20 +37,10 @@ class Helper {
                     },
                     resultsAmount: 3,
                 },
-                "tableData": [
-                    {
-                      key: '1',
-                      name: 'фыфы'
-                    },
-                    {
-                      key: '23',
-                      name: 'John Brown'
-                    }
-                  ],
                 "tableColumns": [
                     {
                       title: 'name',
-                      dataIndex: 'name',
+                      dataIndex: 'value',
                       key: 'name',
                     }  
                   ]
@@ -158,7 +148,7 @@ class Helper {
                 "Disabled": false,
                 "ForceRender": null,
                 "Rows": [
-                    { "Cells": [{ "Type": 0, "Fields": ["FieldLookupMulti"], "Width": 24 }] },
+                    { "Cells": [{ "Type": 0, "Fields": ["multiLookupTest"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
                     {
@@ -213,6 +203,7 @@ class Helper {
     }
     static getRows() {
         const rows = [
+            { "Cells": [{ "Type": 0, "Fields": ["multiLookupTest"], "Width": 24 }] },
             { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
             { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
             {
@@ -235,6 +226,12 @@ class Helper {
             case 1:
                 const secondItem = {
                     "E_DOCUMENT": true,
+                    "multiLookupTest": [
+                        { key: "10", value: "десять" },
+                        { key: "11", value: "одинадцать" },
+                        { key: "12", value: "двенадцать" },
+                        { key: "13", value: "тринадцать" }
+                    ],
                     "parentName": "Находися в 1-ом элементе",
                     "ind": "Номер 1",
                     "volumeNum": 1,
@@ -254,6 +251,12 @@ class Helper {
             case 2:
                 const firstItem = {
                     "E_DOCUMENT": false,
+                    "multiLookupTest": [
+                        { key: "10", value: "десять" },
+                        { key: "11", value: "одинадцать" },
+                        { key: "12", value: "двенадцать" },
+                        { key: "13", value: "тринадцать" }
+                    ],
                     "parentName": "Находися в 2-ом элементе",
                     "ind": "Номер 2",
                     "volumeNum": 2,

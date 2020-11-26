@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Collapse, Table, Menu, Modal, Form, PlusIcon, BinIcon, ArrowVDownIcon, ArrowVTopIcon, Badge } from "@eos/rc-controls";
+import React, { useState } from "react";
+import { Collapse, Menu, Modal, Form, PlusIcon, BinIcon, ArrowVDownIcon, ArrowVTopIcon, Badge } from "@eos/rc-controls";
 import IField from "./IField";
 import { Select as AjaxSelect, IDataService } from "./LookupComponents/AjaxSelect";
 import { FieldsHelper } from "./FieldsHelper";
 import { FormMode } from "../ClientForms/FormMode";
+import DisplayTable, { ITableRow } from "./LookupComponents/DisplayTable";
 
 export interface ITableMenuTool {
     key: string | number;
@@ -28,11 +29,14 @@ export interface IMultilookupRow {
 };
 
 /**
- * Настройки лукап поля.
+ * Настройки МультиЛукап поля.
  */
 export interface ILookupMulti extends IField {
     /** Функция для обработки запроса */
     dataService: IDataService;
+
+    /**Вызовется, когда значение поля изменится. */
+    onChange?(item?: any): void;
 
     /**
      * Передача formInst
@@ -44,59 +48,51 @@ export interface ILookupMulti extends IField {
      */
     notFoundContent?: string;
 
-    tableData?: IMultilookupRow[];
+    /**
+     * Колонки таблицы
+     */
     tableColumns?: ITableColumn[];
-
 }
 
-/**
- * Функция, через которую надо прогонять значение лукапа при сохранении формы. 
- * Иногда лукап возвращается как объект и форма падает при сохранении, если ожидалась строка или число.
- * @param value 
- */
-export function getFieldValuesForPost(value: any) {
-    //  Проверка не работает
-    // if (value && value.key && value.value) {
-    if (Object.prototype.toString.call(value[0]) === "[object Object]") {
-        // console.error("Поле лукап вернуло объект, где key: " + value.key + " value: " + value.value);
-        return value.map((e: IMultilookupRow) => e.key);
-    }
-    else
-        return value;
-}
 /**
  * МультиЛукап поле.
  */
 export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMulti, ref) => {
-
+    //const [isLoading, setIsLoading] = useState<boolean>(false);
     const [lookupVisible, setLookupVisible] = useState<boolean>(false);
-    const [multiLookupRows, setMultieLookupRows] = useState<IMultilookupRow[]>([]);
-    const [currentRow, setCurrentRow] = useState<any>(undefined);
+    const [multiLookupRows, setMultieLookupRows] = useState<ITableRow[]>([]);
+    const [currentRow, setCurrentRow] = useState<ITableRow>();
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
+    const [row, setRow] = useState<ITableRow>();
 
     const rowSelection = {
         preserveSelectedRowKeys: false,
         selectedRowKeys: selectedRowKeys,
-        onChange: (selectedRowKeys: any) => {
+        onChange: (selectedRowKeys: (string | number)[]) => {
             setSelectedRowKeys(selectedRowKeys);
         }
     };
 
+    console.log(rowSelection);
+
     let rules = [];
     if (props.required)
         rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
+    
 
-    useEffect(() => {
-        if (props.tableData) setMultieLookupRows(props.tableData);
-    }, [props.tableData]);
-
-    const DeleteMultiLookupLookupRows = () => {
-        let newMultiLookupRows = multiLookupRows.filter(({ key }) => !(~selectedRowKeys.indexOf(key)));
-        setMultieLookupRows(newMultiLookupRows);
-    };
-
+    /**
+     * Создание записи в таблице
+     */
     const newMultiLookupRow = () => {
         setLookupVisible(true);
+    };
+
+    /**
+     * Удаление записей в таблице
+     */
+    const DeleteMultiLookupLookupRows = () => {
+        let newMultiLookupRows = multiLookupRows.filter(({ key }) => key && !(~selectedRowKeys.indexOf(key)));
+        setMultieLookupRows(newMultiLookupRows);
     };
 
     const isDisplay = () => {
@@ -127,17 +123,6 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
         );
     };
 
-    ///////////////////////////////////////// select /////////////////////////////////////
-
-    // const onSelect = (record, selected) => {
-    //     const arr = selectedRowKeys.filter(item => item !== record.id);
-    //     if (selected) arr.push(record.id);
-    //     setSelectedRowKeys([...arr]);
-    //     setLastSelectedRowKey(record.id);
-    //   };
-
-    //////////////////////////////////////////////////////////////////////////////////////
-
     const menu = [
         {
             component: <PlusIcon />,
@@ -167,11 +152,13 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
             component: <ArrowVDownIcon />,
             title: 'ArrowVDownIcon',
             disabled: isDisplay(),
-            onClick: DeleteMultiLookupLookupRows,
+            onClick: newMultiLookupRow,
             hiddenTitle: true,
             key: 'ArrowVDownIcon'
         }
     ];
+
+    
 
     return (
         <div>
@@ -190,20 +177,27 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                                 borderBottom: '1px solid #E6E6E6'
                             }}
                         >
-                            <Badge count={multiLookupRows.length} type="text">Особенности</Badge>
+                            <Badge count={0} type="text">Особенности</Badge>
                         </div>
                     }
                 >
-                    <Table.Menu
-                        menu={getMenuItemsList(menu)}
-                    >
-                        <Table
-                            rowSelection={rowSelection}
-                            columns={props.tableColumns}
-                            dataSource={multiLookupRows}
-                            showHeader={false}
-                        />
-                    </Table.Menu>
+                    <Form.Item label={props.label} name={props.name} >
+                                <DisplayTable
+                                    tableMenu={getMenuItemsList(menu)}
+                                    rowSelection={rowSelection}
+                                    ref={ref}
+                                    columns={props.tableColumns}
+                                    selectedRow={row}
+                                    onChange={props.onChange}
+                                />
+
+                                {/* <Table
+                                    rowSelection={rowSelection}
+                                    columns={props.tableColumns}
+                                    dataSource={props.value}
+                                    showHeader={false}
+                                /> */}
+                    </Form.Item>
                 </Collapse.Panel>
             </Collapse>
 
@@ -211,20 +205,19 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                 visible={lookupVisible}
                 onCancel={() => setLookupVisible(false)}
                 onOk={() => {
-                        setMultieLookupRows([...multiLookupRows, currentRow]);
-                        setLookupVisible(false);
+                    setRow(currentRow);
+                    setLookupVisible(false);
                     }
                 }
             >
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <Form.Item label={props.label} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
                     <AjaxSelect
                         dataService={props.dataService}
                         ref={ref}
                         form={props.form}
-                        fieldName={props.name}
                         required={props.required}
+                        onChange={(row) => setCurrentRow(row)}
                         notFoundContent={props.notFoundContent}
-                        onChange={(row) => setCurrentRow({ key: row.key, name: row.value })}
                     />
                 </Form.Item>
             </Modal>
