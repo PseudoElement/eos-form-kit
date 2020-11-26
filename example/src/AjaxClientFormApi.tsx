@@ -113,7 +113,8 @@ const AjaxClientFormApi: FunctionComponent = () => {
                         }
                     }
                 }}
-                onFinish={async () => {
+                onFinish={async (values: any) => {
+                    console.log(values);
                     await Helper.sleepAsync(500);
                     formApi?.current?.hideLoading();
                 }}
