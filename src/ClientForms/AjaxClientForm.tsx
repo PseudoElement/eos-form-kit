@@ -52,6 +52,10 @@ export interface IForm {
     toolbar?: IToolBar;
     /**Метод вызовется когда нажали на кнопку "Сохранить". */
     onFinish?(data: Store): Promise<void>;
+    /**Позволяет переопределить действие генератора форм после удачного сохранения.*/
+    onFinishSucceeded?(): void;
+    /**Позволяет переопределить действие генератора форм после неудачного сохранения.*/
+    onFinishFailed?(): void;
     onRendered?(): void;
     /**Вызовется, когда какое-то поле было изменено. */
     onFieldsWasModified?: (wasModified: boolean) => void;
@@ -228,6 +232,36 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setLoadSchema(true);
     }, [props.mode]);
 
+    useEffect(() => {
+        if (loadSchema)
+            loadSchemaAsync(props.mode);
+    }, [loadSchema]);
+    useEffect(() => {
+        if (loadItem)
+            loadItemAsync();
+    }, [loadItem]);
+
+    const loadSchemaAsync = async function (mode: FormMode) {
+        setLoadSchema(false);
+        setLoadingSchema(true);
+        const context = await props?.dataService?.getContextAsync(mode);
+        setSchema(context);
+        if (props.onContextLoaded)
+            props.onContextLoaded(context);
+        setLoadItem(true);
+        setLoadingSchema(false);
+    }
+    const loadItemAsync = async function () {
+        setLoadItem(false);
+        setLoadingItem(true);
+        if (props.dataService.getInitialValuesAsync)
+            props.dataService.getInitialValuesAsync()
+                .then((initialValues: any) => {
+                    onLoadItemSucceeded(initialValues);
+                });
+        else
+            onLoadItemSucceeded({});
+    }
     const onLoadItemSucceeded = async function (data: any) {
         if (props.dataService.modifyContextAsync) {
             await props.dataService.modifyContextAsync(schema);
@@ -244,12 +278,31 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         };
         setClientFormProps(prps);
     };
-
-    if (loadSchema) {
-        loadSchemaAsync(props.mode);
+    const onFinish = async function (values: Store) {
+        setSpinLoading(true);
+        if (props.dataService.onValidateAsync) {
+            const isValid = await props.dataService.onValidateAsync(values);
+            if (isValid) {
+                await ExecuteOnFinish(values);
+            }
+            else {
+                setSpinLoading(false);
+            }
+        }
+        else {
+            await ExecuteOnFinish(values);
+        }
     }
-    if (loadItem) {
-        loadItemAsync();
+    const ExecuteOnFinish = async function (values: Store) {
+        if (props.dataService.onSaveAsync) {
+            await props.dataService.onSaveAsync(values)
+                .then(onSaveSucceeded)
+                .catch(onSaveFailed);
+        }
+        if (props.onFinish)
+            await props.onFinish(values)
+                .then(onSaveSucceeded)
+                .catch(onSaveFailed);
     }
 
     const [form] = RcForm.useForm();
@@ -268,77 +321,26 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             onEditClick={props.onEditClick}
             onCancelClick={props.onCancelClick}
             onFinish={onFinish}
+            onValuesChange={props.onValuesChange}
+            onFieldsWasModified={props.onFieldsWasModified}
             tabsComponent={clientFormProps.tabsComponent}
             rows={clientFormProps.rows}
             toolbar={props.toolbar}
             enableLeftIcon={props.enableLeftIcon}
             leftIconTitle={props.leftIconTitle}
             isHiddenLeftIcon={props.isHiddenLeftIcon}
-            onValuesChange={props.onValuesChange}
             disableHeader={props.disableHeader}
             disableEditButton={props.disableEditButton}
             disableCloseButton={props.disableCloseButton}
         />
     );
-
-    async function loadSchemaAsync(mode: FormMode) {
-        setLoadSchema(false);
-        setLoadingSchema(true);
-        const context = await props?.dataService?.getContextAsync(mode);
-        setSchema(context);
-        if (props.onContextLoaded)
-            props.onContextLoaded(context);
-        setLoadItem(true);
-        setLoadingSchema(false);
-    }
-    async function loadItemAsync() {
-        setLoadItem(false);
-        setLoadingItem(true);
-        // if (clientFormProps.mode === FormMode.display)
-        //     form?.resetFields();
-
-        if (props.dataService.getInitialValuesAsync)
-            props.dataService.getInitialValuesAsync()
-                .then((initialValues: any) => {
-                    onLoadItemSucceeded(initialValues);
-                });
-        else
-            onLoadItemSucceeded({});
-
-    }
-
-    async function onFinish(values: Store) {
-        setSpinLoading(true);
-        if (props.dataService.onValidateAsync) {
-            const isValid = await props.dataService.onValidateAsync(values);
-            if (isValid) {
-                await ExecuteOnFinish(values);
-            }
-            else {
-                setSpinLoading(false);
-            }
-        }
-        else {
-            await ExecuteOnFinish(values);
-        }
-    }
-    async function ExecuteOnFinish(values: Store) {
-        if (props.dataService.onSaveAsync) {
-            await props.dataService.onSaveAsync(values)
-                .then(onSaveSucceeded)
-                .catch(onSaveFailed);
-        }
-        if (props.onFinish)
-            await props.onFinish(values)
-                .then(onSaveSucceeded)
-                .catch(onSaveFailed);
-    }
-
     function onSaveSucceeded() {
-        setSpinLoading(false);
+        if (props.onFinishSucceeded)
+            props.onFinishSucceeded();
     }
     function onSaveFailed() {
-        setSpinLoading(false);
+        if (props.onFinishFailed)
+            props.onFinishFailed();
     }
     function hideLoading() {
         setSkeletonLoading(false);

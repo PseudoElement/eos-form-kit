@@ -1,6 +1,6 @@
 # eos-webui-formgen
 
-> Made with create-react-library
+> Generator for new, edit, disp forms
 
 [![NPM](https://img.shields.io/npm/v/eos-webui-formgen.svg)](https://www.npmjs.com/package/eos-webui-formgen) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -14,7 +14,7 @@ npm install @eos/form-generator
 
 ```tsx
 import React, { FunctionComponent, useRef } from 'react'
-import { SearchForm } from "eos-webui-formgen";
+import { SearchForm } from "@eos/form-generator";
 
 const SearchClientFormPage: FunctionComponent = () => {
     //  DI объект(провайер) выполняющий различные запросы получения данных, валидации и т.д.
