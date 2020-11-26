@@ -8,7 +8,7 @@ class Helper {
         const fields = [
             { 
                 "disabled": false, 
-                "label": null, 
+                "label": "Особенности", 
                 "name": "multiLookupTest", 
                 "required": false, 
                 "requiredMessage": "inventory:formErrors.keepPeriod", 

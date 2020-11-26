@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from '@eos/rc-controls';
-//import { IOptionItem } from "./AjaxSelect";
-
 export interface ITableRow {
     /**
      * Программное значение которое вернёт компонент.
@@ -19,21 +17,29 @@ export interface IDisplayInput {
 
     columns?: any;
 
-    rowSelection?: any;
-
     selectedRow?: ITableRow;
+
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
 
     tableMenu: any;
 }
 
-const DisplayTable = React.forwardRef<any, IDisplayInput>(({value, columns, rowSelection, selectedRow, onChange, tableMenu}) => {
+const DisplayTable = React.forwardRef<any, IDisplayInput>(({ value, columns, selectedRow, onChange, tableMenu }) => {
     const [dataSource, setDataSource] = useState<ITableRow[] | undefined>(value);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
 
-   useEffect(() => {
-    if (selectedRow && dataSource) setDataSource([selectedRow, ...dataSource]);
-}, [selectedRow]);
+    const rowSelection = {
+        preserveSelectedRowKeys: false,
+        selectedRowKeys: selectedRowKeys,
+        onChange: (selectedRowKeys: (string | number)[]) => {
+            setSelectedRowKeys(selectedRowKeys);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedRow && dataSource) setDataSource([selectedRow, ...dataSource]);
+    }, [selectedRow]);
 
     useEffect(() => {
         if (onChange) onChange(dataSource);
