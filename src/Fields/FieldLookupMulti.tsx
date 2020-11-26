@@ -1,21 +1,9 @@
 import React, { useState } from "react";
-import { Collapse, Menu, Modal, Form, PlusIcon, BinIcon, ArrowVDownIcon, ArrowVTopIcon, Badge } from "@eos/rc-controls";
+import { Collapse, Modal, Form, Badge } from "@eos/rc-controls";
 import IField from "./IField";
 import { Select as AjaxSelect, IDataService } from "./LookupComponents/AjaxSelect";
 import { FieldsHelper } from "./FieldsHelper";
-import { FormMode } from "../ClientForms/FormMode";
 import DisplayTable, { ITableRow } from "./LookupComponents/DisplayTable";
-
-export interface ITableMenuTool {
-    key: string | number;
-    component?: JSX.Element;
-    title?: string;
-    onClick?: () => void;
-    hiddenTitle?: boolean;
-    disabled?: boolean;
-    children?: ITableMenuTool[];
-    inMoreBlock?: boolean;
-};
 
 export interface ITableColumn {
     title: string,
@@ -67,83 +55,6 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
     if (props.required)
         rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
 
-    /**
-     * Создание записи в таблице
-     */
-    const newMultiLookupRow = () => {
-        setLookupVisible(true);
-    };
-
-    /**
-     * Удаление записей в таблице
-     */
-    const deleteMultiLookupLookupRows = () => {
-        // let deletedRows = multiLookupRows.filter(({ key }) => key && !(~selectedRowKeys.indexOf(key)));
-        // setMultieLookupRows(newMultiLookupRows);
-        console.log('deleted');
-    };
-
-    const isDisplay = () => {
-        return FormMode.display === props.mode;
-    };
-
-    const getMenuItemsList = (toolsList: ITableMenuTool[]) => {
-        return (
-            toolsList.map(({ component, onClick, disabled, title, children, key, hiddenTitle, inMoreBlock }) => {
-                if (children) return (
-                    <Menu.SubMenu
-                        icon={component}
-                        morePanelElement={inMoreBlock}
-                        title={hiddenTitle ? title : undefined}
-                        key={key}
-                        disabled={disabled}
-                    >
-                        {getMenuItemsList(children)}
-                    </Menu.SubMenu>
-                )
-                return (
-                    <Menu.Item title={hiddenTitle ? title : undefined} key={key} onClick={onClick} disabled={disabled} morePanelElement={inMoreBlock}>
-                        {component}
-                        {!hiddenTitle && <span className="costil-margin" style={{ marginLeft: 1 }}>{title}</span>}
-                    </Menu.Item>
-                );
-            })
-        );
-    };
-
-    const menu = [
-        {
-            component: <PlusIcon />,
-            title: 'PlusIcon',
-            disabled: isDisplay(),
-            onClick: newMultiLookupRow,
-            hiddenTitle: true,
-            key: 'PlusIcon'
-        },
-        {
-            component: <BinIcon />,
-            title: 'BinIcon',
-            disabled: isDisplay(),
-            onClick: deleteMultiLookupLookupRows,
-            hiddenTitle: true,
-            key: 'BinIcon'
-        },
-        {
-            component: <ArrowVTopIcon />,
-            title: 'ArrowVTopIcon',
-            disabled: isDisplay(),
-            hiddenTitle: true,
-            key: 'ArrowVTopIcon'
-        },
-        {
-            component: <ArrowVDownIcon />,
-            title: 'ArrowVDownIcon',
-            disabled: isDisplay(),
-            hiddenTitle: true,
-            key: 'ArrowVDownIcon'
-        }
-    ];
-
     return (
         <div>
             <Collapse
@@ -167,11 +78,12 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                 >
                     <Form.Item label={props.label} name={props.name} >
                         <DisplayTable
-                            tableMenu={getMenuItemsList(menu)}
                             ref={ref}
                             columns={props.tableColumns}
                             selectedRow={row}
                             onChange={props.onChange}
+                            onModalVisible={() => setLookupVisible(true)}
+                            mode={props.mode}
                         />
                     </Form.Item>
                 </Collapse.Panel>
