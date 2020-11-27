@@ -1,6 +1,6 @@
 import React, {
     forwardRef, ReactNode, useEffect, useImperativeHandle,
-    // useMemo,
+    useMemo,
     useRef, useState
 } from "react";
 import { Form as RcForm, Row, Col } from "@eos/rc-controls";
@@ -279,10 +279,10 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             </Row>
         </SpinMaximized>;
 
-    // const memoizedElements = useMemo(() => {
-    //     return (elements)
-    // }, [props.initialValues, props.mode, props.isSkeletonLoading, props.isSpinLoading, rcFormDisplayStyle]);
-    const memoizedElements = elements;
+    const memoizedElements = useMemo(() => {
+        return (elements)
+    }, [props.initialValues, props.mode, props.isSkeletonLoading, props.isSpinLoading, rcFormDisplayStyle]);
+    // const memoizedElements = elements;
 
     // return (<FormContext.Provider value={formContext}>{memoizedElements}</FormContext.Provider>);
     return memoizedElements;
