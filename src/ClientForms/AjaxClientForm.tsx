@@ -1,5 +1,5 @@
 import { Form as RcForm } from "@eos/rc-controls";
-import React, { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Form as ClientForm, IFormApi as IClientFormApi } from "./ClientForm";
 import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
@@ -216,7 +216,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         return api;
     });
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (isLoadingSchema || isLoadingItem) {
             showLoading();
         }
