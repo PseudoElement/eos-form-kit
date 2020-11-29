@@ -9,6 +9,7 @@ import AjaxClientFormPage2 from "./AjaxClientFormPage2";
 import AjaxClientFormApi from "./AjaxClientFormApi";
 import NotFoundPage from "./NotFoundPage";
 import { ConfigProvider, Menu } from 'eos-webui-controls';
+import ArcPage from './Pages/ArcPage';
 
 interface IMenuItem {
     title: string;
@@ -21,6 +22,21 @@ function getArchivist() {
             title: "Создание с вкладками",
             key: 'formNew',
             url: '/form/new'
+        },
+        {
+            title: "АРК new",
+            key: 'arkNew',
+            url: '/arc/new'
+        },
+        {
+            title: "АРК edit",
+            key: 'arkEdit',
+            url: '/arc/edit/1'
+        },
+        {
+            title: "АРК disp",
+            key: 'arkDisp',
+            url: '/arc/disp/1'
         },
         {
             title: "Изменение 1 с вкладками",
@@ -81,6 +97,7 @@ ReactDOM.render(
             </Menu>
             <Switch>
                 <Route strict path="/search" component={SearchClientFormPage} />
+                <Route exact path="/arc/:mode/:id?" component={ArcPage} />
                 <Route exact path="/form/:mode/:id?" component={AjaxClientFormPage} />
                 <Route exact path="/form2/:mode/:id?" component={AjaxClientFormPage2} />
                 <Route exact path="/form3/:mode/:id?" component={AjaxClientFormApi} />
