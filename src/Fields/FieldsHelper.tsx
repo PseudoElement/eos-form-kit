@@ -10,7 +10,7 @@ const INTEGER_RULE_TYPE = "integer";
 class FieldsHelper {
     /**Возвращает правило обязательности поля. */
     static getRequiredRule(requiredErrorText?: string): Rule {
-        const rule: Rule = { required: false, message: requiredErrorText };
+        const rule: Rule = { required: true, message: requiredErrorText };
         return rule;
     }
     /**Возвращает правило целочисленного поля. */

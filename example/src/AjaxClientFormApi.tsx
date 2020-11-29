@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef } from 'react'
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react'
 
 
 import "eos-webui-controls/dist/main.css";
@@ -88,6 +88,16 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onSetFiveCountClick={() => { formApi?.current?.setTabCount("0", 5); }}
                 onClearCountClick={() => { formApi?.current?.setTabCount("0"); }}
                 onSetZeroCountClick={() => { formApi?.current?.setTabCount("0", 0); }}
+                onDisableFieldsClick={() => {
+                    const fields = Helper.getFields(mode);
+                    for (let field of fields)
+                        formApi?.current?.disableField(field.name);
+                }}
+                onEnableFieldsClick={() => {
+                    const fields = Helper.getFields(mode);
+                    for (let field of fields)
+                        formApi?.current?.enableField(field.name);
+                }}
             />
             <AjaxClientForm.Form
                 ref={formApi}
@@ -101,15 +111,23 @@ const AjaxClientFormApi: FunctionComponent = () => {
                     if (changedValues && changedValues.E_DOCUMENT !== undefined) {
                         if (changedValues.E_DOCUMENT === true) {
                             formApi?.current?.showLeftIcon();
+                            formApi?.current?.disableField("ind");
                             formApi?.current?.disableField("name");
                             formApi?.current?.disableField("volumeNum");
                             formApi?.current?.disableField("keepCategory");
+                            // const fields = Helper.getFields(FormMode.display);
+                            // for (let field of fields)
+                            //     formApi?.current?.disableField(field.name);
                         }
                         else {
                             formApi?.current?.hideLeftIcon();
+                            formApi?.current?.enableField("ind");
                             formApi?.current?.enableField("name");
                             formApi?.current?.enableField("volumeNum");
                             formApi?.current?.enableField("keepCategory");
+                            // const fields = Helper.getFields(FormMode.display);
+                            // for (let field of fields)
+                            //     formApi?.current?.enableField(field.name);
                         }
                     }
                 }}
@@ -144,9 +162,14 @@ interface IButtonsPanel {
     onSetFiveCountClick?(): void;
     onClearCountClick?(): void;
     onSetZeroCountClick?(): void;
+
+    onDisableFieldsClick?(): void;
+    onEnableFieldsClick?(): void;
 }
 
 const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) => {
+    const [disabled, setDisabled] = useState(false);
+
     return (<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Button onClick={props.onSkeletonLoadingClick}>Скелетон</Button>
         <Button onClick={props.onTripleSkeletonLoadingClick}>3 скелетона</Button>
@@ -159,5 +182,20 @@ const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) =>
         <Button onClick={props.onSetFiveCountClick}>SetCount(5)</Button>
         <Button onClick={props.onClearCountClick}>SetCount(undefined)</Button>
         <Button onClick={props.onSetZeroCountClick}>SetCount(0)</Button>
+        <Button onClick={() => {
+            if (disabled) {
+                if (props.onEnableFieldsClick) {
+                    props.onEnableFieldsClick();
+                }
+            }
+            else {
+
+                if (props.onDisableFieldsClick) {
+                    props.onDisableFieldsClick();
+                }
+            }
+            setDisabled(!disabled);
+        }}>{disabled ? "Enable fields" : "Disable fields"}</Button>
+
     </div>);
 }

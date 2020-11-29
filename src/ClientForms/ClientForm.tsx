@@ -1,5 +1,5 @@
 import React, {
-    forwardRef, ReactNode, useEffect, useImperativeHandle,
+    forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle,
     useMemo,
     useRef, useState
 } from "react";
@@ -13,7 +13,7 @@ import FormRows, { IFormRows } from "./FormRows";
 import FormTitle, { IFormTitleApi } from "./Title/FormTitle";
 import ToolBar, { IToolBar } from "./ToolBar/ToolBar";
 import Animate from "rc-animate";
-// import { FormContext, defaultContext } from "../Context/Context";
+import { FormContext, IFormContext, IField } from "../Context/Context";
 
 /**API для работы с клиентской формой. */
 export interface IFormApi {
@@ -132,7 +132,46 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
     const [rcFormDisplayStyle, setRcFormDisplayStyle] = useState<"none" | "">(props.initialShownForm ? "" : "none");
-    // const [formContext, setFormContext] = useState(defaultContext);
+    const [formContext, setFormContext] = useState<IFormContext>({
+        disableField: useCallback((name: string) => {
+            if (!formContext.fields)
+                formContext.fields = [];
+            let field: IField | null = null;
+            for (let i = 0; i < formContext.fields.length; i++) {
+                if (formContext.fields[i].name === name) {
+                    field = formContext.fields[i];
+                    break;
+                }
+            }
+            if (!field) {
+                field = { name: name };
+                formContext.fields.push(field);
+            }
+
+            field.disabled = true;
+            setFormContext({ ...formContext });
+
+        }, []),
+        enableField: useCallback((name: string) => {
+            if (!formContext.fields)
+                formContext.fields = [];
+            let field: IField | null = null;
+            for (let i = 0; i < formContext.fields.length; i++) {
+                if (formContext.fields[i].name === name) {
+                    field = formContext.fields[i];
+                    break;
+                }
+            }
+            if (!field) {
+                field = { name: name };
+                formContext.fields.push(field);
+            }
+
+            field.disabled = false;
+            setFormContext({ ...formContext });
+
+        }, []),
+    });
 
     const selfRef = useRef();
 
@@ -169,11 +208,13 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                 // setInitialValues(fieldValues);
                 // props?.form?.setFieldsValue(fieldValues);
             },
-            disableField() {
+            disableField(name: string) {
+                formContext.disableField(name);
                 // formRowsApi?.current?.disableField(name);
                 // clientTabsApi?.current?.disableField(name);
             },
-            enableField() {
+            enableField(name: string) {
+                formContext.enableField(name);
                 // formRowsApi?.current?.enableField(name);
                 // clientTabsApi?.current?.enableField(name);
             },
@@ -284,8 +325,8 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     }, [props.initialValues, props.mode, props.isSkeletonLoading, props.isSpinLoading, rcFormDisplayStyle]);
     // const memoizedElements = elements;
 
-    // return (<FormContext.Provider value={formContext}>{memoizedElements}</FormContext.Provider>);
-    return memoizedElements;
+    return (<FormContext.Provider value={formContext}>{memoizedElements}</FormContext.Provider>);
+    // return memoizedElements;
 
     function onCancelClick(e: Event) {
         if (mode !== FormMode.edit) {

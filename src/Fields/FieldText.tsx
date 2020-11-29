@@ -1,8 +1,9 @@
-import React, { ReactElement, ReactNode } from "react";
+import React, { ReactElement } from "react";
 import { Form, Input } from "@eos/rc-controls";
-import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
+import { Rule } from "rc-field-form/lib/interface"
+import { BaseField } from "./BaseField";
 
 /**
  * Настройки текстового поля.
@@ -22,23 +23,30 @@ export interface IText extends IField {
  * Текстовое поле.
  */
 export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
-    let rules = [];
-    if (props.required)
-        rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
-    const suffix: ReactNode | undefined = props.additionalText != undefined && props.additionalText != null && props.additionalText != "" ?
-        FieldsHelper.getInputSuffix(props.additionalText, props.icon) :
-        undefined;
+    return (<BaseField
+        ref={ref}
+        field={props}
+        getNewField={getNew}
+        getEditField={getEdit}
+        getDisplayField={getDisplay}
+    />)
 
-    switch (props.mode) {
-        case FormMode.display:
-            return FieldsHelper.getDisplayField(props.label, props.name, props.value, suffix);
-        case FormMode.new:
-        case FormMode.edit:
-        default:
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <Input value={props.value} suffix={suffix} style={{ width: "100%" }} ref={ref} required={props.required} allowClear={props.allowClear} maxLength={props.maxLength} />
-                </Form.Item>
-            );
+    function getSuffix(props: IText) {
+        return props.additionalText != undefined && props.additionalText != null && props.additionalText != "" ?
+            FieldsHelper.getInputSuffix(props.additionalText, props.icon) :
+            undefined;
+    }
+    function getNew(props: IText, ref: any, rules?: Rule[]) {
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <Input value={props.value} suffix={getSuffix(props)} style={{ width: "100%" }} ref={ref} required={props.required} allowClear={props.allowClear} maxLength={props.maxLength} />
+            </Form.Item>
+        );
+    }
+    function getEdit(props: IText, ref: any, rules?: Rule[]) {
+        return getNew(props, ref, rules);
+    }
+    function getDisplay(props: IText) {
+        return FieldsHelper.getDisplayField(props.label, props.name, props.value, getSuffix(props));
     }
 });

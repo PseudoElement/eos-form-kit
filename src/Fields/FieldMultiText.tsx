@@ -1,8 +1,8 @@
 import React from "react";
 import { Form, TextArea } from "@eos/rc-controls";
-import { FormMode } from "../ClientForms/FormMode";
-import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
+import { BaseField } from "./BaseField";
+import { Rule } from "rc-field-form/lib/interface";
 
 /**Настройки мульти текстового поля. */
 export interface IMultiText extends IField {
@@ -15,26 +15,31 @@ export interface IMultiText extends IField {
 /**
  * Мульти текстовое поле.
  */
-export const MultiText = React.forwardRef<any, IMultiText>((props: IMultiText, ref) => {
+export const MultiText = React.forwardRef<any, IMultiText>((props: IMultiText, ref) => {   
     const DEFAULT_ROWS = 6;
+    return (<BaseField
+        ref={ref}
+        field={props}
+        getNewField={getNew}
+        getEditField={getEdit}
+        getDisplayField={getDisplay}
+    />);
 
-    let rules = [];
-    if (props.required)
-        rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
-    switch (props.mode) {
-        case FormMode.display:
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }}>
-                    <TextArea style={{ width: "100%" }} ref={ref} rows={props.rows ?? DEFAULT_ROWS} readOnly />
-                </Form.Item>
-            );
-        case FormMode.new:
-        case FormMode.edit:
-        default:
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <TextArea style={{ width: "100%" }} ref={ref} required={props.required} rows={props.rows ?? DEFAULT_ROWS} maxLength={props.maxLength} />
-                </Form.Item>
-            );
+    function getNew(props: IMultiText, ref: any, rules?: Rule[]) {
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <TextArea style={{ width: "100%" }} ref={ref} required={props.required} rows={props.rows ?? DEFAULT_ROWS} maxLength={props.maxLength} />
+            </Form.Item>
+        );
+    }
+    function getEdit(props: IMultiText, ref: any, rules?: Rule[]) {
+        return getNew(props, ref, rules);
+    }
+    function getDisplay(props: IMultiText, ref: any, rules?: Rule[]) {
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <TextArea style={{ width: "100%" }} ref={ref} rows={props.rows ?? DEFAULT_ROWS} readOnly />
+            </Form.Item>
+        );
     }
 });

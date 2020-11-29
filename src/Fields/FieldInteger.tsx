@@ -1,8 +1,9 @@
 import React from "react";
 import { Form, Number } from "@eos/rc-controls";
-import { FormMode } from "../ClientForms/FormMode";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
+import { Rule } from "rc-field-form/lib/interface"
+import { BaseField } from "./BaseField";
 
 /**Настройки целочисленного поля. */
 export interface IInteger extends IField {
@@ -20,23 +21,27 @@ export interface IInteger extends IField {
  * Целочисленное поле.
  */
 export const Integer = React.forwardRef<any, IInteger>((props: IInteger, ref) => {
-    let rules = [];
-    if (props.required)
-        rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
+    return (<BaseField
+        ref={ref}
+        field={props}
+        getNewField={getNew}
+        getEditField={getEdit}
+        getDisplayField={getDisplay}
+        rules={[FieldsHelper.getIntegerRule()]}
+    />);
 
-    rules.push(FieldsHelper.getIntegerRule());
-
-    switch (props.mode) {
-        case FormMode.display:
-            return FieldsHelper.getDisplayField(props.label, props.name);
-        case FormMode.new:
-        case FormMode.edit:
-        default:
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <Number ref={ref} style={{ width: "100%" }} required={props.required} defaultValue={props.defaultValue} min={props.min} max={props.max} counter={props.showCounter} />
-                </Form.Item>
-            );
+    function getNew(props: IInteger, ref: any, rules?: Rule[]) {
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <Number ref={ref} style={{ width: "100%" }} required={props.required} defaultValue={props.defaultValue} min={props.min} max={props.max} counter={props.showCounter} />
+            </Form.Item>
+        );
+    }
+    function getEdit(props: IInteger, ref: any, rules?: Rule[]) {
+        return getNew(props, ref, rules);
+    }
+    function getDisplay(props: IInteger) {
+        return FieldsHelper.getDisplayField(props.label, props.name);
     }
 });
 
