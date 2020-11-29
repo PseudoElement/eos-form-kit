@@ -71,6 +71,24 @@ const ArcPage: FunctionComponent = () => {
                 onEditClick={() => {
                     history.push("/arc/edit/1");
                 }}
+                onValuesChange={(changedValues: any) => {
+                    if (changedValues) {
+                        if (changedValues[Fields.E_DOCUMENT] !== undefined) {
+                            if (changedValues[Fields.E_DOCUMENT] === true) {
+                                formApi?.current?.showLeftIcon();
+                                formApi?.current?.disableField(Fields.SHEET_COUNT);
+                                formApi?.current?.enableField(Fields.FILESIZE);
+                            }
+                            else {
+                                formApi?.current?.hideLeftIcon();
+                                formApi?.current?.enableField(Fields.SHEET_COUNT);
+                                formApi?.current?.disableField(Fields.FILESIZE);
+                            }
+                        }
+
+                    }
+                }}
+
             />
         </React.Fragment>
     );

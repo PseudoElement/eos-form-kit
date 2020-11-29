@@ -3,7 +3,8 @@ import React from "react";
 import moment from 'moment';
 import IField from "./IField";
 import { FormMode } from "../ClientForms/FormMode";
-import { FieldsHelper } from "./FieldsHelper";
+import { BaseField } from "./BaseField";
+import { Rule } from "rc-field-form/lib/interface";
 
 
 const DATE_MOMENT_PATTERN = "DD.MM.yyyy";
@@ -29,79 +30,78 @@ export enum DateTimeMode {
 
 /**Поле типа "Дата". */
 export const DateTime = React.forwardRef<any, IDateTime>((props: IDateTime, ref) => {
-    let rules = [];
-    if (props.required)
-        rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
-    switch (props.mode) {
-        case FormMode.display:
-            // return FieldsHelper.getDisplayField(props.label, props.name);
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ textTransform: "uppercase", marginBottom: "0px" }} rules={rules} >
-                    <DatePicker
-                        disabled={true}
-                        inputReadOnly={true}
-                        format={props.dateTimeMode !== DateTimeMode.year ? DATE_MOMENT_PATTERN : undefined}
-                        ref={ref}
-                        picker={getPickerMode(props.dateTimeMode)}
-                        required={props.required}
-                        style={{ width: "100%" }}
-                        disabledDate={(e) => {
-                            if (props.minDate || props.maxDate) {
-                                if (props.dateTimeMode === DateTimeMode.year) {
-                                    const year = e.year();
-                                    if (props.minDate && props.maxDate)
-                                        return year < props.minDate || year > props.maxDate;
-                                    else if (props.minDate)
-                                        return year < props.minDate;
-                                    else if (props.maxDate)
-                                        return year > props.maxDate;
-                                }
-                                else {
+    return (<BaseField
+        ref={ref}
+        field={props}
+        getNewField={getNew}
+        getEditField={getEdit}
+        getDisplayField={getDisplay}
+    />);
 
-                                }
+    function getNew(props: IDateTime, ref: any, rules?: Rule[]) {
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules} >
+                <DatePicker
+                    format={props.dateTimeMode !== DateTimeMode.year ? DATE_MOMENT_PATTERN : undefined}
+                    ref={ref}
+                    picker={getPickerMode(props.dateTimeMode)}
+                    required={props.required}
+                    style={{ width: "100%" }}
+                    disabledDate={(e) => {
+                        if (props.minDate || props.maxDate) {
+                            if (props.dateTimeMode === DateTimeMode.year) {
+                                const year = e.year();
+                                if (props.minDate && props.maxDate)
+                                    return year < props.minDate || year > props.maxDate;
+                                else if (props.minDate)
+                                    return year < props.minDate;
+                                else if (props.maxDate)
+                                    return year > props.maxDate;
                             }
-                            return false;
+                            else {
 
-                            // const year = e.year();
-                            // return year < minStartDate || year > maxStartDate;
-                        }}
-                    />
-                </Form.Item>
-            );
-        case FormMode.new:
-        case FormMode.edit:
-        default:
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules} >
-                    <DatePicker
-                        format={props.dateTimeMode !== DateTimeMode.year ? DATE_MOMENT_PATTERN : undefined}
-                        ref={ref}
-                        picker={getPickerMode(props.dateTimeMode)}
-                        required={props.required}
-                        style={{ width: "100%" }}
-                        disabledDate={(e) => {
-                            if (props.minDate || props.maxDate) {
-                                if (props.dateTimeMode === DateTimeMode.year) {
-                                    const year = e.year();
-                                    if (props.minDate && props.maxDate)
-                                        return year < props.minDate || year > props.maxDate;
-                                    else if (props.minDate)
-                                        return year < props.minDate;
-                                    else if (props.maxDate)
-                                        return year > props.maxDate;
-                                }
-                                else {
-
-                                }
                             }
-                            return false;
+                        }
+                        return false;
+                    }}
+                />
+            </Form.Item>
+        );
+    }
+    function getEdit(props: IDateTime, ref: any, rules?: Rule[]) {
+        return getNew(props, ref, rules);
+    }
+    function getDisplay(props: IDateTime, ref: any, rules?: Rule[]) {
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ textTransform: "uppercase", marginBottom: "0px" }} rules={rules} >
+                <DatePicker
+                    disabled={true}
+                    inputReadOnly={true}
+                    format={props.dateTimeMode !== DateTimeMode.year ? DATE_MOMENT_PATTERN : undefined}
+                    ref={ref}
+                    picker={getPickerMode(props.dateTimeMode)}
+                    required={props.required}
+                    style={{ width: "100%" }}
+                    disabledDate={(e) => {
+                        if (props.minDate || props.maxDate) {
+                            if (props.dateTimeMode === DateTimeMode.year) {
+                                const year = e.year();
+                                if (props.minDate && props.maxDate)
+                                    return year < props.minDate || year > props.maxDate;
+                                else if (props.minDate)
+                                    return year < props.minDate;
+                                else if (props.maxDate)
+                                    return year > props.maxDate;
+                            }
+                            else {
 
-                            // const year = e.year();
-                            // return year < minStartDate || year > maxStartDate;
-                        }}
-                    />
-                </Form.Item>
-            );
+                            }
+                        }
+                        return false;
+                    }}
+                />
+            </Form.Item>
+        );
     }
 });
 
@@ -118,34 +118,6 @@ export function getFieldValueForClientRender(mode: FormMode, value?: any, dateTi
 
 }
 
-// function parseDateForDispForm(value?: any, dateTimeMode?: DateTimeMode): string {
-//     if (dateTimeMode == DateTimeMode.year) {
-//         let dateObject = null;
-//         if (moment.isMoment(value)) {
-//             dateObject = dateObject = moment(value);
-//             debugger;
-//             return dateObject.year().toString();
-//         }
-//         else {
-//             return value ?? undefined;
-//         }
-//     }
-//     else {
-//         if (value) {
-//             let dateObject = null;
-//             if (moment.isMoment(value)) {
-//                 dateObject = value as moment.Moment;
-//             }
-//             else {
-//                 dateObject = moment(value);
-//             }
-//             return dateObject.format(DATE_MOMENT_PATTERN);
-//         }
-//         else {
-//             return "";
-//         }
-//     }
-// }
 function parseDateForEditForm(value?: string | moment.Moment | number, dateTimeMode?: DateTimeMode): moment.Moment | undefined {
     if (value) {
         if (dateTimeMode == DateTimeMode.year) {
