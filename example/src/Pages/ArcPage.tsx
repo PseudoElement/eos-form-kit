@@ -61,8 +61,10 @@ const ArcPage: FunctionComponent = () => {
                         case FormMode.edit:
                             history.push("/arc/disp/1");
                             history.push("/arc/disp/1");
+                            break;
                         case FormMode.display:
                             history.push("/arc/disp/1");
+                            break;
 
                     }
                 }}
