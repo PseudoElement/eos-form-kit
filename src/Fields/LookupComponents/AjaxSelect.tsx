@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Select as RcSelect, Spin } from "@eos/rc-controls";
 
 /**
@@ -90,7 +90,9 @@ export const Select = React.forwardRef<any, ISelect>(({
      * Объект значения
      */
     const [currentValue, setCurrentValue] = useState<IOptionItem | undefined>(value);
-
+    useEffect(() => {
+        setCurrentValue(value);
+    }, [value])
     /**
      * Объект индикатор загрузки
      */

@@ -20,22 +20,18 @@ export interface IBaseField {
 export const BaseField = React.forwardRef<any, IBaseField>((props: IBaseField, ref: any) => {
     const context = useContext(FormContext);
     const [mode, setMode] = useState(props.field.mode);
+    // useEffect(() => {
+    //     const formMode: FormMode = getFormMode();
+    //     setMode(formMode);
+    // }, [props.field.mode]);
+    // useEffect(() => {
+    //     const formMode: FormMode = getFormMode();
+    //     setMode(formMode);
+    // }, [context]);
     useEffect(() => {
-        setMode(props.field.mode);
-    }, [props.field.mode]);
-    useEffect(() => {
-        if (context.fields) {
-            for (let field of context.fields) {
-                if (field.name === props.field.name) {
-                    if (field.disabled)
-                        setMode(FormMode.display);
-                    else
-                        setMode(props.field.mode);
-                    break;
-                }
-            }
-        }
-    }, [context]);
+        const formMode: FormMode = getFormMode();
+        setMode(formMode);
+    }, [context, props.field.mode]);
 
     let rules: Rule[] = [];
     if (props.field.required)
@@ -56,4 +52,17 @@ export const BaseField = React.forwardRef<any, IBaseField>((props: IBaseField, r
         }
     }, [mode]);
 
+    function getFormMode() {
+        if (context.fields) {
+            for (let field of context.fields) {
+                if (field.name === props.field.name) {
+                    if (field.disabled)
+                        return FormMode.display;
+                    else
+                        return props.field.mode;
+                }
+            }
+        }
+        return props.field.mode;
+    }
 });
