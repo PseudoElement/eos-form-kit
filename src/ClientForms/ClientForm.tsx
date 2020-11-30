@@ -174,8 +174,27 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         }, []),
         reset: useCallback(() => {
             formContext.fields = [];
+            formContext.header = undefined;
             setFormContext({ ...formContext });
-        }, [])
+        }, []),
+        hideLeftIcon: useCallback(() => {
+            if (!formContext.header)
+                formContext.header = {};
+            formContext.header.isLeftIconVisible = false;
+            setFormContext({ ...formContext });
+        }, []),
+        showLeftIcon: useCallback(() => {
+            if (!formContext.header)
+                formContext.header = {};
+            formContext.header.isLeftIconVisible = true;
+            setFormContext({ ...formContext });
+        }, []),
+        setLeftIconTitle: useCallback((title?: string) => {
+            if (!formContext.header)
+                formContext.header = {};
+            formContext.header.leftIconTitle = title;
+            setFormContext({ ...formContext });
+        }, []),
     });
 
     const selfRef = useRef();
@@ -196,10 +215,12 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                 clientTabsApi.current?.setTabCount(key, count);
             },
             showLeftIcon() {
-                formTitleApi?.current?.showLeftIcon();
+                // formTitleApi?.current?.showLeftIcon();
+                formContext.showLeftIcon();
             },
             hideLeftIcon() {
-                formTitleApi?.current?.hideLeftIcon();
+                // formTitleApi?.current?.hideLeftIcon();
+                formContext.hideLeftIcon();
             },
             setTitle(title?: string) {
                 formTitleApi?.current?.setTitle(title);
@@ -227,7 +248,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                 // return rcFormRef?.current?.getFieldsValue() || {};
                 return {};
             },
-            reset(){
+            reset() {
                 formContext?.reset();
             }
         }

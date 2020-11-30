@@ -1,6 +1,7 @@
-import React, { forwardRef, FunctionComponent, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, FunctionComponent, useContext, useEffect, useImperativeHandle, useRef, useState } from "react";
 import Animate from "rc-animate";
 import { EMailIcon } from "@eos/rc-controls";
+import { FormContext } from "../../Context/Context";
 
 /**API компонента отображения иконки перед наименование формы. */
 export interface ITitleIconApi {
@@ -19,6 +20,7 @@ export interface ITitleIcon {
 
 /**Компонент отображения иконки перед наименование формы. */
 const TitleIcon = forwardRef<any, ITitleIcon>((props: ITitleIcon, ref: any) => {
+    const context = useContext(FormContext);
     const [isIconVisible, setIconVisible] = useState(props.isHiddenLeftIcon === true ? false : true);
 
     const selfRef = useRef();
@@ -36,12 +38,26 @@ const TitleIcon = forwardRef<any, ITitleIcon>((props: ITitleIcon, ref: any) => {
         return api;
     });
 
+    useEffect(() => {
+        if (context.header) {
+            if (context.header.isLeftIconVisible === true)
+                setIconVisible(true);
+            else if (context.header.isLeftIconVisible === false)
+                setIconVisible(false);
+            else
+                setIconVisible(props.isHiddenLeftIcon === true ? false : true)
+        }
+        else {
+            setIconVisible(props.isHiddenLeftIcon === true ? false : true)
+        }
+    }, [context, props.isHiddenLeftIcon]);
+
     return (
         <React.Fragment>
             {props.enableLeftIcon &&
                 <span title={props.leftIconTitle}>
                     <Animate showProp="visibility" transitionName="fade">
-                          <AnimatedEMailIcon key="1" visibility={isIconVisible} />
+                        <AnimatedEMailIcon key="1" visibility={isIconVisible} />
                     </Animate>
                 </span>
             }
