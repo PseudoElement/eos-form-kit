@@ -51,6 +51,7 @@ export interface IFormApi {
     disableField(name: string): void;
     enableField(name: string): void;
     getFieldsValue(): Store;
+    reset(): void;
 }
 
 /**Настройки клиентской формы. */
@@ -171,6 +172,10 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             setFormContext({ ...formContext });
 
         }, []),
+        reset: useCallback(() => {
+            formContext.fields = [];
+            setFormContext({ ...formContext });
+        }, [])
     });
 
     const selfRef = useRef();
@@ -221,6 +226,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             getFieldsValue(): Store {
                 // return rcFormRef?.current?.getFieldsValue() || {};
                 return {};
+            },
+            reset(){
+                formContext?.reset();
             }
         }
         return api;

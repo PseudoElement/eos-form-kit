@@ -172,9 +172,11 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
                 clientFormApi.current?.setTabCount(key, count);
             },
             reload() {
+                clientFormApi?.current?.reset();
                 setLoadSchema(true);
             },
             reloadItem() {
+                clientFormApi?.current?.reset();
                 if (schema) {
                     setLoadItem(true);
                 }
@@ -229,6 +231,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     }, [isFirstLoading, isLoadingSchema, isLoadingItem]);
 
     useEffect(() => {
+        clientFormApi?.current?.reset();
         setLoadSchema(true);
     }, [props.mode]);
 

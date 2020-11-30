@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react'
+import React, { FunctionComponent, useEffect, useRef } from 'react'
 
 
 import "eos-webui-controls/dist/main.css";
@@ -168,8 +168,6 @@ interface IButtonsPanel {
 }
 
 const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) => {
-    const [disabled, setDisabled] = useState(false);
-
     return (<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Button onClick={props.onSkeletonLoadingClick}>Скелетон</Button>
         <Button onClick={props.onTripleSkeletonLoadingClick}>3 скелетона</Button>
@@ -182,20 +180,8 @@ const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) =>
         <Button onClick={props.onSetFiveCountClick}>SetCount(5)</Button>
         <Button onClick={props.onClearCountClick}>SetCount(undefined)</Button>
         <Button onClick={props.onSetZeroCountClick}>SetCount(0)</Button>
-        <Button onClick={() => {
-            if (disabled) {
-                if (props.onEnableFieldsClick) {
-                    props.onEnableFieldsClick();
-                }
-            }
-            else {
-
-                if (props.onDisableFieldsClick) {
-                    props.onDisableFieldsClick();
-                }
-            }
-            setDisabled(!disabled);
-        }}>{disabled ? "Enable fields" : "Disable fields"}</Button>
+        <Button onClick={props.onEnableFieldsClick}>Enable fields</Button>
+        <Button onClick={props.onDisableFieldsClick}>Disable fields</Button>
 
     </div>);
 }

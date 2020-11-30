@@ -6,6 +6,7 @@ export interface IFormContext {
 
     disableField(name: string): void;
     enableField(name: string): void;
+    reset(): void;
 }
 
 export interface IField {
@@ -16,5 +17,6 @@ export interface IField {
 export const defaultContext: IFormContext = { 
     disableField(){},
     enableField(){},
+    reset(){}
  };
 export const FormContext = React.createContext(defaultContext);
