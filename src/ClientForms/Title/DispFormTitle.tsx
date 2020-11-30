@@ -1,5 +1,5 @@
 import { Button, CloseIcon, Col, Divider, EditIcon, Row, Space, Typography } from "@eos/rc-controls";
-import React, { forwardRef, useImperativeHandle, useRef } from "react";
+import React, { forwardRef, ReactNode, useImperativeHandle, useRef } from "react";
 import TitleIcon, { ITitleIconApi } from "./TitleIcon";
 import TitleText, { ITitleTextApi } from "./TitleText";
 import { IFormTitleApi } from "./FormTitle";
@@ -21,6 +21,8 @@ export interface IDispFormTitle {
     leftIconTitle?: string;
     disableEditButton?: boolean;
     disableCloseButton?: boolean;
+    /**Дополнительные кнопки между заголовком и кнопкой закрытия формы просмотра. */
+    additionalButtons?: ReactNode | ReactNode[];
 }
 
 /**Компонент отображения заголовка формы просмотра. */
@@ -57,7 +59,7 @@ const DispFormTitle = forwardRef<any, IDispFormTitle>((props: IDispFormTitle, re
                 </Col>
                 <Col flex="0 0 auto">
                     <Space size="small" direction="horizontal">
-                        {/* {(<SimplePagination actionTarget={props.actionTarget} />)} */}
+                        {props.additionalButtons && props.additionalButtons}
                         {!props.disableEditButton &&
                             <Button onClick={props.onEditClick} type="link">
                                 <EditIcon />

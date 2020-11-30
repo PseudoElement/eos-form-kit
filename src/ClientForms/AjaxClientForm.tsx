@@ -1,5 +1,5 @@
 import { Form as RcForm } from "@eos/rc-controls";
-import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Form as ClientForm, IFormApi as IClientFormApi } from "./ClientForm";
 import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
@@ -72,6 +72,8 @@ export interface IForm {
     disableHeader?: boolean;
     disableEditButton?: boolean;
     disableCloseButton?: boolean;
+    /**Дополнительные кнопки между заголовком и кнопкой закрытия формы просмотра. */
+    additionalDispFormTitleButtons?: ReactNode | ReactNode[];
 }
 /**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
@@ -335,6 +337,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             disableHeader={props.disableHeader}
             disableEditButton={props.disableEditButton}
             disableCloseButton={props.disableCloseButton}
+            additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
         />
     );
     function onSaveSucceeded() {
