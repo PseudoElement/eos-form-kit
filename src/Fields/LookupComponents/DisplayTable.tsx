@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Menu, PlusIcon, BinIcon } from "@eos/rc-controls";
-import { Table } from '@eos/rc-controls';
+import { Menu, PlusIcon, Table, BinIcon } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
-import { IModalApi, TableModal } from "./TableModal"
+import { ITableModalApi, TableModal } from "./TableModal"
 import { IDataService } from "./AjaxSelect"
 export interface ITableRow {
     /**
@@ -47,11 +46,13 @@ export interface IDisplayInput {
      */
     notFoundContent?: string;
 
-    required: any;
-
     dataService: IDataService;
 
-    type?: any
+    type?: any;
+
+    name?: string;
+
+    fieldName?: string;
 }
 
 const DisplayTable = React.forwardRef<any, IDisplayInput>(({ 
@@ -60,19 +61,18 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({
         mode, 
         onChange,
         notFoundContent,
-        required,
         dataService,
         form,
-        type
+        type,
+        fieldName
     }) => {
     const [dataSource, setDataSource] = useState<ITableRow[] | undefined>(value);
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
     const [rowFromLookup, setRowFromLookup] = useState<ITableRow | undefined>();
 
-    const modalApi = useRef<IModalApi>();
-
+    const tableModalApi = useRef<ITableModalApi>();
     const showModalLookup = () => {
-        modalApi?.current?.showModal();
+        tableModalApi?.current?.showModal();
     }
 
     const rowSelection = {
@@ -114,6 +114,7 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({
         if(dataSource) {
             let newDataSource = dataSource.filter(({ key }) => key && !(~selectedRowKeys.indexOf(key)));
             setDataSource(newDataSource);
+            setValueToForm(dataSource);
         }
     };
 
@@ -141,7 +142,10 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({
     ];
 
     useEffect(() => {
-        if (rowFromLookup && dataSource) setDataSource([rowFromLookup, ...dataSource]);
+        if (rowFromLookup && dataSource) {
+            setDataSource([rowFromLookup, ...dataSource]);
+            setValueToForm(dataSource);
+        }
     }, [rowFromLookup]);
 
     useEffect(() => {
@@ -149,7 +153,7 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({
     }, [dataSource]);
 
     return (
-        <div >
+        <div>
                 <Table.Menu
                     menu={getMenuItemsList(menu)}
                 >
@@ -163,15 +167,27 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({
                 <TableModal 
                     mode={mode}
                     type={type}
-                    ref={modalApi}
+                    ref={tableModalApi}
                     dataService={dataService}
-                    required={required}
-                    form={form}
                     notFoundContent={notFoundContent}
                     onFinish={(row) => setRowFromLookup(row)}
                 />
         </div>
     );
+
+    /**
+     * Проставляет значение в форму.
+     * @param value Значение для простановки в форму.
+     */
+    function setValueToForm(value?: ITableRow[]): boolean {
+        if (form && form.current) {
+            const { ...fieldValues } = form.current.getFieldsValue();
+            fieldValues[fieldName ?? ''] = value;
+            form.current.setFieldValue(fieldValues);
+            return true;
+        }
+        return false;
+    }
 });
 
 export default DisplayTable;

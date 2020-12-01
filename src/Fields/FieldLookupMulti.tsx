@@ -1,8 +1,9 @@
-import React from "react";
-import { Collapse, Form, Badge } from "@eos/rc-controls";
+import React, { useState } from "react";
+import { Collapse, Form, Input, Badge } from "@eos/rc-controls";
 import IField from "./IField";
 import { IDataService } from "./LookupComponents/AjaxSelect";
 import DisplayTable from "./LookupComponents/DisplayTable";
+import { FieldsHelper } from './FieldsHelper';
 export interface ITableColumn {
     title: string,
     dataIndex: string,
@@ -44,9 +45,17 @@ export interface ILookupMulti extends IField {
  * МультиЛукап поле.
  */
 export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMulti, ref) => {
+    const [rowCount, setRowCount] = useState<number | undefined>();
+
+    let rules = [];
+    if (props.required)
+        rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
 
     return (
         <div>
+            <Form.Item label={props.label} name={props.name} style={{display: "none"}} rules={rules}>
+                <Input />
+            </Form.Item>
             <Collapse
                 key={'1'}
                 expandIconPosition={'right'}
@@ -62,18 +71,21 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                                 borderBottom: '1px solid #E6E6E6'
                             }}
                         >
-                            <Badge count={0} type="text">{props.label}</Badge>
+                            {(!props.required || rowCount) ? 
+                                <Badge count={rowCount} type="text" >{props.label}</Badge> :
+                                <Badge count={' '} type="text" color="red">{props.label}</Badge> 
+                                }
                         </div>
                     }
                 >
-                    <Form.Item name={props.name} >
+                    <Form.Item name={props.name} rules={rules}>
                         <DisplayTable
+                            fieldName={props.name}
                             ref={ref}
                             columns={props.tableColumns}
-                            onChange={props.onChange}
+                            onChange={(row) => setRowCount(row.length)}
                             mode={props.mode}
                             dataService={props.dataService}
-                            required={props.required}
                             form={props.form}
                             notFoundContent={props.notFoundContent}
                             type={props.type}

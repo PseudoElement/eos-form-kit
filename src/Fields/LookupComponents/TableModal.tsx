@@ -2,7 +2,6 @@ import React, { useState, useRef, useImperativeHandle  } from "react";
 import { Modal, Form} from "@eos/rc-controls";
 import IField from "../IField";
 import { Select as AjaxSelect, IDataService } from "./AjaxSelect";
-import { FieldsHelper } from "../FieldsHelper";
 import { ITableRow } from "./DisplayTable";
 
 /**
@@ -28,11 +27,9 @@ export interface ITableModal extends IField {
     onFinish?(row: ITableRow | undefined): void;
 }
 
-export interface IModalApi {
+export interface ITableModalApi {
     /**Показывает модальное окно @. */
     showModal(): void;
-    /**Скрывает модальное окно @. */
-    // hideLeftIcon(): void;
 }
 
 /**
@@ -42,13 +39,9 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
     const [lookupVisible, setLookupVisible] = useState<boolean>(false);
     const [currentRow, setCurrentRow] = useState<ITableRow>();
 
-    let rules = [];
-    if (props.required)
-        rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
-
     const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, (): IModalApi => {
-        const api: IModalApi = {
+    useImperativeHandle(ref ?? selfRef, (): ITableModalApi => {
+        const api: ITableModalApi = {
             showModal() {
                 setLookupVisible(true);
             }
@@ -56,6 +49,7 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
         return api;
     });
 
+    const tableModalApi = useRef<ITableModalApi>();
     return (
         <div>
             <Modal
@@ -66,9 +60,9 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
                     setLookupVisible(false); 
                 }}
             >
-                <Form.Item style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <Form.Item>
                     <AjaxSelect
-                        ref={selfRef}
+                        ref={tableModalApi}
                         dataService={props.dataService}
                         form={props.form}
                         required={props.required}
