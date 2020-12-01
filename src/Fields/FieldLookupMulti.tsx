@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { Collapse, Modal, Form, Badge } from "@eos/rc-controls";
+import React from "react";
+import { Collapse, Form, Badge } from "@eos/rc-controls";
 import IField from "./IField";
-import { Select as AjaxSelect, IDataService } from "./LookupComponents/AjaxSelect";
-import { FieldsHelper } from "./FieldsHelper";
-import DisplayTable, { ITableRow } from "./LookupComponents/DisplayTable";
-
+import { IDataService } from "./LookupComponents/AjaxSelect";
+import DisplayTable from "./LookupComponents/DisplayTable";
 export interface ITableColumn {
     title: string,
     dataIndex: string,
@@ -46,14 +44,6 @@ export interface ILookupMulti extends IField {
  * МультиЛукап поле.
  */
 export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMulti, ref) => {
-    //const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [lookupVisible, setLookupVisible] = useState<boolean>(false);
-    const [currentRow, setCurrentRow] = useState<ITableRow>();
-    const [row, setRow] = useState<ITableRow>();
-
-    let rules = [];
-    if (props.required)
-        rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
 
     return (
         <div>
@@ -76,38 +66,21 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         </div>
                     }
                 >
-                    <Form.Item label={props.label} name={props.name} >
+                    <Form.Item name={props.name} >
                         <DisplayTable
                             ref={ref}
                             columns={props.tableColumns}
-                            selectedRow={row}
                             onChange={props.onChange}
-                            onModalVisible={() => setLookupVisible(true)}
                             mode={props.mode}
+                            dataService={props.dataService}
+                            required={props.required}
+                            form={props.form}
+                            notFoundContent={props.notFoundContent}
+                            type={props.type}
                         />
                     </Form.Item>
                 </Collapse.Panel>
             </Collapse>
-
-            <Modal
-                visible={lookupVisible}
-                onCancel={() => setLookupVisible(false)}
-                onOk={() => {
-                    setRow(currentRow);
-                    setLookupVisible(false);
-                }}
-            >
-                <Form.Item label={props.label} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <AjaxSelect
-                        dataService={props.dataService}
-                        ref={ref}
-                        form={props.form}
-                        required={props.required}
-                        onChange={(row) => setCurrentRow(row)}
-                        notFoundContent={props.notFoundContent}
-                    />
-                </Form.Item>
-            </Modal>
         </div>
     );
 });

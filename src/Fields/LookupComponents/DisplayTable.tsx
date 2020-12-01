@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Menu, PlusIcon, BinIcon } from "@eos/rc-controls";
 import { Table } from '@eos/rc-controls';
 import { FormMode } from "../../ClientForms/FormMode";
+import { IModalApi, TableModal } from "./TableModal"
+import { IDataService } from "./AjaxSelect"
 export interface ITableRow {
     /**
      * Программное значение которое вернёт компонент.
@@ -29,19 +31,49 @@ export interface IDisplayInput {
 
     columns?: any;
 
-    selectedRow?: ITableRow;
-
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
 
     onModalVisible?(): void;
 
     mode?: any;
+    /**
+     * Передача formInst
+     */
+    form?: any;
+
+    /**
+     * Текст при отсутсвии элементов
+     */
+    notFoundContent?: string;
+
+    required: any;
+
+    dataService: IDataService;
+
+    type?: any
 }
 
-const DisplayTable = React.forwardRef<any, IDisplayInput>(({ value, columns, selectedRow, mode, onChange, onModalVisible }) => {
+const DisplayTable = React.forwardRef<any, IDisplayInput>(({ 
+        value, 
+        columns,
+        mode, 
+        onChange,
+        notFoundContent,
+        required,
+        dataService,
+        form,
+        type
+    }) => {
     const [dataSource, setDataSource] = useState<ITableRow[] | undefined>(value);
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
+    const [rowFromLookup, setRowFromLookup] = useState<ITableRow | undefined>();
+
+    const modalApi = useRef<IModalApi>();
+
+    const showModalLookup = () => {
+        modalApi?.current?.showModal();
+    }
 
     const rowSelection = {
         preserveSelectedRowKeys: false,
@@ -76,13 +108,6 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({ value, columns, sel
     };
 
     /**
-     * Создание записи в таблице
-     */
-    const newMultiLookupRow = () => {
-        if (onModalVisible) onModalVisible();
-    };
-
-    /**
      * Удаление записей в таблице
      */
     const deleteMultiLookupLookupRows = () => {
@@ -101,7 +126,7 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({ value, columns, sel
             component: <PlusIcon />,
             title: 'PlusIcon',
             disabled: isDisplay(),
-            onClick: newMultiLookupRow,
+            onClick: showModalLookup,
             hiddenTitle: true,
             key: 'PlusIcon'
         },
@@ -116,24 +141,36 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({ value, columns, sel
     ];
 
     useEffect(() => {
-        if (selectedRow && dataSource) setDataSource([selectedRow, ...dataSource]);
-    }, [selectedRow]);
+        if (rowFromLookup && dataSource) setDataSource([rowFromLookup, ...dataSource]);
+    }, [rowFromLookup]);
 
     useEffect(() => {
         if (onChange) onChange(dataSource);
     }, [dataSource]);
 
     return (
-        <Table.Menu
-            menu={getMenuItemsList(menu)}
-        >
-            <Table 
-                dataSource={dataSource}
-                columns={columns}
-                rowSelection={rowSelection}
-                showHeader={false}
-            />
-        </Table.Menu>
+        <div >
+                <Table.Menu
+                    menu={getMenuItemsList(menu)}
+                >
+                    <Table
+                        dataSource={dataSource}
+                        columns={columns}
+                        rowSelection={rowSelection}
+                        showHeader={false}
+                    />
+                </Table.Menu>
+                <TableModal 
+                    mode={mode}
+                    type={type}
+                    ref={modalApi}
+                    dataService={dataService}
+                    required={required}
+                    form={form}
+                    notFoundContent={notFoundContent}
+                    onFinish={(row) => setRowFromLookup(row)}
+                />
+        </div>
     );
 });
 
