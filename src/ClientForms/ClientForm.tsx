@@ -126,6 +126,9 @@ export interface IForm {
      * Если false, то форма покажется только после скрытия скелетона.
      */
     initialShownForm?: boolean;
+
+    /**Дополнительные кнопки между заголовком и кнопкой закрытия формы просмотра. */
+    additionalDispFormTitleButtons?: ReactNode | ReactNode[];
 }
 
 /**Клиентская форма. */
@@ -340,6 +343,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                                 leftIconTitle={props.leftIconTitle}
                                 disableEditButton={props.disableEditButton}
                                 disableCloseButton={props.disableCloseButton}
+                                additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
                             />}
                         <ToolBar {...props.toolbar}></ToolBar>
                         {clientTabsProps && <ClientTabs ref={clientTabsApi} {...clientTabsProps} />}
