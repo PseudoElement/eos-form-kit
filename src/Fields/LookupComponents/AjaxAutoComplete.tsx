@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AutoComplete as RcAutoComplete, Spin } from '@eos/rc-controls';
 
 /**
@@ -88,7 +88,9 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
      * Объект значения
      */
     const [currentValue, setCurrentValue] = useState<IOptionItem | undefined>(value);
-
+    useEffect(() => {
+        setCurrentValue(value);
+    }, [value])
     /**
      * Объект индикатор загрузки
      */
@@ -218,13 +220,14 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
      * @param value строковое значение для проставки в поле
      * @param option объект {key, value, label(аналогичен value)}
      */
-    let onSelect = (
-        // value: any, 
-        option: any) => {
+    let onSelect = (value: any, option: any) => {
         setCurrentValue(option?.item);
         setValueToForm(option?.item);
         if (onChange)
             onChange(option?.item);
+        if (value) {
+
+        }
     }
 
     return (
