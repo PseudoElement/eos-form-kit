@@ -225,8 +225,9 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
         setValueToForm(option?.item);
         if (onChange)
             onChange(option?.item);
-        if (!value)
-            console.log(value);
+        if (value) {
+
+        }
     }
 
     return (
