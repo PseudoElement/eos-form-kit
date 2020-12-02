@@ -37,10 +37,6 @@ export interface IDisplayTable {
     onModalVisible?(): void;
 
     mode?: any;
-    /**
-     * Передача formInst
-     */
-    form?: any;
 
     /**
      * Текст при отсутсвии элементов
@@ -63,9 +59,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         onChange,
         notFoundContent,
         dataService,
-        form,
         type,
-        fieldName
+    //    fieldName
     }) => {
     const [dataSource, setDataSource] = useState<ITableRow[] | undefined>(value);
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
@@ -114,7 +109,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         if(dataSource) {
             let newDataSource = dataSource.filter(({ key }) => key && !(~selectedRowKeys.indexOf(key)));
             setDataSource(newDataSource);
-            setValueToForm(dataSource);
+        //    setValueToForm(dataSource);
         }
     };
 
@@ -159,7 +154,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     useEffect(() => {
         if (rowFromLookup && dataSource) {
             setDataSource([rowFromLookup, ...dataSource]);
-            setValueToForm(dataSource);
+        //    setValueToForm(dataSource);
         }
     }, [rowFromLookup]);
 
@@ -192,18 +187,18 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     );
 
     /**
-     * Проставляет значение в форму.
-     * @param value Значение для простановки в форму.
+    * Проставляет значение в форму.
+    * @param value Значение для простановки в форму.
      */
-    function setValueToForm(value?: ITableRow[]): boolean {
-        if (form && form.current) {
-            const { ...fieldValues } = form.current.getFieldsValue();
-            fieldValues[fieldName ?? ''] = value;
-            form.current.setFieldValue(fieldValues);
-            return true;
-        }
-        return false;
-    }
+    // function setValueToForm(value?: ITableRow[]): boolean {
+    //     if (form && form.current) {
+    //         const { ...fieldValues } = form.current.getFieldsValue();
+    //         fieldValues[fieldName ?? ''] = value;
+    //         form.current.setFieldValue(fieldValues);
+    //         return true;
+    //     }
+    //     return false;
+    // }
 });
 
 export default DisplayTable;

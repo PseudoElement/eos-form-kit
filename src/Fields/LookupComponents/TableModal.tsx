@@ -15,11 +15,6 @@ export interface ITableModal extends IField {
     onChange?(item?: any): void;
 
     /**
-     * Передача formInst
-     */
-    form?: any;
-
-    /**
      * Текст при отсутсвии элементов
      */
     notFoundContent?: string;
@@ -64,7 +59,6 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
                     <AjaxSelect
                         ref={tableModalApi}
                         dataService={props.dataService}
-                        form={props.form}
                         required={props.required}
                         onChange={(row) => setCurrentRow(row)}
                         notFoundContent={props.notFoundContent}

@@ -15,11 +15,6 @@ export interface ISelect {
     onChange?(item?: any): void;
 
     /**
-     * Передача formInst
-     */
-    form?: any;
-
-    /**
      * Имя поля
      */
     fieldName?: string;
@@ -77,8 +72,7 @@ export interface IDataService {
  */
 export const Select = React.forwardRef<any, ISelect>(({
     onChange,
-    form,
-    fieldName,
+  //  fieldName,
     value,
     notFoundContent,
     required,
@@ -101,7 +95,7 @@ export const Select = React.forwardRef<any, ISelect>(({
     /**
      * Значение имя поля по умолчанию
      */
-    const DEFAULT_FIELD_NAME: string = "";
+   // const DEFAULT_FIELD_NAME: string = "";
 
     /**
      * Сообщение об отображаемом количестве элементов в выпадающем списке
@@ -201,7 +195,7 @@ export const Select = React.forwardRef<any, ISelect>(({
      */
     let onClear = () => {
         setCurrentValue(undefined);
-        setValueToForm(undefined);
+    //   setValueToForm(undefined);
         if (onChange)
             onChange(null);
     }
@@ -238,7 +232,7 @@ export const Select = React.forwardRef<any, ISelect>(({
             setCurrentValue({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
 
             // Проставить объект IOptionItem в форму
-            setValueToForm({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
+            //setValueToForm({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
             // onSelectComponentChange(value, { value: value, label: value, item: { value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key } });
         }
     }
@@ -250,7 +244,7 @@ export const Select = React.forwardRef<any, ISelect>(({
      */
     let onSelect = (value: any, option: any) => {
         setCurrentValue(option?.item);
-        setValueToForm(option?.item);
+        //setValueToForm(option?.item);
         if (onChange)
             onChange(option?.item);
         if (!value)
@@ -303,13 +297,13 @@ export const Select = React.forwardRef<any, ISelect>(({
      * Проставляет значение в форму.
      * @param value Значение для простановки в форму.
      */
-    function setValueToForm(value?: IOptionItem): boolean {
-        if (form && form.current) {
-            const { ...fieldValues } = form.current.getFieldsValue();
-            fieldValues[fieldName ?? DEFAULT_FIELD_NAME] = value;
-            form.current.setFieldsValue(fieldValues);
-            return true;
-        }
-        return false;
-    }
+    // function setValueToForm(value?: IOptionItem): boolean {
+    //     if (form && form.current) {
+    //         const { ...fieldValues } = form.current.getFieldsValue();
+    //         fieldValues[fieldName ?? DEFAULT_FIELD_NAME] = value;
+    //         form.current.setFieldsValue(fieldValues);
+    //         return true;
+    //     }
+    //     return false;
+    // }
 });

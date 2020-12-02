@@ -17,11 +17,6 @@ export interface ILookup extends IField {
     onChange?(item?: any): void;
 
     /**
-     * Передача formInst
-     */
-    form?: any;
-
-    /**
      * Текст при отсутсвии элементов
      */
     notFoundContent?: string;
@@ -64,7 +59,6 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                 <AjaxSelect
                     dataService={props.dataService}
                     ref={ref}
-                    form={props.form}
                     fieldName={props.name}
                     required={props.required}
                     onChange={props.onChange}
