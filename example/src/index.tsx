@@ -1,14 +1,15 @@
 import './index.css'
 
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Link, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import SearchClientFormPage from "./SearchClientFormPage";
 import AjaxClientFormPage from "./AjaxClientFormPage";
 import AjaxClientFormPage2 from "./AjaxClientFormPage2";
 import AjaxClientFormApi from "./AjaxClientFormApi";
 import NotFoundPage from "./NotFoundPage";
-import { ConfigProvider, Menu } from 'eos-webui-controls';
+import { ConfigProvider } from 'eos-webui-controls';
+import { useHistorySlim } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 
 interface IMenuItem {
@@ -83,18 +84,62 @@ function getArchivist() {
 
 let menuItems: IMenuItem[] = getArchivist();
 
+interface IMainMenu {
+    items: IMenuItem[];
+}
+const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
+    return (
+        // <Menu mode="horizontal">
+        <div>
+            {props.items.map(item => {
+                return (
+                    <MainMenuItem title={item.title} url={item.url} />
+                    // <Menu.Item key={item.key}>
+                    //     <a href={item.url} onClick={() => { pushPrevious(item.url); return false; }}>{item.title}</a>
+                    //     {/* <Link to={item.url} title={item.title}>{item.title}</Link> */}
+                    // </Menu.Item>
+                );
+            })}
+            {/* </Menu> */}
+        </div>
+    );
+}
+
+interface IMainMenuItem {
+    url: string;
+    title: string;
+}
+const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) => {
+    const { pushPrevious, pushPopPrevious } = useHistorySlim();
+
+    return (
+        <div style={{ display: "inline-block" }}>
+            <a href={props.url} onClick={(event) => {
+                // pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
+                // pushKeepPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
+                if (props.url.indexOf("form3") >= 0)
+                    pushPopPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
+                else
+                    pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
+
+
+                document.title = props.title;
+
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            }}>{props.title}</a>
+            {/* <Link to={item.url} title={item.title}>{item.title}</Link> */}
+        </div>
+    );
+}
+
+
+
 ReactDOM.render(
     <ConfigProvider>
         <BrowserRouter>
-            <Menu mode="horizontal">
-                {menuItems.map(item => {
-                    return (
-                        <Menu.Item key={item.key}>
-                            <Link to={item.url} title={item.title}>{item.title}</Link>
-                        </Menu.Item>
-                    );
-                })}
-            </Menu>
+            <MainMenu items={menuItems} />
             <Switch>
                 <Route strict path="/search" component={SearchClientFormPage} />
                 <Route exact path="/arc/:mode/:id?" component={ArcPage} />
@@ -105,4 +150,7 @@ ReactDOM.render(
             </Switch>
         </BrowserRouter>
     </ConfigProvider >
-    , document.getElementById('root'))
+    , document.getElementById('root'));
+
+
+
