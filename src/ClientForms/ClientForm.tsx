@@ -293,6 +293,8 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                 onChange: (activeKey: string) => {
                     if (props.tabsComponent && props.tabsComponent.onChange)
                         props.tabsComponent.onChange(activeKey);
+                    if (props.onTabsChange)
+                        props.onTabsChange(activeKey);
                 }
             }
             : null;

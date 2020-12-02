@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef } from 'react'
+import React, { forwardRef, FunctionComponent, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 
 import "eos-webui-controls/dist/main.css";
@@ -17,6 +17,9 @@ const AjaxClientFormApi: FunctionComponent = () => {
     const { params } = useRouteMatch<IPageParams>();
     const mode: FormMode = parseFormMode(params.mode);
     const id: number | undefined = params?.id ? parseFloat(params?.id) : undefined;
+
+    // const { setState } = useHistoryState();
+    // useEffect(() => { setState("title", document.title) }, []);
 
     useEffect(() => {
         formApi?.current?.reloadItem();
@@ -60,10 +63,13 @@ const AjaxClientFormApi: FunctionComponent = () => {
     }
 
     const formApi = useRef<AjaxClientForm.IFormApi>();
+    const buttonsPanelApi = useRef<IButtonsPanelApi>();
+
 
     return (
         <React.Fragment>
             <ButtonsPanel
+                ref={buttonsPanelApi}
                 onEditTitleClick={() => { formApi?.current?.setTitle("Грузится"); setTimeout(() => { formApi?.current?.setTitle(getTitle()); }, 1500); }}
                 onSkeletonLoadingClick={() => { formApi?.current?.showSkeletonLoading(); setTimeout(() => { formApi?.current?.hideLoading(); }, 1500); }}
                 onSpinnerClick={() => { formApi?.current?.showSpinLoading(); setTimeout(() => { formApi?.current?.hideLoading(); }, 1500); }}
@@ -136,6 +142,10 @@ const AjaxClientFormApi: FunctionComponent = () => {
                     await Helper.sleepAsync(500);
                     formApi?.current?.hideLoading();
                 }}
+                onTabsChange={(activeKey: string) => {
+                    debugger;
+                    buttonsPanelApi?.current?.setText(activeKey);
+                }}
                 disableEditButton={true}
                 disableCloseButton={true}
             />
@@ -166,22 +176,39 @@ interface IButtonsPanel {
     onDisableFieldsClick?(): void;
     onEnableFieldsClick?(): void;
 }
-
-const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) => {
-    return (<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <Button onClick={props.onSkeletonLoadingClick}>Скелетон</Button>
-        <Button onClick={props.onTripleSkeletonLoadingClick}>3 скелетона</Button>
-        <Button onClick={props.onSpinnerClick}>Спиннер</Button>
-        <Button onClick={props.onEditTitleClick}>Заголовок</Button>
-        <Button onClick={props.onLookupSetClick}>Задать срок хранения</Button>
-        <Button onClick={props.onNameSetClick}>Задать наименование</Button>
-        <Button onClick={props.onReloadItemClick}>ReloadItem</Button>
-        <Button onClick={props.onReloadClick}>Reload</Button>
-        <Button onClick={props.onSetFiveCountClick}>SetCount(5)</Button>
-        <Button onClick={props.onClearCountClick}>SetCount(undefined)</Button>
-        <Button onClick={props.onSetZeroCountClick}>SetCount(0)</Button>
-        <Button onClick={props.onEnableFieldsClick}>Enable fields</Button>
-        <Button onClick={props.onDisableFieldsClick}>Disable fields</Button>
-
-    </div>);
+interface IButtonsPanelApi {
+    setText(text?: string): void;
 }
+// const ButtonsPanel: FunctionComponent<IButtonsPanel> = (props: IButtonsPanel) => {
+const ButtonsPanel = forwardRef<any, IButtonsPanel>((props: IButtonsPanel, ref: any) => {
+    const [text, setText] = useState("");
+
+    const selfRef = useRef();
+    useImperativeHandle(ref ?? selfRef, () => {
+        const api: IButtonsPanelApi = {
+            setText(text?: string) {
+                setText(text ?? "");
+            }
+        }
+        return api;
+    });
+
+    return (<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div>
+            <Button onClick={props.onSkeletonLoadingClick}>Скелетон</Button>
+            <Button onClick={props.onTripleSkeletonLoadingClick}>3 скелетона</Button>
+            <Button onClick={props.onSpinnerClick}>Спиннер</Button>
+            <Button onClick={props.onEditTitleClick}>Заголовок</Button>
+            <Button onClick={props.onLookupSetClick}>Задать срок хранения</Button>
+            <Button onClick={props.onNameSetClick}>Задать наименование</Button>
+            <Button onClick={props.onReloadItemClick}>ReloadItem</Button>
+            <Button onClick={props.onReloadClick}>Reload</Button>
+            <Button onClick={props.onSetFiveCountClick}>SetCount(5)</Button>
+            <Button onClick={props.onClearCountClick}>SetCount(undefined)</Button>
+            <Button onClick={props.onSetZeroCountClick}>SetCount(0)</Button>
+            <Button onClick={props.onEnableFieldsClick}>Enable fields</Button>
+            <Button onClick={props.onDisableFieldsClick}>Disable fields</Button>
+        </div>
+        <div>{text}</div>
+    </div>);
+});

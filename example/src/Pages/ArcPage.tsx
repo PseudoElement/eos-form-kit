@@ -14,10 +14,11 @@ interface IPageParams {
 
 const ArcPage: FunctionComponent = () => {
     const history = useHistory();
+    // const { setState } = useHistoryState();
     const { params } = useRouteMatch<IPageParams>();
     const mode: FormMode = parseFormMode(params.mode);
     const id: number | undefined = params?.id ? parseFloat(params?.id) : undefined;
-
+    
     useEffect(() => { formApi?.current?.reloadItem(); }, [id]);
 
     const dataService: AjaxClientForm.IDataService = {

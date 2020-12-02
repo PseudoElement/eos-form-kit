@@ -42,14 +42,15 @@ export interface IForm {
     mode: FormMode;
     dataService: IDataService;
     getResourceText: (name: string) => string;
-    onEditClick?: (event: any) => void;
-    onCancelClick?: (event: any, mode: FormMode) => void;
     /**Метод для получения кастомной вкладки. */
     getCustomtab?: (tab: IClientTabProps) => IClientTab | undefined;
+
+    onCancelClick?: (event: any, mode: FormMode) => void;
     /**Вызовется, когда будет подгружена схема формы с сервера. */
     onContextLoaded?(context: any): void;
-    /**Тулбар с кнопками. */
-    toolbar?: IToolBar;
+    onEditClick?: (event: any) => void;
+    /**Вызовется, когда какое-то поле было изменено. */
+    onFieldsWasModified?: (wasModified: boolean) => void;
     /**Метод вызовется когда нажали на кнопку "Сохранить". */
     onFinish?(data: Store): Promise<void>;
     /**Позволяет переопределить действие генератора форм после удачного сохранения.*/
@@ -57,8 +58,13 @@ export interface IForm {
     /**Позволяет переопределить действие генератора форм после неудачного сохранения.*/
     onFinishFailed?(): void;
     onRendered?(): void;
-    /**Вызовется, когда какое-то поле было изменено. */
-    onFieldsWasModified?: (wasModified: boolean) => void;
+    onTabsChange?: (activeKey: string) => void;
+    /**Обработчик события при изменении значений полей формы. */
+    onValuesChange?(changedValues: any, values: any): void;
+
+
+    /**Тулбар с кнопками. */
+    toolbar?: IToolBar;
     /**Включает отрисовку иконки @ перед наименованием. */
     enableLeftIcon?: boolean;
     /**При включенной отрисовке левой иконки @ перед наименование изначальная её скрытость. */
@@ -66,8 +72,6 @@ export interface IForm {
     /**Текст по наведению на иконку @ перед наименованием */
     leftIconTitle?: string;
 
-    /**Обработчик события при изменении значений полей формы. */
-    onValuesChange?(changedValues: any, values: any): void;
     /**true - если необходимо заблокировать отрисовку заголовка формы с кнопками. */
     disableHeader?: boolean;
     disableEditButton?: boolean;
@@ -328,6 +332,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             onFinish={onFinish}
             onValuesChange={props.onValuesChange}
             onFieldsWasModified={props.onFieldsWasModified}
+            onTabsChange={props.onTabsChange}
             tabsComponent={clientFormProps.tabsComponent}
             rows={clientFormProps.rows}
             toolbar={props.toolbar}
