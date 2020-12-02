@@ -7,6 +7,7 @@ import { Text as FieldText } from './FieldText';
 import { Lookup as FieldLookup } from './FieldLookup';
 import { Checkbox as FieldCheckbox } from './FieldCheckbox';
 import { LookupAutoComplete as FieldLookupAutoComplete } from './FieldLookupAutoComplete';
+import { LookupMulti as FieldLookupMulti } from './FieldLookupMulti';
 
 /**Типы доступных полей. */
 const fields = {
@@ -17,7 +18,8 @@ const fields = {
     FieldText,
     FieldLookup,
     FieldCheckbox,
-    FieldLookupAutoComplete
+    FieldLookupAutoComplete,
+    FieldLookupMulti
 }
 
 export default fields;

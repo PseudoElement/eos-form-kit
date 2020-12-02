@@ -6,6 +6,45 @@ class Helper {
          * Огрничение на колиечество элементов запроса
          */
         const fields = [
+            { 
+                "disabled": false, 
+                "label": "Особенности", 
+                "name": "multiLookupTest", 
+                "required": true, 
+                "requiredMessage": "Поле обязательное к заполнению", 
+                "type": "FieldLookupMulti", 
+                "value": null,
+                "notFoundContent": "Нет элементов",
+                "dataService": {
+                    loadDataAsync: async (search?: string) => {
+                        const result: AjaxSelect.IOptionItem[] = [
+                            { key: "6", value: "шесть" },
+                            { key: "7", value: "семь" },
+                            { key: "8", value: "восемь" },
+                            { key: "9", value: "девять" }
+                        ]
+                        if (search) {
+                            return result.filter((item) => {
+                                if (item && item.value && item?.value?.indexOf(search) >= 0) {
+                                    return true;
+                                }
+                                return false;
+                            }) ?? [];
+                        }
+                        else {
+                            return result;
+                        }
+                    },
+                    resultsAmount: 3,
+                },
+                "tableColumns": [
+                    {
+                      title: 'name',
+                      dataIndex: 'value',
+                      key: 'name',
+                    }  
+                  ]
+            },
             { type: "FieldCheckbox", name: "E_DOCUMENT", label: " ", description: "Для электронных документов" },
             { "disabled": true, "label": "Находится в", "name": "parentName", "required": false, "requiredMessage": null, "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
             { "disabled": false, "label": "Номер", "name": "ind", "required": true, "requiredMessage": "inventory:formErrors.ind", "type": "FieldText", "value": null, "additionalText": null, "allowClear": true, "maxLength": 24 },
@@ -109,6 +148,7 @@ class Helper {
                 "Disabled": false,
                 "ForceRender": null,
                 "Rows": [
+                    { "Cells": [{ "Type": 0, "Fields": ["multiLookupTest"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
                     {
@@ -163,6 +203,7 @@ class Helper {
     }
     static getRows() {
         const rows = [
+            { "Cells": [{ "Type": 0, "Fields": ["multiLookupTest"], "Width": 24 }] },
             { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
             { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
             {
@@ -185,6 +226,12 @@ class Helper {
             case 1:
                 const secondItem = {
                     "E_DOCUMENT": true,
+                    "multiLookupTest": [
+                        { key: "10", value: "десять" },
+                        { key: "11", value: "одинадцать" },
+                        { key: "12", value: "двенадцать" },
+                        { key: "13", value: "тринадцать" }
+                    ],
                     "parentName": "Находися в 1-ом элементе",
                     "ind": "Номер 1",
                     "volumeNum": 1,
@@ -204,6 +251,12 @@ class Helper {
             case 2:
                 const firstItem = {
                     "E_DOCUMENT": false,
+                    "multiLookupTest": [
+                        { key: "10", value: "десять" },
+                        { key: "11", value: "одинадцать" },
+                        { key: "12", value: "двенадцать" },
+                        { key: "13", value: "тринадцать" }
+                    ],
                     "parentName": "Находися в 2-ом элементе",
                     "ind": "Номер 2",
                     "volumeNum": 2,
