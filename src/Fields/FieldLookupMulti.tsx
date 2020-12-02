@@ -8,6 +8,7 @@ export interface ITableColumn {
     title: string,
     dataIndex: string,
     key: string | number,
+    render?: any,
 };
 
 export interface IMultilookupRow {

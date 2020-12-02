@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Menu, PlusIcon, Table, BinIcon } from "@eos/rc-controls";
+import { Menu, Table, Input, PlusIcon, BinIcon } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
-import { ITableModalApi, TableModal } from "./TableModal"
-import { IDataService } from "./AjaxSelect"
+import { ITableColumn } from "../FieldLookupMulti";
+import { ITableModalApi, TableModal } from "./TableModal";;
+import  { IDataService } from "./AjaxSelect";
 export interface ITableRow {
     /**
      * Программное значение которое вернёт компонент.
@@ -24,7 +25,7 @@ export interface ITableMenuTool {
     inMoreBlock?: boolean;
 };
 
-export interface IDisplayInput {
+export interface IDisplayTable {
 
     value?: ITableRow[];
 
@@ -55,7 +56,7 @@ export interface IDisplayInput {
     fieldName?: string;
 }
 
-const DisplayTable = React.forwardRef<any, IDisplayInput>(({ 
+const DisplayTable = React.forwardRef<any, IDisplayTable>(({ 
         value, 
         columns,
         mode, 
@@ -76,7 +77,6 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({
     }
 
     const rowSelection = {
-        preserveSelectedRowKeys: false,
         selectedRowKeys: selectedRowKeys,
         onChange: (selectedRowKeys: (string | number)[]) => {
             setSelectedRowKeys(selectedRowKeys);
@@ -118,6 +118,21 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({
         }
     };
 
+    const getFormatedColumns = (data: ITableColumn[]) => {
+        return data.map((e: ITableColumn)=> {
+            return {  
+                key: e.key,
+                title: e.title,
+                dataIndex: e.dataIndex,
+                padding: 0,
+                render: (value: any) => <Input style={{ width: "100%", margin: "12px 0" }} 
+                                               value={value} 
+                                               readOnly={false} 
+                                        />,
+            };
+        });
+    } 
+
     const isDisplay = () => {
         return FormMode.display === mode;
     };
@@ -158,8 +173,9 @@ const DisplayTable = React.forwardRef<any, IDisplayInput>(({
                     menu={getMenuItemsList(menu)}
                 >
                     <Table
-                        dataSource={dataSource}
-                        columns={columns}
+                        fullHeight
+                        dataSource={(dataSource)}
+                        columns={getFormatedColumns(columns)}
                         rowSelection={rowSelection}
                         showHeader={false}
                     />
