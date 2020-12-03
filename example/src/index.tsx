@@ -2,7 +2,7 @@ import './index.css'
 
 import React, { FunctionComponent } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Link, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import SearchClientFormPage from "./SearchClientFormPage";
 import AjaxClientFormPage from "./AjaxClientFormPage";
 import AjaxClientFormPage2 from "./AjaxClientFormPage2";
@@ -89,6 +89,8 @@ interface IMainMenu {
     items: IMenuItem[];
 }
 const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
+    const { toBack } = useBackUrlHistory()
+
     return (
         // <Menu mode="horizontal">
         <div>
@@ -101,6 +103,7 @@ const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
                     // </Menu.Item>
                 );
             })}
+            <a onClick={() => { toBack(); }}>Назад useBackUrlHistory.toBack</a>
             {/* </Menu> */}
         </div>
     );
@@ -111,17 +114,15 @@ interface IMainMenuItem {
     title: string;
 }
 const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) => {
-    const { pushPrevious, pushPopPrevious } = useBackUrlHistory();
+    const { pushPrevious } = useBackUrlHistory();
 
     return (
-        <div style={{ display: "inline-block" }}>
-            {/* <a href={props.url} onClick={(event) => {
+        <div style={{ display: "inline-block", marginRight: 10, border: "1px solid #ebacca" }}>
+            <a href={props.url} onClick={(event) => {
                 // pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
                 // pushKeepPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
-                if (props.url.indexOf("form3") >= 0)
-                    pushPopPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
-                else
-                    pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
+
+                pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
 
 
                 document.title = props.title;
@@ -129,8 +130,8 @@ const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) =>
                 event.preventDefault();
                 event.stopPropagation();
                 return false;
-            }}>{props.title}</a> */}
-            <Link to={props.url} title={props.title}>{props.title}</Link>
+            }}>{props.title}</a>
+            {/* <Link to={props.url} title={props.title}>{props.title}</Link> */}
         </div>
     );
 }

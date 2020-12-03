@@ -15,7 +15,7 @@ export interface IBackInfo {
 export interface IBackUrlHistory {
     push(path: string, state?: IHistorySlimItem): void;
     goBack(): void;
-    pushPrevious(path: string, state?: IHistorySlimItem[]): void;
+    pushPrevious(path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void;
     pushKeepPrevious(path: string): void;
     pushPopPrevious(path: string, state?: IHistorySlimItem | IHistorySlimItem[] | undefined): void;
     getState(): any;
@@ -24,9 +24,9 @@ export interface IBackUrlHistory {
     toBack(): void;
 }
 /**
- * Объект history с проверкой ухода с формый создания/изменения элемента и соответствующим сообщением.
+ * Объект history для работы с backUrl(путь для перехода назад)
  */
-function useBackUrlHistory(): IBackUrlHistory {
+function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
     const {
         push: slimPush,
         goBack: slimGoBack,
@@ -49,7 +49,8 @@ function useBackUrlHistory(): IBackUrlHistory {
      * @param path - урла куда сейчас сделать редирект
      * @param title - заголовок текущей страницы(формы)
      */
-    const pushPrevious = (path: string, state?: IHistorySlimItem[]): void => {
+    const pushPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
+        debugger
         const backObj = {
             url: window.location.pathname,
             title: document.title
@@ -70,7 +71,7 @@ function useBackUrlHistory(): IBackUrlHistory {
      * @param path - урла куда сейчас сделать редирект
      * @param title - заголовок текущей страницы(формы)
      */
-    const pushPopPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[] | undefined): void => {
+    const pushPopPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
         // const state: any = history.location.state;
         const backObj = {
             url: window.location.pathname,
@@ -101,19 +102,27 @@ function useBackUrlHistory(): IBackUrlHistory {
     const toBack = (state?: IHistorySlimItem | IHistorySlimItem[]): void => {
         const currBack = getStateByName(stateKey);
         const myState = joinState(getPreviousState(), state);
+        if (currBack && currBack.url)
+            slimPushPopPrevious(currBack.url, myState);
+        else {
+            if (safeBackUrl)
+                document.location.href = location.protocol + "//" + location.host + safeBackUrl;
+            else
+                document.location.href = location.protocol + "//" + location.host + location.pathname;
 
-        slimPushPopPrevious(currBack.url, myState);
+        }
     }
 
     return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName, toBack };
 
     function joinState(backState: IBackInfo, state?: IHistorySlimItem | IHistorySlimItem[]): any {
         let myState;
+        let backStateSlim: IHistorySlimItem = { name: stateKey, value: backState }
         if (state) {
             if (Array.isArray(state))
-                myState = [backState, ...state];
+                myState = [backStateSlim, ...state];
             else
-                myState = [backState, state];
+                myState = [backStateSlim, state];
         }
         else
             myState = backState;
