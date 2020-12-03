@@ -18,7 +18,7 @@ function useHistorySlim() {
 
 
 
-    const push = (path: string, state?: IHistorySlimItem) => {
+    const push = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
         let nextState = createState();
         addCurrent(nextState, state);
 

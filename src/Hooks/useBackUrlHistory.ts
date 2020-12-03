@@ -50,7 +50,6 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
      * @param title - заголовок текущей страницы(формы)
      */
     const pushPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
-        debugger
         const backObj = {
             url: window.location.pathname,
             title: document.title
@@ -62,9 +61,9 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
      * Метод нужно использовать, когда вы знаете, что вам нужно сохранить бэк урлу, которая уже есть. Например: переход между формами в пределах одной карточки(edit/disp)
      * @param path - урла куда сейчас сделать редирект
      */
-    const pushKeepPrevious = (path: string): void => {
+    const pushKeepPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
         // const state: any = history.location.state;
-        slimPushKeepPrevious(path);
+        slimPushKeepPrevious(path, state);
     }
     /**
      * Пока не использовался
@@ -91,7 +90,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
      * Дублирует метод getPreviousState у хука useHistorySlim
      */
     const getPreviousState = () => {
-        return slimGetPreviousState()
+        return slimGetPreviousState();
     }
     const getStateByName = (name: string) => {
         return slimGetStateByName(name);
@@ -106,9 +105,9 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
             slimPushPopPrevious(currBack.url, myState);
         else {
             if (safeBackUrl)
-                document.location.href = location.protocol + "//" + location.host + safeBackUrl;
+                document.location.href = location.pathname + safeBackUrl;
             else
-                document.location.href = location.protocol + "//" + location.host + location.pathname;
+                document.location.href = location.pathname;
 
         }
     }
