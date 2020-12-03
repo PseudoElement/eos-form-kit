@@ -7,9 +7,10 @@ function clearState() {
         delete state[i];
 }
 
-/**Хук, позволяющий регистрировать свои данные перед уходом со страницы через hostory.push. */
-function useHistoryState() {
+/**Хук, позволяющий регистрировать свои данные перед уходом со страницы через history.push. */
+function useHistoryWriter() {
     return { state, setState, clearState };
 };
-export default useHistoryState;
+export default useHistoryWriter;
+
 

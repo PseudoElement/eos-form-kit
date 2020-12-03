@@ -14,6 +14,8 @@ import FormTitle, { IFormTitleApi } from "./Title/FormTitle";
 import ToolBar, { IToolBar } from "./ToolBar/ToolBar";
 import Animate from "rc-animate";
 import { FormContext, IFormContext, IField } from "../Context/Context";
+import useHistoryWriter from "../Hooks/useHistoryState";
+import useHistoryListener from "../Hooks/useHistoryListener";
 
 /**API для работы с клиентской формой. */
 export interface IFormApi {
@@ -201,6 +203,8 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     });
 
     const selfRef = useRef();
+    const { setState } = useHistoryWriter();
+    const { currentState } = useHistoryListener("activeKey");
 
     useImperativeHandle(ref ?? selfRef, (): IFormApi => {
         const api: IFormApi = {
@@ -260,9 +264,6 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
 
     const clientTabsApi = useRef<IClientTabsApi>();
     const formTitleApi = useRef<IFormTitleApi>();
-    // const formRowsApi = useRef<IFormRowsApi>();
-    // const formRef = React.createRef();
-    // const rcFormRef = props.formInst ?? formRef;
 
     const mode = props.mode ?? FormMode.new;
 
@@ -284,13 +285,16 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         }
     }, [props.mode]);
 
+
+
     const clientTabsProps: IClientTabs | null =
         props.tabsComponent
             ? {
                 ...props.tabsComponent,
-                defaultActiveKey: props.tabsComponent?.defaultActiveKey,
+                defaultActiveKey: currentState ?? props.tabsComponent?.defaultActiveKey,
                 invalidFields: invalidFields,
                 onChange: (activeKey: string) => {
+                    setState("activeKey", activeKey);
                     if (props.tabsComponent && props.tabsComponent.onChange)
                         props.tabsComponent.onChange(activeKey);
                     if (props.onTabsChange)

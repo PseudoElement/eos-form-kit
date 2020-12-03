@@ -11,6 +11,7 @@ import NotFoundPage from "./NotFoundPage";
 import { ConfigProvider } from 'eos-webui-controls';
 import { useHistorySlim } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
+import TestPage from './Pages/Test';
 
 interface IMenuItem {
     title: string;
@@ -142,6 +143,7 @@ ReactDOM.render(
             <MainMenu items={menuItems} />
             <Switch>
                 <Route strict path="/search" component={SearchClientFormPage} />
+                <Route exact path="/test" component={TestPage} />
                 <Route exact path="/arc/:mode/:id?" component={ArcPage} />
                 <Route exact path="/form/:mode/:id?" component={AjaxClientFormPage} />
                 <Route exact path="/form2/:mode/:id?" component={AjaxClientFormPage2} />

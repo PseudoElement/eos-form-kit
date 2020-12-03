@@ -1,22 +1,22 @@
 import { useHistory } from "react-router-dom";
-import useHistoryState from "./useHistoryState";
+import useHistoryWriter from "./useHistoryState";
 
 export interface IHistorySlimItem {
     name: string;
     value?: any;
 }
 
-interface IState {
+export interface IHistorySlimState {
     current?: any;
-    previous?: IState;
+    previous?: IHistorySlimState;
 }
+
 /**Хук, позволяющий работать с историей браузера.*/
 function useHistorySlim() {
     const history = useHistory();
-    const { state: historyState, clearState } = useHistoryState();
+    const { state: historyState, clearState } = useHistoryWriter();
 
-
-    const push = (path: string, state?: IHistorySlimItem) => {
+    const push = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
         let nextState = createState();
         addCurrent(nextState, state);
 
@@ -31,8 +31,8 @@ function useHistorySlim() {
      * @param path 
      * @param state 
      */
-    const pushPrevious = (path: string, state?: IHistorySlimItem) => {
-        const currentState: IState = history?.location?.state ?? { current: {}, previous: {} };
+    const pushPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
+        const currentState: IHistorySlimState = history?.location?.state ?? { current: {}, previous: {} };
         if (!currentState.current)
             currentState.current = {};
 
@@ -40,7 +40,7 @@ function useHistorySlim() {
             for (var i in historyState)
                 currentState.current[i] = historyState[i];
 
-        let nextState: IState = createState();
+        let nextState: IHistorySlimState = createState();
         addCurrent(nextState, state);
         addPrevious(nextState, currentState);
 
@@ -54,8 +54,8 @@ function useHistorySlim() {
     * @param path 
     * @param state 
     */
-    const pushKeepPrevious = (path: string, state?: IHistorySlimItem) => {
-        const currentState: IState = history?.location?.state ?? { current: {}, previous: {} };
+    const pushKeepPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
+        const currentState: IHistorySlimState = history?.location?.state ?? { current: {}, previous: {} };
         if (!currentState.current)
             currentState.current = {};
 
@@ -74,9 +74,9 @@ function useHistorySlim() {
      * @param path 
      * @param state 
      */
-    const pushPopPrevious = (path: string, state?: IHistorySlimItem) => {
-        const currentState: IState = history?.location?.state ?? { current: {}, previous: {} };
-        let nextState: IState = currentState.previous ? currentState.previous : createState();
+    const pushPopPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
+        const currentState: IHistorySlimState = history?.location?.state ?? { current: {}, previous: {} };
+        let nextState: IHistorySlimState = currentState.previous ? currentState.previous : createState();
 
         if (!nextState.current)
             nextState.current = {};
@@ -95,32 +95,50 @@ function useHistorySlim() {
      * Возвращает текущее состояние.
      */
     const getState = () => {
-        const currentState: IState | null = history?.location?.state ?? null;
+        const currentState: IHistorySlimState | null = history?.location?.state ?? null;
         return currentState?.current ?? null;
+    }
+
+    /**
+    * Возвращает из текущего состояния значение по ключу.
+    */
+    const getStateByName = (name: string) => {
+        const currentState: IHistorySlimState | null = history?.location?.state ?? null;
+        return currentState?.current ? currentState?.current[name] : undefined;
     }
 
     /**
      * Возвращает предыдущее состояние.
      */
     const getPreviousState = () => {
-        const currentState: IState | null = history?.location?.state ?? null;
+        const currentState: IHistorySlimState | null = history?.location?.state ?? null;
         return currentState?.previous?.current ?? null;
     }
 
-    return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState };
+    return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName };
 
-    function createState(): IState {
-        let nextState: IState = {};
+    function createState(): IHistorySlimState {
+        let nextState: IHistorySlimState = {};
         return nextState;
     }
-    function addCurrent(state: IState, stateItem?: IHistorySlimItem) {
+    function addCurrent(state: IHistorySlimState, stateItem?: IHistorySlimItem | IHistorySlimItem[]) {
         if (stateItem) {
             if (!state.current)
                 state.current = {};
-            state.current[stateItem.name] = stateItem.value;
+
+            if (Object.prototype.toString.call(stateItem) === "[object Array]") {
+                const items: IHistorySlimItem[] = stateItem as IHistorySlimItem[];
+                for (let item of items) {
+                    state.current[item.name] = item.value;
+                }
+            }
+            else {
+                const item: IHistorySlimItem = stateItem as IHistorySlimItem;
+                state.current[item.name] = item.value;
+            }
         }
     }
-    function addPrevious(state: IState, previous?: IState) {
+    function addPrevious(state: IHistorySlimState, previous?: IHistorySlimState) {
         if (previous) {
             if (!state.previous)
                 state.previous = {};
