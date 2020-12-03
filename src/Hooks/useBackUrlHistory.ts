@@ -37,7 +37,8 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
         pushPopPrevious: slimPushPopPrevious,
         getState: slimGetState,
         getPreviousState: slimGetPreviousState,
-        getStateByName: slimGetStateByName
+        getStateByName: slimGetStateByName,
+        getPathName: slimeGetPathName
     } = useHistorySlim();
     const stateKey = "backUrl";
     /**
@@ -57,7 +58,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
     */
     const pushPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
         const backObj = {
-            url: window.location.pathname,
+            url: slimeGetPathName(),
             title: document.title
         } as IBackUrlHistoryObject
         let myState: IHistorySlimItem = joinState(backObj, state);
@@ -75,13 +76,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
     * Дублирует метод pushPopPrevious у хука useHistorySlim
     */
     const pushPopPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
-        // const state: any = history.location.state;
-        const backObj = {
-            url: window.location.pathname,
-            title: document.title
-        } as IBackUrlHistoryObject
-        const myState = joinState(backObj, state);
-        slimPushPopPrevious(path, myState);
+        slimPushPopPrevious(path, state);
     }
 
     /**
@@ -107,15 +102,13 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
      */
     const toBack = (state?: IHistorySlimItem | IHistorySlimItem[]): void => {
         const currBack = getStateByName(stateKey);
-        const myState = joinState(getPreviousState(), state);
         if (currBack && currBack.url)
-            slimPushPopPrevious(currBack.url, myState);
+            slimPushPopPrevious(currBack.url, state);
         else {
             if (safeBackUrl)
-                document.location.href = combineUrl([location.pathname, safeBackUrl ?? ""]);
+                slimPushPopPrevious(safeBackUrl, state);
             else
-                document.location.href = location.pathname;
-
+                slimPushPopPrevious("/", state);
         }
     }
 
@@ -131,13 +124,8 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
                 myState = [backStateSlim, state];
         }
         else
-            myState = backState;
+            myState = backStateSlim;
         return myState;
-    }
-    function combineUrl(parts: string[]) {
-        var separator = '/';
-        var replace = new RegExp(separator + '{1,}', 'g');
-        return parts.join(separator).replace(replace, separator);
     }
 }
 export default useBackUrlHistory;

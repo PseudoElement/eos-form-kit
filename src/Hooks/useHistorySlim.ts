@@ -16,8 +16,6 @@ function useHistorySlim() {
     const history = useHistory();
     const { state: historyState, clearState } = useHistoryWriter();
 
-
-
     const push = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
         let nextState = createState();
         addCurrent(nextState, state);
@@ -117,7 +115,11 @@ function useHistorySlim() {
         return currentState?.previous?.current ?? null;
     }
 
-    return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName };
+    const getPathName = () => {
+        return history.location.pathname;
+    }
+
+    return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName, getPathName };
 
     function createState(): IHistorySlimState {
         let nextState: IHistorySlimState = {};
