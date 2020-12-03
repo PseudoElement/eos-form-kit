@@ -3,10 +3,10 @@ import React from "react";
 export interface IFormContext {
     formTitle?: string;
 
-
     fields?: IField[];
     header?: IFormHeader;
 
+    setFieldValue(name: string, value?: any): void,
     disableField(name: string): void;
     enableField(name: string): void;
     hideLeftIcon(): void;
@@ -26,6 +26,7 @@ export interface IFormHeader {
 }
 
 export const defaultContext: IFormContext = {
+    setFieldValue() { },
     disableField() { },
     enableField() { },
     reset() { },

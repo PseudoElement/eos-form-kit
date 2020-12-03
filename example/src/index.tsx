@@ -2,14 +2,14 @@ import './index.css'
 
 import React, { FunctionComponent } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Link, Route, Switch } from 'react-router-dom'
 import SearchClientFormPage from "./SearchClientFormPage";
 import AjaxClientFormPage from "./AjaxClientFormPage";
 import AjaxClientFormPage2 from "./AjaxClientFormPage2";
 import AjaxClientFormApi from "./AjaxClientFormApi";
 import NotFoundPage from "./NotFoundPage";
 import { ConfigProvider } from 'eos-webui-controls';
-import { useHistorySlim } from 'eos-webui-formgen';
+// import { useHistorySlim } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 import TestPage from './Pages/Test';
 
@@ -111,11 +111,11 @@ interface IMainMenuItem {
     title: string;
 }
 const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) => {
-    const { pushPrevious, pushPopPrevious } = useHistorySlim();
+    // const { pushPrevious, pushPopPrevious } = useHistorySlim();
 
     return (
         <div style={{ display: "inline-block" }}>
-            <a href={props.url} onClick={(event) => {
+            {/* <a href={props.url} onClick={(event) => {
                 // pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
                 // pushKeepPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
                 if (props.url.indexOf("form3") >= 0)
@@ -129,8 +129,8 @@ const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) =>
                 event.preventDefault();
                 event.stopPropagation();
                 return false;
-            }}>{props.title}</a>
-            {/* <Link to={item.url} title={item.title}>{item.title}</Link> */}
+            }}>{props.title}</a> */}
+            <Link to={props.url} title={props.title}>{props.title}</Link>
         </div>
     );
 }
