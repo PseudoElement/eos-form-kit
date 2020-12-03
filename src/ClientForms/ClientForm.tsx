@@ -138,7 +138,18 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
     const [rcFormDisplayStyle, setRcFormDisplayStyle] = useState<"none" | "">(props.initialShownForm ? "" : "none");
+    const selfRcFormUseForm = RcForm.useForm();
+    const selfRcFormRef = React.createRef();
+
+    const rcFormForm = props.form ?? selfRcFormUseForm;
+    const rcFormRef = props.formInst ?? selfRcFormRef;
+
     const [formContext, setFormContext] = useState<IFormContext>({
+        setFieldValue(name: string, value?: any) {
+            const { ...fieldValues } = rcFormRef?.current?.getFieldsValue();
+            fieldValues[name] = value;
+            rcFormRef?.current?.setFieldsValue(fieldValues);
+        },
         disableField: useCallback((name: string) => {
             if (!formContext.fields)
                 formContext.fields = [];
@@ -235,11 +246,10 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                 // setFormContext({ ...formContext });
                 // setWasModified(true);
             },
-            setFieldValue() {
-                // const { ...fieldValues } = rcFormRef?.current?.getFieldsValue();
-                // fieldValues[name] = value;
-                // setInitialValues(fieldValues);
-                // props?.form?.setFieldsValue(fieldValues);
+            setFieldValue(name: string, value?: any) {
+                const { ...fieldValues } = rcFormRef?.current?.getFieldsValue();
+                fieldValues[name] = value;
+                rcFormRef?.current?.setFieldsValue(fieldValues);
             },
             disableField(name: string) {
                 formContext.disableField(name);
@@ -285,8 +295,6 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         }
     }, [props.mode]);
 
-
-
     const clientTabsProps: IClientTabs | null =
         props.tabsComponent
             ? {
@@ -303,6 +311,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             }
             : null;
 
+
     const elements =
         <SpinMaximized spinning={props.isSpinLoading}>
             <Row style={{ height: "100%" }} justify="center">
@@ -313,11 +322,10 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                         }}>
                         <Skeleton visible={props.isSkeletonLoading} />
                     </Animate>
-                    <RcForm form={props.form}
-                        // style={{ height: "100%", display: props.isSkeletonLoading ? "none" : "" }}
+                    <RcForm
+                        form={rcFormForm}
+                        ref={rcFormRef}
                         style={{ height: "100%", display: rcFormDisplayStyle }}
-                        // ref={rcFormRef}
-                        ref={props.formInst}
                         name="basic" layout="vertical"
                         initialValues={props.initialValues}
                         onFinish={(values: Store) => {
