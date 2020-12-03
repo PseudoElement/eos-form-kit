@@ -26,7 +26,7 @@ export interface IBackUrlHistory {
     toBack(): void;
 }
 /**
- * Объект history для работы с backUrl(путь для перехода назад)
+ * Хук, который работает на основе хука useHistorySlim и записываеть объект IBackUrlHistoryObject в историю
  */
 function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
     const {
