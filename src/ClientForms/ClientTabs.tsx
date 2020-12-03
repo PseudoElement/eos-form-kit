@@ -97,6 +97,26 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
     const [tabs, setTabs] = useState<IClientTab[] | undefined>();
     const [modifiedTabs, setModifiedTabs] = useState<IClientTab[] | undefined>();
     const [activeKey, setActiveKey] = useState(props.defaultActiveKey ?? DEFAULT_ACTIVE_KEY);
+    const [checkedActiveKey, setCheckedActiveKey] = useState(DEFAULT_ACTIVE_KEY);
+
+    useEffect(() => {
+        const firstTabkey = tabs && tabs.length > 0 ? tabs[0].key : DEFAULT_ACTIVE_KEY;
+        let isEnabled = false;
+        if (tabs && tabs.length)
+            for (let tab of tabs) {
+                if (tab.key === activeKey) {
+                    isEnabled = !tab.disabled;
+                    break;
+                }
+            }
+
+        if (isEnabled) {
+            setCheckedActiveKey(activeKey);
+        }
+        else {
+            setCheckedActiveKey(firstTabkey ?? DEFAULT_ACTIVE_KEY);
+        }
+    }, [activeKey, tabs]);
     useEffect(() => {
         checkFields(props.invalidFields);
     }, [props.invalidFields])
@@ -108,16 +128,15 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
             setTabs(modifiedTabs);
     }, [modifiedTabs]);
 
-    // let i = 0;
     return (
         <Tabs
             style={{ width: "100%", background: "#fff" }}
-            activeKey={activeKey}
+            activeKey={checkedActiveKey}
             tabBarStyle={{ ...props.tabBarStyle, background: "#f5f5f5", padding: "0px 20px", margin: 0 }}
             onTabClick={(key: ReactText) => {
                 if (key) {
                     const k = key.toString();
-                    setActiveKey(k);
+                    setCheckedActiveKey(k);
                     if (props.onTabClick)
                         props.onTabClick(k);
                 }

@@ -474,7 +474,7 @@ const ArcPage: FunctionComponent = () => {
                     "ClassName": null,
                     "CustomType": null,
                     "ForceRender": false,
-                    "Disabled": false,
+                    "Disabled": true,
                     "Title": "tabs:specifications",
                     "Rows": [
                         {
