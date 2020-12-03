@@ -2,7 +2,10 @@ import React, { FunctionComponent, useEffect, useRef } from 'react'
 import { useHistory } from "react-router-dom";
 
 import "eos-webui-controls/dist/main.css";
-import { AjaxClientForm, FormMode, parseFormMode, FieldCheckbox, FieldDateTime, FieldMultiText, AjaxSelect } from "eos-webui-formgen";
+import {
+    AjaxClientForm, FormMode, parseFormMode, FieldCheckbox, FieldDateTime, FieldMultiText, AjaxSelect, useHistorySlim,
+    useHistoryListener
+} from "eos-webui-formgen";
 import { Helper } from '../Helper';
 import { useRouteMatch } from 'react-router-dom';
 import Fields from './Fields';
@@ -14,11 +17,11 @@ interface IPageParams {
 
 const ArcPage: FunctionComponent = () => {
     const history = useHistory();
-    // const { setState } = useHistoryState();
+    const { pushPopPrevious, pushPrevious } = useHistorySlim();
     const { params } = useRouteMatch<IPageParams>();
     const mode: FormMode = parseFormMode(params.mode);
     const id: number | undefined = params?.id ? parseFloat(params?.id) : undefined;
-    
+
     useEffect(() => { formApi?.current?.reloadItem(); }, [id]);
 
     const dataService: AjaxClientForm.IDataService = {
@@ -40,15 +43,23 @@ const ArcPage: FunctionComponent = () => {
             }
         },
         async onSaveAsync() {
-            await Helper.sleepAsync(1000);
-            history.push(`/arc/disp/${id}`);
+            if (mode === FormMode.new) {
+                pushPrevious("/test");
+                // await Helper.sleepAsync(1000);
+                // history.push(`/arc/disp/${id}`);
+            }
+            else {
+                pushPopPrevious(`/arc/disp/${id}`);
+                // pushPrevious("/test");
+            }
         }
     }
 
     const formApi = useRef<AjaxClientForm.IFormApi>();
-
+    const { currentState } = useHistoryListener("activeKey");
     return (
         <React.Fragment>
+            <div>currentState={currentState ? "true" : "false"}</div>
             <AjaxClientForm.Form
                 ref={formApi}
                 mode={mode}
@@ -636,5 +647,6 @@ const ArcPage: FunctionComponent = () => {
         };
     }
     function t(value: string) { return value; }
+
 }
 export default ArcPage;

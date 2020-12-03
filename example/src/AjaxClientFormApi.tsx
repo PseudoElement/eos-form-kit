@@ -143,7 +143,6 @@ const AjaxClientFormApi: FunctionComponent = () => {
                     formApi?.current?.hideLoading();
                 }}
                 onTabsChange={(activeKey: string) => {
-                    debugger;
                     buttonsPanelApi?.current?.setText(activeKey);
                 }}
                 disableEditButton={true}
