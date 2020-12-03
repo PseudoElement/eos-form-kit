@@ -6,8 +6,10 @@ import useHistorySlim, { IHistorySlimItem } from "./useHistorySlim";
  * @title - заголовок текущей страницы(формы)
  * @child - информация о предыдущей странице.
  */
-
-export interface IBackInfo {
+/**
+ * Объект, который будет храниться в window.history
+ */
+export interface IBackUrlHistoryObject {
     url?: string;
     title?: string;
 }
@@ -53,7 +55,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
         const backObj = {
             url: window.location.pathname,
             title: document.title
-        } as IBackInfo
+        } as IBackUrlHistoryObject
         let myState: IHistorySlimItem = joinState(backObj, state);
         slimPushPrevious(path, myState);
     }
@@ -75,7 +77,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
         const backObj = {
             url: window.location.pathname,
             title: document.title
-        } as IBackInfo
+        } as IBackUrlHistoryObject
         const myState = joinState(backObj, state);
         slimPushPopPrevious(path, myState);
     }
@@ -114,7 +116,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
 
     return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName, toBack };
 
-    function joinState(backState: IBackInfo, state?: IHistorySlimItem | IHistorySlimItem[]): any {
+    function joinState(backState: IBackUrlHistoryObject, state?: IHistorySlimItem | IHistorySlimItem[]): any {
         let myState;
         let backStateSlim: IHistorySlimItem = { name: stateKey, value: backState }
         if (state) {
