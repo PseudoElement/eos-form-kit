@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 
 import "eos-webui-controls/dist/main.css";
 import {
-    AjaxClientForm, FormMode, parseFormMode, FieldCheckbox, FieldDateTime, FieldMultiText, AjaxSelect, useHistorySlim,
+    AjaxClientForm, FormMode, parseFormMode, FieldCheckbox, FieldDateTime, FieldMultiText, AjaxSelect, useBackUrlHistory,
     useHistoryListener
 } from "eos-webui-formgen";
 import { Helper } from '../Helper';
@@ -17,7 +17,7 @@ interface IPageParams {
 
 const ArcPage: FunctionComponent = () => {
     const history = useHistory();
-    const { pushPopPrevious, pushPrevious } = useHistorySlim();
+    const { pushPopPrevious, pushPrevious } = useBackUrlHistory();
     const { params } = useRouteMatch<IPageParams>();
     const mode: FormMode = parseFormMode(params.mode);
     const id: number | undefined = params?.id ? parseFloat(params?.id) : undefined;

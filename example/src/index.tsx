@@ -9,7 +9,7 @@ import AjaxClientFormPage2 from "./AjaxClientFormPage2";
 import AjaxClientFormApi from "./AjaxClientFormApi";
 import NotFoundPage from "./NotFoundPage";
 import { ConfigProvider } from 'eos-webui-controls';
-import { useHistorySlim } from 'eos-webui-formgen';
+import { useBackUrlHistory } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 import TestPage from './Pages/Test';
 
@@ -111,7 +111,7 @@ interface IMainMenuItem {
     title: string;
 }
 const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) => {
-    const { pushPrevious, pushPopPrevious } = useHistorySlim();
+    const { pushPrevious, pushPopPrevious } = useBackUrlHistory();
 
     return (
         <div style={{ display: "inline-block" }}>

@@ -2,9 +2,10 @@
 export * as AjaxClientForm from './ClientForms/AjaxClientForm';
 export * as ClientForm from './ClientForms/ClientForm';
 export * as SearchForm from './Search/SearchForm';
+export { default as useBackUrlHistory, IBackInfo } from './Hooks/useBackUrlHistory';
 export { default as useHistorySlim, IHistorySlimState, IHistorySlimItem } from './Hooks/useHistorySlim';
-export { default as useHistoryWriter} from './Hooks/useHistoryState';
-export { default as useHistoryListener} from './Hooks/useHistoryListener';
+export { default as useHistoryWriter } from './Hooks/useHistoryState';
+export { default as useHistoryListener } from './Hooks/useHistoryListener';
 
 export { default as ClientTabs, IClientTabs, IClientTab, IClientTabsApi, IFieldsInfo } from './ClientForms/ClientTabs';
 export { default as FormCell, IFormCell, IWidthCell, IAutoCell, IThreeFieldsCell, CellType, WidthType } from './ClientForms/FormCell';
