@@ -40,17 +40,21 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
         getStateByName: slimGetStateByName
     } = useHistorySlim();
     const stateKey = "backUrl";
+    /**
+    * Дублирует метод push у хука useHistorySlim
+    */
     const push = (path: string, state?: IHistorySlimItem): void => {
         slimPush(path, state);
     }
+    /**
+    * Дублирует метод goBack у хука useHistorySlim
+    */
     const goBack = (): void => {
         slimGoBack();
     }
     /**
-     * Метод нужно использовать, когда требуется сохранить текущий урл для перехода. Передавать текущий урл не нужно, потому что он сам подставится из истории.
-     * @param path - урла куда сейчас сделать редирект
-     * @param title - заголовок текущей страницы(формы)
-     */
+    * Дублирует метод pushPrevious у хука useHistorySlim и кладет в историю объект IBackUrlHistoryObject
+    */
     const pushPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
         const backObj = {
             url: window.location.pathname,
@@ -60,18 +64,16 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
         slimPushPrevious(path, myState);
     }
     /**
-     * Метод нужно использовать, когда вы знаете, что вам нужно сохранить бэк урлу, которая уже есть. Например: переход между формами в пределах одной карточки(edit/disp)
-     * @param path - урла куда сейчас сделать редирект
-     */
+    * Дублирует метод pushKeepPrevious у хука useHistorySlim
+    */
     const pushKeepPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
         // const state: any = history.location.state;
         slimPushKeepPrevious(path, state);
     }
+
     /**
-     * Пока не использовался
-     * @param path - урла куда сейчас сделать редирект
-     * @param title - заголовок текущей страницы(формы)
-     */
+    * Дублирует метод pushPopPrevious у хука useHistorySlim
+    */
     const pushPopPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
         // const state: any = history.location.state;
         const backObj = {
@@ -94,6 +96,9 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
     const getPreviousState = () => {
         return slimGetPreviousState();
     }
+    /**
+     * Дублирует метод getStateByName у хука useHistorySlim
+     */
     const getStateByName = (name: string) => {
         return slimGetStateByName(name);
     }
