@@ -16,7 +16,8 @@ function useHistorySlim() {
     const history = useHistory();
     const { state: historyState, clearState } = useHistoryWriter();
 
-    const push = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
+
+    const push = (path: string, state?: IHistorySlimItem) => {
         let nextState = createState();
         addCurrent(nextState, state);
 
