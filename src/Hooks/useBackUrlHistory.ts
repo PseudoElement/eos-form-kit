@@ -112,7 +112,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
             slimPushPopPrevious(currBack.url, myState);
         else {
             if (safeBackUrl)
-                document.location.href = location.pathname + safeBackUrl;
+                document.location.href = combineUrl([location.pathname, safeBackUrl ?? ""]);
             else
                 document.location.href = location.pathname;
 
@@ -133,6 +133,11 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
         else
             myState = backState;
         return myState;
+    }
+    function combineUrl(parts: string[]) {
+        var separator = '/';
+        var replace = new RegExp(separator + '{1,}', 'g');
+        return parts.join(separator).replace(replace, separator);
     }
 }
 export default useBackUrlHistory;
