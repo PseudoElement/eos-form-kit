@@ -27,11 +27,6 @@ export interface ILookupMulti extends IField {
     onChange?(item?: any): void;
 
     /**
-     * Передача formInst
-     */
-    form?: any;
-
-    /**
      * Текст при отсутсвии элементов
      */
     notFoundContent?: string;
@@ -87,7 +82,6 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                             onChange={(row) => setRowCount(row.length)}
                             mode={props.mode}
                             dataService={props.dataService}
-                            form={props.form}
                             notFoundContent={props.notFoundContent}
                             type={props.type}
                         />

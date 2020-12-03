@@ -24,11 +24,6 @@ export interface ILookupAutoComplete extends IField {
     optionsAmountInfo?: any;
 
     /**
-     * Передача formInst
-     */
-    form?: any;
-
-    /**
      * Текст при отсутсвии элементов
      */
     notFoundContent?: string;
@@ -71,7 +66,6 @@ export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((pr
                 <AjaxAutoComplete
                     dataService={props.dataService}
                     ref={ref}
-                    form={props.form}
                     fieldName={props.name}
                     required={props.required}
                     onChange={props.onChange}
