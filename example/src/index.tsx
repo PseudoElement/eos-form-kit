@@ -103,7 +103,13 @@ const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
                     // </Menu.Item>
                 );
             })}
-            <a onClick={() => { toBack(); }}>Назад useBackUrlHistory.toBack</a>
+            <a href={"/"}
+                onClick={(event) => {
+                    toBack();
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }}>Назад useBackUrlHistory.toBack</a>
             {/* </Menu> */}
         </div>
     );
