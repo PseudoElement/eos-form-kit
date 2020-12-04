@@ -119,22 +119,16 @@ function useHistorySlim() {
      */
     const getStateByNameAsArray = (name: string) => {
         let stateAsArray: any[] = [];
-        stateAsArray = getStateArray();
-        return stateAsArray;
+        const currentState: IHistorySlimState | null = history?.location?.state ?? null;
+        if (currentState)
+            pushStateItems(currentState);
+        return stateAsArray.reverse();
 
-        function getStateArray(): any[] {
-            let result: any[] = [];
-            const currentState: IHistorySlimState | null = history?.location?.state ?? null;
-            if (currentState?.current && currentState?.current[name]) {
-                result.push(currentState?.current[name]);
-                let state: any = currentState?.previous;
-                while (state) {
-                    if (state.current && state.current[name])
-                        result.push(state.current[name]);
-                    state = state?.previous;
-                }
-            }
-            return result.reverse();
+        function pushStateItems(myState: IHistorySlimState) {
+            if (myState?.current && myState?.current[name])
+                stateAsArray.push(myState?.current[name]);
+            if (myState.previous)
+                pushStateItems(myState.previous);
         }
     }
 
