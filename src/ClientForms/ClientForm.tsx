@@ -291,24 +291,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                 clientTabsApi.current?.activateTab(firstTab.key);
         }
     }, [props.mode]);
-
-    const clientTabsProps: IClientTabs | null =
-        props.tabsComponent
-            ? {
-                ...props.tabsComponent,
-                defaultActiveKey: currentState ?? props.tabsComponent?.defaultActiveKey,
-                invalidFields: invalidFields,
-                onChange: (activeKey: string) => {
-                    setState("activeKey", activeKey);
-                    if (props.tabsComponent && props.tabsComponent.onChange)
-                        props.tabsComponent.onChange(activeKey);
-                    if (props.onTabsChange)
-                        props.onTabsChange(activeKey);
-                }
-            }
-            : null;
-
-
+ 
     const elements =
         <SpinMaximized spinning={props.isSpinLoading}>
             <Row style={{ height: "100%" }} justify="center">
@@ -357,7 +340,21 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                                 additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
                             />}
                         <ToolBar {...props.toolbar}></ToolBar>
-                        {clientTabsProps && <ClientTabs ref={clientTabsApi} {...clientTabsProps} />}
+                        <ClientTabs ref={clientTabsApi}
+                            className={props?.tabsComponent?.className}
+                            tabBarStyle={props?.tabsComponent?.tabBarStyle}
+                            defaultActiveKey={currentState ?? props.tabsComponent?.defaultActiveKey}
+                            tabs={props?.tabsComponent?.tabs}
+                            fields={props?.tabsComponent?.fields}
+                            invalidFields={invalidFields}
+                            onChange={(activeKey: string) => {
+                                setState("activeKey", activeKey);
+                                if (props.tabsComponent && props.tabsComponent.onChange)
+                                    props.tabsComponent.onChange(activeKey);
+                                if (props.onTabsChange)
+                                    props.onTabsChange(activeKey);
+                            }}
+                        />
                         {props.rows && <FormRows rows={props?.rows?.rows} />}
                     </RcForm>
                 </Col>
