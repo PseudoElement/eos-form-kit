@@ -23,6 +23,7 @@ export interface IBackUrlHistory {
     getState(): any;
     getPreviousState(): any;
     getStateByName(name: string): any;
+    getStateByNameAsArray(): any[];
     toBack(): void;
 }
 /**
@@ -38,9 +39,10 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
         getState: slimGetState,
         getPreviousState: slimGetPreviousState,
         getStateByName: slimGetStateByName,
-        getPathName: slimeGetPathName
+        getPathName: slimGetPathName,
+        getStateByNameAsArray: slimGetStateByNameAsArray
     } = useHistorySlim();
-    const stateKey = "backUrl";
+    const stateName = "backUrl";
     /**
     * Дублирует метод push у хука useHistorySlim
     */
@@ -58,7 +60,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
     */
     const pushPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
         const backObj = {
-            url: slimeGetPathName(),
+            url: slimGetPathName(),
             title: document.title
         } as IBackUrlHistoryObject
         let myState: IHistorySlimItem = joinState(backObj, state);
@@ -101,7 +103,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
      * Метод выполняет переход на предыдущую страницу из истории backUrls.
      */
     const toBack = (state?: IHistorySlimItem | IHistorySlimItem[]): void => {
-        const currBack = getStateByName(stateKey);
+        const currBack = getStateByName(stateName);
         if (currBack && currBack.url)
             slimPushPopPrevious(currBack.url, state);
         else {
@@ -111,12 +113,18 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
                 slimPushPopPrevious("/", state);
         }
     }
+    /**
+     * Возвращает массив объектов IBackUrlHistoryObject
+     */
+    const getStateByNameAsArray = (): any[] => {
+        return slimGetStateByNameAsArray(stateName);
+    }
 
-    return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName, toBack };
+    return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName, getStateByNameAsArray, toBack };
 
     function joinState(backState: IBackUrlHistoryObject, state?: IHistorySlimItem | IHistorySlimItem[]): any {
         let myState;
-        let backStateSlim: IHistorySlimItem = { name: stateKey, value: backState }
+        let backStateSlim: IHistorySlimItem = { name: stateName, value: backState }
         if (state) {
             if (Array.isArray(state))
                 myState = [backStateSlim, ...state];

@@ -129,8 +129,6 @@ const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) =>
                 // pushKeepPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
 
                 pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
-
-
                 document.title = props.title;
 
                 event.preventDefault();
