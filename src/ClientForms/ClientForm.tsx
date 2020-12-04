@@ -146,10 +146,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
 
     const [formContext, setFormContext] = useState<IFormContext>({
         setFieldValue(name: string, value?: any) {
-            const { ...fieldValues } = rcFormRef?.current?.getFieldsValue();
-            fieldValues[name] = value;
-            rcFormRef?.current?.setFieldsValue(fieldValues);
+            setFieldValue(name, value);
         },
+
         disableField: useCallback((name: string) => {
             if (!formContext.fields)
                 formContext.fields = [];
@@ -247,9 +246,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                 // setWasModified(true);
             },
             setFieldValue(name: string, value?: any) {
-                const { ...fieldValues } = rcFormRef?.current?.getFieldsValue();
-                fieldValues[name] = value;
-                rcFormRef?.current?.setFieldsValue(fieldValues);
+                setFieldValue(name, value);;
             },
             disableField(name: string) {
                 formContext.disableField(name);
@@ -408,5 +405,10 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         }
         return values;
     }
-});
 
+    function setFieldValue(name: string, value?: any) {
+        const { ...fieldValues } = rcFormForm?.getFieldsValue();
+        fieldValues[name] = value;
+        rcFormForm?.setFieldsValue(fieldValues);
+    }
+});
