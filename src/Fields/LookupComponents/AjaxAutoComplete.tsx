@@ -32,6 +32,9 @@ export interface IAutoComplete {
      * Обзяательность заполнения поля
      */
     required?: boolean;
+
+    /** конекст */
+    ctx?: any;
 }
 
 /**
@@ -71,11 +74,12 @@ export interface IDataService {
  */
 export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
     onChange,
-    //fieldName,
+    fieldName,
     value,
     notFoundContent,
     // required,
     dataService: getDataService,
+    ctx
 }, ref) => {
 
     /**
@@ -163,7 +167,7 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
      */
     let onClear = () => {
         setCurrentValue(undefined);
-        //setValueToForm(undefined);
+        setValueToForm(undefined);
         if (onChange)
             onChange(null);
     }
@@ -200,12 +204,12 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
             setCurrentValue({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
 
             // Проставить объект IOptionItem в форму
-            //setValueToForm({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
+            setValueToForm({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
             if (onChange)
                 onChange({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
         } else {
             setCurrentValue(undefined);
-            //setValueToForm(undefined);
+            setValueToForm(undefined);
         }
     }
 
@@ -216,12 +220,10 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
      */
     let onSelect = (value: any, option: any) => {
         setCurrentValue(option?.item);
-        //setValueToForm(option?.item);
+        setValueToForm(option?.item);
         if (onChange)
             onChange(option?.item);
-        if (value) {
-
-        }
+        if (!value) { }
     }
 
     return (
@@ -269,13 +271,11 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
      * Проставляет значение в форму.
      * @param value Значение для простановки в форму.
      */
-    // function setValueToForm(value?: IOptionItem): boolean {
-    //     if (form && form.current) {
-    //         const { ...fieldValues } = form.current.getFieldsValue();
-    //         fieldValues[fieldName ?? DEFAULT_FIELD_NAME] = value;
-    //         form.current.setFieldsValue(fieldValues);
-    //         return true;
-    //     }
-    //     return false;
-    // }
+    function setValueToForm(value?: IOptionItem): boolean {
+        if (ctx) {
+            ctx.setFieldValue(fieldName, value);
+            return true;
+        }
+        return false;
+    }
 });
