@@ -120,7 +120,7 @@ interface IMainMenuItem {
     title: string;
 }
 const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) => {
-    const { pushPrevious } = useBackUrlHistory();
+    const { pushPrevious, getStateByNameAsArray } = useBackUrlHistory();
 
     return (
         <div style={{ display: "inline-block", marginRight: 10, border: "1px solid #ebacca" }}>
@@ -129,8 +129,8 @@ const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) =>
                 // pushKeepPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
 
                 pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
-
-
+                debugger
+                console.log(getStateByNameAsArray());
                 document.title = props.title;
 
                 event.preventDefault();
