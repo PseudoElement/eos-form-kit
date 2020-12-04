@@ -2,7 +2,7 @@ import React, { useState, useRef, useImperativeHandle  } from "react";
 import { Modal, Form} from "@eos/rc-controls";
 import IField from "../IField";
 import { Select as AjaxSelect, IDataService } from "./AjaxSelect";
-import { ITableRow } from "./DisplayTable";
+import { IMultiLookupRow } from "../FieldLookupMulti";
 
 /**
  * Настройки Модального окна.
@@ -19,7 +19,7 @@ export interface ITableModal extends IField {
      */
     notFoundContent?: string;
 
-    onFinish?(row: ITableRow | undefined): void;
+    onFinish?(row: IMultiLookupRow | undefined): void;
 }
 
 export interface ITableModalApi {
@@ -32,7 +32,7 @@ export interface ITableModalApi {
  */
 export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal, ref) => {
     const [lookupVisible, setLookupVisible] = useState<boolean>(false);
-    const [currentRow, setCurrentRow] = useState<ITableRow>();
+    const [currentRow, setCurrentRow] = useState<IMultiLookupRow>();
 
     const selfRef = useRef();
     useImperativeHandle(ref ?? selfRef, (): ITableModalApi => {
