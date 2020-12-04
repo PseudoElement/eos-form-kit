@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { Collapse, Form, Input, Badge } from "@eos/rc-controls";
+import React, { useContext, useMemo } from "react";
+import { Form, Input } from "@eos/rc-controls";
 import IField from "./IField";
 import { IDataService } from "./LookupComponents/AjaxSelect";
 import DisplayTable from "./LookupComponents/DisplayTable";
-import { FieldsHelper } from './FieldsHelper';
+import { FormContext, IFormContext } from "../Context/Context";
+import { Rule } from "rc-field-form/lib/interface";
+import { BaseField } from "./BaseField";
 export interface ITableColumn {
     title: string,
     dataIndex: string,
@@ -11,20 +13,20 @@ export interface ITableColumn {
     render?: any,
 };
 
-export interface IMultilookupRow {
+export interface IMultiLookupRow {
     key: string | number;
     name?: string;
 };
 
 /**
- * Настройки МультиЛукап поля.
+ * Настройки Мульти Лукап поля.
  */
 export interface ILookupMulti extends IField {
     /** Функция для обработки запроса */
     dataService: IDataService;
 
     /**Вызовется, когда значение поля изменится. */
-    onChange?(item?: any): void;
+    //onChange?(item?: any): void;
 
     /**
      * Текст при отсутсвии элементов
@@ -35,59 +37,58 @@ export interface ILookupMulti extends IField {
      * Колонки таблицы
      */
     tableColumns?: ITableColumn[];
+
 }
 
 /**
- * МультиЛукап поле.
+ * Мульти Лукап поле.
  */
 export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMulti, ref) => {
-    const [rowCount, setRowCount] = useState<number | undefined>();
+    const memoLookupMulti = useMemo(() => {
 
-    let rules = [];
-    if (props.required)
-        rules.push(FieldsHelper.getRequiredRule(props.requiredMessage));
-
-    return (
-        <div>
-            <Form.Item label={props.label} name={props.name} style={{display: "none"}} rules={rules}>
-                <Input />
-            </Form.Item>
-            <Collapse
-                key={'1'}
-                expandIconPosition={'right'}
-                ghost
-                bordered={true}
-            >
-                <Collapse.Panel
-                    key={'1'}
-                    forceRender={true}
-                    header={
-                        <div
-                            style={{
-                                borderBottom: '1px solid #E6E6E6'
-                            }}
-                        >
-                            {(!props.required || rowCount) ? 
-                                <Badge count={rowCount} type="text" >{props.label}</Badge> :
-                                <Badge count={' '} type="text" color="red">{props.label}</Badge> 
-                                }
-                        </div>
-                    }
-                >
+        function getNew(props: ILookupMulti, ref: any, rules?: Rule[]) {
+            const context: IFormContext = useContext(FormContext);
+            return (
+                <div>
+                    <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
+                        <Input />
+                    </Form.Item>
                     <Form.Item name={props.name} rules={rules}>
                         <DisplayTable
-                            fieldName={props.name}
+                            rules={rules}
+                            label={props.label || ''}
+                            required={props.required}
+                            name={props.name}
                             ref={ref}
                             columns={props.tableColumns}
-                            onChange={(row) => setRowCount(row.length)}
                             mode={props.mode}
                             dataService={props.dataService}
                             notFoundContent={props.notFoundContent}
                             type={props.type}
+                            onDataChange={(row) => context.setFieldValue(props.name || '', row)}
                         />
                     </Form.Item>
-                </Collapse.Panel>
-            </Collapse>
-        </div>
-    );
+                </div>
+            );
+        }
+
+        function getEdit(props: ILookupMulti, ref: any, rules?: Rule[]) {
+            return getNew(props, ref, rules);
+        }
+
+        function getDisplay(props: ILookupMulti, ref: any, rules?: Rule[]) {
+            return getNew(props, ref, rules);
+        }
+
+        return (<BaseField
+            ref={ref}
+            field={props}
+            getNewField={getNew}
+            getEditField={getEdit}
+            getDisplayField={getDisplay}
+        />);
+
+    }, [props.mode, props.value]);
+
+    return memoLookupMulti;
 });

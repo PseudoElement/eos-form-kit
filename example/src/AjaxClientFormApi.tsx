@@ -75,6 +75,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onSpinnerClick={() => { formApi?.current?.showSpinLoading(); setTimeout(() => { formApi?.current?.hideLoading(); }, 1500); }}
                 onLookupSetClick={() => { formApi?.current?.setFieldValue("keepPeriod", { key: "2", value: "два" }); }}
                 onNameSetClick={() => { formApi?.current?.setFieldValue("name", "Новое наименование"); }}
+                onLookupMultiSetClick={() => { formApi?.current?.setFieldValue("multiLookupTest", [{ key: "2", value: "два" }, { key: "3", value: "три" }]); }}
                 onTripleSkeletonLoadingClick={() => {
                     formApi?.current?.showSkeletonLoading();
                     setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);
@@ -166,6 +167,7 @@ interface IButtonsPanel {
     onEditTitleClick?(): void;
     onLookupSetClick?(): void;
     onNameSetClick?(): void;
+    onLookupMultiSetClick?(): void;
     onReloadItemClick?(): void;
     onReloadClick?(): void;
     onSetFiveCountClick?(): void;
@@ -200,6 +202,7 @@ const ButtonsPanel = forwardRef<any, IButtonsPanel>((props: IButtonsPanel, ref: 
             <Button onClick={props.onEditTitleClick}>Заголовок</Button>
             <Button onClick={props.onLookupSetClick}>Задать срок хранения</Button>
             <Button onClick={props.onNameSetClick}>Задать наименование</Button>
+            <Button onClick={props.onLookupMultiSetClick}>Задать особенности</Button>
             <Button onClick={props.onReloadItemClick}>ReloadItem</Button>
             <Button onClick={props.onReloadClick}>Reload</Button>
             <Button onClick={props.onSetFiveCountClick}>SetCount(5)</Button>

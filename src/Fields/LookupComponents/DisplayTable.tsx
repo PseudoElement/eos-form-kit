@@ -1,19 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Menu, Table, Input, PlusIcon, BinIcon } from "@eos/rc-controls";
+import { Menu, Table, Input, PlusIcon, BinIcon, Collapse, Badge } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
-import { ITableColumn } from "../FieldLookupMulti";
+import { ITableColumn, IMultiLookupRow } from "../FieldLookupMulti";
 import { ITableModalApi, TableModal } from "./TableModal";;
-import  { IDataService } from "./AjaxSelect";
-export interface ITableRow {
-    /**
-     * Программное значение которое вернёт компонент.
-     */
-    key?: string;
-    /**
-     * Отображаемый текст значения для пользователя.
-     */
-    value?: string;
-}
+import { IDataService } from "./AjaxSelect";
 export interface ITableMenuTool {
     key: string | number;
     component?: JSX.Element;
@@ -27,7 +17,7 @@ export interface ITableMenuTool {
 
 export interface IDisplayTable {
 
-    value?: ITableRow[];
+    value?: IMultiLookupRow[];
 
     columns?: any;
 
@@ -36,35 +26,45 @@ export interface IDisplayTable {
 
     onModalVisible?(): void;
 
-    mode?: any;
-
     /**
      * Текст при отсутсвии элементов
      */
     notFoundContent?: string;
-
+    /** Функция для обработки запроса */
     dataService: IDataService;
 
     type?: any;
 
-    name?: string;
+    /**Тип отрисовки поля. */
+    mode: FormMode;
 
-    fieldName?: string;
+    /**Отображаемое наименование поля. */
+    label?: string;
+    /**Имя поля в форме при посте */
+    name?: string;
+    /**Обязательность поля. */
+    required?: boolean | undefined;
+
+    onDataChange?(item?: any): void;
+
+    rules: any;
 }
 
-const DisplayTable = React.forwardRef<any, IDisplayTable>(({ 
-        value, 
-        columns,
-        mode, 
-        onChange,
-        notFoundContent,
-        dataService,
-        type,
-    //    fieldName
-    }) => {
-    const [dataSource, setDataSource] = useState<ITableRow[] | undefined>(value);
+const DisplayTable = React.forwardRef<any, IDisplayTable>(({
+    value,
+    columns,
+    mode,
+    onDataChange,
+    notFoundContent,
+    dataService,
+    type,
+    label,
+    required
+}) => {
+
+    const [dataSource, setDataSource] = useState<IMultiLookupRow[] | undefined>(value);
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-    const [rowFromLookup, setRowFromLookup] = useState<ITableRow | undefined>();
+    const [rowFromLookup, setRowFromLookup] = useState<IMultiLookupRow | undefined>();
 
     const tableModalApi = useRef<ITableModalApi>();
     const showModalLookup = () => {
@@ -106,27 +106,26 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
      * Удаление записей в таблице
      */
     const deleteMultiLookupLookupRows = () => {
-        if(dataSource) {
+        if (dataSource) {
             let newDataSource = dataSource.filter(({ key }) => key && !(~selectedRowKeys.indexOf(key)));
             setDataSource(newDataSource);
-        //    setValueToForm(dataSource);
         }
     };
 
     const getFormatedColumns = (data: ITableColumn[]) => {
-        return data.map((e: ITableColumn)=> {
-            return {  
+        return data.map((e: ITableColumn) => {
+            return {
                 key: e.key,
                 title: e.title,
                 dataIndex: e.dataIndex,
                 padding: 0,
-                render: (value: any) => <Input style={{ width: "100%", margin: "12px 0" }} 
-                                               value={value} 
-                                               readOnly={false} 
-                                        />,
+                render: (value: any) => <Input style={{ width: "100%", margin: "12px 0" }}
+                    value={value}
+                    readOnly={true}
+                />,
             };
         });
-    } 
+    }
 
     const isDisplay = () => {
         return FormMode.display === mode;
@@ -154,51 +153,64 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     useEffect(() => {
         if (rowFromLookup && dataSource) {
             setDataSource([rowFromLookup, ...dataSource]);
-        //    setValueToForm(dataSource);
         }
     }, [rowFromLookup]);
 
     useEffect(() => {
-        if (onChange) onChange(dataSource);
+        if (value) setDataSource(value);
+    }, [value]);
+
+    useEffect(() => {
+        if (onDataChange) onDataChange(dataSource);
     }, [dataSource]);
 
     return (
         <div>
-                <Table.Menu
-                    menu={getMenuItemsList(menu)}
+            <Collapse
+                key={'1'}
+                expandIconPosition={'right'}
+                ghost
+                bordered={true}
+            >
+                <Collapse.Panel
+                    key={'1'}
+                    forceRender={true}
+                    header={
+                        <div
+                            style={{
+                                borderBottom: '1px solid #E6E6E6'
+                            }}
+                        >
+                            {(!required || dataSource?.length) ?
+                                <Badge count={dataSource?.length} type="text" >{label}</Badge> :
+                                <Badge count={' '} type="text" color="red">{label}</Badge>
+                            }
+                        </div>
+                    }
                 >
-                    <Table
-                        fullHeight
-                        dataSource={(dataSource)}
-                        columns={getFormatedColumns(columns)}
-                        rowSelection={rowSelection}
-                        showHeader={false}
+                    <Table.Menu
+                        menu={getMenuItemsList(menu)}
+                    >
+                        <Table
+                            fullHeight
+                            dataSource={dataSource}
+                            columns={getFormatedColumns(columns)}
+                            rowSelection={rowSelection}
+                            showHeader={false}
+                        />
+                    </Table.Menu>
+                    <TableModal
+                        mode={mode}
+                        type={type}
+                        ref={tableModalApi}
+                        dataService={dataService}
+                        notFoundContent={notFoundContent}
+                        onFinish={(row) => setRowFromLookup(row)}
                     />
-                </Table.Menu>
-                <TableModal 
-                    mode={mode}
-                    type={type}
-                    ref={tableModalApi}
-                    dataService={dataService}
-                    notFoundContent={notFoundContent}
-                    onFinish={(row) => setRowFromLookup(row)}
-                />
+                </Collapse.Panel>
+            </Collapse>
         </div>
     );
-
-    /**
-    * Проставляет значение в форму.
-    * @param value Значение для простановки в форму.
-     */
-    // function setValueToForm(value?: ITableRow[]): boolean {
-    //     if (form && form.current) {
-    //         const { ...fieldValues } = form.current.getFieldsValue();
-    //         fieldValues[fieldName ?? ''] = value;
-    //         form.current.setFieldValue(fieldValues);
-    //         return true;
-    //     }
-    //     return false;
-    // }
 });
 
 export default DisplayTable;
