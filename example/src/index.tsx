@@ -120,7 +120,7 @@ interface IMainMenuItem {
     title: string;
 }
 const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) => {
-    const { pushPrevious, getStateByNameAsArray } = useBackUrlHistory();
+    const { pushPrevious } = useBackUrlHistory();
 
     return (
         <div style={{ display: "inline-block", marginRight: 10, border: "1px solid #ebacca" }}>
