@@ -15,7 +15,6 @@ export interface IHistorySlimState {
 function useHistorySlim() {
     const history = useHistory();
     const { state: historyState, clearState } = useHistoryWriter();
-
     const push = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
         let nextState = createState();
         addCurrent(nextState, state);
@@ -114,12 +113,35 @@ function useHistorySlim() {
         const currentState: IHistorySlimState | null = history?.location?.state ?? null;
         return currentState?.previous?.current ?? null;
     }
+    /**
+     * Возвращает массив конкретных свойств из истории.
+     * @param name ключ объекта который нужно вытащить из истории
+     */
+    const getStateByNameAsArray = (name: string) => {
+        let stateAsArray: any[] = [];
+        stateAsArray = getStateArray();
+        return stateAsArray;
+
+        function getStateArray(): any[] {
+            let result: any[] = [];
+            const currentState: IHistorySlimState | null = history?.location?.state ?? null;
+            if (currentState?.current && currentState?.current[name]) {
+                result.push(currentState?.current[name]);
+                let state: any = currentState?.previous;
+                while (state) {
+                    if (state.current && state.current[name])
+                        result.push(state.current[name]);
+                    state = state?.previous;
+                }
+            }
+            return result.reverse();
+        }
+    }
 
     const getPathName = () => {
         return history.location.pathname;
     }
-
-    return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName, getPathName };
+    return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName, getPathName, getStateByNameAsArray };
 
     function createState(): IHistorySlimState {
         let nextState: IHistorySlimState = {};
