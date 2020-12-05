@@ -283,6 +283,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         // setInitialValues(props.initialValues);
         if (props.onInitialValuesChanged)
             props.onInitialValuesChanged(props.initialValues);
+        setWasModified(false);
     }, [props.initialValues]);
     useEffect(() => {
         if (!isEnabledTab(clientTabsApi.current?.getActivatedTab() || "")) {
@@ -290,8 +291,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             if (firstTab)
                 clientTabsApi.current?.activateTab(firstTab.key);
         }
+        setWasModified(false);
     }, [props.mode]);
- 
+
     const elements =
         <SpinMaximized spinning={props.isSpinLoading}>
             <Row style={{ height: "100%" }} justify="center">
