@@ -37,6 +37,8 @@ export interface IFormTitle {
 
 /**Компонент отображения заголовка формы. */
 const FormTitle = forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
+    if (props.title)
+        document.title = props.title;
     return (
         <React.Fragment>
             {props.formTitle ?
