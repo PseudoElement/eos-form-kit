@@ -83,7 +83,7 @@ export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((pr
             getEditField={getEdit}
             getDisplayField={getDisplay}
         />);
-    }, [props.label, props.name])
+    }, [props.mode, props.label, props.name])
 
     return memoLookupAutoComplete;
 });

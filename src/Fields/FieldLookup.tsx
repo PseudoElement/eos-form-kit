@@ -83,7 +83,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
             getEditField={getEdit}
             getDisplayField={getDisplay}
         />);
-    }, [props.label, props.name])
+    }, [props.mode, props.label, props.name])
 
     return memoLookup;
 });
