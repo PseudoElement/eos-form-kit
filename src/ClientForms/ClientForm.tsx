@@ -259,8 +259,8 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                 // clientTabsApi?.current?.enableField(name);
             },
             getFieldsValue(): Store {
-                // return rcFormRef?.current?.getFieldsValue() || {};
-                return {};
+                rcFormForm?.getFieldsValue();
+                return  rcFormForm?.getFieldsValue() || {};
             },
             reset() {
                 formContext?.reset();
