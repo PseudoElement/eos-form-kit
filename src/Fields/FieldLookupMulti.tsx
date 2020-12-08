@@ -45,41 +45,6 @@ export interface ILookupMulti extends IField {
  */
 export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMulti, ref) => {
     const memoLookupMulti = useMemo(() => {
-
-        function getNew(props: ILookupMulti, ref: any, rules?: Rule[]) {
-            const context: IFormContext = useContext(FormContext);
-            return (
-                <div>
-                    <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name={props.name} rules={rules}>
-                        <DisplayTable
-                            rules={rules}
-                            label={props.label || ''}
-                            required={props.required}
-                            name={props.name}
-                            ref={ref}
-                            columns={props.tableColumns}
-                            mode={props.mode}
-                            dataService={props.dataService}
-                            notFoundContent={props.notFoundContent}
-                            type={props.type}
-                            onDataChange={(row) => context.setFieldValue(props.name || '', row)}
-                        />
-                    </Form.Item>
-                </div>
-            );
-        }
-
-        function getEdit(props: ILookupMulti, ref: any, rules?: Rule[]) {
-            return getNew(props, ref, rules);
-        }
-
-        function getDisplay(props: ILookupMulti, ref: any, rules?: Rule[]) {
-            return getNew(props, ref, rules);
-        }
-
         return (<BaseField
             ref={ref}
             field={props}
@@ -91,4 +56,36 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
     }, [props.mode, props.value]);
 
     return memoLookupMulti;
+
+    function getNew(props: ILookupMulti, ref: any, rules?: Rule[]) {
+        const context: IFormContext = useContext(FormContext);
+        return (
+            <div>
+                <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
+                    <Input />
+                </Form.Item>
+                <Form.Item name={props.name} rules={rules}>
+                    <DisplayTable
+                        rules={rules}
+                        label={props.label || ''}
+                        required={props.required}
+                        name={props.name}
+                        ref={ref}
+                        columns={props.tableColumns}
+                        mode={props.mode}
+                        dataService={props.dataService}
+                        notFoundContent={props.notFoundContent}
+                        type={props.type}
+                        onDataChange={(row) => context.setFieldValue(props.name || '', row)}
+                    />
+                </Form.Item>
+            </div>
+        );
+    }
+    function getEdit(props: ILookupMulti, ref: any, rules?: Rule[]) {
+        return getNew(props, ref, rules);
+    }
+    function getDisplay(props: ILookupMulti, ref: any, rules?: Rule[]) {
+        return getNew(props, ref, rules);
+    }
 });

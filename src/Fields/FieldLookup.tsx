@@ -47,35 +47,7 @@ export function getFieldValueForPost(value: any) {
  * Лукап поле.
  */
 export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
-    const memoLookup = useMemo(() => {
-        function getNew(props: ILookup, ref: any, rules?: Rule[]) {
-            const ctx: IFormContext = useContext(FormContext)
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <AjaxSelect
-                        dataService={props.dataService}
-                        ref={ref}
-                        ctx={ctx}
-                        fieldName={props.name}
-                        required={props.required}
-                        onChange={props.onChange}
-                        notFoundContent={props.notFoundContent}
-                    />
-                </Form.Item>
-            );
-        }
-
-        function getEdit(props: ILookup, ref: any, rules?: Rule[]) {
-            return getNew(props, ref, rules);
-        }
-        function getDisplay(props: ILookup, ref: any, rules?: Rule[]) {
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <DisplayInput ref={ref} />
-                </Form.Item>
-            );
-        }
-
+    const memoLookup = useMemo(() => {   
         return (<BaseField
             ref={ref}
             field={props}
@@ -86,4 +58,31 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
     }, [props.mode, props.label, props.name])
 
     return memoLookup;
+
+    function getNew(props: ILookup, ref: any, rules?: Rule[]) {
+        const ctx: IFormContext = useContext(FormContext)
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <AjaxSelect
+                    dataService={props.dataService}
+                    ref={ref}
+                    ctx={ctx}
+                    fieldName={props.name}
+                    required={props.required}
+                    onChange={props.onChange}
+                    notFoundContent={props.notFoundContent}
+                />
+            </Form.Item>
+        );
+    }
+    function getEdit(props: ILookup, ref: any, rules?: Rule[]) {
+        return getNew(props, ref, rules);
+    }
+    function getDisplay(props: ILookup, ref: any, rules?: Rule[]) {
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <DisplayInput ref={ref} />
+            </Form.Item>
+        );
+    }
 });
