@@ -126,7 +126,7 @@ function useHistorySlim() {
 
         function pushStateItems(myState: IHistorySlimState) {
             if (myState?.current && myState?.current[name])
-                stateAsArray.push(myState?.current[name]);
+                stateAsArray.push({ ...myState?.current[name], state: myState });
             if (myState.previous)
                 pushStateItems(myState.previous);
         }
