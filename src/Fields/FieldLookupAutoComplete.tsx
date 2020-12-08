@@ -48,34 +48,6 @@ export function getFieldValueForPost(value: any) {
  */
 export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((props: ILookupAutoComplete, ref) => {
     const memoLookupAutoComplete = useMemo(() => {
-        function getNew(props: ILookupAutoComplete, ref: any, rules?: Rule[]) {
-            const ctx: IFormContext = useContext(FormContext)
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <AjaxAutoComplete
-                        dataService={props.dataService}
-                        ref={ref}
-                        ctx={ctx}
-                        fieldName={props.name}
-                        required={props.required}
-                        onChange={props.onChange}
-                        notFoundContent={props.notFoundContent}
-                    />
-                </Form.Item>
-            );
-        }
-
-        function getEdit(props: ILookupAutoComplete, ref: any, rules?: Rule[]) {
-            return getNew(props, ref, rules);
-        }
-        function getDisplay(props: ILookupAutoComplete, ref: any, rules?: Rule[]) {
-            return (
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <DisplayInput ref={ref} />
-                </Form.Item>
-            );
-        }
-
         return (<BaseField
             ref={ref}
             field={props}
@@ -86,4 +58,31 @@ export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((pr
     }, [props.mode, props.label, props.name])
 
     return memoLookupAutoComplete;
+
+    function getNew(props: ILookupAutoComplete, ref: any, rules?: Rule[]) {
+        const ctx: IFormContext = useContext(FormContext)
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <AjaxAutoComplete
+                    dataService={props.dataService}
+                    ref={ref}
+                    ctx={ctx}
+                    fieldName={props.name}
+                    required={props.required}
+                    onChange={props.onChange}
+                    notFoundContent={props.notFoundContent}
+                />
+            </Form.Item>
+        );
+    }
+    function getEdit(props: ILookupAutoComplete, ref: any, rules?: Rule[]) {
+        return getNew(props, ref, rules);
+    }
+    function getDisplay(props: ILookupAutoComplete, ref: any, rules?: Rule[]) {
+        return (
+            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                <DisplayInput ref={ref} />
+            </Form.Item>
+        );
+    }
 });
