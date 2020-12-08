@@ -36,14 +36,7 @@ class Helper {
                         }
                     },
                     resultsAmount: 3,
-                },
-                "tableColumns": [
-                    {
-                      title: 'name',
-                      dataIndex: 'value',
-                      key: 'name',
-                    }  
-                  ]
+                }
             },
             { type: "FieldCheckbox", name: "E_DOCUMENT", label: " ", description: "Для электронных документов" },
             { "disabled": true, "label": "Находится в", "name": "parentName", "required": false, "requiredMessage": null, "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
