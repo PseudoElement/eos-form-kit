@@ -112,19 +112,31 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         }
     };
 
-    const getFormatedColumns = (data: ITableColumn[]) => {
-        return data.map((e: ITableColumn) => {
-            return {
-                key: e.key,
-                title: e.title,
-                dataIndex: e.dataIndex,
-                padding: 0,
+    const getFormatedColumns = (columns: ITableColumn[]) => {
+        if (columns) {
+            return columns.map((e: ITableColumn) => {
+                return {
+                    key: e.key,
+                    title: e.title,
+                    dataIndex: e.dataIndex,
+                    padding: 0,
+                    render: (value: any) => <Input style={{ width: "100%", margin: "12px 0" }}
+                        value={value}
+                        readOnly={true}
+                    />,
+                };
+            });
+        } else {
+            return [{
+                key :'name',
+                dataIndex: 'value',
+                title: 'name',
                 render: (value: any) => <Input style={{ width: "100%", margin: "12px 0" }}
                     value={value}
                     readOnly={true}
                 />,
-            };
-        });
+            }]
+        }
     }
 
     const isDisplay = () => {
