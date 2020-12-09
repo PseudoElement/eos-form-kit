@@ -44,7 +44,7 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
         return api;
     });
 
-    const tableModalApi = useRef<ITableModalApi>();
+    //const tableModalApi = useRef<ITableModalApi>();
     return (
         <div>
             <Modal
@@ -57,7 +57,7 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
             >
                 <Form.Item>
                     <AjaxSelect
-                        ref={tableModalApi}
+                        ref={ref}
                         dataService={props.dataService}
                         required={props.required}
                         onChange={(row) => setCurrentRow(row)}
