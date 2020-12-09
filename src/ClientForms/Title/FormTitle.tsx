@@ -1,4 +1,5 @@
 import React, { forwardRef, ReactNode } from "react";
+import { useBackUrlHistory } from "../..";
 import { FormMode } from "../FormMode";
 import DispFormTitle from "./DispFormTitle";
 import EditFormTitle from "./EditFormTitle";
@@ -37,8 +38,9 @@ export interface IFormTitle {
 
 /**Компонент отображения заголовка формы. */
 const FormTitle = forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
+    const { setCurrentPageState } = useBackUrlHistory()
     if (props.title)
-        document.title = props.title;
+        setCurrentPageState(props.title);
     return (
         <React.Fragment>
             {props.formTitle ?

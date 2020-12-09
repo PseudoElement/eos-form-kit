@@ -2,7 +2,7 @@
 export * as AjaxClientForm from './ClientForms/AjaxClientForm';
 export * as ClientForm from './ClientForms/ClientForm';
 export * as SearchForm from './Search/SearchForm';
-export { default as useBackUrlHistory, IBackUrlHistoryObject } from './Hooks/useBackUrlHistory';
+export { default as useBackUrlHistory, IBackPageInfo } from './Hooks/useBackUrlHistory';
 export { default as useHistorySlim, IHistorySlimState, IHistorySlimItem } from './Hooks/useHistorySlim';
 export { default as useHistoryWriter } from './Hooks/useHistoryState';
 export { default as useHistoryListener } from './Hooks/useHistoryListener';
