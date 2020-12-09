@@ -9,6 +9,7 @@ export interface IHistorySlimItem {
 export interface IHistorySlimState {
     current?: any;
     previous?: IHistorySlimState;
+    key: number;
 }
 
 /**Хук, позволяющий работать с историей браузера.*/
@@ -25,13 +26,22 @@ function useHistorySlim() {
         history.goBack();
     }
     /**
+     * Возвращает по ключу к определенному состоянию
+     * @param key ключ истории к которому нужно вернуться.
+     */
+    const pushRecover = (key: number, path?: string) => {
+        const currentState = getStateByKey(key);
+        const myPath = path ? path : "/";
+        history.push(myPath, currentState);
+    }
+    /**
      * Добавляет запись в историю с записью текущего состояния и всех состояний из useHistoryState.
      * Текущее состояния становится предыдущим.
      * @param path 
      * @param state 
      */
     const pushPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
-        const currentState: IHistorySlimState = history?.location?.state ?? { current: {}, previous: {} };
+        const currentState: IHistorySlimState = history?.location?.state as IHistorySlimState ?? createState();
         if (!currentState.current)
             currentState.current = {};
 
@@ -54,7 +64,7 @@ function useHistorySlim() {
     * @param state 
     */
     const pushKeepPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
-        const currentState: IHistorySlimState = history?.location?.state ?? { current: {}, previous: {} };
+        const currentState: IHistorySlimState = history?.location?.state as IHistorySlimState ?? createState();
         if (!currentState.current)
             currentState.current = {};
 
@@ -74,7 +84,7 @@ function useHistorySlim() {
      * @param state 
      */
     const pushPopPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
-        const currentState: IHistorySlimState = history?.location?.state ?? { current: {}, previous: {} };
+        const currentState: IHistorySlimState = history?.location?.state as IHistorySlimState ?? createState();
         let nextState: IHistorySlimState = currentState.previous ? currentState.previous : createState();
 
         if (!nextState.current)
@@ -94,7 +104,7 @@ function useHistorySlim() {
      * Возвращает текущее состояние.
      */
     const getState = () => {
-        const currentState: IHistorySlimState | null = history?.location?.state ?? null;
+        const currentState: IHistorySlimState | null = history?.location?.state as IHistorySlimState ?? null;
         return currentState?.current ?? null;
     }
 
@@ -102,15 +112,30 @@ function useHistorySlim() {
     * Возвращает из текущего состояния значение по ключу.
     */
     const getStateByName = (name: string) => {
-        const currentState: IHistorySlimState | null = history?.location?.state ?? null;
+        const currentState: IHistorySlimState | null = history?.location?.state as IHistorySlimState ?? null;
         return currentState?.current ? currentState?.current[name] : undefined;
     }
+    const getStateByKey = (key: number) => {
+        const currentState: IHistorySlimState | null = history?.location?.state as IHistorySlimState ?? null;
+        return key ? getState(currentState) : null;
 
+        function getState(state?: IHistorySlimState): IHistorySlimState | null {
+            let result = null;
+            if (state) {
+                if (state.key === key)
+                    result = state;
+                else
+                    result = getState(state.previous)
+            }
+            return result;
+
+        }
+    }
     /**
      * Возвращает предыдущее состояние.
      */
     const getPreviousState = () => {
-        const currentState: IHistorySlimState | null = history?.location?.state ?? null;
+        const currentState: IHistorySlimState | null = history?.location?.state as IHistorySlimState ?? null;
         return currentState?.previous?.current ?? null;
     }
     /**
@@ -119,14 +144,14 @@ function useHistorySlim() {
      */
     const getStateByNameAsArray = (name: string) => {
         let stateAsArray: any[] = [];
-        const currentState: IHistorySlimState | null = history?.location?.state ?? null;
+        const currentState: IHistorySlimState | null = history?.location?.state as IHistorySlimState ?? null;
         if (currentState)
             pushStateItems(currentState);
         return stateAsArray.reverse();
 
         function pushStateItems(myState: IHistorySlimState) {
             if (myState?.current && myState?.current[name])
-                stateAsArray.push({ ...myState?.current[name], state: myState });
+                stateAsArray.push({ state: { ...myState?.current[name] }, key: myState.key });
             if (myState.previous)
                 pushStateItems(myState.previous);
         }
@@ -135,10 +160,15 @@ function useHistorySlim() {
     const getPathName = () => {
         return history.location.pathname;
     }
-    return { push, goBack, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName, getPathName, getStateByNameAsArray };
+    return { push, goBack, pushRecover, pushPrevious, pushKeepPrevious, pushPopPrevious, getState, getPreviousState, getStateByName, getPathName, getStateByNameAsArray, getStateByKey };
 
     function createState(): IHistorySlimState {
-        let nextState: IHistorySlimState = {};
+        let nextState: IHistorySlimState = {} as IHistorySlimState;
+        /**
+         * Уникальный ключ. Возвращает количество миллисекунд с 1 января 1970 года.
+         * https://www.w3schools.com/jsref/jsref_valueof_date.asp
+         */
+        nextState.key = new Date().valueOf();
         return nextState;
     }
     function addCurrent(state: IHistorySlimState, stateItem?: IHistorySlimItem | IHistorySlimItem[]) {
@@ -161,7 +191,7 @@ function useHistorySlim() {
     function addPrevious(state: IHistorySlimState, previous?: IHistorySlimState) {
         if (previous) {
             if (!state.previous)
-                state.previous = {};
+                state.previous = createState();
             state.previous = previous;
         }
     }

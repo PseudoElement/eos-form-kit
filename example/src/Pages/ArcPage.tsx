@@ -17,11 +17,11 @@ interface IPageParams {
 
 const ArcPage: FunctionComponent = () => {
     const history = useHistory();
-    const { pushPopPrevious, pushPrevious } = useBackUrlHistory();
+    const { pushPopPrevious, pushPrevious, getCurrentPageStateAsArray } = useBackUrlHistory();
     const { params } = useRouteMatch<IPageParams>();
     const mode: FormMode = parseFormMode(params.mode);
     const id: number | undefined = params?.id ? parseFloat(params?.id) : undefined;
-
+    console.log(getCurrentPageStateAsArray());
     useEffect(() => { formApi?.current?.reloadItem(); }, [id]);
 
     const dataService: AjaxClientForm.IDataService = {
@@ -57,6 +57,7 @@ const ArcPage: FunctionComponent = () => {
 
     const formApi = useRef<AjaxClientForm.IFormApi>();
     const { currentState } = useHistoryListener("activeKey");
+    const { toBack } = useBackUrlHistory();
     return (
         <React.Fragment>
             <div>currentState={currentState ? "true" : "false"}</div>
@@ -68,17 +69,18 @@ const ArcPage: FunctionComponent = () => {
                 enableLeftIcon={true}
                 isHiddenLeftIcon={true}
                 onCancelClick={() => {
-                    switch (mode) {
-                        case FormMode.new:
-                        case FormMode.edit:
-                            history.push("/arc/disp/1");
-                            history.push("/arc/disp/1");
-                            break;
-                        case FormMode.display:
-                            history.push("/arc/disp/1");
-                            break;
+                    // switch (mode) {
+                    //     case FormMode.new:
+                    //     case FormMode.edit:
+                    //         history.push("/arc/disp/1");
+                    //         history.push("/arc/disp/1");
+                    //         break;
+                    //     case FormMode.display:
+                    //         history.push("/arc/disp/1");
+                    //         break;
 
-                    }
+                    // }
+                    toBack();
                 }}
                 onEditClick={() => {
                     history.push("/arc/edit/1");
