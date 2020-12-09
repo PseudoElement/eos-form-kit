@@ -17,6 +17,10 @@ export interface IText extends IField {
     additionalText?: string;
     /**Иконка с дополнительным текстом. */
     icon?: ReactElement;
+    /**Значение поля по умолчанию. */
+    defaultValue?: string;
+    /**Вызовется, когда значение поля изменится. */
+    onChange?(item?: any): void;
 }
 
 /**
@@ -39,7 +43,7 @@ export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
     function getNew(props: IText, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <Input value={props.value} suffix={getSuffix(props)} style={{ width: "100%" }} ref={ref} required={props.required} allowClear={props.allowClear} maxLength={props.maxLength} />
+                <Input onChange={props.onChange} value={props.value} defaultValue={props.defaultValue} suffix={getSuffix(props)} style={{ width: "100%" }} ref={ref} required={props.required} allowClear={props.allowClear} maxLength={props.maxLength} />
             </Form.Item>
         );
     }
@@ -47,6 +51,6 @@ export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
         return getNew(props, ref, rules);
     }
     function getDisplay(props: IText) {
-        return FieldsHelper.getDisplayField(props.label, props.name, props.value, getSuffix(props));
+        return FieldsHelper.getDisplayField(props.label, props.name, props.value, getSuffix(props), props.defaultValue, props.onChange);
     }
 });

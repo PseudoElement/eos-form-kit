@@ -25,11 +25,13 @@ class FieldsHelper {
      * @param name Имя поля, по которому будет взято значение из initialValues родительской формы.
      * @param value Значение поля, которое проставится, если name не передать.
      * @param suffix suffix для input'а.
+     * @param defaultValue значение input'а по умолчанию.
+     * @param onChange Вызовется, когда значение поля изменится.
      */
-    static getDisplayField(label?: string, name?: string, value?: string, suffix?: ReactNode) {
+    static getDisplayField(label?: string, name?: string, value?: string, suffix?: ReactNode, defaultValue?: string,  onChange?: any) {
         return (
             <Form.Item label={label} name={name} style={{ marginBottom: 0, textTransform: "uppercase" }}>
-                <Input readOnly={true} style={{ width: "100%" }} value={value} suffix={suffix} />
+                <Input readOnly={true} style={{ width: "100%" }} defaultValue={defaultValue} value={value} suffix={suffix} onChange={onChange}/>
             </Form.Item>
         );
     }
