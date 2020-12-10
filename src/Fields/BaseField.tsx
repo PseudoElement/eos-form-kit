@@ -1,6 +1,6 @@
 import React, {
     useContext, useEffect,
-    useMemo,
+    // useMemo,
     useState
 } from "react";
 import { IField } from "..";
@@ -40,7 +40,7 @@ export const BaseField = React.forwardRef<any, IBaseField>((props: IBaseField, r
         for (let rule of props.rules)
             rules.push(rule);
 
-    return useMemo(() => {
+    // return useMemo(() => {
         switch (mode) {
             case FormMode.display:
                 return props.getDisplayField(props.field, ref, rules);
@@ -50,7 +50,7 @@ export const BaseField = React.forwardRef<any, IBaseField>((props: IBaseField, r
             default:
                 return props.getNewField(props.field, ref, rules);
         }
-    }, [mode]);
+    // }, [mode]);
 
     function getFormMode() {
         if (context.fields) {

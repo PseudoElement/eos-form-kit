@@ -1,4 +1,4 @@
-import { FormMode, FieldDateTime, AjaxSelect, AjaxAutoComplete } from "eos-webui-formgen";
+import { FormMode, FieldDateTime, AjaxSelect, AjaxAutoComplete, FieldLookupMulti } from "eos-webui-formgen";
 
 class Helper {
     static getFields(mode: FormMode) {
@@ -6,22 +6,22 @@ class Helper {
          * Огрничение на колиечество элементов запроса
          */
         const fields = [
-            { 
-                "disabled": false, 
-                "label": "Особенности 1", 
-                "name": "multiLookupTest1", 
-                "required": true, 
-                "requiredMessage": "Поле обязательное к заполнению", 
-                "type": "FieldLookupMulti", 
+            {
+                "disabled": false,
+                "label": "multiLookup1",
+                "name": "multiLookup1",
+                "required": true,
+                "requiredMessage": "Поле обязательное к заполнению",
+                "type": "FieldLookupMulti",
                 "value": null,
                 "notFoundContent": "Нет элементов",
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
-                        const result: AjaxSelect.IOptionItem[] = [
-                            { key: "value6", value: "шесть" },
-                            { key: "value7", value: "семь" },
-                            { key: "value8", value: "восемь" },
-                            { key: "value9", value: "девять" }
+                        const result: FieldLookupMulti.IValue[] = [
+                            { key: "1", value: "один" },
+                            { key: "2", value: "два" },
+                            { key: "3", value: "три" },
+                            { key: "4", value: "четыре" }
                         ]
                         if (search) {
                             return result.filter((item) => {
@@ -35,25 +35,25 @@ class Helper {
                             return result;
                         }
                     },
-                    resultsAmount: 3,
+                    resultsAmount: 10,
                 }
             },
-            { 
-                "disabled": false, 
-                "label": "Особенности 2", 
-                "name": "multiLookupTest2", 
-                "required": true, 
-                "requiredMessage": "Поле обязательное к заполнению", 
-                "type": "FieldLookupMulti", 
+            {
+                "disabled": false,
+                "label": "multiLookup2",
+                "name": "multiLookup2",
+                "required": true,
+                "requiredMessage": "Поле обязательное к заполнению",
+                "type": "FieldLookupMulti",
                 "value": null,
                 "notFoundContent": "Нет элементов",
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
-                        const result: AjaxSelect.IOptionItem[] = [
-                            { key: "value6", value: "шесть" },
-                            { key: "value7", value: "семь" },
-                            { key: "value8", value: "восемь" },
-                            { key: "value9", value: "девять" }
+                        const result: FieldLookupMulti.IValue[] = [
+                            { key: "1", value: "один" },
+                            { key: "2", value: "два" },
+                            { key: "3", value: "три" },
+                            { key: "4", value: "четыре" }
                         ]
                         if (search) {
                             return result.filter((item) => {
@@ -67,10 +67,10 @@ class Helper {
                             return result;
                         }
                     },
-                    resultsAmount: 3,
+                    resultsAmount: 10,
                 },
                 "otherColumns": [
-                    { "disabled": true, "label": "Находится в 3", "name": "testfield", "required": false, "requiredMessage": null, "type": "FieldText", "additionalText": null, "allowClear": false, "maxLength": null }
+                    { "label": "secondColumn", "name": "secondColumn", "disabled": false }
                 ]
             },
             { type: "FieldCheckbox", name: "E_DOCUMENT", label: " ", description: "Для электронных документов" },
@@ -176,8 +176,8 @@ class Helper {
                 "Disabled": false,
                 "ForceRender": null,
                 "Rows": [
-                    { "Cells": [{ "Type": 0, "Fields": ["multiLookupTest1"], "Width": 24 }] },
-                    { "Cells": [{ "Type": 0, "Fields": ["multiLookupTest2"], "Width": 24 }] },
+                    { "Cells": [{ "Type": 0, "Fields": ["multiLookup1"], "Width": 24 }] },
+                    { "Cells": [{ "Type": 0, "Fields": ["multiLookup2"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
                     {
@@ -232,8 +232,8 @@ class Helper {
     }
     static getRows() {
         const rows = [
-            { "Cells": [{ "Type": 0, "Fields": ["multiLookupTest1"], "Width": 24 }] },
-            { "Cells": [{ "Type": 0, "Fields": ["multiLookupTest2"], "Width": 24 }] },
+            { "Cells": [{ "Type": 0, "Fields": ["multiLookup1"], "Width": 24 }] },
+            { "Cells": [{ "Type": 0, "Fields": ["multiLookup2"], "Width": 24 }] },
             { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
             { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
             {
@@ -256,17 +256,13 @@ class Helper {
             case 1:
                 const secondItem = {
                     "E_DOCUMENT": true,
-                    "multiLookupTest1": [
-                        { key: "10", value: "десять" },
-                        { key: "11", value: "одинадцать" },
-                        { key: "12", value: "двенадцать" },
-                        { key: "13", value: "тринадцать" }
+                    "multiLookup1": [
+                        { key: "2", value: "два" },
+                        { key: "3", value: "три" }
                     ],
-                    "multiLookupTest2": [
-                        { key: "value0", value: "десять", otherColumns: [{key: "testfield0", value: "сто"}]},
-                        { key: "value1", value: "одинадцать", otherColumns: [{key: "testfield1", value: "стоодин"}]},
-                        { key: "value2", value: "двенадцать", otherColumns: [{key: "testfield2", value: "стодва"}]},
-                        { key: "value3", value: "тринадцать", otherColumns: [{key: "testfield3", value: "стотри"}]}
+                    "multiLookup2": [
+                        { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }] },
+                        { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }] },
                     ],
                     "parentName2": "Находися в 2-ом элементе",
                     "parentName": "Находися в 1-ом элементе",
@@ -282,7 +278,7 @@ class Helper {
                     "name2": "Наименование 11",
                     "ind2": "Номер 11",
                     "volumeNum2": 11,
-                    "keepPeriod":{ key: "3", value: "три" }
+                    "keepPeriod": { key: "3", value: "три" }
                 }
                 return secondItem;
             case 2:
@@ -295,10 +291,10 @@ class Helper {
                         { key: "13", value: "тринадцать" }
                     ],
                     "multiLookupTest2": [
-                        { key: "10", value: "десять", otherColumns: [{key: "100", value: "сто"}]},
-                        { key: "11", value: "одинадцать", otherColumns: [{key: "101", value: "стоодин"}]},
-                        { key: "12", value: "двенадцать", otherColumns: [{key: "102", value: "стодва"}]},
-                        { key: "13", value: "тринадцать", otherColumns: [{key: "103", value: "стотри"}]}
+                        { key: "10", value: "десять", otherColumns: [{ key: "100", value: "сто" }] },
+                        { key: "11", value: "одинадцать", otherColumns: [{ key: "101", value: "стоодин" }] },
+                        { key: "12", value: "двенадцать", otherColumns: [{ key: "102", value: "стодва" }] },
+                        { key: "13", value: "тринадцать", otherColumns: [{ key: "103", value: "стотри" }] }
                     ],
                     "parentName2": "Находися в 2-ом элементе",
                     "parentName": "Находися в 2-ом элементе",
