@@ -33,6 +33,7 @@ export interface IOtherValue {
 };
 
 export interface IColumn {
+    label: string;
     name: string;
     disabled?: boolean;
 }
@@ -51,8 +52,17 @@ export interface ILookupMulti extends IField {
     //  * Колонки таблицы
     //  */
     // tableColumns?: ITableColumn[];
-
     otherColumns?: IColumn[];
+    /**Оторажать шапку таблицы*/
+    showHeader?: boolean;
+    /**Имя столбца по умолчанию */
+    defaultColumnLabel: string;
+    /**Имя модального окна */
+    modalWindowTitle?: string;
+    /**Индекс столбца по умолчанию */
+    defaultColumnIndex?: number;
+    /**Разешить дублирование данных */
+    allowTakes?: boolean;
 }
 
 /**
@@ -85,7 +95,11 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         required={props.required}
                         name={props.name}
                         ref={ref}
-                        // columns={props.tableColumns}
+                        allowTakes={props.allowTakes}
+                        defaultColumnIndex={props.defaultColumnIndex}
+                        modalWindowTitle={props.modalWindowTitle}
+                        defaultColumnLabel={props.defaultColumnLabel}
+                        showHeader={props.showHeader}
                         mode={props.mode}
                         dataService={props.dataService}
                         notFoundContent={props.notFoundContent}
