@@ -1,16 +1,12 @@
-import React, { useEffect, useState, useRef, useImperativeHandle, 
-    //useMemo 
-} from 'react';
-import { Menu, Table, 
-    //Input, 
-    PlusIcon, BinIcon, Collapse, Badge } from "@eos/rc-controls";
+import React, { useEffect, useState, useRef, useImperativeHandle } from 'react';
+import { Menu, Table, PlusIcon, BinIcon, Collapse, Badge } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
-import { 
-    //ITableColumn, 
-    IMultiLookupRow } from "../FieldLookupMulti";
+import { IValue, IColumn, IOtherValue } from "../FieldLookupMulti";
 import { ITableModalApi, TableModal } from "./TableModal";;
-import { IDataService } from "./AjaxSelect";
-import fields from "../../Fields/Fields";
+import { IDataService, IOptionItem } from "./AjaxSelect";
+import { Text as FieldText } from "../FieldText";
+import { AjaxSelect } from '../..';
+
 export interface ITableMenuTool {
     key: string | number;
     component?: JSX.Element;
@@ -23,11 +19,7 @@ export interface ITableMenuTool {
 };
 
 export interface IDisplayTable {
-
-    value?: IMultiLookupRow[];
-
-    columns?: any;
-
+    value?: IValue[];
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
 
@@ -56,10 +48,9 @@ export interface IDisplayTable {
 
     rules: any;
 
-    otherColumns: any;
-
-    context: any;
+    otherColumns?: IColumn[];
 }
+
 
 const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     value,
@@ -72,77 +63,122 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     required,
     otherColumns
 }, ref) => {
+    const [dataSource, setDataSource] = useState<IValue[] | undefined>(value);
+    // const [formData, setFormData] = useState<IValue[] | undefined>(value);
+    const formData = useRef(value);
 
-    const [dataSource, setDataSource] = useState<IMultiLookupRow[] | undefined | any>(value);
-    const [formData, setFormData] = useState<IMultiLookupRow[] | undefined | any>(value);
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-    const [rowFromLookup, setRowFromLookup] = useState<IMultiLookupRow | undefined>();
-    //const [formatedDataSource, setFormatedDataSource] = useState<any>();
+    // const [selectedRowKeys] = useState<(string | number)[]>([]);
+    const [rowFromLookup, setRowFromLookup] = useState<IOptionItem | undefined>();
 
     const tableModalApi = useRef<ITableModalApi>();
-    const showModalLookup = () => {
-        tableModalApi?.current?.showModal();
-    }
 
     const selfRef = useRef();
     useImperativeHandle(ref ?? selfRef, (): any => {
         const api: any = {
             getData() {
-                if (onDataChange) onDataChange(dataRef.current);
+                if (onDataChange)
+                    onDataChange(dataRef.current);
             }
         }
         return api;
     });
 
-    //const DisplayTableApi = useRef<any>();
-
     const dataRef = useRef<any>();
-
     dataRef.current = value;
 
-    //const fieldType = 'FieldText';
-
-    // const defaultColumn = [{
-    //     key: name,
-    //     title: name,
-    //     dataIndex: 'value',
-    //     padding: 0,
-    //     render: (value: any, record: any, index: any) => {
-    //     console.log (value, record, index);
-    //     return React.createElement(fields[fieldType], { 
-    //         type: fieldType,
-    //         mode: mode,
-    //         name: `${name}`, 
-    //         key: name, 
-    //         disabled: true,
-    //         defaultValue: value});
-    //     }
-    //     // <Input style={{ width: "100%", margin: "12px 0" }}
-    //     //     value={value}
-    //     //     readOnly={true}
-    //     // />,
-    // }];
-
-    const defaultColumnShema = { 
-            "disabled": true, 
-            "label": "Особенности", 
-            "name": "value", 
-            "required": false, 
-            "requiredMessage": null, 
-            "type": "FieldText", 
-            "additionalText": null, 
-            "allowClear": false, 
-            "maxLength": null
-        };
-
+    const defaultColumnSchema: IColumn = {
+        "disabled": true,
+        "name": "firstColumn"
+    };
     const rowSelection = {
         selectedRowKeys: selectedRowKeys,
         onChange: (selectedRowKeys: (string | number)[]) => {
             setSelectedRowKeys(selectedRowKeys);
         }
     };
+    const menu = [
+        {
+            component: <PlusIcon />,
+            title: 'PlusIcon',
+            disabled: isDisplay(),
+            onClick: showModalLookup,
+            hiddenTitle: true,
+            key: 'PlusIcon'
+        },
+        {
+            component: <BinIcon />,
+            title: 'BinIcon',
+            disabled: isDisplay(),
+            onClick: deleteMultiLookupLookupRows,
+            hiddenTitle: true,
+            key: 'BinIcon'
+        }
+    ];
 
-    const getMenuItemsList = (toolsList: ITableMenuTool[]) => {
+    useEffect(() => {
+        if (rowFromLookup && dataSource) {
+            getRowFromLookup(rowFromLookup);
+        }
+    }, [rowFromLookup]);
+    useEffect(() => {
+        if (value) {
+            setDataSource(value);
+            // setFormData(value);
+            formData.current = value;
+        }
+    }, [value]);
+    useEffect(() => {
+        if (onDataChange)
+            onDataChange(formData);
+    }, [formData]);
+
+    return (
+        <div>
+            <Collapse key={'1'} expandIconPosition={'right'} ghost bordered={true}  >
+                <Collapse.Panel key={'1'} forceRender={true}
+                    header={
+                        <div style={{ borderBottom: '1px solid #E6E6E6' }}>
+                            {(!required || dataSource?.length) ?
+                                <Badge count={dataSource?.length} type="text" >{label}</Badge> :
+                                <Badge count={' '} type="text" color="red">{label}</Badge>
+                            }
+                        </div>
+                    }>
+                    <Table.Menu menu={getMenuItemsList(menu)}>
+                        <Table
+                            fullHeight
+                            dataSource={getDataSource(dataSource)}
+                            columns={getColumns(otherColumns)}
+                            rowSelection={rowSelection}
+                            showHeader={false}
+                        />
+                    </Table.Menu>
+                    <TableModal
+                        mode={mode}
+                        type={type}
+                        ref={tableModalApi}
+                        dataService={dataService}
+                        notFoundContent={notFoundContent}
+                        onFinish={(row) => setRowFromLookup(row)}
+                    />
+                </Collapse.Panel>
+            </Collapse>
+        </div>
+    );
+
+    function getRowFromLookup(row: AjaxSelect.IOptionItem) {
+        let values: IValue[] = dataSource ? dataSource : [];
+        const newRow: IValue = { key: row.key, value: row.value };
+        const newValues = [...values, newRow];
+        setDataSource(newValues);
+        // setFormData(newValues);
+        formData.current = newValues;
+    };
+    function isDisplay() {
+        return FormMode.display === mode;
+    };
+    function getMenuItemsList(toolsList: ITableMenuTool[]) {
         return (
             toolsList.map(({ component, onClick, disabled, title, children, key, hiddenTitle, inMoreBlock }) => {
                 if (children) return (
@@ -165,217 +201,95 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             })
         );
     };
-
-    /**
-     * Удаление записей в таблице
-     */
-    const deleteMultiLookupLookupRows = () => {
+    function deleteMultiLookupLookupRows() {
         if (dataSource) {
-            let newDataSource = dataSource.filter((e: any) => e.key && !(~selectedRowKeys.indexOf(e.key)));
+            let newDataSource = dataSource.filter((e: IValue) => e.key && !(~selectedRowKeys.indexOf(e.key)));
             setDataSource(newDataSource);
-           // setFormData(newDataSource);
+            // setFormData(newDataSource);
         }
     };
-
-    const getFormatedDataSource = (value: any) => {
-        if (!value[0].otherColumns) return value;
-
-        let n = value.map((row: any) => {
-            let newRow = {
-                key: row.key,
-                value: row.value
+    function getDataSource(values?: IValue[]) {
+        return values?.map((value: IValue) => {
+            let row = { firstColumn: value.value };
+            if (value.other) {
+                for (let column of value.other) {
+                    row[column.name] = column.value;
+                }
             }
-        
-            let otherValues = row.otherColumns.reduce((sum: any, cur: any, i: any) => {
-                return {...sum, [otherColumns[i].name]: cur.value}
-            }, {});
-            return {...newRow, ...otherValues};
+            return row;
         });
-
-        return n;
     };
+    function getColumns(otherColumns?: IColumn[]) {
+        let columns: IColumn[] = otherColumns ? [defaultColumnSchema, ...otherColumns] : [defaultColumnSchema];
+        return columns.map((column: IColumn) => {
+            return {
+                key: column.name,
+                title: column.name,
+                dataIndex: column.name,
+                padding: 0,
+                render: (value: any, record: any, index: any) => {
+                    record = record;
+                    return (<FieldText
+                        type="FieldText"
+                        mode={column.disabled ? FormMode.display : FormMode.edit}
+                        defaultValue={value}
+                        onChange={(changedValue?: string) => {
+                            if (dataSource && dataSource?.length > index) {
+                                const row = dataSource[index];
+                                if (!row.other)
+                                    row.other = [];
 
-    console.log(getFormatedDataSource(value));
+                                let otherValue: IOtherValue | null = null;
+                                for (let other of row.other)
+                                    if (other.name === column.name) {
+                                        otherValue = other;
+                                        break;
+                                    }
 
-    const getFormatedColumns = (otherColumns: any) => {
-            let columns = otherColumns ? [defaultColumnShema,  ...otherColumns] : [defaultColumnShema];
+                                if (!otherValue)
+                                    otherValue = { value: changedValue, name: column.name };
+                                else
+                                    otherValue.value = changedValue;
+                                // setFormData([...dataSource]);
+                                formData.current = [...dataSource]
+                            }
 
-            return  columns.map((e: any) => {
-                return {
-                    key: e.name,
-                    title: e.name,
-                    dataIndex: e.name,
-                    padding: 0,
-                    render: (value: any, record: any, index: any) => {
-                        record = record;
-                        return React.createElement(fields[e.type], { 
-                            ...e, 
-                            name: `${e.name}${index}`, 
-                            key: e.name, 
-                            defaultValue: value,
-                            onChange: (value: any) => {
-                               setFormData((state: any) => {
-
-                            //    let indexn = 0;
-                            //    state?.forEach((el: any, i: any) => {
-                            //        if(el.key === `value${index}`) {
-                            //            indexn  = i;
-                            //        }
-                            //    });
-                               let row = state?.[index];
-                               if (e.name === 'value') {
-                                    let newRow = {...row, [e.name]: value.currentTarget.value};
-                                let newData = [...state?.slice(0, index), newRow, ...state?.slice(index + 1)];
-                                if(onDataChange) onDataChange(newData);
-                                return newData;
-                                // dataRef.current = [...dataRef.current?.slice(0, index), newRow, ...dataRef.current?.slice(index + 1)];
-                                // return dataRef;
-                                } else {
-                                        let otherColumnsn = row.otherColumns;
-
-                                        let columnIndex = 0;
-                                        otherColumnsn.forEach((el: any, i: any) => {
-                                            if(el.key === `${e.name}${index}`) {
-                                                debugger;
-                                                columnIndex  = i;
-                                            }
-                                        });
-                                        let column = otherColumnsn[columnIndex];
-                                        
-                                        column = {...column, value: value.currentTarget.value};
-                                        let newOtherColumns = [...otherColumnsn?.slice(0, columnIndex), column, ...otherColumnsn?.slice(columnIndex + 1)];
-                                        let newRow2 = {...row, otherColumns: newOtherColumns};
-                                        value.target.focus();
-                                        const newData = [...state?.slice(0, index), newRow2, ...state?.slice(index + 1)];
-                                        if(onDataChange) onDataChange(newData);
-                                        return newData;
-    
-                                        // dataRef.current = ((dataRef: any) => { 
-                                        //     return [...dataRef.current?.slice(0, index), newRow2, ...dataRef.current?.slice(index + 1)]
-                                        // // })(dataRef);
-                                        // return dataRef;
-                                }
-});
-                        }
-                    });
+                            // setFormData((state: any) => {
+                            //     let row = state?.[index];
+                            //     if (e.name === 'value') {
+                            //         let newRow = { ...row, [e.name]: value.currentTarget.value };
+                            //         let newData = [...state?.slice(0, index), newRow, ...state?.slice(index + 1)];
+                            //         if (onDataChange) onDataChange(newData);
+                            //         return newData;                                   
+                            //     }
+                            //     else {
+                            //         let otherColumnsn = row.otherColumns;
+                            //         let columnIndex = 0;
+                            //         otherColumnsn.forEach((el: any, i: any) => {
+                            //             if (el.key === `${e.name}${index}`) {
+                            //                 columnIndex = i;
+                            //             }
+                            //         });
+                            //         let column = otherColumnsn[columnIndex];
+                            //         column = { ...column, value: value.currentTarget.value };
+                            //         let newOtherColumns = [...otherColumnsn?.slice(0, columnIndex), column, ...otherColumnsn?.slice(columnIndex + 1)];
+                            //         let newRow2 = { ...row, otherColumns: newOtherColumns };
+                            //         value.target.focus();
+                            //         const newData = [...state?.slice(0, index), newRow2, ...state?.slice(index + 1)];
+                            //         if (onDataChange) onDataChange(newData);
+                            //         return newData;
+                            //     }
+                            // });
+                        }}
+                    />);
                 }
             }
         });
     }
+    function showModalLookup() {
+        tableModalApi?.current?.showModal();
+    }
 
-    const isDisplay = () => {
-        return FormMode.display === mode;
-    };
-
-    const menu = [
-        {
-            component: <PlusIcon />,
-            title: 'PlusIcon',
-            disabled: isDisplay(),
-            onClick: showModalLookup,
-            hiddenTitle: true,
-            key: 'PlusIcon'
-        },
-        {
-            component: <BinIcon />,
-            title: 'BinIcon',
-            disabled: isDisplay(),
-            onClick: deleteMultiLookupLookupRows,
-            hiddenTitle: true,
-            key: 'BinIcon'
-        }
-    ];
-
-    const getRowFromLookup = (row: any) => { 
-        let newOtherColumns = otherColumns.map((e: any) => {
-           return {
-               key: `${e.name}${row.key[5]}`,
-               value: ''
-           } 
-        });
-
-        setDataSource((data: any) => {
-            return([...data, {...row,  otherColumns: newOtherColumns}]);
-
-        });
-        setFormData((data: any) => {
-            return([...data, {...row,  otherColumns: newOtherColumns}]);
-
-        });
-    };
-
-
-    useEffect(() => {
-        if (rowFromLookup && dataSource) {
-            getRowFromLookup(rowFromLookup);
-        }
-    }, [rowFromLookup]);
-
-    useEffect(() => {
-        if (value) {
-            setDataSource(value);
-            setFormData(value);
-            //setFormatedDataSource(getFormatedDataSource(value));
-        }
-    }, [value]);
-
-    useEffect(() => {
-        console.log(dataRef);
-        if (onDataChange) onDataChange(formData);
-    }, [formData]);
-
-    //let memo =  useMemo(() => {
-
-        return (
-            <div>
-                <Collapse
-                    key={'1'}
-                    expandIconPosition={'right'}
-                    ghost
-                    bordered={true}
-                >
-                    <Collapse.Panel
-                        key={'1'}
-                        forceRender={true}
-                        header={
-                            <div
-                                style={{
-                                    borderBottom: '1px solid #E6E6E6'
-                                }}
-                            >
-                                {(!required || dataSource?.length) ?
-                                    <Badge count={dataSource?.length} type="text" >{label}</Badge> :
-                                    <Badge count={' '} type="text" color="red">{label}</Badge>
-                                }
-                            </div>
-                        }
-                    >
-                        <Table.Menu
-                            menu={getMenuItemsList(menu)}
-                        >
-                            <Table
-                                fullHeight
-                                dataSource={getFormatedDataSource(dataSource)}
-                                columns={getFormatedColumns(otherColumns)}
-                                rowSelection={rowSelection}
-                                showHeader={false}
-                            />
-                        </Table.Menu>
-                        <TableModal
-                            mode={mode}
-                            type={type}
-                            ref={tableModalApi}
-                            dataService={dataService}
-                            notFoundContent={notFoundContent}
-                            onFinish={(row) => setRowFromLookup(row)}
-                        />
-                    </Collapse.Panel>
-                </Collapse>
-            </div>
-        );
-    //}, [dataSource, selectedRowKeys]);
-
-    //return memo;
 });
 
 export default DisplayTable;

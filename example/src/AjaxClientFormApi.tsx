@@ -75,7 +75,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onSpinnerClick={() => { formApi?.current?.showSpinLoading(); setTimeout(() => { formApi?.current?.hideLoading(); }, 1500); }}
                 onLookupSetClick={() => { formApi?.current?.setFieldValue("keepPeriod", { key: "2", value: "два" }); }}
                 onNameSetClick={() => { formApi?.current?.setFieldValue("name", "Новое наименование"); }}
-                onLookupMultiSetClick={() => { formApi?.current?.setFieldValue("multiLookupTest", [{ key: "2", value: "два" }, { key: "3", value: "три" }]); }}
+                onLookupMultiSetClick={() => { formApi?.current?.setFieldValue("multiLookup1", [{ key: "4", value: "четыре" }, { key: "3", value: "три" }]); }}
                 onTripleSkeletonLoadingClick={() => {
                     formApi?.current?.showSkeletonLoading();
                     setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);

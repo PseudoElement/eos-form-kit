@@ -1,5 +1,5 @@
 import React, { forwardRef, ReactNode } from "react";
-import { useBackUrlHistory } from "../..";
+import useBackUrlHistory from "../../Hooks/useBackUrlHistory";
 import { FormMode } from "../FormMode";
 import DispFormTitle from "./DispFormTitle";
 import EditFormTitle from "./EditFormTitle";
