@@ -76,6 +76,8 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onLookupSetClick={() => { formApi?.current?.setFieldValue("keepPeriod", { key: "2", value: "два" }); }}
                 onNameSetClick={() => { formApi?.current?.setFieldValue("name", "Новое наименование"); }}
                 onLookupMultiSetClick={() => { formApi?.current?.setFieldValue("multiLookup1", [{ key: "4", value: "четыре" }, { key: "3", value: "три" }]); }}
+                onLookupMultiSetClick2={() => { formApi?.current?.setFieldValue("multiLookup2", [{ key: "4", value: "четыре", other: [{ value: "тридцать семь", name: "secondColumn" }]  }, 
+                                                                                                 { key: "3", value: "три", other: [{ value: "тридцать два", name: "secondColumn" }] }]); }}
                 onTripleSkeletonLoadingClick={() => {
                     formApi?.current?.showSkeletonLoading();
                     setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);
@@ -168,6 +170,7 @@ interface IButtonsPanel {
     onLookupSetClick?(): void;
     onNameSetClick?(): void;
     onLookupMultiSetClick?(): void;
+    onLookupMultiSetClick2?(): void;
     onReloadItemClick?(): void;
     onReloadClick?(): void;
     onSetFiveCountClick?(): void;
@@ -202,7 +205,8 @@ const ButtonsPanel = forwardRef<any, IButtonsPanel>((props: IButtonsPanel, ref: 
             <Button onClick={props.onEditTitleClick}>Заголовок</Button>
             <Button onClick={props.onLookupSetClick}>Задать срок хранения</Button>
             <Button onClick={props.onNameSetClick}>Задать наименование</Button>
-            <Button onClick={props.onLookupMultiSetClick}>Задать особенности</Button>
+            <Button onClick={props.onLookupMultiSetClick}>Задать особенности 1</Button>
+            <Button onClick={props.onLookupMultiSetClick2}>Задать особенности 2</Button>
             <Button onClick={props.onReloadItemClick}>ReloadItem</Button>
             <Button onClick={props.onReloadClick}>Reload</Button>
             <Button onClick={props.onSetFiveCountClick}>SetCount(5)</Button>

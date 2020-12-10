@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, useRef, useImperativeHandle, 
+    //useContext 
+} from 'react';
 import { Menu, Table, PlusIcon, BinIcon, Collapse, Badge } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
 import { IValue, IColumn, IOtherValue } from "../FieldLookupMulti";
@@ -6,7 +8,6 @@ import { ITableModalApi, TableModal } from "./TableModal";;
 import { IDataService, IOptionItem } from "./AjaxSelect";
 import { Text as FieldText } from "../FieldText";
 import { AjaxSelect } from '../..';
-
 export interface ITableMenuTool {
     key: string | number;
     component?: JSX.Element;
@@ -68,7 +69,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     const formData = useRef(value);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-    // const [selectedRowKeys] = useState<(string | number)[]>([]);
+    //const [selectedRowKeys] = useState<(string | number)[]>([]);
     const [rowFromLookup, setRowFromLookup] = useState<IOptionItem | undefined>();
 
     const tableModalApi = useRef<ITableModalApi>();
@@ -92,6 +93,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         "name": "firstColumn"
     };
     const rowSelection = {
+        preserveSelectedRowKeys: false,
         selectedRowKeys: selectedRowKeys,
         onChange: (selectedRowKeys: (string | number)[]) => {
             setSelectedRowKeys(selectedRowKeys);
@@ -130,8 +132,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     }, [value]);
     useEffect(() => {
         if (onDataChange)
-            onDataChange(formData);
-    }, [formData]);
+            onDataChange(formData.current);
+    }, [formData.current]);
 
     return (
         <div>
@@ -169,7 +171,20 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
     function getRowFromLookup(row: AjaxSelect.IOptionItem) {
         let values: IValue[] = dataSource ? dataSource : [];
-        const newRow: IValue = { key: row.key, value: row.value };
+        let newRow: IValue;
+
+        if(dataSource && dataSource[0]?.other) {
+            const defaultOther = dataSource && dataSource[0].other?.map((e: IOtherValue) => {
+                return {
+                    name: e.name,
+                    value: ''
+                }
+            });
+            newRow = { key: row.key, value: row.value, other: defaultOther  };
+        } else {
+            newRow = { key: row.key, value: row.value };  
+        }
+
         const newValues = [...values, newRow];
         setDataSource(newValues);
         // setFormData(newValues);
@@ -203,14 +218,18 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     };
     function deleteMultiLookupLookupRows() {
         if (dataSource) {
-            let newDataSource = dataSource.filter((e: IValue) => e.key && !(~selectedRowKeys.indexOf(e.key)));
+            
+            let newDataSource = dataSource.filter((e: IValue) =>{
+               return e.key && !(~selectedRowKeys?.indexOf(e.key))
+            });
             setDataSource(newDataSource);
+            formData.current = [...newDataSource];
             // setFormData(newDataSource);
         }
     };
     function getDataSource(values?: IValue[]) {
-        return values?.map((value: IValue) => {
-            let row = { firstColumn: value.value };
+        let data = values?.map((value: IValue) => {
+            let row = { key: value.key, firstColumn: value.value };
             if (value.other) {
                 for (let column of value.other) {
                     row[column.name] = column.value;
@@ -218,7 +237,28 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             }
             return row;
         });
+
+        return data;
     };
+
+    // function getFormatedDataSource (values?: IValue[]) {
+    //     if (values && !values[0].other) return value;
+    //     let n = values?.map((row: IValue) => {
+    //         let newRow = {
+    //             key: row.key,
+    //             value: row.value
+    //         }
+        
+    //         let otherValues = row?.other?.reduce((sum: any, cur: any, i: any, arr: any) => {
+    //             return {...sum, [arr[i].name]: cur.value}
+    //         }, {});
+    //         return {...newRow, ...otherValues};
+    //     });
+
+    //     debugger
+    //     return n;
+    // };
+
     function getColumns(otherColumns?: IColumn[]) {
         let columns: IColumn[] = otherColumns ? [defaultColumnSchema, ...otherColumns] : [defaultColumnSchema];
         return columns.map((column: IColumn) => {
@@ -252,6 +292,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                                     otherValue.value = changedValue;
                                 // setFormData([...dataSource]);
                                 formData.current = [...dataSource]
+                                console.log(formData.current);
                             }
 
                             // setFormData((state: any) => {
