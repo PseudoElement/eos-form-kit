@@ -69,7 +69,6 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     const formData = useRef(value);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-    //const [selectedRows, setSelectedRows] = useState<any>()
     //const [selectedRowKeys] = useState<(string | number)[]>([]);
     const [rowFromLookup, setRowFromLookup] = useState<IOptionItem | undefined>();
 
@@ -96,9 +95,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     const rowSelection = {
         preserveSelectedRowKeys: false,
         selectedRowKeys: selectedRowKeys,
-        onChange: (selectedRowKeys: any, selectedRows: any) => {
-            debugger;
-            selectedRows = selectedRows;
+        onChange: (selectedRowKeys: (string | number)[]) => {
             setSelectedRowKeys(selectedRowKeys);
         }
     };
@@ -120,16 +117,6 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             key: 'BinIcon'
         }
     ];
-
-    // const testData = [
-    //     { key: "1", value: "один" },
-    //     { key: "2", value: "два" },
-    //     { key: "3", value: "три" },
-    //     { key: "4", value: "четыре" }
-    // ]
-    useEffect(() => {
-        console.log('render');
-    })
 
     useEffect(() => {
         if (rowFromLookup && dataSource) {
