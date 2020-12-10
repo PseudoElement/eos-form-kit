@@ -1,12 +1,12 @@
 import React, {
-    //  useContext,
+   useContext,
     useMemo
 } from "react";
 import { Form, Input } from "@eos/rc-controls";
 import IField from "./IField";
 import { IDataService } from "./LookupComponents/AjaxSelect";
 import DisplayTable from "./LookupComponents/DisplayTable";
-// import { FormContext, IFormContext } from "../Context/Context";
+import { FormContext, IFormContext } from "../Context/Context";
 import { Rule } from "rc-field-form/lib/interface";
 import { BaseField } from "./BaseField";
 
@@ -72,7 +72,7 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
     return memoLookupMulti;
 
     function getNew(props: ILookupMulti, ref: any, rules?: Rule[]) {
-        // const context: IFormContext = useContext(FormContext);
+        const context: IFormContext = useContext(FormContext);
         return (
             <div>
                 <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
@@ -91,9 +91,9 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         notFoundContent={props.notFoundContent}
                         type={props.type}
                         otherColumns={props.otherColumns}
-                    // onDataChange={(row: any) => {
-                    //     context.setFieldValue(props.name || '', row)
-                    // }}
+                        onDataChange={(row: any) => {
+                            context.setFieldValue(props.name || '', row)
+                        }}
                     />
                 </Form.Item>
             </div>
