@@ -1,5 +1,5 @@
 import React, { forwardRef, ReactNode } from "react";
-import { useBackUrlHistory } from "../..";
+import useBackUrlHistory from "../../Hooks/useBackUrlHistory";
 import { FormMode } from "../FormMode";
 import DispFormTitle from "./DispFormTitle";
 import EditFormTitle from "./EditFormTitle";
@@ -38,7 +38,7 @@ export interface IFormTitle {
 
 /**Компонент отображения заголовка формы. */
 const FormTitle = forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
-    const { setCurrentPageState } = useBackUrlHistory()
+    const { setCurrentPageState } = useBackUrlHistory();
     if (props.title)
         setCurrentPageState(props.title);
     return (
