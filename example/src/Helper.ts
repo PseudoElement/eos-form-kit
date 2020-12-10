@@ -10,7 +10,11 @@ class Helper {
                 "disabled": false,
                 "label": "multiLookup1",
                 "name": "multiLookup1",
+                "defaultColumnLabel": "Особенности",
+                "modalWindowTitle": "Название модального окна",
+                "showHeader": false,
                 "required": true,
+                "allowTakes": true,
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMulti",
                 "value": null,
@@ -42,6 +46,10 @@ class Helper {
                 "disabled": false,
                 "label": "multiLookup2",
                 "name": "multiLookup2",
+                "defaultColumnLabel": "Другие особенности",
+                "defaultColumnIndex": 1,
+                "showHeader": true,
+                "allowTakes": false,
                 "required": true,
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMulti",
@@ -50,10 +58,10 @@ class Helper {
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
-                            { key: "1", value: "один" },
-                            { key: "2", value: "два" },
-                            { key: "3", value: "три" },
-                            { key: "4", value: "четыре" }
+                            { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" }, { value: "шесть три", name: "anotherColumn" } ] },
+                            { key: "2", value: "два",  other: [{ value: "два три", name: "secondColumn" }, { value: "семь три", name: "anotherColumn" } ] },
+                            { key: "3", value: "три",  other: [{ value: "три три", name: "secondColumn" }, { value: "восемь три", name: "anotherColumn" } ] },
+                            { key: "4", value: "четыре",  other: [{ value: "четыре три", name: "secondColumn" }, { value: "девять три", name: "anotherColumn" } ] }
                         ]
                         if (search) {
                             return result.filter((item) => {
@@ -70,7 +78,8 @@ class Helper {
                     resultsAmount: 10,
                 },
                 "otherColumns": [
-                    { "label": "secondColumn", "name": "secondColumn", "disabled": false }
+                    { "label": "secondColumn", "name": "secondColumn", "disabled": false },
+                    { "label": "anotherColumn", "name": "anotherColumn", "disabled": false }
                 ]
             },
             { type: "FieldCheckbox", name: "E_DOCUMENT", label: " ", description: "Для электронных документов" },
@@ -261,8 +270,8 @@ class Helper {
                         { key: "3", value: "три" }
                     ],
                     "multiLookup2": [
-                        { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }] },
-                        { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }] },
+                        { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }, { value: "двадцать шесть", name: "anotherColumn" }] },
+                        { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }, { value: "двадцать семь", name: "anotherColumn" }] },
                     ],
                     "parentName2": "Находися в 2-ом элементе",
                     "parentName": "Находися в 1-ом элементе",

@@ -20,6 +20,8 @@ export interface ITableModal extends IField {
     notFoundContent?: string;
 
     onFinish?(row: IValue | undefined): void;
+    /**Имя модального окна */
+    modalWindowTitle?: string;
 }
 
 export interface ITableModalApi {
@@ -48,6 +50,7 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
     return (
         <div>
             <Modal
+            title={props.modalWindowTitle ?? ''}
                 visible={lookupVisible}
                 onCancel={() => setLookupVisible(false)}
                 onOk={() => {
