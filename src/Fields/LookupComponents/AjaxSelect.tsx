@@ -55,6 +55,16 @@ export interface IOptionItem {
      * Параметр запрета на выбор значения
      */
     disabled?: boolean;
+
+    /** Значения других полей */
+    other?: IOtherValue[];
+}
+
+export interface IOtherValue {
+    /**Наименование поля. */
+    name: string;
+    /**Отображаемый текст значения для пользователя. */
+    value?: string;
 }
 
 export interface IDataService {
@@ -201,6 +211,7 @@ export const Select = React.forwardRef<any, ISelect>(({
         setValueToForm(undefined);
         if (onChange)
             onChange(null);
+        loadItemById("");
     }
 
     /**
