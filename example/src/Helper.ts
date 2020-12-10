@@ -106,10 +106,10 @@ class Helper {
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: AjaxSelect.IOptionItem[] = [
-                            { key: "value1", value: "один" },
-                            { key: "value2", value: "два" },
-                            { key: "value3", value: "три" },
-                            { key: "value4", value: "четыре" }
+                            { key: "value1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
+                            { key: "value2", value: "два",  other: [{ value: "два три", name: "secondColumn" }] },
+                            { key: "value3", value: "три",  other: [{ value: "три три", name: "secondColumn" }] },
+                            { key: "value4", value: "четыре",  other: [{ value: "четыре три", name: "secondColumn" }] }
                         ]
                         if (search) {
                             return result.filter((item) => {
@@ -278,7 +278,7 @@ class Helper {
                     "name2": "Наименование 11",
                     "ind2": "Номер 11",
                     "volumeNum2": 11,
-                    "keepPeriod": { key: "3", value: "три" }
+                    "keepPeriod": { key: "3", value: "три", other: [{ value: "три три", name: "secondColumn" }] }
                 }
                 return secondItem;
             case 2:
