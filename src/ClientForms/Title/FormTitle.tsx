@@ -38,7 +38,7 @@ export interface IFormTitle {
 
 /**Компонент отображения заголовка формы. */
 const FormTitle = forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
-    const { setCurrentPageState } = useBackUrlHistory()
+    const { setCurrentPageState } = useBackUrlHistory();
     if (props.title)
         setCurrentPageState(props.title);
     return (
