@@ -31,3 +31,10 @@ export * as FieldLookupMulti from './Fields/FieldLookupMulti';
 export { default as fields } from './Fields/fields';
 export { FieldsHelper } from './Fields/FieldsHelper';
 export { default as IField } from './Fields/IField';
+
+export { default as EosTable } from './EosTable';
+export {
+    FilterType, IFieldPath, ISorterType, ITableApi, IHandlerProps, Triggers, TriggerArgs,
+    ITableProvider, ITableState, IControlRenderProps, ITableData, ITableSettings, ITableUserSettings
+} from './EosTable/types'
+export { default as GenMenuItems } from './EosTable/components/GenMenuItems'
