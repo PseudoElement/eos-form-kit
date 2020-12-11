@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useRef, useImperativeHandle } from 'react';
-import { Menu, Table, PlusIcon, BinIcon, Collapse, Badge, message } from "@eos/rc-controls";
+import React, { useEffect, useState, useRef } from 'react';
+import { Menu, Table, PlusIcon, BinIcon, Collapse, Badge, } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
-import { IValue, IColumn, 
-    //IOtherValue 
-} from "../FieldLookupMulti";
-import { ITableModalApi, TableModal } from "./TableModal";;
-import { IDataService, 
-    //IOptionItem 
-} from "./AjaxSelect";
-//import { Text as FieldText } from "../FieldText";
+import { IValue, IColumn, IOtherValue, } from "../FieldLookupMulti";
+import { IDataService, } from "./AjaxSelect";
+import { Lookup as FieldLookup,  } from "../FieldLookup";
+import { Text as FieldText } from "../FieldText";
+//import { ILookup } from "../FieldLookup";
+// import { prependOnceListener } from 'process';
 //import { AjaxSelect } from '../..';
+
 export interface ITableMenuTool {
     key: string | number;
     component?: JSX.Element;
@@ -21,13 +20,12 @@ export interface ITableMenuTool {
     inMoreBlock?: boolean;
 };
 
-export interface IDisplayTable {
+export interface IDisplayTableRow {
     value?: IValue[];
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
 
     onModalVisible?(): void;
-
     /**
      * Текст при отсутсвии элементов
      */
@@ -55,7 +53,9 @@ export interface IDisplayTable {
     /**Индекс столбца по умолчанию */
     defaultColumnIndex?: number;
     /**Разешить дублирование данных */
-    allowDuplication?: boolean;
+    allowTakes?: boolean;
+    /**Разешить редактирование столбца по умолчанию*/
+    disabledDefaultColumn?: boolean;
 
     onDataChange?(item?: any): void;
 
@@ -64,47 +64,28 @@ export interface IDisplayTable {
     otherColumns?: IColumn[];
 }
 
-const DisplayTable = React.forwardRef<any, IDisplayTable>(({
+
+const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     value,
     mode,
     onDataChange,
-    notFoundContent,
     dataService,
-    type,
     label,
     required,
     showHeader,
     defaultColumnLabel,
     defaultColumnIndex,
-    modalWindowTitle,
-    allowDuplication,
+    disabledDefaultColumn,
     otherColumns
-}, ref) => {
+}) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-    const [rowFromLookup, setRowFromLookup] = useState<IValue | undefined>();
-
-    const tableModalApi = useRef<ITableModalApi>();
-
-    const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, (): any => {
-        const api: any = {
-            getData() {
-                if (onDataChange)
-                    onDataChange(dataRef.current);
-            }
-        }
-        return api;
-    });
-
-    const dataRef = useRef<any>();
-    dataRef.current = value;
 
     const defaultColumnSchema: IColumn = {
         "label": defaultColumnLabel,
-        "disabled": true,
+        "disabled": disabledDefaultColumn,
         "name": "defaultColumn"
     };
 
@@ -120,7 +101,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             component: <PlusIcon />,
             title: 'PlusIcon',
             disabled: isDisplay(),
-            onClick: showModalLookup,
+            onClick: addNewRow,
             hiddenTitle: true,
             key: 'PlusIcon'
         },
@@ -135,11 +116,6 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     ];
 
     useEffect(() => {
-        if (rowFromLookup && formData.current) {
-            getRowFromLookup(rowFromLookup);
-        }
-    }, [rowFromLookup]);
-    useEffect(() => {
         if (value) {
             setDataSource(getDataSource(value));
             formData.current = value;
@@ -152,6 +128,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         if (onDataChange)
             onDataChange(formData.current);
     }, [formData.current]);
+
 
     return (
         <div>
@@ -176,47 +153,32 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                             showHeader={showHeader}
                         />
                     </Table.Menu>
-                    <TableModal
-                        modalWindowTitle={modalWindowTitle}
-                        mode={mode}
-                        type={type}
-                        ref={tableModalApi}
-                        dataService={dataService}
-                        notFoundContent={notFoundContent}
-                        onFinish={(row) => setRowFromLookup(row)}
-                    />
                 </Collapse.Panel>
             </Collapse>
         </div>
     );
 
-    function getRowFromLookup(row: IValue) {
+    function addNewRow() {
+        if (onDataChange) onDataChange(formData.current);
         let values: IValue[] = formData.current ? formData.current : [];
-        let isInData = formData.current?.find((e: IValue) => {
-            return e.key === row.key;
-        });
- 
-        if(isInData && !allowDuplication)  {
-            message("warning", "Такой элемент уже существует");
-            return;
+
+        let newRow: IValue;
+        if(formData.current && formData?.current[0]?.other) {
+            const defaultOther = dataSource && formData.current[0].other?.map((e: IOtherValue) => {
+                return {
+                    name: e.name,
+                    value: ''
+                }
+            });
+            newRow = { key: getRowKey(), value: '', other: defaultOther  };
+        } else {
+            newRow = { key: getRowKey(), value: '' };  
         }
-        let newRow: IValue = row;
-        // if(dataSource && dataSource[0]?.other) {
-        //     const defaultOther = dataSource && dataSource[0].other?.map((e: IOtherValue) => {
-        //         return {
-        //             name: e.name,
-        //             value: ''
-        //         }
-        //     });
-        //     newRow = { key: row.key, value: row.value, other: defaultOther  };
-        // } else {
-        //     newRow = { key: row.key, value: row.value };  
-        // }
 
         const newValues = [...values, newRow];
-        if (dataSource && getDataSource) setDataSource([...dataSource, ...getDataSource([newRow]) ]);
+        setDataSource(newValues);
         formData.current = newValues;
-    };
+    }
     function isDisplay() {
         return FormMode.display === mode;
     };
@@ -270,72 +232,87 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         });
         return data || [];
     };
-    // function getDataSourceRow(row?: IValue) {
-    //     let data = {
-    //         let row = { rowkey: getRowKey(), defaultColumn: value.value };
-    //         if (value.other) {
-    //             for (let column of value.other) {
-    //                 row[column.name] = column.value;
-    //             }
-    //         }
-    //         return row;
-    //     });
-    //     return data;
-    // };
     function getRowKey() {
         let newKey = `${Math.random()}`;
         const isUnique = formData.current?.find((e: IValue) => e.key === newKey);
         if (isUnique) newKey  = getRowKey();
         return newKey;
     }
-    function getColumns(otherColumns?: IColumn[]) {
 
-        let columns: IColumn[] = otherColumns ? [...otherColumns.slice(0, defaultColumnIndex ),
+    function getColumns(otherColumns?: IColumn[]) {
+        let columns: IColumn[] = otherColumns ? [...otherColumns.slice(0, (defaultColumnIndex || 1)),
                                                 defaultColumnSchema, 
-                                                ...otherColumns.slice(defaultColumnIndex)] : [defaultColumnSchema];
+                                                ...otherColumns.slice((defaultColumnIndex || 1))] : [defaultColumnSchema];
+
         return columns.map((column: IColumn) => {
             return {
                 key: column.name,
                 title: column.label,
                 dataIndex: column.name,
-                //padding: 0,
-                // render: (value: any, record: any, index: any) => {
-                //     record = record;
-                //     return (<FieldText
-                //         type="FieldText"
-                //         mode={column.disabled ? FormMode.display : FormMode.edit}
-                //         defaultValue={value}
-                //         onChange={(changedValue?: string) => {
-                //             if (dataSource && dataSource?.length > index) {
-                //                 const row = dataSource[index];
-                //                 if (!row.other)
-                //                     row.other = [];
+                padding: 0,
+                render: (value: any, record: any, index: any) => {
+                    record = record;
+                    if(column.name === "defaultColumn") {
+                        return (<FieldLookup
+                            type="FieldLookup"
+                            defaultValue={value}
+                            label={column.label}
+                            mode={column.disabled ? FormMode.display : FormMode.edit}
+                            dataService={dataService}
+                            onChange={(changedValue?: any) => {
+                                if (formData.current && formData.current?.length > index) {
+                                    let row = formData.current[index];
+                                    if (!row.other)
+                                        row.other = [];
+       
+                                    let otherValue: IOtherValue | null = null;
+                                    for (let other of row.other)
+                                        if (other.name === column.name) {
+                                            otherValue = other;
+                                            break;
+                                        }
+    
+                                    if (!otherValue) {
+                                        row.value = changedValue?.value || '';
+                                    }
+                                    else
+                                        otherValue.value = changedValue?.value || '';
+                                    //formData.current = [...formData.current]
+                                }
+                            }}
+                        />);
+                    }
+                    return (<FieldText
+                        type="FieldText"
+                        mode={column.disabled ? FormMode.display : FormMode.edit}
+                        defaultValue={value}
+                        label={column.label}
+                        onChange={(changedValue?: string) => {
+                            if (formData.current && formData.current?.length > index) {
+                                let row = formData.current[index];
+                                if (!row.other)
+                                    row.other = [];
+   
+                                let otherValue: IOtherValue | null = null;
+                                for (let other of row.other)
+                                    if (other.name === column.name) {
+                                        otherValue = other;
+                                        break;
+                                    }
 
-                //                 let otherValue: IOtherValue | null = null;
-                //                 for (let other of row.other)
-                //                     if (other.name === column.name) {
-                //                         otherValue = other;
-                //                         break;
-                //                     }
-
-                //                 if (!otherValue)
-                //                     otherValue = { value: changedValue, name: column.name };
-                //                 else
-                //                     otherValue.value = changedValue;
-                //                 // setFormData([...dataSource]);
-                //                 formData.current = [...dataSource]
-                //                 console.log(formData.current);
-                //             }
-                //         }}
-                //     />);
-                // }
+                                if (!otherValue) {
+                                    row.value = changedValue;
+                                }
+                                else
+                                    otherValue.value = changedValue;
+                                //formData.current = [...formData.current]
+                            }
+                        }}
+                    />);
+                }
             }
         });
     }
-    function showModalLookup() {
-        tableModalApi?.current?.showModal();
-    }
-
 });
 
-export default DisplayTable;
+export default DisplayTableRow;
