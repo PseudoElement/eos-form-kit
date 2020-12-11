@@ -143,6 +143,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         if (value) {
             setDataSource(getDataSource(value));
             formData.current = value;
+        } else {
+            setDataSource([]);
+            formData.current = []; 
         }
     }, [value]);
     useEffect(() => {

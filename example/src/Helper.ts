@@ -265,10 +265,7 @@ class Helper {
             case 1:
                 const secondItem = {
                     "E_DOCUMENT": true,
-                    "multiLookup1": [
-                        { key: "2", value: "два" },
-                        { key: "3", value: "три" }
-                    ],
+
                     "multiLookup2": [
                         { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }, { value: "двадцать шесть", name: "anotherColumn" }] },
                         { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }, { value: "двадцать семь", name: "anotherColumn" }] },
