@@ -62,7 +62,7 @@ export interface ILookupMulti extends IField {
     /**Индекс столбца по умолчанию */
     defaultColumnIndex?: number;
     /**Разешить дублирование данных */
-    allowTakes?: boolean;
+    allowDuplication?: boolean;
 }
 
 /**
@@ -95,7 +95,7 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         required={props.required}
                         name={props.name}
                         ref={ref}
-                        allowTakes={props.allowTakes}
+                        allowDuplication={props.allowDuplication}
                         defaultColumnIndex={props.defaultColumnIndex}
                         modalWindowTitle={props.modalWindowTitle}
                         defaultColumnLabel={props.defaultColumnLabel}

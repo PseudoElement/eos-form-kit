@@ -55,7 +55,7 @@ export interface IDisplayTable {
     /**Индекс столбца по умолчанию */
     defaultColumnIndex?: number;
     /**Разешить дублирование данных */
-    allowTakes?: boolean;
+    allowDuplication?: boolean;
 
     onDataChange?(item?: any): void;
 
@@ -63,7 +63,6 @@ export interface IDisplayTable {
 
     otherColumns?: IColumn[];
 }
-
 
 const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     value,
@@ -78,10 +77,10 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     defaultColumnLabel,
     defaultColumnIndex,
     modalWindowTitle,
-    allowTakes,
+    allowDuplication,
     otherColumns
 }, ref) => {
-    const [dataSource, setDataSource] = useState<IValue[] | undefined>(value);
+    const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
@@ -136,13 +135,13 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     ];
 
     useEffect(() => {
-        if (rowFromLookup && dataSource) {
+        if (rowFromLookup && formData.current) {
             getRowFromLookup(rowFromLookup);
         }
     }, [rowFromLookup]);
     useEffect(() => {
         if (value) {
-            setDataSource(value);
+            setDataSource(getDataSource(value));
             formData.current = value;
         }
     }, [value]);
@@ -157,8 +156,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                 <Collapse.Panel key={'1'} forceRender={true}
                     header={
                         <div style={{ borderBottom: '1px solid #E6E6E6' }}>
-                            {(!required || dataSource?.length) ?
-                                <Badge count={dataSource?.length} type="text" >{label}</Badge> :
+                            {(!required || formData.current?.length) ?
+                                <Badge count={formData.current?.length} type="text" >{label}</Badge> :
                                 <Badge count={' '} type="text" color="red">{label}</Badge>
                             }
                         </div>
@@ -168,7 +167,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                                 rowCount={formData.current?.length}>
                         <Table
                             fullHeight
-                            dataSource={getDataSource(dataSource)}
+                            dataSource={dataSource}
                             columns={getColumns(otherColumns)}
                             rowSelection={rowSelection}
                             showHeader={showHeader}
@@ -189,12 +188,12 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     );
 
     function getRowFromLookup(row: IValue) {
-        let values: IValue[] = dataSource ? dataSource : [];
-        let isInData = dataSource?.find((e: IValue) => {
-            return e.key === row.key
+        let values: IValue[] = formData.current ? formData.current : [];
+        let isInData = formData.current?.find((e: IValue) => {
+            return e.key === row.key;
         });
  
-        if(isInData && !allowTakes)  {
+        if(isInData && !allowDuplication)  {
             message("warning", "Такой элемент уже существует");
             return;
         }
@@ -212,7 +211,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         // }
 
         const newValues = [...values, newRow];
-        setDataSource(newValues);
+        if (dataSource && getDataSource) setDataSource([...dataSource, ...getDataSource([newRow]) ]);
         formData.current = newValues;
     };
     function isDisplay() {
@@ -242,18 +241,23 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         );
     };
     function deleteMultiLookupLookupRows() {
-        if (dataSource) {
-            
-            let newDataSource = dataSource.filter((e: IValue) =>{
+        if (formData.current && selectedRowKeys) {
+            let deleteIndexes: number[] = [];
+            let newDataSource = dataSource?.filter((e: any, i: number) =>{
+               if(!(e.key && !(~selectedRowKeys?.indexOf(e.key)))) deleteIndexes.push(i);
                return e.key && !(~selectedRowKeys?.indexOf(e.key))
             });
+            let newFormData = formData.current?.filter((e: IValue, i: number) => {
+                e = e;
+                return !(~deleteIndexes?.indexOf(i)); 
+            });
             setDataSource(newDataSource);
-            formData.current = [...newDataSource];
+            formData.current = newFormData;
         }
     };
     function getDataSource(values?: IValue[]) {
         let data = values?.map((value: IValue) => {
-            let row = { key: value.key, defaultColumn: value.value };
+            let row = { key: getRowKey(), defaultColumn: value.value };
             if (value.other) {
                 for (let column of value.other) {
                     row[column.name] = column.value;
@@ -261,28 +265,26 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             }
             return row;
         });
-
-        return data;
+        return data || [];
     };
-
-    // function getFormatedDataSource (values?: IValue[]) {
-    //     if (values && !values[0].other) return value;
-    //     let n = values?.map((row: IValue) => {
-    //         let newRow = {
-    //             key: row.key,
-    //             value: row.value
+    // function getDataSourceRow(row?: IValue) {
+    //     let data = {
+    //         let row = { rowkey: getRowKey(), defaultColumn: value.value };
+    //         if (value.other) {
+    //             for (let column of value.other) {
+    //                 row[column.name] = column.value;
+    //             }
     //         }
-        
-    //         let otherValues = row?.other?.reduce((sum: any, cur: any, i: any, arr: any) => {
-    //             return {...sum, [arr[i].name]: cur.value}
-    //         }, {});
-    //         return {...newRow, ...otherValues};
+    //         return row;
     //     });
-
-    //     debugger
-    //     return n;
+    //     return data;
     // };
-
+    function getRowKey() {
+        let newKey = `${Math.random()}`;
+        const isUnique = formData.current?.find((e: IValue) => e.key === newKey);
+        if (isUnique) newKey  = getRowKey();
+        return newKey;
+    }
     function getColumns(otherColumns?: IColumn[]) {
         let columns: IColumn[] = otherColumns ? [...otherColumns.slice(0, defaultColumnIndex ),
                                                 defaultColumnSchema, 
