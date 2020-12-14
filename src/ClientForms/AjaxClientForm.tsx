@@ -138,6 +138,8 @@ export interface IFormApi {
     disableField(name: string): void;
     enableField(name: string): void;
     getFieldsValue(): Store;
+    setDisabledButton(disable: boolean, name: string): void
+    setVisibleButton(visible: boolean, name: string): void
 }
 
 
@@ -219,7 +221,13 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             getFieldsValue(): Store {
                 return clientFormApi?.current?.getFieldsValue() || {};
-            }
+            },
+            setDisabledButton(disable: boolean, name: string) {
+                clientFormApi?.current?.setDisabledButton(disable, name);
+            },
+            setVisibleButton(visible: boolean, name: string) {
+                clientFormApi?.current?.setVisibleButton(visible, name);
+            },
         }
         return api;
     });

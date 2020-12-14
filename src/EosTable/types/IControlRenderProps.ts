@@ -1,4 +1,3 @@
-import { ITableApi } from "./ITableApi";
 import { IRenderArgs } from "./ITableSettings";
 
 export interface IControlRenderProps {
@@ -6,5 +5,5 @@ export interface IControlRenderProps {
     valueInCell?: any
     recordInRow?: any
     indexOfRow?: number    
-    refApi?: ITableApi,
+    refApi?: any,
 }

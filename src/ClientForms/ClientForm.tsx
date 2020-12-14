@@ -54,6 +54,8 @@ export interface IFormApi {
     enableField(name: string): void;
     getFieldsValue(): Store;
     reset(): void;
+    setDisabledButton(disable: boolean, name: string): void
+    setVisibleButton(visible: boolean, name: string): void
 }
 
 /**Настройки клиентской формы. */
@@ -190,6 +192,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         reset: useCallback(() => {
             formContext.fields = [];
             formContext.header = undefined;
+            formContext.buttons = [];
             setFormContext({ ...formContext });
         }, []),
         hideLeftIcon: useCallback(() => {
@@ -208,6 +211,48 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             if (!formContext.header)
                 formContext.header = {};
             formContext.header.leftIconTitle = title;
+            setFormContext({ ...formContext });
+        }, []),
+        setDisabledButton: useCallback((disabled: boolean, name: string) => {
+            let buttons = []
+            if (formContext.buttons && formContext.buttons.length > 0) {
+                buttons = [...formContext.buttons]
+                const index = formContext.buttons.findIndex(item => item.name === name)
+                if (index >= 0) {
+                    buttons[index] = {
+                        ...formContext.buttons[index],
+                        disabled
+                    }
+                }
+            }
+            else {
+                buttons = [{
+                    name,
+                    disabled
+                }]
+            }
+            formContext.buttons = buttons
+            setFormContext({ ...formContext });
+        }, []),
+        setVisibleButton: useCallback((visible: boolean, name: string) => {
+            let buttons = []
+            if (formContext.buttons && formContext.buttons.length > 0) {
+                buttons = [...formContext.buttons]
+                const index = formContext.buttons.findIndex(item => item.name === name)
+                if (index >= 0) {
+                    buttons[index] = {
+                        ...formContext.buttons[index],
+                        visible
+                    }
+                }
+            }
+            else {
+                buttons = [{
+                    name,
+                    visible
+                }]
+            }
+            formContext.buttons = buttons
             setFormContext({ ...formContext });
         }, []),
     });
@@ -260,11 +305,13 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             },
             getFieldsValue(): Store {
                 rcFormForm?.getFieldsValue();
-                return  rcFormForm?.getFieldsValue() || {};
+                return rcFormForm?.getFieldsValue() || {};
             },
             reset() {
                 formContext?.reset();
-            }
+            },
+            setDisabledButton: formContext?.setDisabledButton,
+            setVisibleButton: formContext?.setVisibleButton
         }
         return api;
     });

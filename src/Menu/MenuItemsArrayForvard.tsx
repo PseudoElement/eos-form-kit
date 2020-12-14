@@ -1,11 +1,16 @@
 import { Menu } from '@eos/rc-controls'
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { IMenuProps } from '.'
 import { IControlRenderProps } from '..'
-import { MenuItem } from './MenuItem'
+import { FormContext } from '../Context/Context'
+import { MenuItemGen } from './MenuItem'
 import { IMenuItem } from './types'
 
 const MenuIemsArray = ({ menuItems, refApi, fetchAction, fetchControlRender, fetchCondition }: IMenuProps) => {
+    const context = useContext(FormContext)
+    useEffect(()=>{
+        
+    },[context])
     const items = (toolsList: IMenuItem[]) => {
         return (toolsList
             .map(menuItem => {
@@ -32,7 +37,7 @@ const MenuIemsArray = ({ menuItems, refApi, fetchAction, fetchControlRender, fet
                     </Menu.SubMenu>
                 }
                 else {
-                    return <MenuItem key={menuItem.key} title={menuItem.title} render={menuItem.render} onClick={onClickFunc && (() => onClickFunc({ refApi, menuItem }))}></MenuItem>
+                    return <MenuItemGen key={menuItem.key} title={menuItem.title} render={menuItem.render} onClick={onClickFunc && (() => onClickFunc({ refApi, menuItem }))}></MenuItemGen>
                 }
             })
         )

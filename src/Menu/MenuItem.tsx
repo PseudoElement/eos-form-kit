@@ -1,5 +1,6 @@
 import { Menu } from '@eos/rc-controls'
-import React, { useImperativeHandle, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { FormContext } from '../Context/Context'
 import { Icon } from './defaultRenders'
 import { IMenuItem } from './types'
 
@@ -7,28 +8,21 @@ export interface IMenuItemApi {
     setDisabled: (isDisable: boolean) => void
 }
 
-const MenuItem = React.forwardRef(({ key, title }: IMenuItem, ref: any) => {
-
+const MenuItemGen = ({ key, title }: IMenuItem)  => {
+    const context = useContext(FormContext)
     const [disabled, setDisabled] = useState<boolean>()
-    const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, (): IMenuItemApi => {
-        return {
-            setDisabled: setDisabled
-        }
-    })
-
+    useEffect(() => {
+        //setDisabled(context.buttons?.find(b=>b.name === key)?.disabled)
+        setDisabled(!disabled)
+    }, [context])
     const item = <Menu.Item title={title}
         key={key}
-    //onClick={onClickFunc && (() => onClickFunc({ refApi, menuItem }))}
-    //disabled={disableFunc && disableFunc({ refApi, menuItem })}
-    //morePanelElement={menuItem.fold}>
-    //{Component && <Component {...props} />} 
-    
+        disabled={disabled}
     >
         <Icon></Icon>
     </Menu.Item>
 
     return useMemo(() => item, [disabled])
-})
+}
 
-export { MenuItem }
+export { MenuItemGen }

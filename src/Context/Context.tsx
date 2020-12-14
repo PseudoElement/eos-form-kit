@@ -13,6 +13,10 @@ export interface IFormContext {
     showLeftIcon(): void;
     setLeftIconTitle(title?: string): void;
     reset(): void;
+
+    buttons?: IButton[]
+    setDisabledButton(disable: boolean, name: string): void
+    setVisibleButton(visible: boolean, name: string): void
 }
 
 export interface IField {
@@ -25,6 +29,12 @@ export interface IFormHeader {
     isLeftIconVisible?: boolean;
 }
 
+export interface IButton {
+    name: string
+    disabled?: boolean
+    visible?: boolean
+}
+
 export const defaultContext: IFormContext = {
     setFieldValue() { },
     disableField() { },
@@ -32,6 +42,8 @@ export const defaultContext: IFormContext = {
     reset() { },
     hideLeftIcon() { },
     showLeftIcon() { },
-    setLeftIconTitle() { }
+    setLeftIconTitle() { },
+    setDisabledButton() { },
+    setVisibleButton() { }
 };
 export const FormContext = React.createContext(defaultContext);

@@ -71,10 +71,8 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 case "add":
                     return (handlerProps: IHandlerProps) => { alert(handlerProps.menuItem.key) }
                 case "disable":
-                    return (handlerProps: IHandlerProps) => {
-                        const fields = Helper.getFields(mode);
-                        for (let field of fields)
-                            handlerProps.refApi?.current?.disableField(field.name);
+                    return () => {
+                        formApi.current?.setDisabledButton(true, "add")
                     }
                 default: return undefined
             }
