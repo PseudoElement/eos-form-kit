@@ -8,13 +8,62 @@ class Helper {
         const fields = [
             {
                 "disabled": false,
+                "label": "multiLookupRow",
+                "name": "multiLookupRow",
+                "defaultColumnLabel": "Особенности",
+                "modalWindowTitle": "Название модального окна",
+                "showHeader": true,
+                "hideDefaultColumn": false,
+                "disabledDefaultColumn": false,
+                "addRowToolbarTitle": "Добавить строку",
+                "deleteRowsToolbarTitle": "Удалить строки",
+                "addRowToolbarWarning": "Такой элемент уже существует",
+                "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
+                "required": true,
+                "allowDuplication": false,
+                "requiredMessage": "Поле обязательное к заполнению",
+                "type": "FieldLookupMultiRow",
+                "value": null,
+                "notFoundContent": "Нет элементов",
+                "dataService": {
+                    loadDataAsync: async (search?: string) => {
+                        const result: FieldLookupMulti.IValue[] = [
+                            { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" } ] },
+                            { key: "2", value: "два", other: [{ value: "один шесть", name: "secondColumn" } ] },
+                            { key: "3", value: "три" },
+                            { key: "4", value: "четыре" }
+                        ]
+                        if (search) {
+                            return result.filter((item) => {
+                                if (item && item.value && item?.value?.indexOf(search) >= 0) {
+                                    return true;
+                                }
+                                return false;
+                            }) ?? [];
+                        }
+                        else {
+                            return result;
+                        }
+                    },
+                    resultsAmount: 10,
+                },
+                "otherColumns": [
+                    { "label": "Колонка 2", "name": "secondColumn", "disabled": false }
+                ]
+            },
+            {
+                "disabled": false,
                 "label": "multiLookup1",
                 "name": "multiLookup1",
                 "defaultColumnLabel": "Особенности",
                 "modalWindowTitle": "Название модального окна",
+                "addRowToolbarTitle": "Добавить строку",
+                "deleteRowsToolbarTitle": "Удалить строки",
+                "addRowToolbarWarning": "Такой элемент уже существует",
+                "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
                 "showHeader": false,
                 "required": true,
-                "allowDuplication": true,
+                "allowTakes": true,
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMulti",
                 "value": null,
@@ -22,10 +71,10 @@ class Helper {
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
-                            { key: "1", value: "один" },
-                            { key: "2", value: "два" },
-                            { key: "3", value: "три" },
-                            { key: "4", value: "четыре" }
+                            { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" } ] },
+                            { key: "2", value: "два",  other: [{ value: "два три", name: "secondColumn" } ] },
+                            { key: "3", value: "три",  other: [{ value: "три три", name: "secondColumn" } ] },
+                            { key: "4", value: "четыре",  other: [{ value: "четыре три", name: "secondColumn" }]}
                         ]
                         if (search) {
                             return result.filter((item) => {
@@ -47,9 +96,14 @@ class Helper {
                 "label": "multiLookup2",
                 "name": "multiLookup2",
                 "defaultColumnLabel": "Другие особенности",
+                "addRowToolbarTitle": "Добавить строку",
+                "deleteRowsToolbarTitle": "Удалить строки",
+                "addRowToolbarWarning": "Такой элемент уже существует",
+                "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
                 "defaultColumnIndex": 1,
+                "hideDefaultColumn": false,
                 "showHeader": true,
-                "allowDuplication": false,
+                "allowDuplication": true,
                 "required": true,
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMulti",
@@ -78,7 +132,7 @@ class Helper {
                     resultsAmount: 10,
                 },
                 "otherColumns": [
-                    { "label": "secondColumn", "name": "secondColumn", "disabled": false },
+                    { "label": "Колонка 2", "name": "secondColumn", "disabled": false },
                     { "label": "anotherColumn", "name": "anotherColumn", "disabled": false }
                 ]
             },
@@ -185,6 +239,7 @@ class Helper {
                 "Disabled": false,
                 "ForceRender": null,
                 "Rows": [
+                    { "Cells": [{ "Type": 0, "Fields": ["multiLookupRow"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["multiLookup1"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["multiLookup2"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
@@ -241,6 +296,7 @@ class Helper {
     }
     static getRows() {
         const rows = [
+            { "Cells": [{ "Type": 0, "Fields": ["multiLookupRow"], "Width": 24 }] },
             { "Cells": [{ "Type": 0, "Fields": ["multiLookup1"], "Width": 24 }] },
             { "Cells": [{ "Type": 0, "Fields": ["multiLookup2"], "Width": 24 }] },
             { "Cells": [{ "Type": 0, "Fields": ["E_DOCUMENT"], "Width": 24 }] },
@@ -265,7 +321,16 @@ class Helper {
             case 1:
                 const secondItem = {
                     "E_DOCUMENT": true,
-
+                    "multiLookupRow": [
+                        { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }] },
+                        { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }] }
+                    ],
+                    "multiLookup1": [
+                        { key: "10", value: "десять", },
+                        { key: "11", value: "одинадцать" },
+                        { key: "12", value: "двенадцать" },
+                        { key: "13", value: "тринадцать" }
+                    ],
                     "multiLookup2": [
                         { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }, { value: "двадцать шесть", name: "anotherColumn" }] },
                         { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }, { value: "двадцать семь", name: "anotherColumn" }] },
@@ -290,6 +355,10 @@ class Helper {
             case 2:
                 const firstItem = {
                     "E_DOCUMENT": false,
+                    "multiLookupRow": [
+                        { key: "2", value: "два", other: [{ key: "101", value: "стоодин" }] },
+                        { key: "3", value: "три", other: [{ key: "100", value: "сто" }] }
+                    ],
                     "multiLookupTest1": [
                         { key: "10", value: "десять", },
                         { key: "11", value: "одинадцать" },
@@ -297,10 +366,10 @@ class Helper {
                         { key: "13", value: "тринадцать" }
                     ],
                     "multiLookupTest2": [
-                        { key: "10", value: "десять", otherColumns: [{ key: "100", value: "сто" }] },
-                        { key: "11", value: "одинадцать", otherColumns: [{ key: "101", value: "стоодин" }] },
-                        { key: "12", value: "двенадцать", otherColumns: [{ key: "102", value: "стодва" }] },
-                        { key: "13", value: "тринадцать", otherColumns: [{ key: "103", value: "стотри" }] }
+                        { key: "10", value: "десять", other: [{ key: "100", value: "сто" }] },
+                        { key: "11", value: "одинадцать", other: [{ key: "101", value: "стоодин" }] },
+                        { key: "12", value: "двенадцать", other: [{ key: "102", value: "стодва" }] },
+                        { key: "13", value: "тринадцать", other: [{ key: "103", value: "стотри" }] }
                     ],
                     "parentName2": "Находися в 2-ом элементе",
                     "parentName": "Находися в 2-ом элементе",

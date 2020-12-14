@@ -63,6 +63,16 @@ export interface ILookupMulti extends IField {
     defaultColumnIndex?: number;
     /**Разешить дублирование данных */
     allowDuplication?: boolean;
+    /**Спрятать столбец по умолчанию */
+    hideDefaultColumn?: boolean;
+    /**Текст для тулы добавления строки*/
+    addRowToolbarTitle?: string; 
+    /**Текст для тулы удаления строк */
+    deleteRowsToolbarTitle?: string;
+    /**Текст для сообщения при добавлении существующей записи.*/
+    addRowToolbarWarning?: string;
+    /**Текст для модального окна при удалении записи.*/
+    deleteRowsToolbarWarning?: string;
 }
 
 /**
@@ -85,26 +95,29 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
         const context: IFormContext = useContext(FormContext);
         return (
             <div>
-                <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
-                    <Input />
-                </Form.Item>
+                 <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
+                     <Input ref={ref}/>
+                 </Form.Item>
                 <Form.Item name={props.name} rules={rules}>
                     <DisplayTable
                         rules={rules}
                         label={props.label || ''}
                         required={props.required}
-                        name={props.name}
-                        ref={ref}
                         allowDuplication={props.allowDuplication}
                         defaultColumnIndex={props.defaultColumnIndex}
                         modalWindowTitle={props.modalWindowTitle}
                         defaultColumnLabel={props.defaultColumnLabel}
+                        addRowToolbarTitle={props.addRowToolbarTitle}
+                        deleteRowsToolbarTitle={props.deleteRowsToolbarTitle}
+                        addRowToolbarWarning={props.addRowToolbarWarning}
+                        deleteRowsToolbarWarning={props.deleteRowsToolbarWarning}
                         showHeader={props.showHeader}
                         mode={props.mode}
                         dataService={props.dataService}
                         notFoundContent={props.notFoundContent}
                         type={props.type}
                         otherColumns={props.otherColumns}
+                        hideDefaultColumn={props.hideDefaultColumn}
                         onDataChange={(row: any) => {
                             context.setFieldValue(props.name || '', row)
                         }}

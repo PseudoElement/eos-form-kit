@@ -27,6 +27,7 @@ export * as AjaxSelect from './Fields/LookupComponents/AjaxSelect';
 export * as FieldLookupAutoComplete from './Fields/FieldLookupAutoComplete';
 export * as AjaxAutoComplete from './Fields/LookupComponents/AjaxAutoComplete';
 export * as FieldLookupMulti from './Fields/FieldLookupMulti';
+export * as FieldLookupMultiRow from './Fields/FieldLookupMultiRow';
 
 export { default as fields } from './Fields/fields';
 export { FieldsHelper } from './Fields/FieldsHelper';
