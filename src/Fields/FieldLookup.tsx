@@ -21,10 +21,6 @@ export interface ILookup extends IField {
      * Текст при отсутсвии элементов
      */
     notFoundContent?: string;
-    /**
-     * Значение по умолчанию
-     */
-    defaultValue?: string;
 
     resultName?: string;
     resultObject?: string;
@@ -68,7 +64,6 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
                 <AjaxSelect
-                    defaultValue={props.defaultValue}
                     dataService={props.dataService}
                     ref={ref}
                     ctx={ctx}

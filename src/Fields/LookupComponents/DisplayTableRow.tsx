@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Menu, Table, PlusIcon, BinIcon, Collapse, Badge, } from "@eos/rc-controls";
+import { Menu, Table, PlusIcon, BinIcon, Collapse, Badge, message, modalMessage, Button } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
 import { IValue, IColumn, IOtherValue, } from "../FieldLookupMulti";
-import { IDataService, } from "./AjaxSelect";
-import { Lookup as FieldLookup,  } from "../FieldLookup";
+import { IDataService, 
+    //IOptionItem,
+ } from "./AjaxSelect";
+//import { Lookup as FieldLookup,  } from "../FieldLookup";
+import { Select as FieldSelect,  IOption  } from "../FieldSelect";
 import { Text as FieldText } from "../FieldText";
 //import { ILookup } from "../FieldLookup";
 // import { prependOnceListener } from 'process';
@@ -53,9 +56,19 @@ export interface IDisplayTableRow {
     /**Индекс столбца по умолчанию */
     defaultColumnIndex?: number;
     /**Разешить дублирование данных */
-    allowTakes?: boolean;
+    allowDuplication?: boolean;
     /**Разешить редактирование столбца по умолчанию*/
     disabledDefaultColumn?: boolean;
+    /**Спрятать столбец по умолчанию.*/
+    hideDefaultColumn?: boolean;
+    /**Текст для тулы добавления строки*/
+    addRowToolbarTitle?: string; 
+    /**Текст для тулы удаления строк */
+    deleteRowsToolbarTitle?: string;
+    /**Текст для сообщения при добавлении существующей записи.*/
+    addRowToolbarWarning?: string;
+    /**Текст для модального окна при удалении записи.*/
+    deleteRowsToolbarWarning?: string;
 
     onDataChange?(item?: any): void;
 
@@ -69,23 +82,33 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     value,
     mode,
     onDataChange,
-    dataService,
+    dataService: getDataService,
     label,
     required,
     showHeader,
     defaultColumnLabel,
     defaultColumnIndex,
+    hideDefaultColumn,
     disabledDefaultColumn,
-    otherColumns
+    otherColumns,
+    allowDuplication,
+    addRowToolbarTitle,
+    deleteRowsToolbarTitle,
+    addRowToolbarWarning,
+    deleteRowsToolbarWarning
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    //const [queryAmountInfo, setQueryAmountInfo] = useState<string>("");
+    const [items, setItems] = useState<IOption[]>([]);
+
     const defaultColumnSchema: IColumn = {
         "label": defaultColumnLabel,
-        "disabled": disabledDefaultColumn,
+        "disabled": hideDefaultColumn,
         "name": "defaultColumn"
     };
 
@@ -99,34 +122,79 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     const menu = [
         {
             component: <PlusIcon />,
-            title: 'PlusIcon',
+            title: addRowToolbarTitle || '',
             disabled: isDisplay(),
             onClick: addNewRow,
             hiddenTitle: true,
-            key: 'PlusIcon'
+            key: addRowToolbarTitle || 'PlusIcon'
         },
         {
             component: <BinIcon />,
-            title: 'BinIcon',
-            disabled: isDisplay(),
-            onClick: deleteMultiLookupLookupRows,
+            title: deleteRowsToolbarTitle || '',
+            disabled: (isDisplay() || selectedRowKeys.length < 1),
+            onClick: showDeleteModalMessage,
             hiddenTitle: true,
-            key: 'BinIcon'
+            key: deleteRowsToolbarTitle || 'BinIcon'
         }
     ];
+
+    /**
+     * Запрос
+     * @search search параметры запроса
+     */
+    async function loadItemById(search?: string) {
+        setIsLoading(true);
+        return getDataService?.loadDataAsync(search).then(
+            (data: IOption[]) => {
+                let items: IOption[] = data;
+                switch (true) {
+                    case (items.length >= getDataService.resultsAmount):
+                        // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
+                        let shortArray = items.slice(0, getDataService.resultsAmount - 1);
+                        // Использование useTranslate
+                        // const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: getDataService.resultsAmount - 1 });
+                        //const QUERY_AMOUNT_INFO_TEXT: string = `Отображены первые ${getDataService.resultsAmount - 1} результатов`;
+                        // Добавляет в выпадающий список надпись "Отображены первые 10 результатов"
+                        //setQueryAmountInfo(QUERY_AMOUNT_INFO_TEXT);
+                        setItems([...shortArray]);
+                        break;
+                    case (items.length && items.length <= getDataService.resultsAmount - 1):
+                        // Убирает надпись "Отображены первые 10 результатов" при количестве элементов списка 10 и менее
+                        //setQueryAmountInfo("");
+                        setItems(items);
+                        break;
+                    default:
+                        //setQueryAmountInfo("");
+                        setItems([]);
+                        break;
+                }
+                setIsLoading(false);
+            }
+        )
+            .catch(
+                (err: any) => {
+                    console.error(err);
+                    //setQueryAmountInfo("");
+                    setItems([]);
+                    setIsLoading(false)
+                }
+            )
+    }
 
     useEffect(() => {
         if (value) {
             setDataSource(getDataSource(value));
             formData.current = value;
-        } else {
+        } 
+        else {
             setDataSource([]);
             formData.current = []; 
         }
+        loadItemById("");
     }, [value]);
     useEffect(() => {
-        if (onDataChange)
-            onDataChange(formData.current);
+        if (onDataChange) 
+            onDataChange(formData.current);      
     }, [formData.current]);
 
 
@@ -146,11 +214,13 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                                 gutter="5px"
                                 rowCount={formData.current?.length}>
                         <Table
+                            loading={isLoading}
                             fullHeight
                             dataSource={dataSource}
                             columns={getColumns(otherColumns)}
                             rowSelection={rowSelection}
                             showHeader={showHeader}
+                            settings={{ isDraggable: false }}
                         />
                     </Table.Menu>
                 </Collapse.Panel>
@@ -170,13 +240,13 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                     value: ''
                 }
             });
-            newRow = { key: getRowKey(), value: '', other: defaultOther  };
+            newRow = { key: '', value: '', other: defaultOther  };
         } else {
-            newRow = { key: getRowKey(), value: '' };  
+            newRow = { key: '', value: '' };  
         }
 
         const newValues = [...values, newRow];
-        setDataSource(newValues);
+        setDataSource(getDataSource(newValues));
         formData.current = newValues;
     }
     function isDisplay() {
@@ -218,6 +288,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
             });
             setDataSource(newDataSource);
             formData.current = newFormData;
+            setSelectedRowKeys([]);
         }
     };
     function getDataSource(values?: IValue[]) {
@@ -238,46 +309,65 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
         if (isUnique) newKey  = getRowKey();
         return newKey;
     }
-
+    function showDeleteModalMessage() {
+        modalMessage("warning", deleteRowsToolbarWarning || '', [
+            <Button style={{ width: 88 }} 
+                    key="1" 
+                    onClick={(e) => {
+                    deleteMultiLookupLookupRows();
+                    modalMessage.destroy(e);
+            }}> 
+                Да 
+            </Button>, 
+            <Button style={{ width: 88 }} 
+                    key="2" 
+                    onClick={(e) => modalMessage.destroy(e)} 
+                    type="primary">
+                Нет
+            </Button>
+        ]);
+    }
     function getColumns(otherColumns?: IColumn[]) {
         let columns: IColumn[] = otherColumns ? [...otherColumns.slice(0, (defaultColumnIndex || 1)),
                                                 defaultColumnSchema, 
                                                 ...otherColumns.slice((defaultColumnIndex || 1))] : [defaultColumnSchema];
 
-        return columns.map((column: IColumn) => {
+        return columns.map((column: IColumn ) => {
             return {
                 key: column.name,
                 title: column.label,
                 dataIndex: column.name,
-                padding: 0,
+                width: `${Math.trunc(100/columns.length)}%`,
                 render: (value: any, record: any, index: any) => {
                     record = record;
                     if(column.name === "defaultColumn") {
-                        return (<FieldLookup
-                            type="FieldLookup"
+                        return (<FieldSelect
+                            type="FieldSelect"
+                            values={items}
+                            required={required}
                             defaultValue={value}
                             label={column.label}
-                            mode={column.disabled ? FormMode.display : FormMode.edit}
-                            dataService={dataService}
+                            mode={disabledDefaultColumn ? FormMode.display : FormMode.edit}
                             onChange={(changedValue?: any) => {
+                                const item = items.find((e: IOption) => e.key === changedValue);
+
                                 if (formData.current && formData.current?.length > index) {
-                                    let row = formData.current[index];
-                                    if (!row.other)
-                                        row.other = [];
-       
-                                    let otherValue: IOtherValue | null = null;
-                                    for (let other of row.other)
-                                        if (other.name === column.name) {
-                                            otherValue = other;
-                                            break;
+                                    const row = formData.current[index];
+
+                                    if(!allowDuplication) {
+                                        const isDuplicate = formData?.current?.find((e: IValue) => (e.key === changedValue && row.key !== e.key));
+                                        if(isDuplicate) {
+                                            row.key = '';
+                                            row.value ='';
+                                            message("warning", addRowToolbarWarning || '');
+                                            setDataSource(getDataSource(formData.current));
+                                            return;
                                         }
-    
-                                    if (!otherValue) {
-                                        row.value = changedValue?.value || '';
                                     }
-                                    else
-                                        otherValue.value = changedValue?.value || '';
-                                    //formData.current = [...formData.current]
+                                    row.key = changedValue || '';
+                                    row.value = item?.value || '';
+                                    if (item?.other) row.other = item?.other;
+                                    setDataSource(getDataSource(formData.current));
                                 }
                             }}
                         />);

@@ -12,10 +12,15 @@ class Helper {
                 "name": "multiLookupRow",
                 "defaultColumnLabel": "Особенности",
                 "modalWindowTitle": "Название модального окна",
-                "showHeader": false,
+                "showHeader": true,
+                "hideDefaultColumn": false,
                 "disabledDefaultColumn": false,
+                "addRowToolbarTitle": "Добавить строку",
+                "deleteRowsToolbarTitle": "Удалить строки",
+                "addRowToolbarWarning": "Такой элемент уже существует",
+                "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
                 "required": true,
-                "allowDuplication": true,
+                "allowDuplication": false,
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMultiRow",
                 "value": null,
@@ -23,8 +28,8 @@ class Helper {
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
-                            { key: "1", value: "один" },
-                            { key: "2", value: "два" },
+                            { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" } ] },
+                            { key: "2", value: "два", other: [{ value: "один шесть", name: "secondColumn" } ] },
                             { key: "3", value: "три" },
                             { key: "4", value: "четыре" }
                         ]
@@ -43,7 +48,7 @@ class Helper {
                     resultsAmount: 10,
                 },
                 "otherColumns": [
-                    { "label": "secondColumn", "name": "secondColumn", "disabled": false }
+                    { "label": "Колонка 2", "name": "secondColumn", "disabled": false }
                 ]
             },
             {
@@ -52,6 +57,10 @@ class Helper {
                 "name": "multiLookup1",
                 "defaultColumnLabel": "Особенности",
                 "modalWindowTitle": "Название модального окна",
+                "addRowToolbarTitle": "Добавить строку",
+                "deleteRowsToolbarTitle": "Удалить строки",
+                "addRowToolbarWarning": "Такой элемент уже существует",
+                "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
                 "showHeader": false,
                 "required": true,
                 "allowTakes": true,
@@ -87,9 +96,14 @@ class Helper {
                 "label": "multiLookup2",
                 "name": "multiLookup2",
                 "defaultColumnLabel": "Другие особенности",
+                "addRowToolbarTitle": "Добавить строку",
+                "deleteRowsToolbarTitle": "Удалить строки",
+                "addRowToolbarWarning": "Такой элемент уже существует",
+                "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
                 "defaultColumnIndex": 1,
+                "hideDefaultColumn": false,
                 "showHeader": true,
-                "allowDuplication": false,
+                "allowDuplication": true,
                 "required": true,
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMulti",
@@ -118,7 +132,7 @@ class Helper {
                     resultsAmount: 10,
                 },
                 "otherColumns": [
-                    { "label": "secondColumn", "name": "secondColumn", "disabled": false },
+                    { "label": "Колонка 2", "name": "secondColumn", "disabled": false },
                     { "label": "anotherColumn", "name": "anotherColumn", "disabled": false }
                 ]
             },

@@ -30,11 +30,6 @@ export interface ISelect {
     notFoundContent?: string;
 
     /**
-     * Значение по умолчанию
-     */
-    defaultValue?: string;
-
-    /**
      * Обзяательность заполнения поля
      */
     required?: boolean;
@@ -93,7 +88,6 @@ export const Select = React.forwardRef<any, ISelect>(({
     value,
     notFoundContent,
     required,
-    defaultValue,
     dataService: getDataService,
     ctx
     // передача функции useTranslate t(`Отображены первые ${getDataService.resultsAmount} результатов`;)
@@ -273,7 +267,6 @@ export const Select = React.forwardRef<any, ISelect>(({
     return (
         <Spin spinning={isLoading}>
             <RcSelect ref={ref}
-                defaultValue={defaultValue}
                 required={required}
                 showSearch={true}
                 value={currentValue?.value}

@@ -34,10 +34,20 @@ import React, {
      modalWindowTitle?: string;
      /**Индекс столбца по умолчанию */
      defaultColumnIndex?: number;
-     /**Разешить дублирование данных */
-     allowTakes?: boolean;
-    /**Разешить редактирование столбца по умолчанию*/
+     /**Разешить дублирование данных.*/
+     allowDuplication?: boolean;
+    /**Разешить редактирование столбца по умолчанию.*/
     disabledDefaultColumn?: boolean;
+    /**Спрятать столбец по умолчанию.*/
+    hideDefaultColumn?: boolean;
+    /**Текст для тулы добавления строки.*/
+    addRowToolbarTitle?: string; 
+    /**Текст для тулы удаления строк.*/
+    deleteRowsToolbarTitle?: string;
+    /**Текст для сообщения при добавлении существующей записи.*/
+    addRowToolbarWarning?: string;
+    /**Текст для модального окна при удалении записи.*/
+    deleteRowsToolbarWarning?: string;
  }
  
  /**
@@ -58,10 +68,11 @@ import React, {
  
      function getNew(props: ILookupMultiRow, ref: any, rules?: Rule[]) {
          const context: IFormContext = useContext(FormContext);
+         debugger;
          return (
              <div>
                  <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
-                     <Input />
+                     <Input ref={ref}/>
                  </Form.Item>
                  <Form.Item name={props.name} rules={rules}>
                      <DisplayTableRow
@@ -70,8 +81,12 @@ import React, {
                          required={props.required}
                          name={props.name}
                          disabledDefaultColumn={props.disabledDefaultColumn}
-                         ref={ref}
-                         allowTakes={props.allowTakes}
+                         hideDefaultColumn={props.hideDefaultColumn}
+                         allowDuplication={props.allowDuplication}
+                         addRowToolbarTitle={props.addRowToolbarTitle}
+                         deleteRowsToolbarTitle={props.deleteRowsToolbarTitle}
+                         addRowToolbarWarning={props.addRowToolbarWarning}
+                         deleteRowsToolbarWarning={props.deleteRowsToolbarWarning}
                          defaultColumnIndex={props.defaultColumnIndex}
                          modalWindowTitle={props.modalWindowTitle}
                          defaultColumnLabel={props.defaultColumnLabel}

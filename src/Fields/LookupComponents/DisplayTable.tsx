@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useImperativeHandle } from 'react';
-import { Menu, Table, PlusIcon, BinIcon, Collapse, Badge, message } from "@eos/rc-controls";
+import React, { useEffect, useState, useRef } from 'react';
+import { Menu, Table, PlusIcon, BinIcon, Collapse, Badge, message, modalMessage, Button } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
 import { IValue, IColumn, 
     //IOtherValue 
@@ -56,6 +56,16 @@ export interface IDisplayTable {
     defaultColumnIndex?: number;
     /**Разешить дублирование данных */
     allowDuplication?: boolean;
+    /**Спрятать столбец по умолчанию */
+    hideDefaultColumn?: boolean;
+    /**Текст для тулы добавления строки*/
+    addRowToolbarTitle?: string; 
+    /**Текст для тулы удаления строк */
+    deleteRowsToolbarTitle?: string;
+    /**Текст для сообщения при добавлении существующей записи.*/
+    addRowToolbarWarning?: string;
+    /**Текст для модального окна при удалении записи.*/
+    deleteRowsToolbarWarning?: string;
 
     onDataChange?(item?: any): void;
 
@@ -78,8 +88,13 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     defaultColumnIndex,
     modalWindowTitle,
     allowDuplication,
-    otherColumns
-}, ref) => {
+    otherColumns,
+    hideDefaultColumn,
+    addRowToolbarTitle,
+    deleteRowsToolbarTitle,
+    addRowToolbarWarning,
+    deleteRowsToolbarWarning
+}) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
 
@@ -88,29 +103,14 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
     const tableModalApi = useRef<ITableModalApi>();
 
-    const selfRef = useRef();
-    useImperativeHandle(ref ?? selfRef, (): any => {
-        const api: any = {
-            getData() {
-                if (onDataChange)
-                    onDataChange(dataRef.current);
-            }
-        }
-        return api;
-    });
-
-    const dataRef = useRef<any>();
-    dataRef.current = value;
-
-    const defaultColumnSchema: IColumn = {
+    let defaultColumnSchema: IColumn = {
         "label": defaultColumnLabel,
         "disabled": true,
         "name": "defaultColumn"
     };
 
     const rowSelection = {
-        preserveSelectedRowKeys: false,
-        selectedRowKeys: selectedRowKeys,
+        selectedRowKeys,
         onChange: (selectedRowKeys: (string | number)[]) => {
             setSelectedRowKeys(selectedRowKeys);
         }
@@ -118,19 +118,19 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     const menu = [
         {
             component: <PlusIcon />,
-            title: 'PlusIcon',
+            title: addRowToolbarTitle || '',
             disabled: isDisplay(),
             onClick: showModalLookup,
             hiddenTitle: true,
-            key: 'PlusIcon'
+            key: addRowToolbarTitle || 'PlusIcon'
         },
         {
             component: <BinIcon />,
-            title: 'BinIcon',
-            disabled: isDisplay(),
-            onClick: deleteMultiLookupLookupRows,
+            title:  deleteRowsToolbarTitle || '',
+            disabled: (isDisplay() || selectedRowKeys.length < 1),
+            onClick: showDeleteModalMessage,
             hiddenTitle: true,
-            key: 'BinIcon'
+            key: deleteRowsToolbarTitle || 'BinIcon'
         }
     ];
 
@@ -174,6 +174,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                             columns={getColumns(otherColumns)}
                             rowSelection={rowSelection}
                             showHeader={showHeader}
+                            settings={{ isDraggable: false }}
+                            //pagination={{ showMoreBtn: false }}
                         />
                     </Table.Menu>
                     <TableModal
@@ -197,7 +199,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         });
  
         if(isInData && !allowDuplication)  {
-            message("warning", "Такой элемент уже существует");
+            message("warning", addRowToolbarWarning || '');
             return;
         }
         let newRow: IValue = row;
@@ -256,6 +258,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             });
             setDataSource(newDataSource);
             formData.current = newFormData;
+            setSelectedRowKeys([]);
         }
     };
     function getDataSource(values?: IValue[]) {
@@ -289,11 +292,18 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         return newKey;
     }
     function getColumns(otherColumns?: IColumn[]) {
+        let columns: IColumn[] | undefined;
 
-        let columns: IColumn[] = otherColumns ? [...otherColumns.slice(0, defaultColumnIndex ),
-                                                defaultColumnSchema, 
-                                                ...otherColumns.slice(defaultColumnIndex)] : [defaultColumnSchema];
-        return columns.map((column: IColumn) => {
+        if(hideDefaultColumn) {
+            columns = otherColumns;
+        } 
+        else {
+        columns = otherColumns ? [...otherColumns.slice(0, defaultColumnIndex ),
+                                  defaultColumnSchema, 
+                                  ...otherColumns.slice(defaultColumnIndex)] : [defaultColumnSchema];
+        }
+ 
+        return columns?.map((column: IColumn) => {
             return {
                 key: column.name,
                 title: column.label,
@@ -335,7 +345,24 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     function showModalLookup() {
         tableModalApi?.current?.showModal();
     }
-
+    function showDeleteModalMessage() {
+        modalMessage("warning", deleteRowsToolbarWarning || '', [
+            <Button style={{ width: 88 }} 
+                    key="1" 
+                    onClick={(e) => {
+                     deleteMultiLookupLookupRows();
+                     modalMessage.destroy(e);
+            }}> 
+                Да 
+            </Button>, 
+            <Button style={{ width: 88 }} 
+                    key="2" 
+                    onClick={(e) => modalMessage.destroy(e)} 
+                    type="primary">
+                Нет
+            </Button>
+        ]);
+    }
 });
 
 export default DisplayTable;
