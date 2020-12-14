@@ -1,8 +1,9 @@
 import React, { Fragment } from 'react'
+import { IMenuItem } from '../../Menu/types';
 import { IControlRenderProps } from '../types/IControlRenderProps';
 import { ITableApi } from '../types/ITableApi';
 import { FetchAction, FetchCondition, FetchControlRender } from '../types/ITableProvider';
-import { IMenuItem, ITableSettings } from '../types/ITableSettings';
+import { ITableSettings } from '../types/ITableSettings';
 
 interface GenerateRightMenuProps{
     tableSettings: ITableSettings

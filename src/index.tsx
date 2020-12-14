@@ -37,4 +37,5 @@ export {
     FilterType, IFieldPath, ISorterType, ITableApi, IHandlerProps, Triggers, TriggerArgs,
     ITableProvider, ITableState, IControlRenderProps, ITableData, ITableSettings, ITableUserSettings
 } from './EosTable/types'
-export { default as GenMenuItems } from './EosTable/components/GenMenuItems'
+export  { default as ClientMenu } from './Menu/index'
+export * from './Menu/defaultRenders'

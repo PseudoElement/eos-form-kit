@@ -1,7 +1,8 @@
+import { IMenuItem } from "../../Menu/types";
 import { IControlRenderProps } from "./IControlRenderProps";
 import { ITableApi } from "./ITableApi";
 import { ITableData } from "./ITableData";
-import { IMenuItem, ITableSettings } from "./ITableSettings";
+import { ITableSettings } from "./ITableSettings";
 import { ITableState } from "./ITableState";
 import { ITableUserSettings } from "./ITableUserSettings";
 
@@ -38,6 +39,6 @@ export type FetchAction = (name: string) => ((handlerProps: IHandlerProps) => Pr
 export type FetchCondition = (name: string) => ((handlerProps: IHandlerProps) => boolean) | undefined
 
 export interface IHandlerProps{
-    refApi: ITableApi, 
+    refApi: any, 
     menuItem: IMenuItem
 }

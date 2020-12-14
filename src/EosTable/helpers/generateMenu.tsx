@@ -1,8 +1,9 @@
 import { Menu } from '@eos/rc-controls';
 import React from 'react'
-import { IMenuItem, ITableSettings } from '../types/ITableSettings';
+import { ITableSettings } from '../types/ITableSettings';
 import { ITableApi } from '..//types/ITableApi'
 import { FetchAction, FetchCondition, FetchControlRender } from '../types/ITableProvider';
+import { IMenuItem } from '../../Menu/types';
 
 export function generateGridMenu(fetchControl: FetchControlRender,
     fetchAction: FetchAction,

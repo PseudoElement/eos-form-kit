@@ -1,3 +1,4 @@
+import { IMenuItem } from "../../Menu/types";
 import { IFieldPath } from "./IFieldPath";
 
 export interface ITableSettings {
@@ -59,20 +60,7 @@ export interface IVisualSettings {
     pageSizeOptions?: string[]
 }
 
-export interface IMenuItem {
-    key: string
-    title?: string
-    description?: string
-    render: IRender
-    children?: IMenuItem[]
-    fold?: boolean
-    handlers?: MenuItemHandler[]
-}
 
-interface MenuItemHandler {
-    type: "disabled" | "onClick"
-    handlerName: string
-}
 
 export interface IRender {
     renderType: string,

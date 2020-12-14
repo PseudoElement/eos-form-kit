@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react'
-import { IControlRenderProps } from '../../types/IControlRenderProps';
+import { IControlRenderProps } from '../../EosTable/types';
 
 export default function Icon({ renderArgs }: IControlRenderProps) {
     const LazyComponent = lazy(() => import(`@eos/rc-controls/lib/icon/icons/${renderArgs && renderArgs["name"]}.js`)

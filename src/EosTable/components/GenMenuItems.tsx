@@ -1,8 +1,8 @@
 import { Menu } from '@eos/rc-controls';
 import React from 'react'
+import { IMenuItem } from '../../Menu/types';
 import { IControlRenderProps } from '../types/IControlRenderProps';
 import { FetchAction, FetchCondition, FetchControlRender } from '../types/ITableProvider';
-import { IMenuItem } from '../types/ITableSettings';
 
 interface IGenMenuItemProps {
     menuItems: IMenuItem[]

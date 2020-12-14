@@ -2,9 +2,9 @@ import { SearchButton } from '@eos/rc-controls'
 
 import React, { Fragment, useEffect } from 'react'
 import { useState } from 'react'
-import generateQuickSearchFilter from '../../helpers/generateQuickSearchFilter'
-import { FilterType, ITableState } from '../../types'
-import { IControlRenderProps } from '../../types/IControlRenderProps'
+import generateQuickSearchFilter from '../../EosTable/helpers/generateQuickSearchFilter'
+import { FilterType, IControlRenderProps, ITableState } from '../../EosTable/types'
+
 
 
 export default function QuickSearch({ refApi }: IControlRenderProps) {

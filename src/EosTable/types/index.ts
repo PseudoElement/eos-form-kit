@@ -4,7 +4,7 @@ import { FilterType } from './IFilterType'
 import { ISorterType } from './ISorterType'
 import { ITableApi } from './ITableApi'
 import { ITableData } from './ITableData'
-import { IHandlerProps, ITableProvider, TriggerArgs, Triggers } from './ITableProvider'
+import { FetchAction, FetchCondition, FetchControlRender, IHandlerProps, ITableProvider, TriggerArgs, Triggers } from './ITableProvider'
 import { ITableSettings } from './ITableSettings'
 import { ITableState } from './ITableState'
 import { ITableUserSettings } from './ITableUserSettings'
@@ -22,5 +22,8 @@ export {
     IControlRenderProps, 
     ITableData,
     ITableSettings,
-    ITableUserSettings
+    ITableUserSettings,    
+    FetchAction, 
+    FetchCondition, 
+    FetchControlRender
 }
