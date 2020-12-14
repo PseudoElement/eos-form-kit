@@ -7,8 +7,7 @@ export interface IMenuItem {
     render: IRender
     children?: IMenuItem[]
     fold?: boolean
-    handlers?: MenuItemHandler[]
-    onClick?: () => Promise<void> | void
+    handlers?: MenuItemHandler[]    
 }
 
 interface MenuItemHandler {

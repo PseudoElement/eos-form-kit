@@ -255,6 +255,27 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             formContext.buttons = buttons
             setFormContext({ ...formContext });
         }, []),
+        setCheckedButton: useCallback((checked: boolean, name: string) => {
+            let buttons = []
+            if (formContext.buttons && formContext.buttons.length > 0) {
+                buttons = [...formContext.buttons]
+                const index = formContext.buttons.findIndex(item => item.name === name)
+                if (index >= 0) {
+                    buttons[index] = {
+                        ...formContext.buttons[index],
+                        checked
+                    }
+                }
+            }
+            else {
+                buttons = [{
+                    name,
+                    checked
+                }]
+            }
+            formContext.buttons = buttons
+            setFormContext({ ...formContext });
+        }, []),
     });
 
     const selfRef = useRef();

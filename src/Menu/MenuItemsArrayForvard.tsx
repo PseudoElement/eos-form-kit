@@ -6,19 +6,19 @@ import { FormContext } from '../Context/Context'
 import { MenuItemGen } from './MenuItem'
 import { IMenuItem } from './types'
 
-const MenuIemsArray = ({ menuItems, refApi, fetchAction, fetchControlRender, fetchCondition }: IMenuProps) => {
+const MenuIemsArray = ({ menuItems, refApi, fetchControlRender, fetchCondition }: IMenuProps) => {
     const context = useContext(FormContext)
     useEffect(()=>{
-        
+
     },[context])
     const items = (toolsList: IMenuItem[]) => {
         return (toolsList
             .map(menuItem => {
                 const disableHandler = menuItem.handlers?.find(m => m.type === "disabled")
-                const onClickHandler = menuItem.handlers?.find(m => m.type === "onClick")
+                //const onClickHandler = menuItem.handlers?.find(m => m.type === "onClick")
 
                 const disableFunc = disableHandler && fetchCondition && fetchCondition(disableHandler.handlerName);
-                const onClickFunc = onClickHandler && fetchAction && fetchAction(onClickHandler.handlerName);
+                //const onClickFunc = onClickHandler && fetchAction && fetchAction(onClickHandler.handlerName);
                 const Component = fetchControlRender && fetchControlRender(menuItem.render.renderType);
 
                 const props: IControlRenderProps = {
@@ -37,7 +37,7 @@ const MenuIemsArray = ({ menuItems, refApi, fetchAction, fetchControlRender, fet
                     </Menu.SubMenu>
                 }
                 else {
-                    return <MenuItemGen key={menuItem.key} title={menuItem.title} render={menuItem.render} onClick={onClickFunc && (() => onClickFunc({ refApi, menuItem }))}></MenuItemGen>
+                    return <MenuItemGen key={menuItem.key} title={menuItem.title} render={menuItem.render}></MenuItemGen>
                 }
             })
         )

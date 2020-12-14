@@ -17,6 +17,7 @@ export interface IFormContext {
     buttons?: IButton[]
     setDisabledButton(disable: boolean, name: string): void
     setVisibleButton(visible: boolean, name: string): void
+    setCheckedButton(checked: boolean, name: string): void
 }
 
 export interface IField {
@@ -33,6 +34,7 @@ export interface IButton {
     name: string
     disabled?: boolean
     visible?: boolean
+    checked?: boolean
 }
 
 export const defaultContext: IFormContext = {
@@ -44,6 +46,7 @@ export const defaultContext: IFormContext = {
     showLeftIcon() { },
     setLeftIconTitle() { },
     setDisabledButton() { },
-    setVisibleButton() { }
+    setVisibleButton() { },
+    setCheckedButton() { }
 };
 export const FormContext = React.createContext(defaultContext);
