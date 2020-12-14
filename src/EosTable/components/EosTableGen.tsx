@@ -117,18 +117,21 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             if (selected) {
                 resultRowKeys.push(...rowKeys)
                 arrayRecords.push(...getValueByKey(rowKeys))
+                return { selRowKeys: resultRowKeys, selRecords: arrayRecords, unSelRecords: [] }
             }
-            return { selRowKeys: resultRowKeys, selRecords: arrayRecords }
+            else {
+                return { selRowKeys: resultRowKeys, selRecords: arrayRecords, unSelRecords: getValueByKey(rowKeys) }
+            }
         }
 
-        return { selRowKeys: [], selRecords: [] }
+        return { selRowKeys: [], selRecords: [], unSelRecords: [] }
     }
 
     const setSelectRecordsAndKeys = (selected: boolean, rowKeys?: string[], records?: any[]) => {
-        const { selRecords, selRowKeys } = selectRecordsAndKeys(selected, rowKeys, records)
+        const { selRecords, selRowKeys, unSelRecords } = selectRecordsAndKeys(selected, rowKeys, records)
         setSelectedRowKeys(selRowKeys)
         setSelectedRecords(selRecords)
-        const state: ITableState = { ...currentTableState, selectedRecords: selRecords, selectedRowKeys: selRowKeys }
+        const state: ITableState = { ...currentTableState, selectedRecords: selRecords, selectedRowKeys: selRowKeys, lastUnSelectedRecords: unSelRecords }
         triggers?.onChangeSelectedRows && triggers.onChangeSelectedRows({ tableApi: currentRef.current, tableSetting: tableSettings, userSetting: tableUserSetiings, tableState: state })
     }
     //#endregion

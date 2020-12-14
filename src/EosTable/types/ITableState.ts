@@ -17,4 +17,5 @@ export interface ITableState {
     tableView?: "table" | "card"    
     forcedReloadData?: boolean
     quickSearchMode?: boolean 
+    readonly lastUnSelectedRecords?: any[]
 }

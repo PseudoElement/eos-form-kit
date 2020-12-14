@@ -11,9 +11,7 @@ const MenuIemsArray = ({ menuItems, refApi, fetchAction, fetchControlRender, fet
             .map(menuItem => {
                 const disableHandler = menuItem.handlers?.find(m => m.type === "disabled")
                 const onClickHandler = menuItem.handlers?.find(m => m.type === "onClick")
-                
-                contextButtons?.find(b=>b.name===menuItem.key)?.disabled
-                
+
                 const disableFunc = disableHandler && fetchCondition && fetchCondition(disableHandler.handlerName);
                 const onClickFunc = onClickHandler && fetchAction && fetchAction(onClickHandler.handlerName);
                 const Component = fetchControlRender && fetchControlRender(menuItem.render.renderType);
