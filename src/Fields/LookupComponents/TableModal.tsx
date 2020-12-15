@@ -1,7 +1,7 @@
 import React, { useState, useRef, useImperativeHandle  } from "react";
 import { Modal, Form} from "@eos/rc-controls";
 import IField from "../IField";
-import { Select as AjaxSelect, IDataService } from "./AjaxSelect";
+import { Select as AjaxSelect, IDataService, IOptionItem } from "./AjaxSelect";
 import { IValue } from "../FieldLookupMulti";
 
 /**
@@ -35,6 +35,7 @@ export interface ITableModalApi {
 export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal, ref) => {
     const [lookupVisible, setLookupVisible] = useState<boolean>(false);
     const [currentRow, setCurrentRow] = useState<IValue>();
+    const [ajaxSelectValue, setAjaxSelectValue] = useState<IOptionItem | undefined>(undefined);
 
     const selfRef = useRef();
     useImperativeHandle(ref ?? selfRef, (): ITableModalApi => {
@@ -55,11 +56,13 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
                 onCancel={() => setLookupVisible(false)}
                 onOk={() => {
                     if (props.onFinish) props.onFinish(currentRow);
+                    setAjaxSelectValue({key: '', value: ''});
                     setLookupVisible(false); 
                 }}
             >
                 <Form.Item>
                     <AjaxSelect
+                        value={ajaxSelectValue}
                         ref={ref}
                         dataService={props.dataService}
                         required={props.required}
