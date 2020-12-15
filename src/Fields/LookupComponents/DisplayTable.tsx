@@ -121,7 +121,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     const menu = [
         {
             component: <PlusIcon />,
-            title: addRowToolbarTitle || '',
+            title: addRowToolbarTitle || 'Добавить строку',
             disabled: isDisplay(),
             onClick: showModalLookup,
             hiddenTitle: true,
@@ -129,7 +129,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         },
         {
             component: <BinIcon />,
-            title:  deleteRowsToolbarTitle || '',
+            title:  deleteRowsToolbarTitle || 'Удалить строки',
             disabled: (isDisplay() || selectedRowKeys.length < 1),
             onClick: deleteRowsToolbarWarning ? showDeleteModalMessage : deleteMultiLookupLookupRows,
             hiddenTitle: true,

@@ -125,11 +125,11 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     const menu = [
         {
             component: <PlusIcon />,
-            title: addRowToolbarTitle || '',
+            title: addRowToolbarTitle || 'Добавить строку',
             disabled: isDisplay(),
             onClick: addNewRow,
             hiddenTitle: true,
-            key: addRowToolbarTitle || 'PlusIcon'
+            key: addRowToolbarTitle || 'Удалить строки'
         },
         {
             component: <BinIcon />,

@@ -68,7 +68,6 @@ import React, {
  
      function getNew(props: ILookupMultiRow, ref: any, rules?: Rule[]) {
          const context: IFormContext = useContext(FormContext);
-         debugger;
          return (
              <div>
                  <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
