@@ -39,3 +39,4 @@ export {
 } from './EosTable/types'
 export  { default as ClientMenu } from './Menu/index'
 export * from './Menu/defaultRenders'
+export { useEosTableComponentsStore } from './EosTable/StoreComponents'

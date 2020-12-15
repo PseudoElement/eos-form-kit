@@ -1,24 +1,23 @@
 //import { gql, useApolloClient } from "@apollo/react-hooks";
-import { generateGridMenu } from "../helpers/generateMenu";
-import { GenerateRightMenu } from "../helpers/generateRightMenu";
-import generateSelectQuery from "../helpers/generateSelectQuery";
-import { getColumnsBySettings } from "../helpers/getColumnsBySettings";
+//import { generateGridMenu } from "../helpers/generateMenu";
+//import { GenerateRightMenu } from "../helpers/generateRightMenu";
+//import generateSelectQuery from "../helpers/generateSelectQuery";
+//import { getColumnsBySettings } from "../helpers/getColumnsBySettings";
 import { useEosTableComponentsStore } from "../StoreComponents";
-import { IColumn } from "../types/IColumn";
-import { ITableApi } from "../types/ITableApi";
-import { ITableData } from "../types/ITableData";
+//import { IColumn } from "../types/IColumn";
+//import { ITableApi } from "../types/ITableApi";
+//import { ITableData } from "../types/ITableData";
 import { ITableProvider } from "../types/ITableProvider";
-import { ITableSettings } from "../types/ITableSettings";
-import { ITableState } from "../types/ITableState";
-import { ITableUserSettings } from "../types/ITableUserSettings";
+//import { ITableSettings } from "../types/ITableSettings";
+//import { ITableState } from "../types/ITableState";
+//import { ITableUserSettings } from "../types/ITableUserSettings";
 
 export function useDefaultProvider() {
     //const apolloClient = useApolloClient();
     const {
         fetcConditionFromStore,
         fetchActionFromStore,
-        fetchControlFromStore,
-        translation,
+        fetchControlFromStore,        
     } = useEosTableComponentsStore();
 
     // function defaultDataProvider(tableState: ITableState, tableSettings: ITableSettings, userSettings: ITableUserSettings) {

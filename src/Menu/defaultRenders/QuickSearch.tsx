@@ -3,15 +3,16 @@ import { SearchButton } from '@eos/rc-controls'
 import React, { Fragment, useEffect } from 'react'
 import { useState } from 'react'
 import generateQuickSearchFilter from '../../EosTable/helpers/generateQuickSearchFilter'
-import { FilterType, IControlRenderProps, ITableState } from '../../EosTable/types'
+import { FilterType, IControlRenderProps, ITableApi, ITableState } from '../../EosTable/types'
 
 
 
 export default function QuickSearch({ refApi }: IControlRenderProps) {
-    if (!refApi)
+    const refTableApi = refApi?.current as ITableApi
+    if (!refTableApi)
         return <Fragment />
-    const state = refApi.getCurrentTableState()
-    const tableSettings = refApi.getTableSetting()
+    const state = refTableApi.getCurrentTableState()
+    const tableSettings = refTableApi.getTableSetting()
 
     const [show, setShow] = useState<boolean | undefined>(() => state.quickSearchMode)
 
@@ -33,7 +34,7 @@ export default function QuickSearch({ refApi }: IControlRenderProps) {
                 filter: filters,
                 quickSearchMode: quickSearchMode
             }
-            refApi.setTableState(tableState)
+            refTableApi.setTableState(tableState)
         }
     }
 
@@ -43,7 +44,7 @@ export default function QuickSearch({ refApi }: IControlRenderProps) {
                 ...state,
                 quickSearchMode: true
             }
-            refApi.setTableState(tableState)
+            refTableApi.setTableState(tableState)
         }
         else {
             setTableState()

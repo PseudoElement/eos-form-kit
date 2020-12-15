@@ -1,5 +1,5 @@
 export interface IFieldPath {
-    name: string ///displayName для отображения на форме настроек
+    displayName: string
     apiField: string
     sortable?: boolean
     child?: IFieldPath

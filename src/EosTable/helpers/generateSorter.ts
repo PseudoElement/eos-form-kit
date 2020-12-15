@@ -11,7 +11,7 @@ export function getPossibleSortings(tableSettings: ITableSettings, localize?: (k
         const sortPath: ISorterPath = addChildToSorterTypeParent({ [field.apiField]: undefined }, sorterPath)
         const newSorter = { ...sorterTypeCurrent }
         if (field.child) {
-            const nameField = localize ? localize(field.child.name) : field.child.name
+            const nameField = localize ? localize(field.child.displayName) : field.child.displayName
             const sorterChild = sorterTypeCurrent.children?.find(s => s.name === nameField) ?? { name: nameField }
             const sortingChanged = getSorterByField(field.child, sorterChild, columnName, sortPath)
             if (sortingChanged) {
@@ -40,10 +40,10 @@ export function getPossibleSortings(tableSettings: ITableSettings, localize?: (k
         const fields = column.fields
         if (!fields) return
         fields.forEach((field) => {
-            const sorterTypeCurrent = possibleSortingsTree.find(s => s.name === field.name) ?? { name: field.name }
+            const sorterTypeCurrent = possibleSortingsTree.find(s => s.name === field.displayName) ?? { name: field.displayName }
             const sortingChanged = getSorterByField(field, sorterTypeCurrent, column.name)
             if (sortingChanged) {
-                possibleSortingsTree = [...possibleSortingsTree.filter(s => s.name !== field.name), sortingChanged]
+                possibleSortingsTree = [...possibleSortingsTree.filter(s => s.name !== field.displayName), sortingChanged]
             }
 
         })

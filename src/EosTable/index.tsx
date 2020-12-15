@@ -1,6 +1,7 @@
 import { Spin } from '@eos/rc-controls'
 import React, { useEffect, useRef, useState } from 'react'
 import EosTableGen from './components/EosTableGen'
+import { useDefaultProvider } from './context/DefaultDataProvider'
 import { ITableApi } from './types/ITableApi'
 import { ITableProvider } from './types/ITableProvider'
 import { ITableSettings } from './types/ITableSettings'
@@ -10,14 +11,16 @@ import { ITableUserSettings } from './types/ITableUserSettings'
 interface ITableProps {
     tableId?: string
     provider: ITableProvider
-    initTableState?: ITableState    
+    initTableState?: ITableState
 }
 
 const EosTable = React.forwardRef<any, ITableProps>(({
     tableId,
     provider,
-    initTableState   
+    initTableState
 }: ITableProps, ref) => {
+
+    const { DefaultTableProvider } = useDefaultProvider()
 
     const currentRef = ref ?? useRef<ITableApi>();
 
@@ -33,10 +36,14 @@ const EosTable = React.forwardRef<any, ITableProps>(({
     if (!tableSettings || !gridUserSettings) {
         return <Spin size={"large"}></Spin>
     }
+
     return <EosTableGen tableSettings={tableSettings}
-        tableUserSetiings={gridUserSettings}        
+        tableUserSetiings={gridUserSettings}
         initTableState={initTableState}
-        provider={provider}
+        provider={{
+            ...DefaultTableProvider,
+            ...provider
+        }}
         ref={currentRef} />
 })
 

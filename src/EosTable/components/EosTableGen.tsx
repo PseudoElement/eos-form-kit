@@ -21,7 +21,7 @@ interface ITableGenProps {
     tableSettings: ITableSettings
     tableUserSetiings: ITableUserSettings
     initTableState?: ITableState
-    provider: ITableProvider
+    provider: Omit<ITableProvider, "tableSettingLoad" | "tableUserSettingLoad">
 }
 
 const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,

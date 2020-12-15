@@ -12,6 +12,7 @@ import { ConfigProvider } from 'eos-webui-controls';
 import { useBackUrlHistory, useHistoryListener } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 import TestPage from './Pages/Test';
+import { TableExample } from './Table';
 
 interface IMenuItem {
     title: string;
@@ -79,6 +80,11 @@ function getArchivist() {
             title: "Форма поиска",
             url: '/search',
             key: 'search',
+        },
+        {
+            title: "Таблица",
+            url: '/table',
+            key: 'table',
         }
     ];
 }
@@ -164,6 +170,7 @@ ReactDOM.render(
                 <Route exact path="/form/:mode/:id?" component={AjaxClientFormPage} />
                 <Route exact path="/form2/:mode/:id?" component={AjaxClientFormPage2} />
                 <Route exact path="/form3/:mode/:id?" component={AjaxClientFormApi} />
+                <Route exact path="/table" component={TableExample} />
                 <Route path="*" component={NotFoundPage} />
             </Switch>
         </BrowserRouter>
