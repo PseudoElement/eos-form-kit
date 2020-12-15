@@ -111,7 +111,10 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
         "disabled": hideDefaultColumn,
         "name": "defaultColumn"
     };
-
+    const pagination = {
+        showMoreBtn: false,
+        pageSizeOptions: undefined,
+    };
     const rowSelection = {
         preserveSelectedRowKeys: false,
         selectedRowKeys: selectedRowKeys,
@@ -132,7 +135,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
             component: <BinIcon />,
             title: deleteRowsToolbarTitle || '',
             disabled: (isDisplay() || selectedRowKeys.length < 1),
-            onClick: showDeleteModalMessage,
+            onClick: deleteRowsToolbarWarning ? showDeleteModalMessage : deleteMultiLookupLookupRows,
             hiddenTitle: true,
             key: deleteRowsToolbarTitle || 'BinIcon'
         }
@@ -191,12 +194,12 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
             formData.current = []; 
         }
         loadItemById("");
+        setSelectedRowKeys([]);
     }, [value]);
     useEffect(() => {
         if (onDataChange) 
             onDataChange(formData.current);      
     }, [formData.current]);
-
 
     return (
         <div>
@@ -221,6 +224,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                             rowSelection={rowSelection}
                             showHeader={showHeader}
                             settings={{ isDraggable: false }}
+                            pagination={pagination}
                         />
                     </Table.Menu>
                 </Collapse.Panel>
@@ -337,17 +341,19 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                 key: column.name,
                 title: column.label,
                 dataIndex: column.name,
+                align: "center" as any,
                 width: `${Math.trunc(100/columns.length)}%`,
                 render: (value: any, record: any, index: any) => {
                     record = record;
                     if(column.name === "defaultColumn") {
-                        return (<FieldSelect
+                        return (
+                        <FieldSelect
                             type="FieldSelect"
                             values={items}
                             required={required}
                             defaultValue={value}
                             label={column.label}
-                            mode={disabledDefaultColumn ? FormMode.display : FormMode.edit}
+                            mode={(disabledDefaultColumn || isDisplay()) ? FormMode.display : FormMode.edit}
                             onChange={(changedValue?: any) => {
                                 const item = items.find((e: IOption) => e.key === changedValue);
 
@@ -359,7 +365,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                                         if(isDuplicate) {
                                             row.key = '';
                                             row.value ='';
-                                            message("warning", addRowToolbarWarning || '');
+                                            if (addRowToolbarWarning) message("warning", addRowToolbarWarning);
                                             setDataSource(getDataSource(formData.current));
                                             return;
                                         }
@@ -374,7 +380,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                     }
                     return (<FieldText
                         type="FieldText"
-                        mode={column.disabled ? FormMode.display : FormMode.edit}
+                        mode={(column.disabled || isDisplay()) ? FormMode.display : FormMode.edit}
                         defaultValue={value}
                         label={column.label}
                         onChange={(changedValue?: string) => {
