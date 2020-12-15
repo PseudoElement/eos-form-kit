@@ -43,9 +43,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const currentRef = (ref ?? useRef<ITableApi>()) as React.MutableRefObject<ITableApi>;
     useImperativeHandle(currentRef, (): ITableApi => {
         const api: ITableApi = {
-            setTableState: (tableState) => {
-                setTableState(tableState)
-            },
+            setTableState: setTableState,           
             getCurrentTableState: () => { return { ...currentTableState } },
             getTableSetting: () => { return { ...tableSettings } },
             getUSerSetting: () => { return { ...tableUserSetiings } }

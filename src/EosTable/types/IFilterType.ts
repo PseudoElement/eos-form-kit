@@ -1,4 +1,4 @@
-export type FilterType = FilterUnion | { [key: string]: FilteGroupExpression | FilterExpression | FilterValue }
+export type FilterType = FilterUnion | { [key: string]: FilteGroupExpression | FilterExpression | FilterValue | FilterValueEmpty }
 
 type FilterUnion = { [K in FilterUnionKeys]?: FilterType[] }
 type FilteGroupExpression = { [K in FilterExpressionWithGroupsKeys]?: FilterType | FilteGroupExpression | FilterValue }
@@ -11,4 +11,6 @@ type FilterExpressionKeys = "equal" | "in" | "startsWith" | "endsWith" | "contai
     | "notEqual" | "notIn" | "notStartsWith" | "notEndsWith" | "notContains" | "isNull"
     | "greater" | "greaterOrEqual" | "less" | "lessOrEqual" | "not"
 
-type FilterValue = string | number | boolean | string[] | number[]
+type FilterValueEmpty = string | number | boolean | string[] | number[]
+
+type FilterValue = { value: FilterValueEmpty }

@@ -41,3 +41,4 @@ export {
 export  { default as ClientMenu } from './Menu/index'
 export * from './Menu/defaultRenders'
 export { useEosTableComponentsStore } from './EosTable/StoreComponents'
+export { generatePreparedQuery } from './EosTable/helpers/generatePreparedQuery'

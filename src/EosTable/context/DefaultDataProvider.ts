@@ -1,24 +1,12 @@
-//import { gql, useApolloClient } from "@apollo/react-hooks";
-//import { generateGridMenu } from "../helpers/generateMenu";
-//import { GenerateRightMenu } from "../helpers/generateRightMenu";
-//import generateSelectQuery from "../helpers/generateSelectQuery";
-//import { getColumnsBySettings } from "../helpers/getColumnsBySettings";
 import { useEosTableComponentsStore } from "../StoreComponents";
-//import { IColumn } from "../types/IColumn";
-//import { ITableApi } from "../types/ITableApi";
-//import { ITableData } from "../types/ITableData";
-import { ITableProvider } from "../types/ITableProvider";
-//import { ITableSettings } from "../types/ITableSettings";
-//import { ITableState } from "../types/ITableState";
-//import { ITableUserSettings } from "../types/ITableUserSettings";
+import { ITableProvider } from "../types";
 
 export function useDefaultProvider() {
-    //const apolloClient = useApolloClient();
     const {
         fetcConditionFromStore,
         fetchActionFromStore,
-        fetchControlFromStore,        
-    } = useEosTableComponentsStore();
+        fetchControlFromStore,
+    } = useEosTableComponentsStore();  
 
     // function defaultDataProvider(tableState: ITableState, tableSettings: ITableSettings, userSettings: ITableUserSettings) {
 
@@ -33,7 +21,7 @@ export function useDefaultProvider() {
     //             query: gql`${query}`,
     //             variables: {
     //                 after: tableState.after,
-    //                 first: tableState.first,
+    //                 first: tableState.pageSize,
     //                 orderby: tableState.orderby,
     //                 filter: filter,
     //             }
@@ -53,11 +41,10 @@ export function useDefaultProvider() {
     //     })
     // }
 
-    const DefaultTableProvider: ITableProvider = {   
+    const DefaultTableProvider: ITableProvider = {
         fetchAction: fetchActionFromStore,
         fetchCondition: fetcConditionFromStore,
         fetchRender: fetchControlFromStore
-        //fetchData: defaultDataProvider
     };
 
     return { DefaultTableProvider };

@@ -3,7 +3,7 @@ import { ITableSettings } from "../types/ITableSettings";
 import { ITableUserSettings } from "../types/ITableUserSettings";
 
 
-export default function generateSelectQuery(tableSettings: ITableSettings, gridUserSettings: ITableUserSettings) {
+export default function generateSelectQuery(tableSettings: ITableSettings, gridUserSettings: ITableUserSettings, onlyKeysForSelectedAll?: boolean) {
   const typeName = tableSettings.typeName;
   const typePluralName = tableSettings.typePluralName[0].toLowerCase() + tableSettings.typePluralName.slice(1);
 
@@ -18,23 +18,27 @@ export default function generateSelectQuery(tableSettings: ITableSettings, gridU
 
   const items: string[] = [];
 
-  gridUserSettings.columns.filter(c => c.visible).forEach((c) => {
-    let gridCol = tableSettings.columns.find((gridCol) => gridCol.name === c.name);
-    if (gridCol) {
-      if (gridCol.fields) {
-        gridCol.fields.forEach((fieldCol) => {
-          items.push(getTextField(fieldCol));
-        })
-      }
-      else {
-        items.push(gridCol.name);
-      }
-    }
-  });
+  if (!onlyKeysForSelectedAll) {
 
-  tableSettings.defaultLoadFields?.forEach((fieldCol) => {
-    items.push(getTextField(fieldCol));
-  })
+    gridUserSettings.columns.filter(c => c.visible).forEach((c) => {
+      let gridCol = tableSettings.columns.find((gridCol) => gridCol.name === c.name);
+      if (gridCol) {
+        if (gridCol.fields) {
+          gridCol.fields.forEach((fieldCol) => {
+            items.push(getTextField(fieldCol));
+          })
+        }
+        else {
+          items.push(gridCol.name);
+        }
+      }
+    });
+
+    tableSettings.defaultLoadFields?.forEach((fieldCol) => {
+      items.push(getTextField(fieldCol));
+    })
+
+  }
 
   tableSettings.keyFields.forEach((c) => {
     items.push(c);

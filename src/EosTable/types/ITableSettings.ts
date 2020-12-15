@@ -1,3 +1,4 @@
+import { FilterType } from ".";
 import { IMenuItem } from "../../Menu/types";
 import { IFieldPath } from "./IFieldPath";
 
@@ -18,7 +19,7 @@ export interface ITableSettings {
     minSelectedRecords?: number
     maxSelectedRecords?: number    
     defaultLoadFields?: Omit<IFieldPath, "name" | "sortable">[]
-    ///filter
+    requiredFilter?: FilterType
 }
 
 type ColumnGroups = IColumnGroup | ITableColumnSettings
