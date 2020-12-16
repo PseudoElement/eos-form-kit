@@ -108,7 +108,10 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         "disabled": true,
         "name": "defaultColumn"
     };
-
+    const pagination = {
+        showMoreBtn: false,
+        pageSizeOptions: undefined,
+    };
     const rowSelection = {
         selectedRowKeys,
         onChange: (selectedRowKeys: (string | number)[]) => {
@@ -118,7 +121,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     const menu = [
         {
             component: <PlusIcon />,
-            title: addRowToolbarTitle || '',
+            title: addRowToolbarTitle || 'Добавить строку',
             disabled: isDisplay(),
             onClick: showModalLookup,
             hiddenTitle: true,
@@ -126,9 +129,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         },
         {
             component: <BinIcon />,
-            title:  deleteRowsToolbarTitle || '',
+            title:  deleteRowsToolbarTitle || 'Удалить строки',
             disabled: (isDisplay() || selectedRowKeys.length < 1),
-            onClick: showDeleteModalMessage,
+            onClick: deleteRowsToolbarWarning ? showDeleteModalMessage : deleteMultiLookupLookupRows,
             hiddenTitle: true,
             key: deleteRowsToolbarTitle || 'BinIcon'
         }
@@ -147,6 +150,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             setDataSource([]);
             formData.current = []; 
         }
+        setSelectedRowKeys([]);
     }, [value]);
     useEffect(() => {
         if (onDataChange)
@@ -175,7 +179,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                             rowSelection={rowSelection}
                             showHeader={showHeader}
                             settings={{ isDraggable: false }}
-                            //pagination={{ showMoreBtn: false }}
+                            pagination={pagination}
                         />
                     </Table.Menu>
                     <TableModal
@@ -199,7 +203,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         });
  
         if(isInData && !allowDuplication)  {
-            message("warning", addRowToolbarWarning || '');
+            if (addRowToolbarWarning) message("warning", addRowToolbarWarning);
             return;
         }
         let newRow: IValue = row;
