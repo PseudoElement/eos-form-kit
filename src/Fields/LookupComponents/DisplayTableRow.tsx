@@ -72,8 +72,6 @@ export interface IDisplayTableRow {
 
     onDataChange?(item?: any): void;
 
-    rules: any;
-
     otherColumns?: IColumn[];
 }
 
@@ -237,8 +235,8 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
         let values: IValue[] = formData.current ? formData.current : [];
 
         let newRow: IValue;
-        if(formData.current && formData?.current[0]?.other) {
-            const defaultOther = dataSource && formData.current[0].other?.map((e: IOtherValue) => {
+        if(formData.current && otherColumns) {
+            const defaultOther = dataSource && otherColumns.map((e: IOtherValue) => {
                 return {
                     name: e.name,
                     value: ''

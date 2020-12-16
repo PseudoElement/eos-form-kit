@@ -1,7 +1,8 @@
 
 import React, { ReactElement, ReactNode } from "react";
 import { Form, Icon, InfoIcon, Input, Tooltip } from "@eos/rc-controls";
-import { Rule } from "rc-field-form/lib/interface"
+import { Rule } from "rc-field-form/lib/interface";
+import { IOptionItem, IOtherValue } from "../Fields/LookupComponents/AjaxSelect";
 
 export const DEFAULT_ICONS_COLOR = "#2196f3";
 const INTEGER_RULE_TYPE = "integer";
@@ -16,6 +17,33 @@ class FieldsHelper {
     /**Возвращает правило целочисленного поля. */
     static getIntegerRule(): Rule {
         const rule: Rule = { type: INTEGER_RULE_TYPE, message: "Не является целым числом!" };
+        return rule;
+    }
+    /**Возвращает правило мультилукапа. */
+    static getMultilookupRowRule(): Rule {
+        const rule: Rule =
+            {
+              type: "array",
+              message: "Поле заполненно не до конца!",
+              validator(rule: Rule, value: IOptionItem[]) {
+                rule = rule
+                let emptyField;
+                
+                if(value) {
+                    emptyField = value.find((e: IOptionItem) => {
+                        return ((e.value === '') || 
+                        e?.other?.find((e: IOtherValue) => e.value?.trim() === ''));
+                    });
+                }
+                debugger;
+                if (!emptyField) {
+                  return Promise.resolve();
+                }
+  
+                return Promise.reject('Поле заполненно не до конца!');
+              }
+            };
+
         return rule;
     }
 
