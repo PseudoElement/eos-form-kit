@@ -1,63 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Select as RcSelect, Spin } from "@eos/rc-controls";
 
-/**
- * Структура и описание пропсов AjaxSelect
- */
+/** Структура и описание пропсов AjaxSelect */
 export interface ISelect {
-    /**
-     * Объект для осуществления запроса
-     */
+    /** Объект для осуществления запроса */
     dataService?: IDataService;
-
 
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
 
-    /**
-     * Имя поля
-     */
+    /** Имя поля */
     fieldName?: string;
 
-    /**
-     * Объект значения поля
-     */
+    /** Объект значения поля*/
     value?: IOptionItem;
 
-    /**
-     * Текст при отсутсвии элементов
-     */
+    /** Текст при отсутсвии элементов */
     notFoundContent?: string;
 
-    /**
-     * Обзяательность заполнения поля
-     */
+    /** Обзяательность заполнения поля */
     required?: boolean;
+
     /** конекст */
     ctx?: any;
+
+    /** ручной ввод */
+    manualInputAllowed?: boolean;
 }
 
 /**
  * Структура элемента выпадающего списка
  */
 export interface IOptionItem {
-    /**
-     * Программное значение которое вернёт компонент.
-     */
+    /** Программное значение которое вернёт компонент. */
     key?: string;
 
-    /**
-     * Отображаемый текст значения для пользователя.
-     */
+    /** Отображаемый текст значения для пользователя. */
     value?: string;
 
-    /**
-     * Параметр запрета на выбор значения
-     */
+    /** Параметр запрета на выбор значения */
     disabled?: boolean;
 
     /** Значения других полей */
     other?: IOtherValue[];
+
+    /** Подскраска поля (необходима для выделения структурного признака синим цветом) */
+    isSpecific?: boolean;
 }
 
 export interface IOtherValue {
@@ -68,20 +56,14 @@ export interface IOtherValue {
 }
 
 export interface IDataService {
-    /**
-     * Функция useLazyQuery для отправки и обработки запроса
-     */
+    /** Функция useLazyQuery для отправки и обработки запроса */
     loadDataAsync(search?: string): Promise<IOptionItem[]>;
 
-    /**
-     * Количество запрашивамых результатов
-     */
+    /** Количество запрашивамых результатов */
     resultsAmount: number;
 }
 
-/**
- * Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке
- */
+/** Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке */
 export const Select = React.forwardRef<any, ISelect>(({
     onChange,
     fieldName,
@@ -89,44 +71,41 @@ export const Select = React.forwardRef<any, ISelect>(({
     notFoundContent,
     required,
     dataService: getDataService,
-    ctx
-    // передача функции useTranslate t(`Отображены первые ${getDataService.resultsAmount} результатов`;)
-    // optionsAmountInfo
-}, ref) => {
-    /**
-     * Объект значения
-     */
+    ctx,
+    manualInputAllowed
+}) => {
+    /** Объект значения */
     const [currentValue, setCurrentValue] = useState<IOptionItem | undefined>(value);
     useEffect(() => {
         setCurrentValue(value);
     }, [value])
-    /**
-     * Объект индикатор загрузки
-     */
+    /** Объект индикатор загрузки */
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    /**
-     * Значение имя поля по умолчанию
-     */
-//    const DEFAULT_FIELD_NAME: string = "";
+    /** Индикатор открытия списка */
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    /**
-     * Сообщение об отображаемом количестве элементов в выпадающем списке
-     */
+    /** Цвет особого элемента списка */
+    const SPECIFIC_ELEM_COROL_VALUE: string = "#2196F3";
+    /** Цвет задизейбленного элемента списка */
+    const DISABLED_ELEM_COROL_VALUE: string = "#BABABA";
+    /** Ключ для информационного элемента списка (количество элементов) */
+    const INFO_ELEM_KEY_VALUE: string | number = "queryAmountInfo";
+    /** Значение типа курсора при наведении на информационный жлемент списка */
+    const INFO_ELEM_CURSOR_VALUE: string = "default";
+
+    /** Сообщение об отображаемом количестве элементов в выпадающем списке */
     const [queryAmountInfo, setQueryAmountInfo] = useState<string>("");
 
-    /**
-     * Время задержки отправки поискового запроса при изменении значения поля
-     */
+    /** Время задержки отправки поискового запроса при изменении значения поля */
     const DEFAULT_SEARCH_DELAY_MS_VALUE: number = 200;
 
-    /**
-     * Элементы выпадающего списка
-     */
+    /** Элементы выпадающего списка */
     const [items, setItems] = useState<IOptionItem[]>([]);
 
-    /**
-     * Запрос
+    const focusRef = useRef<any>();
+
+    /** Запрос
      * @search search параметры запроса
      */
     async function loadItemById(search?: string) {
@@ -168,44 +147,7 @@ export const Select = React.forwardRef<any, ISelect>(({
             )
     }
 
-    /**
-     * Параметры запроса
-     */
-    // const [loadItemById, { loading: isLoading }] = getDataService?.loadDataAsync(getDataService?.query, {
-    //     // const [loadItemById, { called: isCalled, loading: isLoading, data: data }] = getDataService?.loadDataAsync(getDataService?.query, {
-    //     onCompleted: useCallback(
-    //         (data: any) => {
-    //             let items: IOptionItem[] = getOptionItems ? getOptionItems(data) : DEFAULT_GET_OPTION_ITEMS(data);
-    //             console.log('items', items)
-    //             switch (true) {
-    //                 case (items.length >= getDataService.resultsAmount):
-    //                     // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
-    //                     let shortArray = items.slice(0, getDataService.resultsAmount - 1);
-    //                     const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: getDataService.resultsAmount - 1 });
-    //                     // Добавляет в выпадающий список надпись "Отображены первые 10 результатов"
-    //                     setQueryAmountInfo(QUERY_AMOUNT_INFO_TEXT);
-    //                     setItems([...shortArray]);
-    //                     break;
-    //                 case (items.length && items.length <= getDataService.resultsAmount - 1):
-    //                     // Убирает надпись "Отображены первые 10 результатов" при количестве элементов списка 10 и менее
-    //                     setQueryAmountInfo("");
-    //                     setItems(items);
-    //                     break;
-    //                 default:
-    //                     setQueryAmountInfo("");
-    //                     setItems([]);
-    //                     break;
-    //             }
-    //         }, []),
-    //     onError: useCallback((err: any) => {
-    //         console.error(err);
-    //         setItems([]);
-    //     }, []),
-    // });
-
-    /**
-     * Очистка значения формы
-     */
+    /** Очистка значения формы */
     let onClear = () => {
         setCurrentValue(undefined);
         setValueToForm(undefined);
@@ -214,9 +156,7 @@ export const Select = React.forwardRef<any, ISelect>(({
         loadItemById("");
     }
 
-    /**
-     * Отправка запроса на показ дополнительных вариантов введенного значения при фокусе на поле
-     */
+    /** Отправка запроса на показ дополнительных вариантов введенного значения при фокусе на поле */
     let onFocus = () => {
         // Если поле со значением, то отправить запрос со значением на поиск
         if (currentValue?.value) {
@@ -225,10 +165,10 @@ export const Select = React.forwardRef<any, ISelect>(({
             // Если без - пустую строку на показ всех доступных значений
             loadItemById("");
         }
+        setIsOpen(true)
     }
 
-    /**
-     * Обработчик ввода в поле
+    /** Обработчик ввода в поле
      * @param value строкове значение, передаваемое в запрос на поиск
      */
     let handleSearch = (value: string) => {
@@ -251,24 +191,34 @@ export const Select = React.forwardRef<any, ISelect>(({
         }
     }
 
-    /**
-     * Проставка выбранного значения в поле
+    /** Проставка выбранного значения в поле
      * @param value строковое значение для проставки в поле
      * @param option объект {key, value, label(аналогичен value)}
      */
     let onSelect = (value: any, option: any) => {
         setCurrentValue(option?.item);
         setValueToForm(option?.item);
-        if (onChange)
+        if (value) {
+            loadItemById(value?.trim()); 
+        }
+        if (onChange) {
             onChange(option?.item);
+        }
         if (!value) {}
+        setIsOpen(false)
+        if (focusRef?.current && focusRef?.current?.blur)
+        focusRef?.current?.blur()
+    }
+
+    let onBlur = () => {
+        setIsOpen(false);
     }
 
     return (
         <Spin spinning={isLoading}>
-            <RcSelect ref={ref}
+            <RcSelect ref={focusRef}
                 required={required}
-                showSearch={true}
+                showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
                 value={currentValue?.value}
                 notFoundContent={notFoundContent}
                 onSearch={handleSearch}
@@ -276,32 +226,37 @@ export const Select = React.forwardRef<any, ISelect>(({
                 onClear={onClear}
                 onSelect={onSelect}
                 delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
-                allowClear={true}
-                options={
-                    queryAmountInfo === ""
+                open={isOpen}
+                onBlur={onBlur}
+                allowClear={true}>
+                    {
+                        queryAmountInfo === ""
                         ? items.map((item: IOptionItem) => {
-                            return {
-                                value: item?.value ?? `${item.key}`,
-                                label: item?.value ?? `${item.key}`,
-                                item: item,
-                                disabled: item?.disabled
-                            }
+                            return <RcSelect.Option 
+                                        key={`${item?.key}`} 
+                                        value={item?.value ?? `${item?.key}`}
+                                        disabled={item?.disabled}
+                                        item={item}
+                                        style={item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : {}}
+                                        >
+                                            {item?.value ?? `${item?.key}`}
+                                    </RcSelect.Option>
                         })
 
-                        : [{
-                            label: queryAmountInfo,
-                            options: items.map((item: IOptionItem) => {
-                                return {
-                                    value: item.value ?? `${item.key}`,
-                                    label: item?.value ?? `${item.key}`,
-                                    item: item,
-                                    disabled: item?.disabled
-                                }
-                            })
-                        }]
-                }
-            >
-                {/* {options} */}
+                        :   [<RcSelect.Option key={INFO_ELEM_KEY_VALUE} value={INFO_ELEM_KEY_VALUE} disabled style={{cursor: INFO_ELEM_CURSOR_VALUE}}>{queryAmountInfo}</RcSelect.Option>,
+                            ...items?.map((item: IOptionItem) => {
+                                return <RcSelect.Option 
+                                            key={`${item?.key}`} 
+                                            value={item?.value ?? `${item?.key}`}
+                                            disabled={item?.disabled}
+                                            item={item}
+                                            style={item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : {}}
+                                            >
+                                                {item?.value ?? `${item?.key}`}
+                                        </RcSelect.Option>
+                            })]
+                        
+                    }
             </RcSelect >
         </Spin>
     );
