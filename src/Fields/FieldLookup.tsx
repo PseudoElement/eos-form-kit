@@ -26,6 +26,8 @@ export interface ILookup extends IField {
     resultObject?: string;
     resultKey?: string;
     searchField?: string;
+    manualInputAllowed?: boolean;
+    isSpecific?: boolean;
 }
 /**
  * Функция, через которую надо прогонять значение лукапа при сохранении формы. 
@@ -43,9 +45,7 @@ export function getFieldValueForPost(value: any) {
         return value;
 }
 
-/**
- * Лукап поле.
- */
+/** Лукап поле. */
 export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
     const memoLookup = useMemo(() => {   
         return (<BaseField
@@ -71,7 +71,8 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                     required={props.required}
                     onChange={props.onChange}
                     notFoundContent={props.notFoundContent}
-                />
+                    manualInputAllowed={props.manualInputAllowed}
+                ></AjaxSelect>
             </Form.Item>
         );
     }
