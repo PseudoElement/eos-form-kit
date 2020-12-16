@@ -35,7 +35,6 @@ class FieldsHelper {
                         e?.other?.find((e: IOtherValue) => e.value?.trim() === ''));
                     });
                 }
-                debugger;
                 if (!emptyField) {
                   return Promise.resolve();
                 }
