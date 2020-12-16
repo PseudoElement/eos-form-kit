@@ -54,6 +54,8 @@ export interface IFormApi {
     enableField(name: string): void;
     getFieldsValue(): Store;
     reset(): void;
+    setDisabledMenuButton(disable: boolean, name: string): void
+    setVisibleMenuButton(visible: boolean, name: string): void
 }
 
 /**Настройки клиентской формы. */
@@ -190,6 +192,7 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         reset: useCallback(() => {
             formContext.fields = [];
             formContext.header = undefined;
+            formContext.menuButtons = [];
             setFormContext({ ...formContext });
         }, []),
         hideLeftIcon: useCallback(() => {
@@ -208,6 +211,69 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             if (!formContext.header)
                 formContext.header = {};
             formContext.header.leftIconTitle = title;
+            setFormContext({ ...formContext });
+        }, []),
+        setDisabledMenuButton: useCallback((disabled: boolean, name: string) => {
+            let buttons = []
+            if (formContext.menuButtons && formContext.menuButtons.length > 0) {
+                buttons = [...formContext.menuButtons]
+                const index = formContext.menuButtons.findIndex(item => item.name === name)
+                if (index >= 0) {
+                    buttons[index] = {
+                        ...formContext.menuButtons[index],
+                        disabled
+                    }
+                }
+            }
+            else {
+                buttons = [{
+                    name,
+                    disabled
+                }]
+            }
+            formContext.menuButtons = buttons
+            setFormContext({ ...formContext });
+        }, []),
+        setVisibleMenuButton: useCallback((visible: boolean, name: string) => {
+            let buttons = []
+            if (formContext.menuButtons && formContext.menuButtons.length > 0) {
+                buttons = [...formContext.menuButtons]
+                const index = formContext.menuButtons.findIndex(item => item.name === name)
+                if (index >= 0) {
+                    buttons[index] = {
+                        ...formContext.menuButtons[index],
+                        visible
+                    }
+                }
+            }
+            else {
+                buttons = [{
+                    name,
+                    visible
+                }]
+            }
+            formContext.menuButtons = buttons
+            setFormContext({ ...formContext });
+        }, []),
+        setCheckedMenuButton: useCallback((checked: boolean, name: string) => {
+            let buttons = []
+            if (formContext.menuButtons && formContext.menuButtons.length > 0) {
+                buttons = [...formContext.menuButtons]
+                const index = formContext.menuButtons.findIndex(item => item.name === name)
+                if (index >= 0) {
+                    buttons[index] = {
+                        ...formContext.menuButtons[index],
+                        checked
+                    }
+                }
+            }
+            else {
+                buttons = [{
+                    name,
+                    checked
+                }]
+            }
+            formContext.menuButtons = buttons
             setFormContext({ ...formContext });
         }, []),
     });
@@ -260,11 +326,13 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             },
             getFieldsValue(): Store {
                 rcFormForm?.getFieldsValue();
-                return  rcFormForm?.getFieldsValue() || {};
+                return rcFormForm?.getFieldsValue() || {};
             },
             reset() {
                 formContext?.reset();
-            }
+            },
+            setDisabledMenuButton: formContext?.setDisabledMenuButton,
+            setVisibleMenuButton: formContext?.setVisibleMenuButton
         }
         return api;
     });

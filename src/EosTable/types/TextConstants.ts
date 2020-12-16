@@ -1,0 +1,5 @@
+export const TABLE_SETTINS_LOADER_DEFAULT = "Default"
+export const USER_SETTINS_LOADER_DEFAULT = "Default"
+export const DATA_PROVIDER_DEFAULT = "Default"
+export const TRIGGERS_DEFAULT = "Default"
+export const ROW_KEYS_DELIMITER = "###"

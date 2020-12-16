@@ -32,3 +32,13 @@ export * as FieldLookupMultiRow from './Fields/FieldLookupMultiRow';
 export { default as fields } from './Fields/fields';
 export { FieldsHelper } from './Fields/FieldsHelper';
 export { default as IField } from './Fields/IField';
+
+export { default as EosMenu } from './Menu'
+export * as EosMenuTypes from './Menu/types'
+export * as DefaultMenuRenders from './Menu/defaultRenders'
+
+export { EosTable } from './EosTable'
+export { ITableProvider } from './EosTable/types'
+export { useEosTableComponentsStore } from './EosTable/StoreComponents'
+export * as EosTableHelper from './EosTable/helpers'
+export * as EosTableTypes from './EosTable/types'
