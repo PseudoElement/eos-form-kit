@@ -1,8 +1,8 @@
 import { Menu } from '@eos/rc-controls'
 import React, { useContext, useEffect } from 'react'
 import { IMenuProps } from '.'
-import { IControlRenderProps } from '..'
 import { FormContext } from '../Context/Context'
+import { IControlRenderProps } from '../EosTable/types'
 import { MenuItemGen } from './MenuItem'
 import { IMenuItem } from './types'
 

@@ -14,10 +14,10 @@ export interface IFormContext {
     setLeftIconTitle(title?: string): void;
     reset(): void;
 
-    buttons?: IButton[]
-    setDisabledButton(disable: boolean, name: string): void
-    setVisibleButton(visible: boolean, name: string): void
-    setCheckedButton(checked: boolean, name: string): void
+    menuButtons?: IMenuButton[]
+    setDisabledMenuButton(disable: boolean, name: string): void
+    setVisibleMenuButton(visible: boolean, name: string): void
+    setCheckedMenuButton(checked: boolean, name: string): void
 }
 
 export interface IField {
@@ -30,7 +30,7 @@ export interface IFormHeader {
     isLeftIconVisible?: boolean;
 }
 
-export interface IButton {
+export interface IMenuButton {
     name: string
     disabled?: boolean
     visible?: boolean
@@ -45,8 +45,8 @@ export const defaultContext: IFormContext = {
     hideLeftIcon() { },
     showLeftIcon() { },
     setLeftIconTitle() { },
-    setDisabledButton() { },
-    setVisibleButton() { },
-    setCheckedButton() { }
+    setDisabledMenuButton() { },
+    setVisibleMenuButton() { },
+    setCheckedMenuButton() { }
 };
 export const FormContext = React.createContext(defaultContext);

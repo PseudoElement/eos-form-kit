@@ -2,7 +2,7 @@ import React, { forwardRef, Fragment, FunctionComponent, useEffect, useImperativ
 
 
 import "eos-webui-controls/dist/main.css";
-import { AjaxClientForm, FormMode, IToolBar, parseFormMode, ClientMenu, IHandlerProps, Icon, MenuButton } from "eos-webui-formgen";
+import { AjaxClientForm, FormMode, IToolBar, parseFormMode, EosMenu, EosTableTypes, DefaultMenuRenders } from "eos-webui-formgen";
 import { Helper } from './Helper';
 import { useRouteMatch } from 'react-router-dom';
 import { Button } from '@eos/rc-controls';
@@ -66,13 +66,13 @@ const AjaxClientFormApi: FunctionComponent = () => {
     const buttonsPanelApi = useRef<IButtonsPanelApi>();
 
     const toolbar: IToolBar = {
-        children: <ClientMenu fetchAction={(name: string) => {
+        children: <EosMenu fetchAction={(name: string) => {
             switch (name) {
                 case "add":
-                    return (handlerProps: IHandlerProps) => { alert(handlerProps.menuItem.key) }
+                    return (handlerProps: EosTableTypes.IHandlerProps) => { alert(handlerProps.menuItem.key) }
                 case "disable":
                     return () => {
-                        formApi.current?.setDisabledButton(true, "add")
+                        formApi.current?.setDisabledMenuButton(true, "add")
                     }
                 default: return undefined
             }
@@ -80,9 +80,9 @@ const AjaxClientFormApi: FunctionComponent = () => {
             fetchControlRender={(name: string) => {
                 switch (name) {
                     case "Icon":
-                        return Icon
+                        return DefaultMenuRenders.Icon
                     case "MenuButton":
-                        return MenuButton    
+                        return DefaultMenuRenders.MenuButton
                     default:
                         return () => <Fragment />
                 }
@@ -90,8 +90,8 @@ const AjaxClientFormApi: FunctionComponent = () => {
             fetchCondition={(name: string) => {
                 switch (name) {
                     case "add_disabled":
-                        return (handlerProps: IHandlerProps) => {   
-                            const name = (handlerProps.refApi?.current as AjaxClientForm.IFormApi)?.getFieldsValue()["name"];                         
+                        return (handlerProps: EosTableTypes.IHandlerProps) => {
+                            const name = (handlerProps.refApi?.current as AjaxClientForm.IFormApi)?.getFieldsValue()["name"];
                             return name === "Новое наименование"
                         }
                     default:
@@ -105,9 +105,9 @@ const AjaxClientFormApi: FunctionComponent = () => {
                     renderArgs: {
                         icon: "PlusIcon",
                         title: "Добавить",
-                        type:"link"
+                        type: "link"
                     }
-                },                
+                },
                 handlers: [{
                     type: "onClick",
                     handlerName: "add"
@@ -146,7 +146,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 }]
             }]}
             refApi={formApi}
-        ></ClientMenu>
+        ></EosMenu>
     }
 
     return (
@@ -159,10 +159,14 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onLookupSetClick={() => { formApi?.current?.setFieldValue("keepPeriod", { key: "2", value: "два" }); }}
                 onNameSetClick={() => { formApi?.current?.setFieldValue("name", "Новое наименование"); }}
                 onLookupMultiSetClick={() => { formApi?.current?.setFieldValue("multiLookup1", [{ key: "4", value: "четыре" }, { key: "3", value: "три" }]); }}
-                onLookupMultiSetClick2={() => { formApi?.current?.setFieldValue("multiLookup2", [{ key: "4", value: "четыре", other: [{ value: "тридцать семь", name: "secondColumn" }]  }, 
-                                                                                                 { key: "3", value: "три", other: [{ value: "тридцать два", name: "secondColumn" }] }]); }}
-                onLookupMultiRowSetClick={() => { formApi?.current?.setFieldValue("multiLookupRow", [{ key: "4", value: "четыре", other: [{ value: "тридцать семь", name: "secondColumn" }]  }, 
-                                                                                                 { key: "3", value: "три", other: [{ value: "тридцать два", name: "secondColumn" }] }]); }}
+                onLookupMultiSetClick2={() => {
+                    formApi?.current?.setFieldValue("multiLookup2", [{ key: "4", value: "четыре", other: [{ value: "тридцать семь", name: "secondColumn" }] },
+                    { key: "3", value: "три", other: [{ value: "тридцать два", name: "secondColumn" }] }]);
+                }}
+                onLookupMultiRowSetClick={() => {
+                    formApi?.current?.setFieldValue("multiLookupRow", [{ key: "4", value: "четыре", other: [{ value: "тридцать семь", name: "secondColumn" }] },
+                    { key: "3", value: "три", other: [{ value: "тридцать два", name: "secondColumn" }] }]);
+                }}
                 onTripleSkeletonLoadingClick={() => {
                     formApi?.current?.showSkeletonLoading();
                     setTimeout(() => { formApi?.current?.hideLoading(); }, 3000);

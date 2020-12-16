@@ -1,7 +1,8 @@
 import { Menu } from '@eos/rc-controls'
 import React from 'react'
 import { IMenuProps } from '.'
-import { IControlRenderProps } from '..'
+import { IControlRenderProps } from '../EosTable/types'
+
 
 import { IMenuItem } from './types'
 

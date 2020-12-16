@@ -1,0 +1,1 @@
+export { generatePreparedQuery } from './generatePreparedQuery'

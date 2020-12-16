@@ -1,6 +1,6 @@
 import { Menu } from '@eos/rc-controls'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { FormContext, IButton } from '../Context/Context'
+import { FormContext, IMenuButton } from '../Context/Context'
 import { compareArrays } from '../EosTable/helpers/compareObjects'
 import { FetchAction, FetchCondition, FetchControlRender } from '../EosTable/types'
 import { MenuIemsArray } from './MenuItemsArray'
@@ -12,18 +12,18 @@ export interface IMenuProps {
     fetchControlRender: FetchControlRender
     fetchAction: FetchAction
     fetchCondition: FetchCondition
-    contextButtons?: IButton[]
+    contextButtons?: IMenuButton[]
 }
 
-const ClientMenu = ({ ...props }: IMenuProps) => { 
+const EosMenu = ({ ...props }: IMenuProps) => { 
     const context = useContext(FormContext)
-    const [contextButtons, setContextButtons] = useState<IButton[]>([])
+    const [contextButtons, setContextButtons] = useState<IMenuButton[]>([])
     useEffect(()=>{
-        context.buttons && !compareArrays(contextButtons, context.buttons) && setContextButtons(context.buttons)
-    },[context.buttons])
+        context.menuButtons && !compareArrays(contextButtons, context.menuButtons) && setContextButtons(context.menuButtons)
+    },[context.menuButtons])
     const menu = () => <Menu mode={"horizontal"}>{
         (MenuIemsArray({...props, contextButtons}))}</Menu>
     return useMemo(menu,[contextButtons])
 }
 
-export default ClientMenu
+export default EosMenu

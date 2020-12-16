@@ -1,13 +1,13 @@
 import React from 'react'
-import { EosTable, Icon, ITableData, ITableProvider, ITableSettings, ITableUserSettings, MenuButton, useEosTableComponentsStore } from "eos-webui-formgen"
+import { EosTable, useEosTableComponentsStore, ITableProvider, EosTableTypes, DefaultMenuRenders } from "eos-webui-formgen"
 
 const TableExample = () => {
 
     const { addControlToStore } = useEosTableComponentsStore()
-    addControlToStore("Icon", Icon)
-    addControlToStore("MenuButton", MenuButton)
+    addControlToStore("Icon", DefaultMenuRenders.Icon)
+    addControlToStore("MenuButton", DefaultMenuRenders.MenuButton)
 
-    const provider = GetProvider()    
+    const provider = GetProvider()
     return <div style={{ height: "calc(100vh - 48px)" }}><EosTable provider={provider} /></div>
 }
 
@@ -15,7 +15,7 @@ const GetProvider = () => {
     const tableProvider: ITableProvider = {
         tableSettingLoad: () => {
             return new Promise((resolve) => {
-                const setting: ITableSettings = {
+                const setting: EosTableTypes.ITableSettings = {
                     tableId: "test",
                     typeName: "test",
                     typePluralName: "tests",
@@ -34,7 +34,8 @@ const GetProvider = () => {
                     keyFields: ["key"],
                     visual: {
                         dragable: true,
-                        resizable: true
+                        resizable: true,
+                        isDifferentRow: true
                     },
                     menu: [{
                         key: "add",
@@ -57,6 +58,16 @@ const GetProvider = () => {
                         title: "Редактирвать"
                     },
                     {
+                        key: "SynchroIcon",
+                        render: {
+                            renderType: "Icon",
+                            renderArgs: {
+                                name: "SynchroIcon"
+                            }
+                        },
+                        title: "Обновить"
+                    },
+                    {
                         key: "delete",
                         render: {
                             renderType: "Icon",
@@ -75,7 +86,28 @@ const GetProvider = () => {
                                 },
                                 title: 'Удалить'
                             }
-                        ],                        
+                        ],
+                    },
+                    {
+                        key: "delete2",
+                        render: {
+                            renderType: "Icon",
+                            renderArgs: {
+                                name: "BinForeverIcon"
+                            }
+                        },
+                        children: [
+                            {
+                                key: "delete21",
+                                render: {
+                                    renderType: "Icon",
+                                    renderArgs: {
+                                        name: "BinIcon"
+                                    }
+                                },
+                                title: 'Удалить'
+                            }
+                        ],
                     },
                     {
                         key: "setting",
@@ -94,7 +126,7 @@ const GetProvider = () => {
         },
         tableUserSettingLoad: () => {
             return new Promise((resolve) => {
-                const setting: ITableUserSettings = {
+                const setting: EosTableTypes.ITableUserSettings = {
                     tableId: "test",
                     columns: [
                         {
@@ -115,7 +147,7 @@ const GetProvider = () => {
         },
         fetchData: () => {
             return new Promise((resolve) => {
-                const data: ITableData = {
+                const data: EosTableTypes.ITableData = {
                     totalCount: 5,
                     records: [{
                         "key": 1,

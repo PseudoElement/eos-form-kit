@@ -33,12 +33,12 @@ export { default as fields } from './Fields/fields';
 export { FieldsHelper } from './Fields/FieldsHelper';
 export { default as IField } from './Fields/IField';
 
-export { default as EosTable } from './EosTable';
-export {
-    FilterType, IFieldPath, ISorterType, ITableApi, IHandlerProps, Triggers, TriggerArgs,
-    ITableProvider, ITableState, IControlRenderProps, ITableData, ITableSettings, ITableUserSettings
-} from './EosTable/types'
-export  { default as ClientMenu } from './Menu/index'
-export * from './Menu/defaultRenders'
+export { default as EosMenu } from './Menu'
+export * as EosMenuTypes from './Menu/types'
+export * as DefaultMenuRenders from './Menu/defaultRenders'
+
+export { EosTable } from './EosTable'
+export { ITableProvider } from './EosTable/types'
 export { useEosTableComponentsStore } from './EosTable/StoreComponents'
-export { generatePreparedQuery } from './EosTable/helpers/generatePreparedQuery'
+export * as EosTableHelper from './EosTable/helpers'
+export * as EosTableTypes from './EosTable/types'
