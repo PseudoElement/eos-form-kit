@@ -10,6 +10,7 @@ import React, {
  import { Rule } from "rc-field-form/lib/interface";
  import { BaseField } from "./BaseField";
  import { IColumn   } from "./FieldLookupMulti";
+ import { FieldsHelper } from "./FieldsHelper";
 
  /**
   * Настройки Мульти Лукап поля.
@@ -61,6 +62,7 @@ import React, {
              getNewField={getNew}
              getEditField={getEdit}
              getDisplayField={getDisplay}
+             rules={[FieldsHelper.getMultilookupRowRule()]}
          />);
      }, [props.mode]);
  
@@ -68,7 +70,6 @@ import React, {
  
      function getNew(props: ILookupMultiRow, ref: any, rules?: Rule[]) {
          const context: IFormContext = useContext(FormContext);
-         debugger;
          return (
              <div>
                  <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
@@ -76,7 +77,6 @@ import React, {
                  </Form.Item>
                  <Form.Item name={props.name} rules={rules}>
                      <DisplayTableRow
-                         rules={rules}
                          label={props.label || ''}
                          required={props.required}
                          name={props.name}
