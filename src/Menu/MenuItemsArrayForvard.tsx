@@ -1,16 +1,16 @@
 import { Menu } from '@eos/rc-controls'
-import React, { useContext, useEffect } from 'react'
+import React, { Fragment, useContext, useEffect } from 'react'
 import { IMenuProps } from '.'
 import { FormContext } from '../Context/Context'
 import { IControlRenderProps } from '../EosTable/types'
 import { MenuItemGen } from './MenuItem'
 import { IMenuItem } from './types'
 
-const MenuIemsArray = ({ menuItems, refApi, fetchControlRender, fetchCondition }: IMenuProps) => {
+const MenuIemsArray = React.forwardRef(({ menuItems, refApi, fetchControlRender, fetchCondition }: IMenuProps, ref: any) => {
     const context = useContext(FormContext)
-    useEffect(()=>{
+    useEffect(() => {
 
-    },[context])
+    }, [context])
     const items = (toolsList: IMenuItem[]) => {
         return (toolsList
             .map(menuItem => {
@@ -37,13 +37,13 @@ const MenuIemsArray = ({ menuItems, refApi, fetchControlRender, fetchCondition }
                     </Menu.SubMenu>
                 }
                 else {
-                    return <MenuItemGen key={menuItem.key} title={menuItem.title} render={menuItem.render}></MenuItemGen>
+                    return <MenuItemGen ref={ref} key={menuItem.key} title={menuItem.title} render={menuItem.render}></MenuItemGen>
                 }
             })
         )
     }
 
-    return items(menuItems)
-}
+    return <Fragment>{items(menuItems)}</Fragment>
+})
 
 export { MenuIemsArray }

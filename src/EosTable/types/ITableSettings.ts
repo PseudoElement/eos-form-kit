@@ -17,7 +17,7 @@ export interface ITableSettings {
     //cardView?: ICard
     columnGroups?: ColumnGroups[]
     minSelectedRecords?: number
-    maxSelectedRecords?: number    
+    maxSelectedRecords?: number
     defaultLoadFields?: Omit<IFieldPath, "name" | "sortable">[]
     requiredFilter?: FilterType
 }
@@ -69,7 +69,9 @@ export interface IRender {
 }
 
 export interface IRenderArgs {
-    [key: string]: string
+    ellipsisRows?: number
+    iconName?: string
+    [key: string]: string | number | undefined
 }
 
 // export interface IFieldRelationPath {

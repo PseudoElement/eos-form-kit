@@ -8,7 +8,7 @@ export interface IMenuItemApi {
     setDisabled: (isDisable: boolean) => void
 }
 
-const MenuItemGen = ({ key, title }: IMenuItem)  => {
+const MenuItemGen = React.forwardRef(({ key, title }: IMenuItem, ref: any) => {
     const context = useContext(FormContext)
     const [disabled, setDisabled] = useState<boolean>()
     useEffect(() => {
@@ -17,12 +17,12 @@ const MenuItemGen = ({ key, title }: IMenuItem)  => {
     }, [context])
     const item = <Menu.Item title={title}
         key={key}
-        disabled={disabled}
+        disabled={disabled || ref}
     >
         <Icon></Icon>
     </Menu.Item>
 
     return useMemo(() => item, [disabled])
-}
+})
 
 export { MenuItemGen }

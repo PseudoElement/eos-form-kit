@@ -103,7 +103,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 render: {
                     renderType: "MenuButton",
                     renderArgs: {
-                        icon: "PlusIcon",
+                        iconName: "PlusIcon",
                         title: "Добавить",
                         type: "link"
                     }
@@ -122,7 +122,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 render: {
                     renderType: "Icon",
                     renderArgs: {
-                        name: "EditIcon"
+                        iconName: "EditIcon"
                     }
                 },
                 title: "Редактировать",
@@ -136,7 +136,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 render: {
                     renderType: "Icon",
                     renderArgs: {
-                        name: "CancelIcon"
+                        iconName: "CancelIcon"
                     }
                 },
                 title: "Сделать неактивными поля",

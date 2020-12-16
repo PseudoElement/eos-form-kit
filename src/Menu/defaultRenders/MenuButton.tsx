@@ -1,4 +1,4 @@
-import { Button } from '@eos/rc-controls'
+import { SmartButton } from '@eos/rc-controls'
 import React from 'react'
 import { IControlRenderProps } from '../../EosTable/types'
 
@@ -7,7 +7,7 @@ import Icon from './IconRender'
 
 export default function MenuButton({ renderArgs }: IControlRenderProps) {
     if (!renderArgs)
-        return <Button>{"Button"}</Button>
+        return <SmartButton>{"Button"}</SmartButton>
     const type: any = renderArgs["type"]
-    return <Button type={type} icon={<Icon renderArgs={{ name: renderArgs["icon"] }} />}>{renderArgs["title"]}</Button>
+    return React.useMemo(() => <SmartButton type={type} icon={<Icon renderArgs={{ iconName: renderArgs.iconName }} />}>{renderArgs["title"]}</SmartButton>,[])
 }
