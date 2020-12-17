@@ -1,4 +1,3 @@
-import { ITableApi } from "../types/ITableApi";
 import { IHandlerProps } from "../types/ITableProvider";
 
 function unSelectedOne({ refApi }: IHandlerProps) {
