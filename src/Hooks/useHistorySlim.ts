@@ -32,7 +32,7 @@ function useHistorySlim() {
     const pushRecover = (key: number, path?: string) => {
         const currentState = getStateByKey(key);
         const myPath = path ? path : "/";
-        history.push(myPath, currentState);
+        history.push(myPath, currentState?.previous); // Нужно передавать предыдущее состояние, потому что в нем хранится правильная информация о предыдущей странице.
     }
     /**
      * Добавляет запись в историю с записью текущего состояния и всех состояний из useHistoryState.
