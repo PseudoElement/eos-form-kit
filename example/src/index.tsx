@@ -1,6 +1,6 @@
 import './index.css'
 
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import SearchClientFormPage from "./SearchClientFormPage";
@@ -9,7 +9,7 @@ import AjaxClientFormPage2 from "./AjaxClientFormPage2";
 import AjaxClientFormApi from "./AjaxClientFormApi";
 import NotFoundPage from "./NotFoundPage";
 import { ConfigProvider } from 'eos-webui-controls';
-import { useBackUrlHistory, useHistoryListener } from 'eos-webui-formgen';
+import { useBackUrlHistory, useHistoryListener, useTitleChanger } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 import TestPage from './Pages/Test';
 import { TableExample } from './Table';
@@ -95,8 +95,14 @@ interface IMainMenu {
     items: IMenuItem[];
 }
 const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
-    const { toBack, getCurrentPageStateAsArray, pushRecover } = useBackUrlHistory()
-    const currStory: any[] = getCurrentPageStateAsArray();
+    const { toBack, getBackPageStateAsArray, pushRecover } = useBackUrlHistory()
+    const backStory: any[] = getBackPageStateAsArray();
+
+    let { pageTitle } = useTitleChanger();
+    useEffect(() => {
+        console.log(pageTitle);
+    }, [pageTitle])
+
     return (
         // <Menu mode="horizontal">
         <div>
@@ -118,12 +124,14 @@ const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
                     return false;
                 }}>Назад useBackUrlHistory.toBack</a>
             {/* </Menu> */}
-            {currStory && currStory.length > 0 ? (<div>{currStory.map(item => {
+            {backStory && backStory.length > 0 ? (<div>{backStory.map(item => {
                 return (<div style={{ display: "inline-block", marginRight: 10, border: "1px solid green" }}><a href={item.state.url} onClick={(event) => {
+                    debugger
                     pushRecover(item.key);
                     event.preventDefault();
                 }}>{item.state.title}</a></div>);
             })}</div>) : (<></>)}
+            <div>{pageTitle}</div>
         </div>
     );
 }
@@ -133,21 +141,18 @@ interface IMainMenuItem {
     title: string;
 }
 const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) => {
-    const { pushPrevious, getBackPageStateAsArray, getCurrentPageStateAsArray, setCurrentPageState } = useBackUrlHistory();
-    const { currentState } = useHistoryListener()
+    const { pushPrevious, getBackPageStateAsArray } = useBackUrlHistory();
+    const { currentState } = useHistoryListener();
     return (
         <div style={{ display: "inline-block", marginRight: 10, border: "1px solid #ebacca" }}>
             <a href={props.url} onClick={(event) => {
                 // pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
                 // pushKeepPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
-
                 pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
-                setCurrentPageState(props.title);
                 console.log(currentState);
                 const backStory = getBackPageStateAsArray();
+                debugger
                 console.log(backStory);
-                const currStory = getCurrentPageStateAsArray();
-                console.log(currStory);
                 event.preventDefault();
                 event.stopPropagation();
                 return false;
