@@ -42,7 +42,7 @@ const GetProvider = () => {
                         render: {
                             renderType: "Icon",
                             renderArgs: {
-                                name: "PlusIcon"
+                                iconName: "PlusIcon"
                             }
                         },
                         title: "Добавить"
@@ -52,7 +52,7 @@ const GetProvider = () => {
                         render: {
                             renderType: "Icon",
                             renderArgs: {
-                                name: "EditIcon"
+                                iconName: "EditIcon"
                             }
                         },
                         title: "Редактирвать"
@@ -62,7 +62,7 @@ const GetProvider = () => {
                         render: {
                             renderType: "Icon",
                             renderArgs: {
-                                name: "SynchroIcon"
+                                iconName: "SynchroIcon"
                             }
                         },
                         title: "Обновить"
@@ -72,7 +72,7 @@ const GetProvider = () => {
                         render: {
                             renderType: "Icon",
                             renderArgs: {
-                                name: "BinIcon"
+                                iconName: "BinIcon"
                             }
                         },
                         children: [
@@ -81,7 +81,7 @@ const GetProvider = () => {
                                 render: {
                                     renderType: "Icon",
                                     renderArgs: {
-                                        name: "BinIcon"
+                                        iconName: "BinIcon"
                                     }
                                 },
                                 title: 'Удалить'
@@ -93,7 +93,7 @@ const GetProvider = () => {
                         render: {
                             renderType: "Icon",
                             renderArgs: {
-                                name: "BinForeverIcon"
+                                iconName: "BinForeverIcon"
                             }
                         },
                         children: [
@@ -102,7 +102,7 @@ const GetProvider = () => {
                                 render: {
                                     renderType: "Icon",
                                     renderArgs: {
-                                        name: "BinIcon"
+                                        iconName: "BinIcon"
                                     }
                                 },
                                 title: 'Удалить'
@@ -114,7 +114,7 @@ const GetProvider = () => {
                         render: {
                             renderType: "MenuButton",
                             renderArgs: {
-                                icon: "SettingsIcon",
+                                iconName: "SettingsIcon",
                                 title: "Настройки",
                                 type: "link"
                             },

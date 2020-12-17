@@ -26,7 +26,10 @@
     "typescript": "file:../node_modules/typescript"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-object-rest-spread": "^7.8.3"
+    "@babel/plugin-syntax-object-rest-spread": "^7.8.3",
+    "@apollo/react-hooks": "^4.0.0",
+    "http-proxy-middleware": "^1.0.6",
+    "graphql": "^15.4.0"
   },
   "eslintConfig": {
     "extends": "react-app"

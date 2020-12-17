@@ -36,9 +36,11 @@ export { default as IField } from './Fields/IField';
 export { default as EosMenu } from './Menu'
 export * as EosMenuTypes from './Menu/types'
 export * as DefaultMenuRenders from './Menu/defaultRenders'
+export * as DefaultColumnRenders from './EosTable/components/ColumnRender'
 
 export { EosTable } from './EosTable'
 export { ITableProvider } from './EosTable/types'
 export { useEosTableComponentsStore } from './EosTable/StoreComponents'
 export * as EosTableHelper from './EosTable/helpers'
 export * as EosTableTypes from './EosTable/types'
+export * as EosTableConditions from './EosTable/conditions'

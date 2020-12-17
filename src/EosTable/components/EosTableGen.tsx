@@ -43,14 +43,14 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const currentRef = (ref ?? useRef<ITableApi>()) as React.MutableRefObject<ITableApi>;
     useImperativeHandle(currentRef, (): ITableApi => {
         const api: ITableApi = {
-            setTableState: setTableState,           
+            setTableState: setTableState,
             getCurrentTableState: () => { return { ...currentTableState } },
             getTableSetting: () => { return { ...tableSettings } },
             getUSerSetting: () => { return { ...tableUserSetiings } }
         }
         return api;
     });
-    //#endregion    
+    //#endregion
 
     const DEFAULT_PAGE_SIZE = 10
     const DEFAULT_CURRENT_PAGE = 1
@@ -194,7 +194,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchRender} />)
     }, [selectedRowKeys, currentRowKey, queryFilters])
 
-    useEffect(() => {        
+    useEffect(() => {
         setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchRender} />)
     }, [quickSearchMode])
 
@@ -307,7 +307,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     }
     //#endregion
 
-    //#region rowSelection 
+    //#region rowSelection
     const onSelect = (record: any, selected: any) => {
         setSelectRecordsAndKeys(selected, undefined, [record])
     };
@@ -422,11 +422,15 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     };
 
     const selectAll = () => {
-        (!maxSelectedRecords || maxSelectedRecords === 0) && fetchData && fetchData(currentTableState, tableSettings, tableUserSetiings, true)
-            .then(({ records }) => {
-                setSelectRecordsAndKeys(true, undefined, records)
-            })
-            .catch((error) => console.error(error))
+        if ((!maxSelectedRecords || maxSelectedRecords === 0) && fetchData) {
+            setIsLoading(true)
+            fetchData(currentTableState, tableSettings, tableUserSetiings, true)
+                .then(({ records }) => {
+                    setSelectRecordsAndKeys(true, undefined, records)
+                })
+                .catch((error) => console.error(error))
+                .finally(() => setIsLoading(false))
+        }
     };
 
     const cancelAllOnPage: any = (keys: any) => {
@@ -436,7 +440,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const cancelAll = () => {
         setSelectRecordsAndKeys(false)
     };
-    //#endregion    
+    //#endregion
 
     function onRowDoubleClick(record: any) {
         const state: ITableState = { ...currentTableState, currentRecord: record, currentRowKey: rowKeyValue(record) }
@@ -467,7 +471,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             menu={menu}
         >
             <Table
-                isVirtualTable
+                isVirtualTable={pageSize > 20}
                 fullHeight
                 scroll={scroll}
                 columns={columns}
@@ -539,5 +543,6 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     return useMemo(() => table, [columns, tableData, isLoading, menu, rightMenu])
 })
+EosTableGen.displayName = "EosTableGen"
 
 export default EosTableGen

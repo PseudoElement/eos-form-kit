@@ -1,7 +1,7 @@
-import React, { Fragment } from 'react';
+import { SmartTypography } from '@eos/rc-controls';
+import React from 'react';
 import { IControlRenderProps } from '../../types/IControlRenderProps';
 
-export default function ReferenceDisplay({recordInRow}:IControlRenderProps) {
-    return <Fragment>{recordInRow.name}</Fragment>
-    //return <SmartTooltip title={value.name}><SmartTypography.Paragraph  ellipsis={{rows:3}} >{value.name}</SmartTypography.Paragraph></SmartTooltip>
+export default function ReferenceDisplay({ valueInCell, renderArgs }: IControlRenderProps) {
+    return <SmartTypography.Paragraph title={valueInCell.name} ellipsis={{ rows: renderArgs?.ellipsisRows || 3 }} >{valueInCell.name}</SmartTypography.Paragraph>
 }

@@ -7,19 +7,14 @@ export function getColumnsBySettings(tableSettings: ITableSettings,
     gridColumns: IColumnUserSettings[],
     fetchControl?: FetchControlRender,
     localize?: (key?: string) => string
-    ): IColumn[] {
+): IColumn[] {
     const columns: IColumn[] = [];
     gridColumns
         .filter(c => c.visible)
         .forEach(c => {
             const gridColSettings = tableSettings.columns.find(gridCol => gridCol.name === c.name);
             if (gridColSettings) {
-                const render = gridColSettings.columnRender?.renderType !== undefined && fetchControl && fetchControl(gridColSettings.columnRender?.renderType);
-                //const defaultSortOrder = c.sorter?.direction?.toLowerCase().concat("end");
-                //let sorter: any = gridColSettings.sorter !== undefined;
-                //if (sorter && c.sorter) {
-                //    sorter = { multiple: c.sorter.priority }
-                //}
+                const render = gridColSettings.columnRender?.renderType !== undefined && fetchControl && fetchControl(gridColSettings.columnRender?.renderType)
                 const title = localize ? localize(gridColSettings.title) : gridColSettings.title
                 let width = c.width
                 if (!width && title) {
@@ -39,7 +34,8 @@ export function getColumnsBySettings(tableSettings: ITableSettings,
                     //sorterField: gridColSettings.sorter
                 };
                 if (render) {
-                    column.render = (value: any, record: any, index: any) => render({ valueInCell: value, recordInRow: record, indexOfRow: index })
+                    column.render = (value: any, record: any, index: any) =>
+                        render({ valueInCell: value, recordInRow: record, indexOfRow: index, renderArgs: { ellipsisRows: tableSettings.visual?.ellipsisRows, ...gridColSettings.columnRender?.renderArgs } })
                 }
                 columns.push(column);
             }

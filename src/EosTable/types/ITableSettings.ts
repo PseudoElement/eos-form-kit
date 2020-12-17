@@ -9,7 +9,7 @@ export interface ITableSettings {
     columns: ITableColumnSettings[]
     keyFields: string[]
     visual?: IVisualSettings
-    quickSearchFilter?: Omit<IFieldPath, "name" | "sortable">[]
+    quickSearchFilter?: Omit<IFieldPath, "displayName" | "sortable">[]
     menu?: IMenuItem[]
     rightMenu?: IMenuItem[]
     contextMenu?: any
@@ -17,8 +17,8 @@ export interface ITableSettings {
     //cardView?: ICard
     columnGroups?: ColumnGroups[]
     minSelectedRecords?: number
-    maxSelectedRecords?: number    
-    defaultLoadFields?: Omit<IFieldPath, "name" | "sortable">[]
+    maxSelectedRecords?: number
+    defaultLoadFields?: Omit<IFieldPath, "displayName" | "sortable">[]
     requiredFilter?: FilterType
 }
 
@@ -69,7 +69,9 @@ export interface IRender {
 }
 
 export interface IRenderArgs {
-    [key: string]: string
+    ellipsisRows?: number
+    iconName?: string
+    [key: string]: string | number | undefined
 }
 
 // export interface IFieldRelationPath {

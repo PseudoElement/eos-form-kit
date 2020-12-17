@@ -13,6 +13,7 @@ import { useBackUrlHistory, useHistoryListener } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 import TestPage from './Pages/Test';
 import { TableExample } from './Table';
+import { TableSmevMessageQueue } from './TableSmevMessageQueue';
 
 interface IMenuItem {
     title: string;
@@ -85,6 +86,11 @@ function getArchivist() {
             title: "Таблица",
             url: '/table',
             key: 'table',
+        },
+        {
+            title: "Таблица СМЭВ Очередь сообщений",
+            url: '/tableSmevMessageQueue',
+            key: 'tableSmevMessageQueue',
         }
     ];
 }
@@ -171,6 +177,7 @@ ReactDOM.render(
                 <Route exact path="/form2/:mode/:id?" component={AjaxClientFormPage2} />
                 <Route exact path="/form3/:mode/:id?" component={AjaxClientFormApi} />
                 <Route exact path="/table" component={TableExample} />
+                <Route exact path="/tableSmevMessageQueue" component={TableSmevMessageQueue} />
                 <Route path="*" component={NotFoundPage} />
             </Switch>
         </BrowserRouter>

@@ -1,8 +1,8 @@
 import { IFieldPath } from "../types/IFieldPath";
 import { FilterType } from "../types/IFilterType";
 
-export default function generateQuickSearchFilter(quickSearchFilter: Omit<IFieldPath, "name" | "sortable">[], value: string) {
-  function getItemByField(fieldPath: Omit<IFieldPath, "name" | "sortable">): FilterType {
+export default function generateQuickSearchFilter(quickSearchFilter: Omit<IFieldPath, "displayName" | "sortable">[], value: string) {
+  function getItemByField(fieldPath: Omit<IFieldPath, "displayName" | "sortable">): FilterType {
     if (!fieldPath.child) {
       return { [fieldPath.apiField + "_contains"]: value };
       //return { [fieldPath.apiField]: { contains: value } }

@@ -47,5 +47,5 @@ const EosTable = React.forwardRef<any, ITableProps>(({
         }}
         ref={currentRef} />
 })
-
+EosTableGen.displayName = "EosTable"
 export { EosTable }

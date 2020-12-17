@@ -7,7 +7,7 @@ export default function generateSelectQuery(tableSettings: ITableSettings, gridU
   const typeName = tableSettings.typeName;
   const typePluralName = tableSettings.typePluralName[0].toLowerCase() + tableSettings.typePluralName.slice(1);
 
-  function getTextField(fieldPath: Omit<IFieldPath, "name" | "sortable">): string {
+  function getTextField(fieldPath: Omit<IFieldPath, "displayName" | "sortable">): string {
     if (!fieldPath.child) {
       return fieldPath.apiField
     }
@@ -62,7 +62,7 @@ export default function generateSelectQuery(tableSettings: ITableSettings, gridU
         ) {
           totalCount
           items {
-           ${items.join("\n")}        
+           ${items.join("\n")}
           }
         }
       }`

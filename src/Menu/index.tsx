@@ -7,23 +7,29 @@ import { MenuIemsArray } from './MenuItemsArray'
 import { IMenuItem } from './types'
 
 export interface IMenuProps {
-    menuItems: IMenuItem[]    
-    refApi: any    
+    menuItems: IMenuItem[]
+    refApi: any
     fetchControlRender: FetchControlRender
     fetchAction: FetchAction
     fetchCondition: FetchCondition
     contextButtons?: IMenuButton[]
 }
 
-const EosMenu = ({ ...props }: IMenuProps) => { 
+const EosMenu = React.forwardRef(({ ...props }: IMenuProps) => {
+    //const currentRef = ref || React.createRef()
     const context = useContext(FormContext)
     const [contextButtons, setContextButtons] = useState<IMenuButton[]>([])
-    useEffect(()=>{
+    useEffect(() => {
         context.menuButtons && !compareArrays(contextButtons, context.menuButtons) && setContextButtons(context.menuButtons)
-    },[context.menuButtons])
-    const menu = () => <Menu mode={"horizontal"}>{
-        (MenuIemsArray({...props, contextButtons}))}</Menu>
-    return useMemo(menu,[contextButtons])
-}
+    }, [context.menuButtons])
+    //const properties = { ...props, contextButtons }
+    const menu = () => <Menu mode={"horizontal"}>
+        {/* <MenuIemsArray {...properties} ref={currentRef}></MenuIemsArray> */}
+        {(MenuIemsArray({...props, contextButtons}))}
+    </Menu>
+    return useMemo(menu, [contextButtons])
+})
+
+EosMenu.displayName = "EosMenu"
 
 export default EosMenu
