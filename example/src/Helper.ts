@@ -15,6 +15,10 @@ class Helper {
                 "showHeader": true,
                 "hideDefaultColumn": false,
                 "disabledDefaultColumn": false,
+                "addRowToolbarTitle": "Добавить строку",
+                "deleteRowsToolbarTitle": "Удалить строки",
+                "addRowToolbarWarning": "Такой элемент уже существует",
+                "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
                 "required": true,
                 "allowDuplication": false,
                 "requiredMessage": "Поле обязательное к заполнению",
@@ -182,7 +186,7 @@ class Helper {
                             return result;
                         }
                     },
-                    resultsAmount: 3,
+                    resultsAmount: 8,
                 },
             },
             {
@@ -214,7 +218,45 @@ class Helper {
                     },
                     resultsAmount: 3,
                 }
-            }
+            },
+            // test lookup without manual input
+            {
+                "disabled": false,
+                "label": "Признак",
+                "name": "arhClsAttr",
+                "required": true,
+                "requiredMessage": "Прризнак обязателен для заполнения",
+                "type": "FieldLookup",
+                "value": null,
+                "notFoundContent": "Нет элементов",
+                "manualInputAllowed": false,
+                "dataService": {
+                    loadDataAsync: async (search?: string) => {
+                        const result: AjaxSelect.IOptionItem[] = [
+                            { key: "value1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
+                            { key: "value2", value: "два",  other: [{ value: "два три", name: "secondColumn" }] },
+                            { key: "value3", value: "три",  other: [{ value: "три три", name: "secondColumn" }] },
+                            { key: "value4", value: "четыре",  other: [{ value: "четыре три", name: "secondColumn" }] },
+                            { key: "value5", value: "пять", disabled: false, isSpecific: false },
+                            { key: "value6", value: "шесть",  disabled: true, isSpecific: false },
+                            { key: "value7", value: "семь",  disabled: false, isSpecific: true },
+                            { key: "value8", value: "восемь",  disabled: true, isSpecific: true }
+                        ]
+                        if (search) {
+                            return result.filter((item) => {
+                                if (item && item.value && item?.value?.indexOf(search) >= 0) {
+                                    return true;
+                                }
+                                return false;
+                            }) ?? [];
+                        }
+                        else {
+                            return result;
+                        }
+                    },
+                    resultsAmount: 8,
+                },
+            },
         ];
         if (mode === FormMode.display)
             for (let field of fields)
@@ -264,6 +306,12 @@ class Helper {
                         "Cells": [
                             { "Type": 0, "Fields": ["keepPeriod"], "Width": 12 },
                             { "Type": 0, "Fields": ["typeDocum"], "Width": 12 }
+                        ]
+                    },
+                    // test lookup without manual input
+                    {
+                        "Cells": [
+                            { "Type": 0, "Fields": ["arhClsAttr"], "Width": 12 },
                         ]
                     }
 
