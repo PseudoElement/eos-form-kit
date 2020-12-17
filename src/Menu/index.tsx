@@ -30,4 +30,6 @@ const EosMenu = React.forwardRef(({ ...props }: IMenuProps) => {
     return useMemo(menu, [contextButtons])
 })
 
+EosMenu.displayName = "EosMenu"
+
 export default EosMenu

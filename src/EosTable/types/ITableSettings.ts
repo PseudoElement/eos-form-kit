@@ -9,7 +9,7 @@ export interface ITableSettings {
     columns: ITableColumnSettings[]
     keyFields: string[]
     visual?: IVisualSettings
-    quickSearchFilter?: Omit<IFieldPath, "name" | "sortable">[]
+    quickSearchFilter?: Omit<IFieldPath, "displayName" | "sortable">[]
     menu?: IMenuItem[]
     rightMenu?: IMenuItem[]
     contextMenu?: any
@@ -18,7 +18,7 @@ export interface ITableSettings {
     columnGroups?: ColumnGroups[]
     minSelectedRecords?: number
     maxSelectedRecords?: number
-    defaultLoadFields?: Omit<IFieldPath, "name" | "sortable">[]
+    defaultLoadFields?: Omit<IFieldPath, "displayName" | "sortable">[]
     requiredFilter?: FilterType
 }
 
