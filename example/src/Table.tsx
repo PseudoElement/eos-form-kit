@@ -1,9 +1,9 @@
 import React from 'react'
-import { EosTable, useEosTableComponentsStore, ITableProvider, EosTableTypes, DefaultMenuRenders } from "eos-webui-formgen"
+import { EosTable, useEosComponentsStore, ITableProvider, EosTableTypes, DefaultMenuRenders } from "eos-webui-formgen"
 
 const TableExample = () => {
 
-    const { addControlToStore } = useEosTableComponentsStore()
+    const { addControlToStore  } = useEosComponentsStore()
     addControlToStore("Icon", DefaultMenuRenders.Icon)
     addControlToStore("MenuButton", DefaultMenuRenders.MenuButton)
 

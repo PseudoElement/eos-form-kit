@@ -1,6 +1,6 @@
 import React from 'react'
 import { ApolloClient, ApolloProvider, InMemoryCache, useApolloClient, gql } from "@apollo/react-hooks";
-import { EosTable, useEosTableComponentsStore, ITableProvider, EosTableTypes, DefaultMenuRenders, EosTableHelper, DefaultColumnRenders } from "eos-webui-formgen"
+import { EosTable, useEosComponentsStore, ITableProvider, EosTableTypes, DefaultMenuRenders, EosTableHelper, DefaultColumnRenders } from "eos-webui-formgen"
 import { Layout } from '@eos/rc-controls';
 
 const TableSmevMessageQueue = () => {
@@ -8,7 +8,7 @@ const TableSmevMessageQueue = () => {
         uri: './smevdispatcher/Gql/Query',
         cache: new InMemoryCache()
     });
-    const { addControlToStore, addActionToStore } = useEosTableComponentsStore()
+    const { addControlToStore } = useEosComponentsStore()
     addControlToStore("Icon", DefaultMenuRenders.Icon)
     addControlToStore("MenuButton", DefaultMenuRenders.MenuButton)
     addControlToStore("MenuCheckableButton", DefaultMenuRenders.MenuCheckableButton)
@@ -19,9 +19,17 @@ const TableSmevMessageQueue = () => {
     addControlToStore("ReferenceDisplay", DefaultColumnRenders.Reference)
     addControlToStore("Links", DefaultColumnRenders.FileLinks)
 
-    addActionToStore("stop", (props: EosTableTypes.IHandlerProps)=>{
+    return <ApolloProvider client={client}><TableMessageQueue /></ApolloProvider>
+}
+
+const TableMessageQueue = () => {
+    const apolloClient = useApolloClient();
+
+    const { addActionToStore, scopeStore } = useEosComponentsStore({ global: false })
+
+    addActionToStore("stop", (props: EosTableTypes.IHandlerProps) => {
         const tableApi = props.refApi as EosTableTypes.ITableApi
-        if(tableApi){
+        if (tableApi) {
             const state = tableApi.getCurrentTableState()
             tableApi.setTableState({
                 ...state,
@@ -30,15 +38,8 @@ const TableSmevMessageQueue = () => {
         }
     })
 
-
-    return <ApolloProvider client={client}><TableMessageQueue /></ApolloProvider>
-}
-
-const TableMessageQueue = () => {
-    const apolloClient = useApolloClient();
-
     const provider = GetProvider()
-    return <Layout style={{ height: "calc(100vh - 70px)" }}><EosTable provider={provider} /></Layout>
+    return <Layout style={{ height: "calc(100vh - 70px)" }}><EosTable scopeEosComponentsStore={scopeStore} provider={provider} /></Layout>
 
 
     function GetProvider() {
@@ -53,7 +54,8 @@ const TableMessageQueue = () => {
                         visual: {
                             isDifferentRow: true,
                             resizable: true,
-                            ellipsisRows: 3
+                            ellipsisRows: 3,
+                            dragable: true
                         },
                         columns: [
                             {
@@ -146,8 +148,8 @@ const TableMessageQueue = () => {
 
                                 }
                             },
-                            handlers:[{
-                                type:"onClick",
+                            handlers: [{
+                                type: "onClick",
                                 handlerName: "stop"
                             }],
                             title: "Выйти из режима поиска"
@@ -284,12 +286,12 @@ const TableMessageQueue = () => {
                                 }
                             }, title: "Показать логически удаленные"
                         },],
-                        rightMenu:[
+                        rightMenu: [
                             {
                                 key: "QuickSearch",
                                 render: {
                                     renderType: "QuickSearch",
-                                    renderArgs:{
+                                    renderArgs: {
                                         mode: "classif"
                                     }
                                 },

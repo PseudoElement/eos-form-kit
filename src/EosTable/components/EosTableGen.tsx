@@ -1,6 +1,7 @@
 import { Table } from '@eos/rc-controls'
 import { PaginationProps } from '@eos/rc-controls/lib/pagination'
 import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { ScopeEosComponentsStore, useEosComponentsStore } from '../../Hooks/useEosComponentsStore'
 import GenMenuItems from '../components/GenMenuItems'
 import { compareArrays, compareMaps } from '../helpers/compareObjects'
 import { GenerateRightMenu } from '../helpers/generateRightMenu'
@@ -22,6 +23,7 @@ interface ITableGenProps {
     tableUserSetiings: ITableUserSettings
     initTableState?: ITableState
     provider: Omit<ITableProvider, "tableSettingLoad" | "tableUserSettingLoad">
+    scopeEosComponentsStore?: ScopeEosComponentsStore
 }
 
 const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
@@ -30,14 +32,13 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     provider: {
         fetchData,
         triggers,
-        fetchRender,
-        fetchAction,
-        fetchCondition,
-        localize,
         saveUserSetting,
         disableSelectRecord
-    }
+    },
+    scopeEosComponentsStore
 }: ITableGenProps, ref) => {
+
+    const { fetchControlFromStore, fetchActionFromStore, fetchConditionFromStore, localize } = useEosComponentsStore({ scope: scopeEosComponentsStore })
 
     //#region ref
     const currentRef = (ref ?? useRef<ITableApi>()) as React.MutableRefObject<ITableApi>;
@@ -142,7 +143,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [currentRecord, setCurrentRecord] = useState<any | undefined>(undefined)
 
     const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, localize))
-    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchRender, localize));
+    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchControlFromStore, localize));
     const [sorterList, setSorterList] = useState<ISorterPath[] | undefined>(() => initState.orderby);
     const [queryFilters, setQueryFilters] = useState<Map<string, FilterType>>(() => initState.filter || new Map());
     const [queryAfter, setQueryAfter] = useState(() => afterRecords(initState.currentPage || DEFAULT_CURRENT_PAGE, initState.pageSize || DEFAULT_PAGE_SIZE));
@@ -184,18 +185,18 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     useEffect(() => {
         tableSettings.menu && setMenu(
             GenMenuItems({
-                fetchAction: fetchAction,
-                fetchCondition: fetchCondition,
-                fetchControl: fetchRender,
+                fetchAction: fetchActionFromStore,
+                fetchCondition: fetchConditionFromStore,
+                fetchControl: fetchControlFromStore,
                 menuItems: tableSettings.menu,
                 refApi: currentRef.current
             }))
 
-        setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchRender} />)
+        setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchActionFromStore} fetchCondition={fetchConditionFromStore} fetchControl={fetchControlFromStore} />)
     }, [selectedRowKeys, currentRowKey, queryFilters])
 
     useEffect(() => {
-        setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchRender} />)
+        setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchActionFromStore} fetchCondition={fetchConditionFromStore} fetchControl={fetchControlFromStore} />)
     }, [quickSearchMode])
 
     useEffect(() => {
@@ -473,6 +474,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             <Table
                 isVirtualTable={pageSize > 20}
                 fullHeight
+                deleteLastColumnWidth
                 scroll={scroll}
                 columns={columns}
                 dataSource={tableData}
@@ -492,7 +494,6 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 }}
                 onFixedColumnClick={tableSettings.visual?.fixedColumn ? onFixedColumnClick : undefined}
                 bordered={bordered}
-                //deleteLastColumnWidth={tableSettings.visual?.resizable && tableSettings.visual?.dragable}
                 checkboxMenu={
                     {
                         cancelAll: cancelAll,
