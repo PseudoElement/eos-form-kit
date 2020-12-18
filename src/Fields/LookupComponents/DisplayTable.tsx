@@ -66,6 +66,10 @@ export interface IDisplayTable {
     addRowToolbarWarning?: string;
     /**Текст для модального окна при удалении записи.*/
     deleteRowsToolbarWarning?: string;
+    /**Скрыть подпись тулы удаления строк в тултип.*/
+    hiddenDeleteToolTitle?: boolean;
+    /**Скрыть подпись тулы добавления строки в тултип.*/
+    hiddenAddRowToolTitle?: boolean;
 
     onDataChange?(item?: any): void;
 
@@ -93,7 +97,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     addRowToolbarTitle,
     deleteRowsToolbarTitle,
     addRowToolbarWarning,
-    deleteRowsToolbarWarning
+    deleteRowsToolbarWarning,
+    hiddenDeleteToolTitle,
+    hiddenAddRowToolTitle
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
@@ -124,7 +130,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             title: addRowToolbarTitle || 'Добавить строку',
             disabled: isDisplay(),
             onClick: showModalLookup,
-            hiddenTitle: true,
+            hiddenTitle: hiddenDeleteToolTitle || false,
             key: addRowToolbarTitle || 'PlusIcon'
         },
         {
@@ -132,7 +138,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             title:  deleteRowsToolbarTitle || 'Удалить строки',
             disabled: (isDisplay() || selectedRowKeys.length < 1),
             onClick: deleteRowsToolbarWarning ? showDeleteModalMessage : deleteMultiLookupLookupRows,
-            hiddenTitle: true,
+            hiddenTitle: hiddenAddRowToolTitle || false,
             key: deleteRowsToolbarTitle || 'BinIcon'
         }
     ];
@@ -146,15 +152,17 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         if (value) {
             setDataSource(getDataSource(value));
             formData.current = value;
-        } else {
+        } 
+        else {
             setDataSource([]);
             formData.current = []; 
         }
         setSelectedRowKeys([]);
     }, [value]);
     useEffect(() => {
-        if (onDataChange)
+        if (onDataChange) {
             onDataChange(formData.current);
+        }  
     }, [formData.current]);
 
     return (
@@ -203,7 +211,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         });
  
         if(isInData && !allowDuplication)  {
-            if (addRowToolbarWarning) message("warning", addRowToolbarWarning);
+            if (addRowToolbarWarning) {
+                message("warning", addRowToolbarWarning);
+            } 
             return;
         }
         let newRow: IValue = row;
@@ -220,7 +230,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         // }
 
         const newValues = [...values, newRow];
-        if (dataSource && getDataSource) setDataSource([...dataSource, ...getDataSource([newRow]) ]);
+        if (dataSource && getDataSource) {
+            setDataSource([...dataSource, ...getDataSource([newRow]) ]);
+        }
         formData.current = newValues;
     };
     function isDisplay() {
@@ -292,7 +304,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     function getRowKey() {
         let newKey = `${Math.random()}`;
         const isUnique = formData.current?.find((e: IValue) => e.key === newKey);
-        if (isUnique) newKey  = getRowKey();
+        if (isUnique) {
+            newKey  = getRowKey();
+        }
         return newKey;
     }
     function getColumns(otherColumns?: IColumn[]) {
