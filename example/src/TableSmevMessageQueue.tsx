@@ -8,14 +8,27 @@ const TableSmevMessageQueue = () => {
         uri: './smevdispatcher/Gql/Query',
         cache: new InMemoryCache()
     });
-    const { addControlToStore } = useEosTableComponentsStore()
+    const { addControlToStore, addActionToStore } = useEosTableComponentsStore()
     addControlToStore("Icon", DefaultMenuRenders.Icon)
     addControlToStore("MenuButton", DefaultMenuRenders.MenuButton)
+    addControlToStore("MenuCheckableButton", DefaultMenuRenders.MenuCheckableButton)
+    addControlToStore("QuickSearch", DefaultMenuRenders.QuickSearch)
     addControlToStore("CheckboxDisplay", DefaultColumnRenders.Checkbox)
     addControlToStore("DateTimeDisplay", DefaultColumnRenders.DateTime)
     addControlToStore("DefaultDisplay", DefaultColumnRenders.Default)
     addControlToStore("ReferenceDisplay", DefaultColumnRenders.Reference)
     addControlToStore("Links", DefaultColumnRenders.FileLinks)
+
+    addActionToStore("stop", (props: EosTableTypes.IHandlerProps)=>{
+        const tableApi = props.refApi as EosTableTypes.ITableApi
+        if(tableApi){
+            const state = tableApi.getCurrentTableState()
+            tableApi.setTableState({
+                ...state,
+                quickSearchMode: false
+            })
+        }
+    })
 
 
     return <ApolloProvider client={client}><TableMessageQueue /></ApolloProvider>
@@ -132,7 +145,12 @@ const TableMessageQueue = () => {
                                     iconName: "StopIcon",
 
                                 }
-                            }, title: "Остановить"
+                            },
+                            handlers:[{
+                                type:"onClick",
+                                handlerName: "stop"
+                            }],
+                            title: "Выйти из режима поиска"
                         },
                         {
                             key: "delete",
@@ -255,7 +273,30 @@ const TableMessageQueue = () => {
                                     title: "Получить запросы",
                                 }
                             ]
-                        }]
+                        },
+                        {
+                            key: "deletedVisible",
+                            render: {
+                                renderType: "MenuCheckableButton",
+                                renderArgs: {
+                                    iconName: "HideIcon",
+
+                                }
+                            }, title: "Показать логически удаленные"
+                        },],
+                        rightMenu:[
+                            {
+                                key: "QuickSearch",
+                                render: {
+                                    renderType: "QuickSearch",
+                                    renderArgs:{
+                                        mode: "classif"
+                                    }
+                                },
+                                title: "Быстрый поиск",
+                            }
+                        ],
+                        quickSearchFilter: [{ apiField: "smevRequestType", child: { displayName: "Наименование", apiField: "name" } }],
                     }
                     return resolve(setting)
                 })
