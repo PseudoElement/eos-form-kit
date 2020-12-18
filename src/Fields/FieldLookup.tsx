@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import { Form } from "@eos/rc-controls";
+import { Form, Input } from "@eos/rc-controls";
 import IField from "./IField";
 import { Select as AjaxSelect, IDataService } from "./LookupComponents/AjaxSelect";
 import DisplayInput from "./LookupComponents/DisplayInput";
@@ -62,18 +62,24 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
     function getNew(props: ILookup, ref: any, rules?: Rule[]) {
         const ctx: IFormContext = useContext(FormContext)
         return (
-            <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <AjaxSelect
-                    dataService={props.dataService}
-                    ref={ref}
-                    ctx={ctx}
-                    fieldName={props.name}
-                    required={props.required}
-                    onChange={props.onChange}
-                    notFoundContent={props.notFoundContent}
-                    manualInputAllowed={props.manualInputAllowed}
-                ></AjaxSelect>
-            </Form.Item>
+            <React.Fragment>
+                <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
+                    <Input ref={ref}/>
+                </Form.Item>
+                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                    <AjaxSelect
+                        dataService={props.dataService}
+                        ref={ref}
+                        ctx={ctx}
+                        fieldName={props.name}
+                        required={props.required}
+                        onChange={props.onChange}
+                        notFoundContent={props.notFoundContent}
+                        manualInputAllowed={props.manualInputAllowed}
+                    ></AjaxSelect>
+                </Form.Item>
+            </React.Fragment>
+
         );
     }
     function getEdit(props: ILookup, ref: any, rules?: Rule[]) {

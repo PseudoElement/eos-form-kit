@@ -103,6 +103,7 @@ export const Select = React.forwardRef<any, ISelect>(({
     /** Элементы выпадающего списка */
     const [items, setItems] = useState<IOptionItem[]>([]);
 
+    /** Реф для установки фокуса */
     const focusRef = useRef<any>();
 
     /** Запрос
@@ -114,17 +115,17 @@ export const Select = React.forwardRef<any, ISelect>(({
             (data: IOptionItem[]) => {
                 let items: IOptionItem[] = data;
                 switch (true) {
-                    case (items.length >= getDataService.resultsAmount):
+                    case (items?.length >= getDataService?.resultsAmount):
                         // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
-                        let shortArray = items.slice(0, getDataService.resultsAmount - 1);
+                        let shortArray = items?.slice(0, getDataService?.resultsAmount - 1);
                         // Использование useTranslate
                         // const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: getDataService.resultsAmount - 1 });
-                        const QUERY_AMOUNT_INFO_TEXT: string = `Отображены первые ${getDataService.resultsAmount - 1} результатов`;
+                        const QUERY_AMOUNT_INFO_TEXT: string = `Отображены первые ${getDataService?.resultsAmount - 1} результатов`;
                         // Добавляет в выпадающий список надпись "Отображены первые 10 результатов"
                         setQueryAmountInfo(QUERY_AMOUNT_INFO_TEXT);
                         setItems([...shortArray]);
                         break;
-                    case (items.length && items.length <= getDataService.resultsAmount - 1):
+                    case (items?.length && items?.length <= getDataService?.resultsAmount - 1):
                         // Убирает надпись "Отображены первые 10 результатов" при количестве элементов списка 10 и менее
                         setQueryAmountInfo("");
                         setItems(items);
@@ -176,18 +177,19 @@ export const Select = React.forwardRef<any, ISelect>(({
         loadItemById(value.trim());
 
         // Приведение value полученных объектов к UpperCase для дальнейшего сравнения
-        let options: any = items?.map(item => item.value?.toLocaleUpperCase());
+        let options: any = items?.map(item => item?.value?.toLocaleUpperCase());
 
         // Если есть options совпадающий с введенной строкой и они не равны пустой строке, то сделать значение выбранным, 
         // если нет - остается предыдущее введенное значение либо значение
         if (options?.indexOf(value?.toLocaleUpperCase().trim()) > -1 && value.trim() !== "") {
+            // не проставлять задизейбленный элемент
+            if (!items[options.indexOf(value.toLocaleUpperCase().trim())].disabled) {
+                // Проставить объект IOptionItem в отображение
+                setCurrentValue({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
 
-            // Проставить объект IOptionItem в отображение
-            setCurrentValue({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
-
-            // Проставить объект IOptionItem в форму
-            setValueToForm({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
-            // onSelectComponentChange(value, { value: value, label: value, item: { value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key } });
+                // Проставить объект IOptionItem в форму
+                setValueToForm({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key, ...items[options.indexOf(value.toLocaleUpperCase().trim())]});    
+            }
         }
     }
 
@@ -206,8 +208,9 @@ export const Select = React.forwardRef<any, ISelect>(({
         }
         if (!value) {}
         setIsOpen(false)
-        if (focusRef?.current && focusRef?.current?.blur)
-        focusRef?.current?.blur()
+        if (focusRef?.current && focusRef?.current?.blur) {
+            focusRef?.current?.blur();
+        }
     }
 
     let onBlur = () => {
