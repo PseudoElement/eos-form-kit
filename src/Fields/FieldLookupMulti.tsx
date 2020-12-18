@@ -73,6 +73,10 @@ export interface ILookupMulti extends IField {
     addRowToolbarWarning?: string;
     /**Текст для модального окна при удалении записи.*/
     deleteRowsToolbarWarning?: string;
+    /**Скрыть подпись тулы удаления строк в тултип.*/
+    hiddenDeleteToolTitle?: boolean;
+    /**Скрыть подпись тулы добавления строки в тултип.*/
+    hiddenAddRowToolTitle?: boolean;
 }
 
 /**
@@ -109,6 +113,8 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         defaultColumnLabel={props.defaultColumnLabel}
                         addRowToolbarTitle={props.addRowToolbarTitle}
                         deleteRowsToolbarTitle={props.deleteRowsToolbarTitle}
+                        hiddenDeleteToolTitle={props.hiddenDeleteToolTitle}
+                        hiddenAddRowToolTitle={props.hiddenAddRowToolTitle}
                         addRowToolbarWarning={props.addRowToolbarWarning}
                         deleteRowsToolbarWarning={props.deleteRowsToolbarWarning}
                         showHeader={props.showHeader}

@@ -53,7 +53,10 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
             <Modal
             title={props.modalWindowTitle ?? ''}
                 visible={lookupVisible}
-                onCancel={() => setLookupVisible(false)}
+                onCancel={() => {
+                    setAjaxSelectValue({key: '', value: ''});
+                    setLookupVisible(false)
+                }}
                 onOk={() => {
                     if (props.onFinish) props.onFinish(currentRow);
                     setAjaxSelectValue({key: '', value: ''});

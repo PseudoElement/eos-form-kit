@@ -98,6 +98,8 @@ class Helper {
                 "defaultColumnLabel": "Другие особенности",
                 "addRowToolbarTitle": "Добавить строку",
                 "deleteRowsToolbarTitle": "Удалить строки",
+                "hiddenDeleteToolTitle": true,
+                "hiddenAddRowToolTitle": true,
                 "addRowToolbarWarning": "Такой элемент уже существует",
                 "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
                 "defaultColumnIndex": 1,
