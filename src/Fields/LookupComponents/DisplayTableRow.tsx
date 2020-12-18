@@ -69,6 +69,10 @@ export interface IDisplayTableRow {
     addRowToolbarWarning?: string;
     /**Текст для модального окна при удалении записи.*/
     deleteRowsToolbarWarning?: string;
+    /**Скрыть подпись тулы удаления строк в тултип.*/
+    hiddenDeleteToolTitle?: boolean;
+    /**Скрыть подпись тулы добавления строки в тултип.*/
+    hiddenAddRowToolTitle?: boolean;
 
     onDataChange?(item?: any): void;
 
@@ -93,7 +97,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     addRowToolbarTitle,
     deleteRowsToolbarTitle,
     addRowToolbarWarning,
-    deleteRowsToolbarWarning
+    deleteRowsToolbarWarning,
+    hiddenDeleteToolTitle,
+    hiddenAddRowToolTitle
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
@@ -126,7 +132,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
             title: addRowToolbarTitle || 'Добавить строку',
             disabled: isDisplay(),
             onClick: addNewRow,
-            hiddenTitle: true,
+            hiddenTitle: hiddenDeleteToolTitle || false,
             key: addRowToolbarTitle || 'Удалить строки'
         },
         {
@@ -134,7 +140,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
             title: deleteRowsToolbarTitle || '',
             disabled: (isDisplay() || selectedRowKeys.length < 1),
             onClick: deleteRowsToolbarWarning ? showDeleteModalMessage : deleteMultiLookupLookupRows,
-            hiddenTitle: true,
+            hiddenTitle: hiddenAddRowToolTitle || false,
             key: deleteRowsToolbarTitle || 'BinIcon'
         }
     ];
@@ -231,7 +237,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     );
 
     function addNewRow() {
-        if (onDataChange) onDataChange(formData.current);
+        if (onDataChange) {
+            onDataChange(formData.current);
+        } 
         let values: IValue[] = formData.current ? formData.current : [];
 
         let newRow: IValue;
@@ -243,7 +251,8 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                 }
             });
             newRow = { key: '', value: '', other: defaultOther  };
-        } else {
+        } 
+        else {
             newRow = { key: '', value: '' };  
         }
 
@@ -308,7 +317,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     function getRowKey() {
         let newKey = `${Math.random()}`;
         const isUnique = formData.current?.find((e: IValue) => e.key === newKey);
-        if (isUnique) newKey  = getRowKey();
+        if (isUnique) {
+            newKey  = getRowKey();
+        } 
         return newKey;
     }
     function showDeleteModalMessage() {
@@ -363,14 +374,18 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                                         if(isDuplicate) {
                                             row.key = '';
                                             row.value ='';
-                                            if (addRowToolbarWarning) message("warning", addRowToolbarWarning);
+                                            if (addRowToolbarWarning) {
+                                                message("warning", addRowToolbarWarning);
+                                            } 
                                             setDataSource(getDataSource(formData.current));
                                             return;
                                         }
                                     }
                                     row.key = changedValue || '';
                                     row.value = item?.value || '';
-                                    if (item?.other) row.other = item?.other;
+                                    if (item?.other) {
+                                        row.other = item?.other;
+                                    } 
                                     setDataSource(getDataSource(formData.current));
                                 }
                             }}
@@ -384,9 +399,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                         onChange={(changedValue?: string) => {
                             if (formData.current && formData.current?.length > index) {
                                 let row = formData.current[index];
-                                if (!row.other)
+                                if (!row.other) {
                                     row.other = [];
-   
+                                }
                                 let otherValue: IOtherValue | null = null;
                                 for (let other of row.other)
                                     if (other.name === column.name) {
@@ -397,8 +412,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                                 if (!otherValue) {
                                     row.value = changedValue;
                                 }
-                                else
+                                else {
                                     otherValue.value = changedValue;
+                                }
                                 //formData.current = [...formData.current]
                             }
                         }}

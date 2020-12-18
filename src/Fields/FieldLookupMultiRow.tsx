@@ -49,6 +49,10 @@ import React, {
     addRowToolbarWarning?: string;
     /**Текст для модального окна при удалении записи.*/
     deleteRowsToolbarWarning?: string;
+    /**Скрыть подпись тулы удаления строк в тултип.*/
+    hiddenDeleteToolTitle?: boolean;
+    /**Скрыть подпись тулы добавления строки в тултип.*/
+    hiddenAddRowToolTitle?: boolean;
  }
  
  /**
@@ -75,7 +79,7 @@ import React, {
                  <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
                      <Input ref={ref}/>
                  </Form.Item>
-                 <Form.Item name={props.name} rules={rules}>
+                 <Form.Item name={props.name}>
                      <DisplayTableRow
                          label={props.label || ''}
                          required={props.required}
@@ -85,6 +89,8 @@ import React, {
                          allowDuplication={props.allowDuplication}
                          addRowToolbarTitle={props.addRowToolbarTitle}
                          deleteRowsToolbarTitle={props.deleteRowsToolbarTitle}
+                         hiddenDeleteToolTitle={props.hiddenDeleteToolTitle}
+                         hiddenAddRowToolTitle={props.hiddenAddRowToolTitle}
                          addRowToolbarWarning={props.addRowToolbarWarning}
                          deleteRowsToolbarWarning={props.deleteRowsToolbarWarning}
                          defaultColumnIndex={props.defaultColumnIndex}
