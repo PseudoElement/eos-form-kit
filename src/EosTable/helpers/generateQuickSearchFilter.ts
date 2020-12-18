@@ -8,10 +8,8 @@ export default function generateQuickSearchFilter(quickSearchFilter: Omit<IField
       //return { [fieldPath.apiField]: { contains: value } }
     }
     else {
-      const relation = Object.keys(fieldPath)[0]
-      const value = fieldPath[relation]
-      const child: any = getItemByField(value)
-      return { [relation]: { or: [...child] } };
+      const child: any = getItemByField(fieldPath.child)
+      return { [fieldPath.apiField]: { or: [...child] } };
     }
 
   }
