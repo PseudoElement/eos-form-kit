@@ -17,17 +17,21 @@ export interface ILookup extends IField {
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
 
-    /**
-     * Текст при отсутсвии элементов
-     */
+    /** Текст при отсутсвии элементов */
     notFoundContent?: string;
 
     resultName?: string;
     resultObject?: string;
     resultKey?: string;
     searchField?: string;
+    /** параметр ручного ввода, по умолчанию разрешен */
     manualInputAllowed?: boolean;
-    isSpecific?: boolean;
+
+    /** параметр показа инфотекста (о результатах), по умолчанию показывать */
+    showResultInfoText?: boolean;
+
+    /** инфотекст */
+    resultInfoText?: string;
 }
 /**
  * Функция, через которую надо прогонять значение лукапа при сохранении формы. 
@@ -61,6 +65,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
 
     function getNew(props: ILookup, ref: any, rules?: Rule[]) {
         const ctx: IFormContext = useContext(FormContext)
+        // реф поставлен на инпут для установления фокуса при незаполненном поле
         return (
             <React.Fragment>
                 <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
@@ -76,7 +81,9 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                         onChange={props.onChange}
                         notFoundContent={props.notFoundContent}
                         manualInputAllowed={props.manualInputAllowed}
-                    ></AjaxSelect>
+                        resultInfoText={props.resultInfoText}
+                        showResultInfoText={props.showResultInfoText}
+                    />
                 </Form.Item>
             </React.Fragment>
 

@@ -2,9 +2,11 @@ import { FormMode, FieldDateTime, AjaxSelect, AjaxAutoComplete, FieldLookupMulti
 
 class Helper {
     static getFields(mode: FormMode) {
-        /**
-         * Огрничение на колиечество элементов запроса
-         */
+        /** Огрничение на отображаемое количество элементов запроса */
+        const RESULT_AMOUNT_LIMIT: number = 2;
+        /** Фактически требуемое количество элементов при запросе, чтобы указать, что отображены только первые элементы запроса, а не все */
+        const LOADING_ELEMENTS_AMOUNT: number = RESULT_AMOUNT_LIMIT + 1;
+
         const fields = [
             {
                 "disabled": false,
@@ -168,6 +170,8 @@ class Helper {
                 "type": "FieldLookup",
                 "value": null,
                 "notFoundContent": "Нет элементов",
+                // "showResultInfoText": true,
+                "resultInfoText": `Отображены первые ${RESULT_AMOUNT_LIMIT} элементов`,
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: AjaxSelect.IOptionItem[] = [
@@ -185,18 +189,19 @@ class Helper {
                             { key: "value12", value: "двенадцать",  disabled: true, isSpecific: true, other: [{ value: "два четыре", name: "secondColumn" }] }
                         ]
                         if (search) {
-                            return result.filter((item) => {
+                            let res = result.filter((item) => {
                                 if (item && item.value && item?.value?.indexOf(search) >= 0) {
                                     return true;
                                 }
                                 return false;
-                            }) ?? [];
+                            })
+                            return res.length > 0 ? res : [];
                         }
                         else {
                             return result;
                         }
                     },
-                    resultsAmount: 11,
+                    resultsAmount: LOADING_ELEMENTS_AMOUNT
                 },
             },
             {
@@ -226,7 +231,7 @@ class Helper {
                             return result;
                         }
                     },
-                    resultsAmount: 3,
+                    resultsAmount: LOADING_ELEMENTS_AMOUNT,
                 }
             },
             // test lookup without manual input
@@ -240,6 +245,8 @@ class Helper {
                 "value": null,
                 "notFoundContent": "Нет элементов",
                 "manualInputAllowed": false,
+                "showResultInfoText": false,
+                // "resultInfoText": `Отображены первые ${RESULT_AMOUNT_LIMIT} элементов`,
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: AjaxSelect.IOptionItem[] = [
@@ -268,7 +275,7 @@ class Helper {
                             return result;
                         }
                     },
-                    resultsAmount: 11,
+                    // resultsAmount: LOADING_ELEMENTS_AMOUNT
                 },
             },
         ];
@@ -315,20 +322,19 @@ class Helper {
                             { "Type": 1, "Fields": ["startYear2", "endYear2"] }
                         ]
                     },
-                    // test lookup lookupAutoComplete
                     {
                         "Cells": [
+                            // test lookup lookupAutoComplete
                             { "Type": 0, "Fields": ["keepPeriod"], "Width": 12 },
                             { "Type": 0, "Fields": ["typeDocum"], "Width": 12 }
                         ]
                     },
-                    // test lookup without manual input
                     {
                         "Cells": [
-                            { "Type": 0, "Fields": ["arhClsAttr"], "Width": 12 },
+                            // test lookup w/o manual input
+                            { "Type": 0, "Fields": ["arhClsAttr"], "Width": 12 }
                         ]
                     }
-
                 ],
                 "Title": "Раздел описи"
             },

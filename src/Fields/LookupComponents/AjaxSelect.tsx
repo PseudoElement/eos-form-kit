@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Select as RcSelect, Spin } from "@eos/rc-controls";
+import React, { useEffect, useState, useRef, ReactNode } from 'react';
+import { Select as RcSelect } from "@eos/rc-controls";
 
 /** Структура и описание пропсов AjaxSelect */
 export interface ISelect {
@@ -26,11 +26,15 @@ export interface ISelect {
 
     /** ручной ввод */
     manualInputAllowed?: boolean;
+
+    /** инфо текст */
+    resultInfoText?: string
+
+    /** отображение инфо текста */
+    showResultInfoText?: boolean
 }
 
-/**
- * Структура элемента выпадающего списка
- */
+/** Структура элемента выпадающего списка */
 export interface IOptionItem {
     /** Программное значение которое вернёт компонент. */
     key?: string;
@@ -48,6 +52,7 @@ export interface IOptionItem {
     isSpecific?: boolean;
 }
 
+/** Структура других полей */
 export interface IOtherValue {
     /**Наименование поля. */
     name: string;
@@ -55,12 +60,13 @@ export interface IOtherValue {
     value?: string;
 }
 
+/** Управление запросом */
 export interface IDataService {
     /** Функция useLazyQuery для отправки и обработки запроса */
     loadDataAsync(search?: string): Promise<IOptionItem[]>;
 
     /** Количество запрашивамых результатов */
-    resultsAmount: number;
+    resultsAmount?: number;
 }
 
 /** Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке */
@@ -72,13 +78,16 @@ export const Select = React.forwardRef<any, ISelect>(({
     required,
     dataService: getDataService,
     ctx,
-    manualInputAllowed
+    manualInputAllowed,
+    showResultInfoText,
+    resultInfoText
 }) => {
     /** Объект значения */
     const [currentValue, setCurrentValue] = useState<IOptionItem | undefined>(value);
     useEffect(() => {
         setCurrentValue(value);
     }, [value])
+
     /** Объект индикатор загрузки */
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -91,11 +100,11 @@ export const Select = React.forwardRef<any, ISelect>(({
     const DISABLED_ELEM_COROL_VALUE: string = "#BABABA";
     /** Ключ для информационного элемента списка (количество элементов) */
     const INFO_ELEM_KEY_VALUE: string | number = "queryAmountInfo";
+    /** Текстовое значение информационного элемента списка */
+    const INFO_ELEM_TEXT_VALUE: string = getInfoText();
+
     /** Значение типа курсора при наведении на информационный жлемент списка */
     const INFO_ELEM_CURSOR_VALUE: string = "default";
-
-    /** Сообщение об отображаемом количестве элементов в выпадающем списке */
-    const [queryAmountInfo, setQueryAmountInfo] = useState<string>("");
 
     /** Время задержки отправки поискового запроса при изменении значения поля */
     const DEFAULT_SEARCH_DELAY_MS_VALUE: number = 200;
@@ -103,37 +112,38 @@ export const Select = React.forwardRef<any, ISelect>(({
     /** Элементы выпадающего списка */
     const [items, setItems] = useState<IOptionItem[]>([]);
 
+    /** Индикатора показа инфотекста */
+    const [showInfo, setShowInfo] = useState<boolean>();
+
     /** Реф для установки фокуса */
     const focusRef = useRef<any>();
 
     /** Запрос
-     * @search search параметры запроса
+     * @search параметры запроса
      */
     async function loadItemById(search?: string) {
         setIsLoading(true);
-        return getDataService?.loadDataAsync(search).then(
+        return getDataService?.loadDataAsync(search ?? '').then(
             (data: IOptionItem[]) => {
                 let items: IOptionItem[] = data;
-                switch (true) {
-                    case (items?.length >= getDataService?.resultsAmount):
-                        // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
+                if (getDataService?.resultsAmount !== null && getDataService?.resultsAmount !== undefined) {
+                    if (items?.length >= getDataService?.resultsAmount) {
                         let shortArray = items?.slice(0, getDataService?.resultsAmount - 1);
-                        // Использование useTranslate
-                        // const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: getDataService.resultsAmount - 1 });
-                        const QUERY_AMOUNT_INFO_TEXT: string = `Отображены первые ${getDataService?.resultsAmount - 1} результатов`;
-                        // Добавляет в выпадающий список надпись "Отображены первые 10 результатов"
-                        setQueryAmountInfo(QUERY_AMOUNT_INFO_TEXT);
+                        if (showResultInfoText === true || showResultInfoText === undefined) {
+                            setShowInfo(true);
+                        }
                         setItems([...shortArray]);
-                        break;
-                    case (items?.length && items?.length <= getDataService?.resultsAmount - 1):
-                        // Убирает надпись "Отображены первые 10 результатов" при количестве элементов списка 10 и менее
-                        setQueryAmountInfo("");
+                    } 
+                    else {
+                        setShowInfo(false)
                         setItems(items);
-                        break;
-                    default:
-                        setQueryAmountInfo("");
-                        setItems([]);
-                        break;
+                    }
+                }
+                else {
+                    if (showResultInfoText === true || showResultInfoText === undefined) {
+                        setShowInfo(true);
+                    }                 
+                    setItems(items);
                 }
                 setIsLoading(false);
             }
@@ -141,7 +151,6 @@ export const Select = React.forwardRef<any, ISelect>(({
             .catch(
                 (err: any) => {
                     console.error(err);
-                    setQueryAmountInfo("");
                     setItems([]);
                     setIsLoading(false)
                 }
@@ -162,7 +171,8 @@ export const Select = React.forwardRef<any, ISelect>(({
         // Если поле со значением, то отправить запрос со значением на поиск
         if (currentValue?.value) {
             loadItemById(currentValue?.value?.trim());
-        } else {
+        } 
+        else {
             // Если без - пустую строку на показ всех доступных значений
             loadItemById("");
         }
@@ -172,23 +182,24 @@ export const Select = React.forwardRef<any, ISelect>(({
     /** Обработчик ввода в поле
      * @param value строкове значение, передаваемое в запрос на поиск
      */
-    let handleSearch = (value: string) => {
+    let handleSearch = (value?: string) => {
         // Получить сделать запрос на получение данных по обрезанной строке
-        loadItemById(value.trim());
+        value = value?.trim() ?? '';
+        loadItemById(value);
 
         // Приведение value полученных объектов к UpperCase для дальнейшего сравнения
         let options: any = items?.map(item => item?.value?.toLocaleUpperCase());
 
         // Если есть options совпадающий с введенной строкой и они не равны пустой строке, то сделать значение выбранным, 
         // если нет - остается предыдущее введенное значение либо значение
-        if (options?.indexOf(value?.toLocaleUpperCase().trim()) > -1 && value.trim() !== "") {
+        if (options?.indexOf(value?.toLocaleUpperCase().trim()) > -1 && value?.trim() !== "") {
             // не проставлять задизейбленный элемент
-            if (!items[options.indexOf(value.toLocaleUpperCase().trim())].disabled) {
+            if (!items[options.indexOf(value?.toLocaleUpperCase().trim())].disabled) {
                 // Проставить объект IOptionItem в отображение
-                setCurrentValue({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key });
+                setCurrentValue({ value: value, key: items[options.indexOf(value?.toLocaleUpperCase().trim())].key });
 
                 // Проставить объект IOptionItem в форму
-                setValueToForm({ value: value, key: items[options.indexOf(value.toLocaleUpperCase().trim())].key, ...items[options.indexOf(value.toLocaleUpperCase().trim())]});    
+                setValueToForm({ value: value, key: items[options.indexOf(value?.toLocaleUpperCase().trim())].key, ...items[options.indexOf(value?.toLocaleUpperCase().trim())]});    
             }
         }
     }
@@ -201,68 +212,91 @@ export const Select = React.forwardRef<any, ISelect>(({
         setCurrentValue(option?.item);
         setValueToForm(option?.item);
         if (value) {
-            loadItemById(value?.trim()); 
+            loadItemById(value?.trim() ?? ''); 
         }
         if (onChange) {
             onChange(option?.item);
         }
-        if (!value) {}
         setIsOpen(false)
         if (focusRef?.current && focusRef?.current?.blur) {
             focusRef?.current?.blur();
         }
     }
 
+    /** событие по потере фокуса */
     let onBlur = () => {
         setIsOpen(false);
     }
 
     return (
-        <Spin spinning={isLoading}>
-            <RcSelect ref={focusRef}
-                required={required}
-                showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
-                value={currentValue?.value}
-                notFoundContent={notFoundContent}
-                onSearch={handleSearch}
-                onFocus={onFocus}
-                onClear={onClear}
-                onSelect={onSelect}
-                delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
-                open={isOpen}
-                onBlur={onBlur}
-                allowClear={true}>
-                    {
-                        queryAmountInfo === ""
-                        ? items.map((item: IOptionItem) => {
-                            return <RcSelect.Option 
-                                        key={`${item?.key}`} 
-                                        value={item?.value ?? `${item?.key}`}
-                                        disabled={item?.disabled}
-                                        item={item}
-                                        style={item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : {}}
-                                        >
-                                            {item?.value ?? `${item?.key}`}
-                                    </RcSelect.Option>
-                        })
-
-                        :   [<RcSelect.Option key={INFO_ELEM_KEY_VALUE} value={INFO_ELEM_KEY_VALUE} disabled style={{cursor: INFO_ELEM_CURSOR_VALUE}}>{queryAmountInfo}</RcSelect.Option>,
-                            ...items?.map((item: IOptionItem) => {
-                                return <RcSelect.Option 
-                                            key={`${item?.key}`} 
-                                            value={item?.value ?? `${item?.key}`}
-                                            disabled={item?.disabled}
-                                            item={item}
-                                            style={item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : {}}
-                                            >
-                                                {item?.value ?? `${item?.key}`}
-                                        </RcSelect.Option>
-                            })]
-                        
-                    }
-            </RcSelect >
-        </Spin>
+        <RcSelect ref={focusRef}
+            loading={isLoading}
+            required={required}
+            showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
+            value={currentValue?.value}
+            notFoundContent={notFoundContent}
+            onSearch={handleSearch}
+            onFocus={onFocus}
+            onClear={onClear}
+            onSelect={onSelect}
+            delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
+            open={isOpen}
+            onBlur={onBlur}
+            allowClear={true}
+            filterOption={false}>
+                {
+                    getOptionList()
+                }
+        </RcSelect >
     );
+
+    // Получить список элементов для отрисовки
+    function getOptionList(): ReactNode | ReactNode[] {
+        if (showInfo) {
+            return [<RcSelect.Option key={INFO_ELEM_KEY_VALUE} value={INFO_ELEM_KEY_VALUE} disabled style={{cursor: INFO_ELEM_CURSOR_VALUE}}>{INFO_ELEM_TEXT_VALUE}</RcSelect.Option>,
+                ...items.map((item: IOptionItem) => {
+                    return <RcSelect.Option 
+                                key={`${item?.key}`} 
+                                value={item?.value ?? `${item?.key}`}
+                                disabled={item?.disabled}
+                                item={item}
+                                style={item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : {}}
+                                >
+                                    {item?.value ?? `${item?.key}`}
+                            </RcSelect.Option>
+            })]
+        } 
+        else {
+            return items.map((item: IOptionItem) => {
+                return <RcSelect.Option 
+                            key={`${item?.key}`} 
+                            value={item?.value ?? `${item?.key}`}
+                            disabled={item?.disabled}
+                            item={item}
+                            style={item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : {}}
+                            >
+                                {item?.value ?? `${item?.key}`}
+                        </RcSelect.Option>
+            })
+        }
+    }
+
+    /** получить информационный текст */
+    function getInfoText(): string {
+        if (resultInfoText) {
+            // переданный текст
+            return resultInfoText;
+        }
+        else {
+            // предустановленный текст
+            if (getDataService?.resultsAmount !== null && getDataService?.resultsAmount !== undefined) {
+                return `Отображены первые ${getDataService?.resultsAmount - 1} элементов`;
+            }
+            else {
+                return `Отображены все результаты`;
+            }
+        }
+    }
 
     /**
      * Проставляет значение в форму.
