@@ -17,9 +17,11 @@ const AjaxClientFormApi: FunctionComponent = () => {
     addActionToStore("add", (handlerProps: EosTableTypes.IHandlerProps) => { alert(handlerProps.menuItem.key) })
     addActionToStore("disable", () => {
         menuRefApi.current?.setButtonDisabled("add")
+        menuRefApi.current?.setButtonVisible("deletedVisible", true)
     })
     addActionToStore("edit", () => {
         menuRefApi.current?.setButtonDisabled("add", false)
+        menuRefApi.current?.setButtonVisible("deletedVisible", false)
     })
     addConditionToStore("add", (handlerProps: EosTableTypes.IHandlerProps) => {
         const name = (handlerProps.refApi?.current as AjaxClientForm.IFormApi)?.getFieldsValue()["name"];

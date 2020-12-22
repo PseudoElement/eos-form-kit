@@ -52,8 +52,7 @@ export interface IEosMenuButtonApi {
 
 export interface IMenuProps {
     menuItems: IMenuItem[]
-    refApi: any
-    //initStateButtons?: IMenuButton[]
+    refApi: any   
     scopeEosComponentsStore?: ScopeEosComponentsStore
     overflowMenuDisabled?: boolean
     ellipsis?: boolean

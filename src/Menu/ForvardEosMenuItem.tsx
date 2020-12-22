@@ -3,7 +3,7 @@ import React, { useImperativeHandle, useMemo, useRef, useState } from "react";
 import EosIcon from "./defaultRenders/EosIcon";
 import { IEosMenuButtonApi, IEosMenuButtonProps } from "./types";
 
-const EosMenuItem = React.forwardRef<any, IEosMenuButtonProps>(({ ...props }: IEosMenuButtonProps, ref: React.MutableRefObject<IEosMenuButtonApi>) => {
+const ForvardEosMenuItem = React.forwardRef<any, IEosMenuButtonProps>(({ ...props }: IEosMenuButtonProps, ref: React.MutableRefObject<IEosMenuButtonApi>) => {
     const [disable, setDisable] = useState<boolean | undefined>(props.disabled)
     const [checkable, setCheckable] = useState<boolean | undefined>(props.checked)
     const [visible, setVisible] = useState<boolean | undefined>(props.visible)
@@ -58,6 +58,6 @@ const EosMenuItem = React.forwardRef<any, IEosMenuButtonProps>(({ ...props }: IE
     }, [disable, checkable, visible])
 })
 
-EosMenuItem.displayName = "EosMenuItem"
+ForvardEosMenuItem.displayName = "EosMenuItem"
 
-export { EosMenuItem }
+export { ForvardEosMenuItem }
