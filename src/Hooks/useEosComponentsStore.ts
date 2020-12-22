@@ -51,9 +51,13 @@ const init: IProps = {
     conditions: new Dictionary<(handlerProps: IHandlerProps) => boolean>()
 }
 
-const StoreComponentsContext = createContext<IProps>(init);
-const GLOBAL_NAME_SCOPE = "EosVendor"
+
+export const SCOPE_EOS_COMPONENTS_STORE_GLOBAL = "EosVendor"
+export const SCOPE_EOS_COMPONENTS_STORE_CLASSIF = "EosVendorClassif"
 const DELIMITER = ":"
+
+const StoreComponentsContext = createContext<IProps>(init);
+
 export type ScopeEosComponentsStore = string
 
 interface IEosComponentsStoreProps {
@@ -63,7 +67,7 @@ interface IEosComponentsStoreProps {
 
 export function useEosComponentsStore(props?: IEosComponentsStoreProps) {
 
-    const scopeStore = props?.global === false ? (props?.scope || Guid()) : (props?.scope || GLOBAL_NAME_SCOPE)
+    const scopeStore = props?.scope || (props?.global ? SCOPE_EOS_COMPONENTS_STORE_GLOBAL : Guid())
 
     const context = useContext(StoreComponentsContext)
 
@@ -73,7 +77,8 @@ export function useEosComponentsStore(props?: IEosComponentsStoreProps) {
 
     function fetchControlFromStore(name: string) {
         return context.controls.getItem(scopeStore + DELIMITER + name)
-            || context.controls.getItem(GLOBAL_NAME_SCOPE + DELIMITER + name)
+            || context.controls.getItem(SCOPE_EOS_COMPONENTS_STORE_CLASSIF + DELIMITER + name)
+            || context.controls.getItem(SCOPE_EOS_COMPONENTS_STORE_GLOBAL + DELIMITER + name)
     }
 
     function addActionToStore(name: string, action: (handlerProps: IHandlerProps) => Promise<void> | void) {
@@ -82,7 +87,8 @@ export function useEosComponentsStore(props?: IEosComponentsStoreProps) {
 
     function fetchActionFromStore(name: string) {
         return context.actions.getItem(scopeStore + DELIMITER + name)
-            || context.actions.getItem(GLOBAL_NAME_SCOPE + DELIMITER + name)
+            || context.actions.getItem(SCOPE_EOS_COMPONENTS_STORE_CLASSIF + DELIMITER + name)
+            || context.actions.getItem(SCOPE_EOS_COMPONENTS_STORE_GLOBAL + DELIMITER + name)
     }
 
     function addConditionToStore(name: string, action: (handlerProps: IHandlerProps) => boolean) {
@@ -91,7 +97,8 @@ export function useEosComponentsStore(props?: IEosComponentsStoreProps) {
 
     function fetchConditionFromStore(name: string) {
         return context.conditions.getItem(scopeStore + DELIMITER + name)
-            || context.conditions.getItem(GLOBAL_NAME_SCOPE + DELIMITER + name)
+            || context.conditions.getItem(SCOPE_EOS_COMPONENTS_STORE_CLASSIF + DELIMITER + name)
+            || context.conditions.getItem(SCOPE_EOS_COMPONENTS_STORE_GLOBAL + DELIMITER + name)
     }
 
     function localizationCallback(callback: (key?: string) => string) {
@@ -99,7 +106,7 @@ export function useEosComponentsStore(props?: IEosComponentsStoreProps) {
     }
 
     function localize(key?: string) {
-        return (key && context.translation) ? context.translation(key || "") : (key || "");
+        return (key && context.translation) ? context.translation(key) : (key || "");
     }
 
     return {

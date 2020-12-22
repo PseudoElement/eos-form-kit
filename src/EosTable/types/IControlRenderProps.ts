@@ -4,6 +4,7 @@ export interface IControlRenderProps {
     renderArgs?: IRenderArgs
     valueInCell?: any
     recordInRow?: any
-    indexOfRow?: number    
-    refApi?: any,
+    indexOfRow?: number
+    refApi?: any
+    buttonChecked?: boolean
 }

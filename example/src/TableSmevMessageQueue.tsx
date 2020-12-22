@@ -1,31 +1,20 @@
 import React from 'react'
 import { ApolloClient, ApolloProvider, InMemoryCache, useApolloClient, gql } from "@apollo/react-hooks";
-import { EosTable, useEosComponentsStore, ITableProvider, EosTableTypes, DefaultMenuRenders, EosTableHelper, DefaultColumnRenders } from "eos-webui-formgen"
+import { EosTable, useEosComponentsStore, ITableProvider, EosTableTypes, EosTableHelper } from "eos-webui-formgen"
 import { Layout } from '@eos/rc-controls';
 
 const TableSmevMessageQueue = () => {
     const client = new ApolloClient({
         uri: './smevdispatcher/Gql/Query',
         cache: new InMemoryCache()
-    });
-    const { addControlToStore } = useEosComponentsStore()
-    addControlToStore("Icon", DefaultMenuRenders.Icon)
-    addControlToStore("MenuButton", DefaultMenuRenders.MenuButton)
-    addControlToStore("MenuCheckableButton", DefaultMenuRenders.MenuCheckableButton)
-    addControlToStore("QuickSearch", DefaultMenuRenders.QuickSearch)
-    addControlToStore("CheckboxDisplay", DefaultColumnRenders.Checkbox)
-    addControlToStore("DateTimeDisplay", DefaultColumnRenders.DateTime)
-    addControlToStore("DefaultDisplay", DefaultColumnRenders.Default)
-    addControlToStore("ReferenceDisplay", DefaultColumnRenders.Reference)
-    addControlToStore("Links", DefaultColumnRenders.FileLinks)
-
+    })
     return <ApolloProvider client={client}><TableMessageQueue /></ApolloProvider>
 }
 
 const TableMessageQueue = () => {
     const apolloClient = useApolloClient();
 
-    const { addActionToStore, scopeStore } = useEosComponentsStore({ global: false })
+    const { addActionToStore, scopeStore } = useEosComponentsStore()
 
     addActionToStore("stop", (props: EosTableTypes.IHandlerProps) => {
         const tableApi = props.refApi as EosTableTypes.ITableApi
@@ -120,7 +109,7 @@ const TableMessageQueue = () => {
                                 fields: [{ displayName: "Вложения", apiField: "smevRequestAttachments", child: { displayName: "Наименование файла", apiField: "filename" } },
                                 { displayName: "Вложения", apiField: "smevRequestAttachments", child: { displayName: "Ссылка", apiField: "fileLink" } }],
                                 columnRender: {
-                                    renderType: "Links",
+                                    renderType: "LinksDisplay",
                                     renderArgs: {
                                         array: "smevRequestAttachments",
                                         name: "filename",
@@ -279,7 +268,7 @@ const TableMessageQueue = () => {
                         {
                             key: "deletedVisible",
                             render: {
-                                renderType: "MenuCheckableButton",
+                                renderType: "CheckableButton",
                                 renderArgs: {
                                     iconName: "HideIcon",
 

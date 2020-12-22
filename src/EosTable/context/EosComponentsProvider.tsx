@@ -1,18 +1,15 @@
 import React, { Fragment, ReactNode } from 'react'
+import { useEosComponentsStore } from '../../Hooks/useEosComponentsStore';
+import { Icon, MenuButton, QuickSearch } from '../../Menu/defaultRenders';
+import { FileLinks } from '../components/ColumnRender';
 import CheckboxDisplay from '../components/ColumnRender/Checkbox';
 import DateTimeDisplay from '../components/ColumnRender/DateTime';
 import DefaultDisplay from '../components/ColumnRender/Default';
 import ReferenceDisplay from '../components/ColumnRender/Reference';
-import Icon from '../components/MenuItemRender/IconRender';
-import MenuButton from '../components/MenuItemRender/MenuButton';
 import unSelected from '../conditions/unSelected';
 import unSelectedOne from '../conditions/unSelectedOne';
-import { useEosTableComponentsStore } from '../StoreComponents';
-import QuickSearch from '../components/MenuItemRender/QuickSearch';
 import { ITableSettings } from '../types/ITableSettings';
 import { ITableUserSettings } from '../types/ITableUserSettings';
-import { useDefaultProvider } from './DefaultDataProvider';
-import { DATA_PROVIDER_DEFAULT, TABLE_SETTINS_LOADER_DEFAULT, TRIGGERS_DEFAULT, USER_SETTINS_LOADER_DEFAULT } from '../types/TextConstants';
 
 interface IProps {
     tableSettingLoader?: (tableId?: string) => Promise<ITableSettings>
@@ -21,31 +18,24 @@ interface IProps {
     children?: ReactNode | ReactNode[] | undefined
 }
 
-export default function EosTableProvider({
-    tableSettingLoader,
-    userSettingLoader,
-    translation,
+export default function EosComponentsProvider({
     children
-
 }: IProps) {
 
-    const { addControlToStore, addActionToStore, addConditionToStore, addTableSettingLoader, addUserSettingLoader, addDataProvider, translationCallback } = useEosTableComponentsStore()
-    
+    const { addControlToStore, addConditionToStore } = useEosComponentsStore({ global: true })
+
     addControlToStore("CheckboxDisplay", CheckboxDisplay)
     addControlToStore("DateTimeDisplay", DateTimeDisplay)
     addControlToStore("DefaultDisplay", DefaultDisplay)
     addControlToStore("ReferenceDisplay", ReferenceDisplay)
+    addControlToStore("LinksDisplay", FileLinks)
     addControlToStore("MenuButton", MenuButton)
     addControlToStore("Icon", Icon)
     addControlToStore("QuickSearch", QuickSearch)
 
-    addConditionToStore("Unmarked", unSelected)
-    addConditionToStore("UnmarkedOne", unSelectedOne)
+    addConditionToStore("unSelected", unSelected)
+    addConditionToStore("unSelectedOne", unSelectedOne)
 
-    tableSettingLoader && addTableSettingLoader(TABLE_SETTINS_LOADER_DEFAULT, tableSettingLoader)
-    userSettingLoader && addUserSettingLoader(USER_SETTINS_LOADER_DEFAULT, userSettingLoader)  
-
-    translation && translationCallback(translation)   
 
     return (
         <Fragment>

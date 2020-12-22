@@ -1,12 +1,7 @@
 import React from 'react'
-import { EosTable, useEosComponentsStore, ITableProvider, EosTableTypes, DefaultMenuRenders } from "eos-webui-formgen"
+import { EosTable, ITableProvider, EosTableTypes } from "eos-webui-formgen"
 
 const TableExample = () => {
-
-    const { addControlToStore  } = useEosComponentsStore()
-    addControlToStore("Icon", DefaultMenuRenders.Icon)
-    addControlToStore("MenuButton", DefaultMenuRenders.MenuButton)
-
     const provider = GetProvider()
     return <div style={{ height: "calc(100vh - 48px)" }}><EosTable provider={provider} /></div>
 }
@@ -112,7 +107,7 @@ const GetProvider = () => {
                     {
                         key: "setting",
                         render: {
-                            renderType: "MenuButton",
+                            renderType: "Button",
                             renderArgs: {
                                 iconName: "SettingsIcon",
                                 title: "Настройки",
