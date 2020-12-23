@@ -30,18 +30,10 @@ class Helper {
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
-                            { key: "value1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
-                            { key: "value2", value: "два",  other: [{ value: "два три", name: "secondColumn" }] },
-                            { key: "value3", value: "три",  other: [{ value: "три три", name: "secondColumn" }] },
-                            { key: "value4", value: "четыре",  other: [{ value: "четыре три", name: "secondColumn" }] },
-                            { key: "value5", value: "пять", disabled: false, isSpecific: false },
-                            { key: "value6", value: "шесть",  disabled: true, isSpecific: false },
-                            { key: "value7", value: "семь",  disabled: false, isSpecific: true },
-                            { key: "value8", value: "восемь",  disabled: true, isSpecific: true },
-                            { key: "value9", value: "девять", disabled: false, isSpecific: false, other: [{ value: "три один", name: "secondColumn" }] },
-                            { key: "value10", value: "десять",  disabled: true, isSpecific: false, other: [{ value: "три два", name: "secondColumn" }] },
-                            { key: "value11", value: "одиннадцать",  disabled: false, isSpecific: true, other: [{ value: "три три", name: "secondColumn" }] },
-                            { key: "value12", value: "двенадцать",  disabled: true, isSpecific: true, other: [{ value: "три четыре", name: "secondColumn" }] }
+                            { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" } ] },
+                            { key: "2", value: "два", other: [{ value: "один шесть", name: "secondColumn" } ] },
+                            { key: "3", value: "три" },
+                            { key: "4", value: "четыре" }
                         ]
                         if (search) {
                             return result.filter((item) => {
@@ -55,7 +47,7 @@ class Helper {
                             return result;
                         }
                     },
-                    resultsAmount: 100,
+                    resultsAmount: 10,
                 },
                 "otherColumns": [
                     { "label": "Колонка 2", "name": "secondColumn", "disabled": false }

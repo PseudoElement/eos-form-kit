@@ -151,20 +151,29 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
      */
     async function loadItemById(search?: string) {
         setIsLoading(true);
-        return getDataService?.loadDataAsync(search ?? '').then(
+        return getDataService?.loadDataAsync(search).then(
             (data: IOption[]) => {
                 let items: IOption[] = data;
-                if (getDataService?.resultsAmount !== null && getDataService?.resultsAmount !== undefined) {
-                    if (items?.length >= getDataService?.resultsAmount) {
-                        let shortArray = items?.slice(0, getDataService?.resultsAmount - 1);
+                switch (true) {
+                    case (items.length >= getDataService.resultsAmount):
+                        // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
+                        let shortArray = items.slice(0, getDataService.resultsAmount - 1);
+                        // Использование useTranslate
+                        // const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: getDataService.resultsAmount - 1 });
+                        //const QUERY_AMOUNT_INFO_TEXT: string = `Отображены первые ${getDataService.resultsAmount - 1} результатов`;
+                        // Добавляет в выпадающий список надпись "Отображены первые 10 результатов"
+                        //setQueryAmountInfo(QUERY_AMOUNT_INFO_TEXT);
                         setItems([...shortArray]);
-                    } 
-                    else {
+                        break;
+                    case (items.length && items.length <= getDataService.resultsAmount - 1):
+                        // Убирает надпись "Отображены первые 10 результатов" при количестве элементов списка 10 и менее
+                        //setQueryAmountInfo("");
                         setItems(items);
-                    }
-                }
-                else {                
-                    setItems(items);
+                        break;
+                    default:
+                        //setQueryAmountInfo("");
+                        setItems([]);
+                        break;
                 }
                 setIsLoading(false);
             }
@@ -172,6 +181,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
             .catch(
                 (err: any) => {
                     console.error(err);
+                    //setQueryAmountInfo("");
                     setItems([]);
                     setIsLoading(false)
                 }
