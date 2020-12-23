@@ -9,7 +9,7 @@ import AjaxClientFormPage2 from "./AjaxClientFormPage2";
 import AjaxClientFormApi from "./AjaxClientFormApi";
 import NotFoundPage from "./NotFoundPage";
 import { ConfigProvider } from 'eos-webui-controls';
-import { useBackUrlHistory, useHistoryListener } from 'eos-webui-formgen';
+import { EosComponentsProvider, useBackUrlHistory, useHistoryListener } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 import TestPage from './Pages/Test';
 import { TableExample } from './Table';
@@ -167,20 +167,22 @@ const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) =>
 
 ReactDOM.render(
     <ConfigProvider>
-        <BrowserRouter>
-            <MainMenu items={menuItems} />
-            <Switch>
-                <Route strict path="/search" component={SearchClientFormPage} />
-                <Route exact path="/test" component={TestPage} />
-                <Route exact path="/arc/:mode/:id?" component={ArcPage} />
-                <Route exact path="/form/:mode/:id?" component={AjaxClientFormPage} />
-                <Route exact path="/form2/:mode/:id?" component={AjaxClientFormPage2} />
-                <Route exact path="/form3/:mode/:id?" component={AjaxClientFormApi} />
-                <Route exact path="/table" component={TableExample} />
-                <Route exact path="/tableSmevMessageQueue" component={TableSmevMessageQueue} />
-                <Route path="*" component={NotFoundPage} />
-            </Switch>
-        </BrowserRouter>
+        <EosComponentsProvider>
+            <BrowserRouter>
+                <MainMenu items={menuItems} />
+                <Switch>
+                    <Route strict path="/search" component={SearchClientFormPage} />
+                    <Route exact path="/test" component={TestPage} />
+                    <Route exact path="/arc/:mode/:id?" component={ArcPage} />
+                    <Route exact path="/form/:mode/:id?" component={AjaxClientFormPage} />
+                    <Route exact path="/form2/:mode/:id?" component={AjaxClientFormPage2} />
+                    <Route exact path="/form3/:mode/:id?" component={AjaxClientFormApi} />
+                    <Route exact path="/table" component={TableExample} />
+                    <Route exact path="/tableSmevMessageQueue" component={TableSmevMessageQueue} />
+                    <Route path="*" component={NotFoundPage} />
+                </Switch>
+            </BrowserRouter>
+        </EosComponentsProvider>
     </ConfigProvider >
     , document.getElementById('root'));
 

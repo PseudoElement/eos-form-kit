@@ -12,10 +12,6 @@ export interface ITableProvider {
     tableUserSettingLoad?: (tableId?: string) => Promise<ITableUserSettings>
     fetchData?: (tableState: ITableState, tableSettings: ITableSettings, userSettings: ITableUserSettings, onlyKeysForSelectedAll?: boolean) => Promise<ITableData>
     saveUserSetting?: (userSetting: ITableUserSettings) => Promise<void>
-    fetchRender?: FetchControlRender
-    fetchAction?: FetchAction
-    fetchCondition?: FetchCondition
-    localize?: (key: string) => string
     disableSelectRecord?: (record: any) => boolean
 }
 
@@ -39,6 +35,6 @@ export type FetchAction = (name: string) => ((handlerProps: IHandlerProps) => Pr
 export type FetchCondition = (name: string) => ((handlerProps: IHandlerProps) => boolean) | undefined
 
 export interface IHandlerProps{
-    refApi: any, 
+    refApi: any,
     menuItem: IMenuItem
 }

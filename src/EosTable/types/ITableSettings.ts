@@ -71,7 +71,11 @@ export interface IRender {
 export interface IRenderArgs {
     ellipsisRows?: number
     iconName?: string
+    iconSize?: string
+    iconColor?: string
     mode?: string
+    typeButton?: 'primary' | 'link' | 'default'
+    titleButton?: string
     [key: string]: string | number | undefined
 }
 

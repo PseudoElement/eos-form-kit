@@ -1,8 +1,8 @@
-import React, { forwardRef, Fragment, FunctionComponent, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, FunctionComponent, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 
 import "eos-webui-controls/dist/main.css";
-import { AjaxClientForm, FormMode, IToolBar, parseFormMode, EosMenu, EosTableTypes, DefaultMenuRenders } from "eos-webui-formgen";
+import { AjaxClientForm, FormMode, IToolBar, parseFormMode, EosMenu, EosTableTypes, useEosComponentsStore, EosMenuTypes } from "eos-webui-formgen";
 import { Helper } from './Helper';
 import { useRouteMatch } from 'react-router-dom';
 import { Button } from '@eos/rc-controls';
@@ -13,6 +13,21 @@ interface IPageParams {
 }
 
 const AjaxClientFormApi: FunctionComponent = () => {
+    const { addActionToStore, addConditionToStore, scopeStore } = useEosComponentsStore()
+    addActionToStore("add", (handlerProps: EosTableTypes.IHandlerProps) => { alert(handlerProps.menuItem.key) })
+    addActionToStore("disable", () => {
+        menuRefApi.current?.setButtonDisabled("add")
+        menuRefApi.current?.setButtonVisible("deletedVisible", true)
+    })
+    addActionToStore("edit", () => {
+        menuRefApi.current?.setButtonDisabled("add", false)
+        menuRefApi.current?.setButtonVisible("deletedVisible", false)
+    })
+    addConditionToStore("add", (handlerProps: EosTableTypes.IHandlerProps) => {
+        const name = (handlerProps.refApi?.current as AjaxClientForm.IFormApi)?.getFieldsValue()["name"];
+        return name === "Новое наименование"
+    })
+
     const E_DOCUMENT_LABEL = "Для электронных документов";
     const { params } = useRouteMatch<IPageParams>();
     const mode: FormMode = parseFormMode(params.mode);
@@ -64,44 +79,14 @@ const AjaxClientFormApi: FunctionComponent = () => {
 
     const formApi = useRef<AjaxClientForm.IFormApi>();
     const buttonsPanelApi = useRef<IButtonsPanelApi>();
+    const menuRefApi = useRef<EosMenuTypes.IEosMenuApi>()
 
     const toolbar: IToolBar = {
-        children: <EosMenu fetchAction={(name: string) => {
-            switch (name) {
-                case "add":
-                    return (handlerProps: EosTableTypes.IHandlerProps) => { alert(handlerProps.menuItem.key) }
-                case "disable":
-                    return () => {
-                        formApi.current?.setDisabledMenuButton(true, "add")
-                    }
-                default: return undefined
-            }
-        }}
-            fetchControlRender={(name: string) => {
-                switch (name) {
-                    case "Icon":
-                        return DefaultMenuRenders.Icon
-                    case "MenuButton":
-                        return DefaultMenuRenders.MenuButton
-                    default:
-                        return () => <Fragment />
-                }
-            }}
-            fetchCondition={(name: string) => {
-                switch (name) {
-                    case "add_disabled":
-                        return (handlerProps: EosTableTypes.IHandlerProps) => {
-                            const name = (handlerProps.refApi?.current as AjaxClientForm.IFormApi)?.getFieldsValue()["name"];
-                            return name === "Новое наименование"
-                        }
-                    default:
-                        return undefined
-                }
-            }}
+        children: <EosMenu ref={menuRefApi} scopeEosComponentsStore={scopeStore}
             menuItems={[{
                 key: "add",
                 render: {
-                    renderType: "MenuButton",
+                    renderType: "Icon",
                     renderArgs: {
                         iconName: "PlusIcon",
                         title: "Добавить",
@@ -114,7 +99,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 },
                 {
                     type: "disabled",
-                    handlerName: "add_disabled"
+                    handlerName: "add"
                 }]
             },
             {
@@ -128,6 +113,10 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 title: "Редактировать",
                 handlers: [{
                     type: "onClick",
+                    handlerName: "edit"
+                },
+                {
+                    type: "disabled",
                     handlerName: "edit"
                 }]
             },
@@ -144,7 +133,39 @@ const AjaxClientFormApi: FunctionComponent = () => {
                     type: "onClick",
                     handlerName: "disable"
                 }]
-            }]}
+            },
+            {
+                key: "deletedVisible",
+                render: {
+                    renderType: "CheckableButton",
+                    renderArgs: {
+                        iconName: "HideIcon",
+
+                    }
+                }, title: "Показать логически удаленные"
+            },
+            {
+                key: "sub",
+                render: {
+                    renderType: "Icon",
+                    renderArgs: {
+                        iconName: "ProcessIcon"
+                    }
+                },
+                children: [{
+                    key: "child1",
+                    
+                    render: {
+                        renderType: "Button",
+                        renderArgs: {
+                            iconName: "PlusIcon",
+                            titleButton: "ПОдменю",
+                            typeButton: "link"
+                        }
+                    }
+                }]
+            }
+            ]}
             refApi={formApi}
         ></EosMenu>
     }

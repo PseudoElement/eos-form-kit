@@ -1,6 +1,5 @@
 import { Spin } from '@eos/rc-controls'
 import React, { useEffect, useRef, useState } from 'react'
-import { useDefaultProvider } from '../context/DefaultDataProvider'
 import EosTableGen from './EosTableGen'
 
 import { ITableApi } from '../types/ITableApi'
@@ -8,21 +7,21 @@ import { ITableProvider } from '../types/ITableProvider'
 import { ITableSettings } from '../types/ITableSettings'
 import { ITableState } from '../types/ITableState'
 import { ITableUserSettings } from '../types/ITableUserSettings'
+import { ScopeEosComponentsStore } from '../../Hooks/useEosComponentsStore'
 
 interface ITableProps {
     tableId?: string
     provider: ITableProvider
     initTableState?: ITableState
+    scopeEosComponentsStore?: ScopeEosComponentsStore
 }
 
 const EosTable = React.forwardRef<any, ITableProps>(({
     tableId,
     provider,
-    initTableState
+    initTableState,
+    scopeEosComponentsStore
 }: ITableProps, ref) => {
-
-    const { DefaultTableProvider } = useDefaultProvider()
-
     const currentRef = ref ?? useRef<ITableApi>();
 
     const [tableSettings, setGridSettings] = useState<ITableSettings>()
@@ -41,10 +40,8 @@ const EosTable = React.forwardRef<any, ITableProps>(({
     return <EosTableGen tableSettings={tableSettings}
         tableUserSetiings={gridUserSettings}
         initTableState={initTableState}
-        provider={{
-            ...DefaultTableProvider,
-            ...provider
-        }}
+        provider={provider}
+        scopeEosComponentsStore={scopeEosComponentsStore}
         ref={currentRef} />
 })
 EosTableGen.displayName = "EosTable"
