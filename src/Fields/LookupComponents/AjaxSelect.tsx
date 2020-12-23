@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, ReactNode } from 'react';
-import { Select as RcSelect } from "@eos/rc-controls";
+import { Select as RcSelect, Spin } from "@eos/rc-controls";
 
 /** Структура и описание пропсов AjaxSelect */
 export interface ISelect {
@@ -229,25 +229,25 @@ export const Select = React.forwardRef<any, ISelect>(({
     }
 
     return (
-        <RcSelect ref={focusRef}
-            loading={isLoading}
-            required={required}
-            showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
-            value={currentValue?.value}
-            notFoundContent={notFoundContent}
-            onSearch={handleSearch}
-            onFocus={onFocus}
-            onClear={onClear}
-            onSelect={onSelect}
-            delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
-            open={isOpen}
-            onBlur={onBlur}
-            allowClear={true}
-            filterOption={false}>
-                {
-                    getOptionList()
-                }
-        </RcSelect >
+        <Spin spinning={isLoading}>
+            <RcSelect ref={focusRef}
+                required={required}
+                showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
+                value={currentValue?.value}
+                notFoundContent={notFoundContent}
+                onSearch={handleSearch}
+                onFocus={onFocus}
+                onClear={onClear}
+                onSelect={onSelect}
+                delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
+                open={isOpen}
+                onBlur={onBlur}
+                allowClear={true}
+                filterOption={false}
+            >
+                {getOptionList()}
+            </RcSelect>
+        </Spin>
     );
 
     // Получить список элементов для отрисовки
@@ -260,7 +260,7 @@ export const Select = React.forwardRef<any, ISelect>(({
                                 value={item?.value ?? `${item?.key}`}
                                 disabled={item?.disabled}
                                 item={item}
-                                style={item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : {}}
+                                style={item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : {}}
                                 >
                                     {item?.value ?? `${item?.key}`}
                             </RcSelect.Option>
@@ -273,7 +273,7 @@ export const Select = React.forwardRef<any, ISelect>(({
                             value={item?.value ?? `${item?.key}`}
                             disabled={item?.disabled}
                             item={item}
-                            style={item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : {}}
+                            style={item?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : item?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : {}}
                             >
                                 {item?.value ?? `${item?.key}`}
                         </RcSelect.Option>
