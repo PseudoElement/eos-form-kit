@@ -30,10 +30,18 @@ class Helper {
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
-                            { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" } ] },
-                            { key: "2", value: "два", other: [{ value: "один шесть", name: "secondColumn" } ] },
-                            { key: "3", value: "три" },
-                            { key: "4", value: "четыре" }
+                            { key: "value1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
+                            { key: "value2", value: "два",  other: [{ value: "два три", name: "secondColumn" }] },
+                            { key: "value3", value: "три",  other: [{ value: "три три", name: "secondColumn" }] },
+                            { key: "value4", value: "четыре",  other: [{ value: "четыре три", name: "secondColumn" }] },
+                            { key: "value5", value: "пять", disabled: false, isSpecific: false },
+                            { key: "value6", value: "шесть",  disabled: true, isSpecific: false },
+                            { key: "value7", value: "семь",  disabled: false, isSpecific: true },
+                            { key: "value8", value: "восемь",  disabled: true, isSpecific: true },
+                            { key: "value9", value: "девять", disabled: false, isSpecific: false, other: [{ value: "три один", name: "secondColumn" }] },
+                            { key: "value10", value: "десять",  disabled: true, isSpecific: false, other: [{ value: "три два", name: "secondColumn" }] },
+                            { key: "value11", value: "одиннадцать",  disabled: false, isSpecific: true, other: [{ value: "три три", name: "secondColumn" }] },
+                            { key: "value12", value: "двенадцать",  disabled: true, isSpecific: true, other: [{ value: "три четыре", name: "secondColumn" }] }
                         ]
                         if (search) {
                             return result.filter((item) => {
@@ -47,7 +55,7 @@ class Helper {
                             return result;
                         }
                     },
-                    resultsAmount: 10,
+                    resultsAmount: 100,
                 },
                 "otherColumns": [
                     { "label": "Колонка 2", "name": "secondColumn", "disabled": false }
@@ -153,7 +161,13 @@ class Helper {
                     { "key": "1", "value": "Постоянно" },
                     { "key": "2", "value": "Свыше 10 лет" },
                     { "key": "3", "value": "До 10 лет (включительно)" },
-                    { "key": "4", "value": "Личный состав" }]
+                    { "key": "4", "value": "Личный состав" },
+                    { "key": "5", "value": "Обычный"},
+                    { "key": "6", "value": "Специальный", "disabled": false, "isSpecific": true},
+                    { "key": "7", "value": "Специальный заблок.", "disabled": true, "isSpecific": true},
+                    { "key": "8", "value": "Обычный заблок.", "disabled": true, "isSpecific": false},
+                    { "key": "9", "value": "Обычный со св-вами.", "disabled": false, "isSpecific": false, "other": [{ "value": "четыре три", "name": "secondColumn" }, { "value": "девять три", "name": "anotherColumn" } ]},
+                ]
             },
             { "disabled": false, "label": "Наименование", "name": "name", "required": true, "requiredMessage": "inventory:formErrors.name", "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
             { "disabled": false, "label": "Примечание", "name": "note", "required": false, "requiredMessage": null, "type": "FieldMultiText", "value": null, "maxLength": null, "rows": null },
@@ -239,7 +253,7 @@ class Helper {
                 "disabled": false,
                 "label": "Признак",
                 "name": "arhClsAttr",
-                "required": true,
+                "required": false,
                 "requiredMessage": "Признак обязателен для заполнения",
                 "type": "FieldLookup",
                 "value": null,
