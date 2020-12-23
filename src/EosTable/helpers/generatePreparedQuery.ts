@@ -7,12 +7,12 @@ function generatePreparedQuery(tableState: ITableState, tableSettings: ITableSet
     const filterArray = tableState.filter && Array.from(tableState.filter.values())
     let filter = filterArray && { and: [...filterArray] }
 
-    if (tableSettings.requiredFilter) {
+    if (tableSettings.constFilter) {
         if (filter) {
-            filter.and?.push(tableSettings.requiredFilter)
+            filter.and?.push(tableSettings.constFilter)
         }
         else {
-            filter = { and: [tableSettings.requiredFilter] }
+            filter = { and: [tableSettings.constFilter] }
         }
     }
 

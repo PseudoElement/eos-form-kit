@@ -9,17 +9,18 @@ export interface ITableSettings {
     columns: ITableColumnSettings[]
     keyFields: string[]
     visual?: IVisualSettings
-    quickSearchFilter?: Omit<IFieldPath, "displayName" | "sortable">[]
+    quickSearchFilter?: Omit<IFieldPath, "displayName" | "sortable">[] /// func(tableState, tableSettings, userTableSettings) => FilterExpressionFragment
     menu?: IMenuItem[]
     rightMenu?: IMenuItem[]
     contextMenu?: any
     dataProviderName?: string
-    //cardView?: ICard
+    ///cardView?: ICard
     columnGroups?: ColumnGroups[]
     minSelectedRecords?: number
     maxSelectedRecords?: number
     defaultLoadFields?: Omit<IFieldPath, "displayName" | "sortable">[]
-    requiredFilter?: FilterType
+    constFilter?: FilterType ///внешнее состояние, превращенное в фильтр //FilterExpressionFragment
+    ///formFilter: Map<string(key form), Rule>   /// func(tableState, tableSettings, userTableSettings) => FilterExpressionFragment
 }
 
 type ColumnGroups = IColumnGroup | ITableColumnSettings

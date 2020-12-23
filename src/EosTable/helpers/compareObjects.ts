@@ -26,6 +26,9 @@ export function compareArrays(array1: any[] | undefined, array2: any[] | undefin
 }
 
 export function deepEqual(object1: any, object2: any) {
+  if((object1 === undefined) && (object2 === undefined)) return true
+  if((object1 === undefined) || (object2 === undefined)) return false
+  
   const keys1 = Object.keys(object1);
   const keys2 = Object.keys(object2);
 

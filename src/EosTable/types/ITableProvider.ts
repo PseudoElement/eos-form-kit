@@ -1,4 +1,5 @@
 import { IMenuItem } from "../../Menu/types";
+import { IDataService } from "../../Search/SearchForm";
 import { IControlRenderProps } from "./IControlRenderProps";
 import { ITableApi } from "./ITableApi";
 import { ITableData } from "./ITableData";
@@ -13,6 +14,10 @@ export interface ITableProvider {
     fetchData?: (tableState: ITableState, tableSettings: ITableSettings, userSettings: ITableUserSettings, onlyKeysForSelectedAll?: boolean) => Promise<ITableData>
     saveUserSetting?: (userSetting: ITableUserSettings) => Promise<void>
     disableSelectRecord?: (record: any) => boolean
+    searchFormService?: IDataService
+    fetchControl?: (name: string) => ((controlProps: IControlRenderProps) => JSX.Element) | undefined
+    fetchAction?: (name: string) => ((handlerProps: IHandlerProps) => Promise<void> | void) | undefined
+    fetchCondition?: (name: string) => ((handlerProps: IHandlerProps) => boolean) | undefined
 }
 
 export interface Triggers {

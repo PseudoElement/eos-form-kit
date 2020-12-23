@@ -13,7 +13,7 @@ interface IPageParams {
 }
 
 const AjaxClientFormApi: FunctionComponent = () => {
-    const { addActionToStore, addConditionToStore, scopeStore } = useEosComponentsStore()
+    const { addActionToStore, addConditionToStore } = useEosComponentsStore()
     addActionToStore("add", (handlerProps: EosTableTypes.IHandlerProps) => { alert(handlerProps.menuItem.key) })
     addActionToStore("disable", () => {
         menuRefApi.current?.setButtonDisabled("add")
@@ -82,7 +82,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
     const menuRefApi = useRef<EosMenuTypes.IEosMenuApi>()
 
     const toolbar: IToolBar = {
-        children: <EosMenu ref={menuRefApi} scopeEosComponentsStore={scopeStore}
+        children: <EosMenu ref={menuRefApi}
             menuItems={[{
                 key: "add",
                 render: {

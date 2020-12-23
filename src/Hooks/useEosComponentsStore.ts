@@ -1,4 +1,3 @@
-import { v4 as Guid } from 'uuid'
 import { createContext, useContext } from 'react'
 import { IControlRenderProps, IHandlerProps } from '../EosTable/types'
 
@@ -51,54 +50,33 @@ const init: IProps = {
     conditions: new Dictionary<(handlerProps: IHandlerProps) => boolean>()
 }
 
+const StoreComponentsContext = createContext<IProps>(init)
 
-export const SCOPE_EOS_COMPONENTS_STORE_GLOBAL = "EosVendor"
-export const SCOPE_EOS_COMPONENTS_STORE_CLASSIF = "EosVendorClassif"
-const DELIMITER = ":"
-
-const StoreComponentsContext = createContext<IProps>(init);
-
-export type ScopeEosComponentsStore = string
-
-interface IEosComponentsStoreProps {
-    global?: boolean
-    scope?: ScopeEosComponentsStore
-}
-
-export function useEosComponentsStore(props?: IEosComponentsStoreProps) {
-
-    const scopeStore = props?.scope || (props?.global ? SCOPE_EOS_COMPONENTS_STORE_GLOBAL : Guid())
-
+export function useEosComponentsStore() {    
     const context = useContext(StoreComponentsContext)
 
     function addControlToStore(name: string, control: (controlProps: IControlRenderProps) => JSX.Element) {
-        context.controls.add(scopeStore + DELIMITER + name, control);
+        context.controls.add(name, control);
     }
 
     function fetchControlFromStore(name: string) {
-        return context.controls.getItem(scopeStore + DELIMITER + name)
-            || context.controls.getItem(SCOPE_EOS_COMPONENTS_STORE_CLASSIF + DELIMITER + name)
-            || context.controls.getItem(SCOPE_EOS_COMPONENTS_STORE_GLOBAL + DELIMITER + name)
+        return context.controls.getItem(name)           
     }
 
     function addActionToStore(name: string, action: (handlerProps: IHandlerProps) => Promise<void> | void) {
-        context.actions.add(scopeStore + DELIMITER + name, action);
+        context.actions.add(name, action);
     }
 
     function fetchActionFromStore(name: string) {
-        return context.actions.getItem(scopeStore + DELIMITER + name)
-            || context.actions.getItem(SCOPE_EOS_COMPONENTS_STORE_CLASSIF + DELIMITER + name)
-            || context.actions.getItem(SCOPE_EOS_COMPONENTS_STORE_GLOBAL + DELIMITER + name)
+        return context.actions.getItem(name)           
     }
 
     function addConditionToStore(name: string, action: (handlerProps: IHandlerProps) => boolean) {
-        context.conditions.add(scopeStore + DELIMITER + name, action);
+        context.conditions.add(name, action);
     }
 
     function fetchConditionFromStore(name: string) {
-        return context.conditions.getItem(scopeStore + DELIMITER + name)
-            || context.conditions.getItem(SCOPE_EOS_COMPONENTS_STORE_CLASSIF + DELIMITER + name)
-            || context.conditions.getItem(SCOPE_EOS_COMPONENTS_STORE_GLOBAL + DELIMITER + name)
+        return context.conditions.getItem(name)            
     }
 
     function localizationCallback(callback: (key?: string) => string) {
@@ -110,14 +88,13 @@ export function useEosComponentsStore(props?: IEosComponentsStoreProps) {
     }
 
     return {
-        addActionToStore,
-        addConditionToStore,
-        addControlToStore,
+        addActionToStore, ///del
+        addConditionToStore, ///del
+        addControlToStore, ///del
         fetchActionFromStore,
         fetchConditionFromStore,
         fetchControlFromStore,
         localizationCallback,
-        localize,
-        scopeStore
+        localize
     }
 }

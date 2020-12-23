@@ -6,6 +6,7 @@ import { IColumnUserSettings } from "../types/ITableUserSettings";
 export function getColumnsBySettings(tableSettings: ITableSettings,
     gridColumns: IColumnUserSettings[],
     fetchControl?: FetchControlRender,
+    fetchControlGlobal?: FetchControlRender,
     localize?: (key?: string) => string
 ): IColumn[] {
     const columns: IColumn[] = [];
@@ -14,7 +15,12 @@ export function getColumnsBySettings(tableSettings: ITableSettings,
         .forEach(c => {
             const gridColSettings = tableSettings.columns.find(gridCol => gridCol.name === c.name);
             if (gridColSettings) {
-                const render = gridColSettings.columnRender?.renderType !== undefined && fetchControl && fetchControl(gridColSettings.columnRender?.renderType)
+                const render = gridColSettings.columnRender?.renderType !== undefined &&
+                    (
+                        (fetchControl && fetchControl(gridColSettings.columnRender?.renderType))
+                        ||
+                        (fetchControlGlobal && fetchControlGlobal(gridColSettings.columnRender?.renderType))
+                    )
                 const title = localize ? localize(gridColSettings.title) : gridColSettings.title
                 let width = c.width
                 if (!width && title) {

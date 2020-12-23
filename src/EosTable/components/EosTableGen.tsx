@@ -1,9 +1,10 @@
 import { Table } from '@eos/rc-controls'
 import { PaginationProps } from '@eos/rc-controls/lib/pagination'
-import React, { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { ScopeEosComponentsStore, useEosComponentsStore } from '../../Hooks/useEosComponentsStore'
+import React, { Fragment, ReactElement, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { Form as SearchForm, IFormApi } from '../../Search/SearchForm'
+import { useEosComponentsStore } from '../../Hooks/useEosComponentsStore'
 import GenMenuItems from '../components/GenMenuItems'
-import { compareArrays, compareMaps } from '../helpers/compareObjects'
+import { compareArrays, compareMaps, deepEqual } from '../helpers/compareObjects'
 import { GenerateRightMenu } from '../helpers/generateRightMenu'
 import { getPossibleSortings, setDirectionToSortPath } from '../helpers/generateSorter'
 import { getColumnsBySettings } from '../helpers/getColumnsBySettings'
@@ -17,13 +18,15 @@ import { ITableProvider } from '../types/ITableProvider'
 import { ITableSettings } from '../types/ITableSettings'
 import { ITableState } from '../types/ITableState'
 import { IColumnUserSettings, ITableUserSettings } from '../types/ITableUserSettings'
+import { Store } from 'rc-field-form/lib/interface';
+import { IFilterValueObjects } from '../types/IFilterValueObjects'
+import generateQuickSearchFilter from '../helpers/generateQuickSearchFilter'
 
 interface ITableGenProps {
     tableSettings: ITableSettings
     tableUserSetiings: ITableUserSettings
     initTableState?: ITableState
     provider: Omit<ITableProvider, "tableSettingLoad" | "tableUserSettingLoad">
-    scopeEosComponentsStore?: ScopeEosComponentsStore
 }
 
 const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
@@ -33,12 +36,15 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         fetchData,
         triggers,
         saveUserSetting,
-        disableSelectRecord
-    },
-    scopeEosComponentsStore
+        disableSelectRecord,
+        searchFormService,
+        fetchAction,
+        fetchControl,
+        fetchCondition
+    }
 }: ITableGenProps, ref) => {
 
-    const { fetchControlFromStore, fetchActionFromStore, fetchConditionFromStore, localize } = useEosComponentsStore({ scope: scopeEosComponentsStore })
+    const { fetchControlFromStore, fetchActionFromStore, fetchConditionFromStore, localize } = useEosComponentsStore()
 
     //#region ref
     const currentRef = (ref ?? useRef<ITableApi>()) as React.MutableRefObject<ITableApi>;
@@ -143,7 +149,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [currentRecord, setCurrentRecord] = useState<any | undefined>(undefined)
 
     const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, localize))
-    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchControlFromStore, localize));
+    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchControl, fetchControlFromStore, localize));
     const [sorterList, setSorterList] = useState<ISorterPath[] | undefined>(() => initState.orderby);
     const [queryFilters, setQueryFilters] = useState<Map<string, FilterType>>(() => initState.filter || new Map());
     const [queryAfter, setQueryAfter] = useState(() => afterRecords(initState.currentPage || DEFAULT_CURRENT_PAGE, initState.pageSize || DEFAULT_PAGE_SIZE));
@@ -162,6 +168,10 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [minSelectedRecords, setMinSelectedRecords] = useState<number | undefined>(() => initState.minSelectedRecords)
 
     const [quickSearchMode, setQuickSearchMode] = useState(() => initState.quickSearchMode)
+    const [showFilter, setShowFilter] = useState<boolean | undefined>()
+    const [filterOn, setfilterOn] = useState<boolean | undefined>()
+
+    const [filterValueObjects, setFilterValueObjects] = useState<IFilterValueObjects>()
 
     const currentTableState: ITableState = {
         after: queryAfter,
@@ -170,34 +180,40 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         selectedRecords: [...selectedRecords],
         selectedRowKeys: [...selectedRowKeys],
         tableData: [...tableData],
-        currentPage: currentPage,
-        pageSize: pageSize,
-        maxSelectedRecords: maxSelectedRecords,
-        currentRowKey: currentRowKey,
-        currentRecord: currentRecord,
-        quickSearchMode: quickSearchMode
+        currentPage,
+        pageSize,
+        maxSelectedRecords,
+        currentRowKey,
+        currentRecord,
+        quickSearchMode,
+        showFormFilter: showFilter,
+        formFilterMode: filterOn,
+        filterValueObjects
     }
 
     useEffect(() => {
         getTableData()
-    }, [fetchData, queryAfter, sorterList, queryFilters, pageSize, currentPage])
+    }, [fetchData, queryAfter, sorterList, queryFilters, pageSize, currentPage, filterValueObjects?.formFilter])
 
     useEffect(() => {
         tableSettings.menu && setMenu(
             GenMenuItems({
-                fetchAction: fetchActionFromStore,
-                fetchCondition: fetchConditionFromStore,
-                fetchControl: fetchControlFromStore,
+                fetchAction,
+                fetchCondition,
+                fetchControl,
+                fetchActionFromStore,
+                fetchConditionFromStore,
+                fetchControlFromStore,
                 menuItems: tableSettings.menu,
                 refApi: currentRef.current
             }))
 
-        setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchActionFromStore} fetchCondition={fetchConditionFromStore} fetchControl={fetchControlFromStore} />)
+        setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchControl} />)
     }, [selectedRowKeys, currentRowKey, queryFilters])
 
     useEffect(() => {
-        setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchActionFromStore} fetchCondition={fetchConditionFromStore} fetchControl={fetchControlFromStore} />)
-    }, [quickSearchMode])
+        setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchControl} />)
+    }, [quickSearchMode, showFilter, filterOn])
 
     useEffect(() => {
         let isUpdate = false
@@ -233,6 +249,16 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         setMaxSelectedRecords(tableState.maxSelectedRecords)
         setMinSelectedRecords(tableState.minSelectedRecords)
         setQuickSearchMode(tableState.quickSearchMode)
+        setShowFilter(tableState.showFormFilter)
+
+        if (tableState.formFilterMode !== filterOn) {
+            setfilterOn(tableState.formFilterMode)
+            !tableState.formFilterMode && searchFormApi.current?.clearFields()
+        }
+
+        if (!deepEqual(tableState.filterValueObjects, filterValueObjects)) {
+            setFilterValueObjects(tableState.filterValueObjects)
+        }
 
         if (tableState.currentRowKey !== currentRowKey) {
             setCurrentRowKey(tableState.currentRowKey?.toString())
@@ -272,6 +298,24 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             clearTimeout(timeout);
         }
     }, [columns])
+
+    useEffect(() => {
+        if (tableSettings.quickSearchFilter) {
+            const filters = new Map(queryFilters)
+            if (filterValueObjects?.quickSearchFilter) {
+                filters.set("QuickSearch", generateQuickSearchFilter(tableSettings.quickSearchFilter, filterValueObjects.quickSearchFilter))
+            }
+            else {
+                if (filters.has("QuickSearch")) {
+                    filters.delete("QuickSearch")
+                }
+            }
+            if (!compareMaps(filters, queryFilters))
+                setQueryFilters(filters)
+
+            //const filter = filterValueObjects && filterValueObjects.quickSearchFilter && generateQuickSearchFilter(tableSettings.quickSearchFilter, filterValueObjects.quickSearchFilter)
+        }
+    }, [filterValueObjects?.quickSearchFilter])
 
     const getTableData = async () => {
         if (fetchData) {
@@ -462,87 +506,122 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         setQueryAfter(afterRecords(newCurrentPage, pageSize))
     };
 
-
-    const table = (
-        <Table.Menu
-            gutter="75px"
-            rowCount={recordsTotalCount}
-            selectedRowCount={selectedRowKeys.length}
-            submenu={rightMenu}
-            menu={menu}
-        >
-            <Table
-                isVirtualTable={pageSize > 20}
-                fullHeight
-                deleteLastColumnWidth
-                scroll={scroll}
-                columns={columns}
-                dataSource={tableData}
-                isDifferentRow={isDifferentRow}
-                ellipsisRows={tableSettings.visual?.ellipsisRows}
-                loading={isLoading}
-                onChange={onTableChange}
-                currentRowKey={currentRowKey}
-                onChangeCurrentRowKey={onChangeCurrentRowKey}
-                pagination={pagination}
-                rowKey={rowKeyValue}
-                rowSelection={rowSelection}
-                settings={{
-                    isDraggable: true,
-                    onDrop: tableSettings.visual?.dragable ? onDropHandler : undefined,
-                    onResizable: tableSettings.visual?.resizable ? onResizableHandler : undefined
-                }}
-                onFixedColumnClick={tableSettings.visual?.fixedColumn ? onFixedColumnClick : undefined}
-                bordered={bordered}
-                checkboxMenu={
-                    {
-                        cancelAll: cancelAll,
-                        cancelAllOnPage: cancelAllOnPage,
-                        selectAll: selectAll,
-                        selectAllOnPage: selectAllOnPage
-
+    const onSearchAsync = (values: Store) => {
+        return new Promise<void>((resolve) => {
+            resolve(
+                setFilterValueObjects((prev) => {
+                    if (prev?.formFilter !== values) {
+                        const newFilterValueObjects: IFilterValueObjects = { ...prev, formFilter: values }
+                        return newFilterValueObjects
                     }
+                    return prev
+                }))
+        }).then(() => setfilterOn(true))
+    }
+
+    const onCloseClick = () => {
+        setShowFilter(false)
+    }
+
+    // const getInitialValuesAsync = () => {
+    //     return new Promise<any>((resolve) => {
+    //         resolve(filterValueObjects?.formFilter)
+    //     })
+    // }
+
+    const table = () => (
+        <Table
+            isVirtualTable={pageSize > 20}
+            fullHeight
+            deleteLastColumnWidth
+            scroll={scroll}
+            columns={columns}
+            dataSource={tableData}
+            isDifferentRow={isDifferentRow}
+            ellipsisRows={tableSettings.visual?.ellipsisRows}
+            loading={isLoading}
+            onChange={onTableChange}
+            currentRowKey={currentRowKey}
+            onChangeCurrentRowKey={onChangeCurrentRowKey}
+            pagination={pagination}
+            rowKey={rowKeyValue}
+            rowSelection={rowSelection}
+            settings={{
+                isDraggable: true,
+                onDrop: tableSettings.visual?.dragable ? onDropHandler : undefined,
+                onResizable: tableSettings.visual?.resizable ? onResizableHandler : undefined
+            }}
+            onFixedColumnClick={tableSettings.visual?.fixedColumn ? onFixedColumnClick : undefined}
+            bordered={bordered}
+            checkboxMenu={
+                {
+                    cancelAll: cancelAll,
+                    cancelAllOnPage: cancelAllOnPage,
+                    selectAll: selectAll,
+                    selectAllOnPage: selectAllOnPage
+
                 }
-                onRow={(record) => {
-                    return {
-                        onDoubleClick: (event) => {
-                            event.target["type"] !== "checkbox" && onRowDoubleClick(record)
-                        },
-                        onKeyDown: (e) => {
-                            switch (e.key) {
-                                case E_KEY_CODE.ALT:
-                                    return;
-                                case E_KEY_CODE.SPACE:
-                                    e.preventDefault();
-                                    if (currentRowKey) {
-                                        const selected = !selectedRowKeys.includes(currentRowKey)
-                                        setSelectRecordsAndKeys(selected, [currentRowKey])
-                                    }
-                                case E_KEY_CODE.PAGE_UP:
-                                    e.preventDefault()
-                                    onPageUp(e.altKey)
-                                    return
+            }
+            onRow={(record) => {
+                return {
+                    onDoubleClick: (event) => {
+                        event.target["type"] !== "checkbox" && onRowDoubleClick(record)
+                    },
+                    onKeyDown: (e) => {
+                        switch (e.key) {
+                            case E_KEY_CODE.ALT:
+                                return;
+                            case E_KEY_CODE.SPACE:
+                                e.preventDefault();
+                                if (currentRowKey) {
+                                    const selected = !selectedRowKeys.includes(currentRowKey)
+                                    setSelectRecordsAndKeys(selected, [currentRowKey])
+                                }
+                            case E_KEY_CODE.PAGE_UP:
+                                e.preventDefault()
+                                onPageUp(e.altKey)
+                                return
 
-                                case E_KEY_CODE.PAGE_DOWN:
-                                    e.preventDefault()
-                                    onPageDown(e.altKey)
-                                    return;
+                            case E_KEY_CODE.PAGE_DOWN:
+                                e.preventDefault()
+                                onPageDown(e.altKey)
+                                return;
 
-                                case E_KEY_CODE.ENTER:
-                                    e.preventDefault();
-                                    onRowDoubleClick(record)
-                                    return
-                            }
-                        },
-                    }
-                }}
+                            case E_KEY_CODE.ENTER:
+                                e.preventDefault();
+                                onRowDoubleClick(record)
+                                return
+                        }
+                    },
+                }
+            }}
+        >
+        </Table>)
+
+    const tableMenu = useCallback((children: ReactElement) => {
+        return (
+            <Table.Menu
+                gutter="75px"
+                rowCount={recordsTotalCount}
+                selectedRowCount={selectedRowKeys.length}
+                submenu={rightMenu}
+                menu={menu}
             >
-            </Table>
-        </Table.Menu>
+                {children}
+            </Table.Menu>
+        )
+    }, [recordsTotalCount, selectedRowKeys, rightMenu, menu])
 
-    )
+    const tableMemo = useMemo(table, [columns, tableData, isLoading, selectedRowKeys, currentRowKey])
 
-    return useMemo(() => table, [columns, tableData, isLoading, menu, rightMenu])
+    const searchFormApi = useRef<IFormApi>()
+
+    return <Fragment>
+        {searchFormService && <div style={{ height: "300px", display: showFilter ? "block" : "none" }}>
+            <SearchForm ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
+        </div>}
+        {tableMenu(tableMemo)}
+    </Fragment>
 })
 EosTableGen.displayName = "EosTableGen"
 

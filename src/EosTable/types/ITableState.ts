@@ -1,4 +1,5 @@
 import { FilterType } from "./IFilterType";
+import { IFilterValueObjects } from "./IFilterValueObjects";
 import { ISorterPath } from "./ISorterType";
 
 export interface ITableState {
@@ -16,6 +17,9 @@ export interface ITableState {
     currentPage?: number
     tableView?: "table" | "card"
     forcedReloadData?: boolean
-    quickSearchMode?: boolean | { mode: string }
+    quickSearchMode?: boolean
     readonly lastUnSelectedRecords?: any[]
+    showFormFilter?: boolean
+    readonly formFilterMode?: boolean
+    filterValueObjects?: IFilterValueObjects
 }

@@ -1,6 +1,6 @@
 import React, { Fragment, ReactNode } from 'react'
 import { useEosComponentsStore } from '../../Hooks/useEosComponentsStore';
-import { Icon, MenuButton, QuickSearch, MenuCheckableButton } from '../../Menu/defaultRenders';
+import { Icon, MenuButton, QuickSearch, MenuCheckableButton, ShowFilter } from '../../Menu/defaultRenders';
 import { FileLinks } from '../components/ColumnRender';
 import CheckboxDisplay from '../components/ColumnRender/Checkbox';
 import DateTimeDisplay from '../components/ColumnRender/DateTime';
@@ -22,7 +22,7 @@ export default function EosComponentsProvider({
     children
 }: IProps) {
 
-    const { addControlToStore, addConditionToStore } = useEosComponentsStore({ global: true })
+    const { addControlToStore, addConditionToStore } = useEosComponentsStore()
 
     addControlToStore("CheckboxDisplay", CheckboxDisplay)
     addControlToStore("DateTimeDisplay", DateTimeDisplay)
@@ -33,6 +33,7 @@ export default function EosComponentsProvider({
     addControlToStore("CheckableButton", MenuCheckableButton)
     addControlToStore("Icon", Icon)
     addControlToStore("QuickSearch", QuickSearch)
+    addControlToStore("ShowFilter", ShowFilter)
 
     addConditionToStore("unSelected", unSelected)
     addConditionToStore("unSelectedOne", unSelectedOne)
