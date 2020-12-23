@@ -24,6 +24,10 @@ export interface IValue {
     value?: string;
     /**Дополнительные столбцы. */
     other?: IOtherValue[];
+    /** Параметр запрета на выбор значения */
+    disabled?: boolean;
+    /** Подскраска поля (необходима для выделения структурного признака синим цветом) */
+    isSpecific?: boolean;
 };
 export interface IOtherValue {
     /**Наименование поля. */
