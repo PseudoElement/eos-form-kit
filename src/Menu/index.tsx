@@ -10,8 +10,7 @@ import { IMenuButton } from '../Context/Context'
 const EosMenu = React.forwardRef<any, IMenuProps>(
   (
     {
-      refApi,
-      scopeEosComponentsStore,
+      refApi,      
       menuItems,
       overflowMenuDisabled,
       ellipsis,
@@ -24,7 +23,7 @@ const EosMenu = React.forwardRef<any, IMenuProps>(
       fetchActionFromStore,
       fetchConditionFromStore,
       fetchControlFromStore
-    } = useEosComponentsStore({ scope: scopeEosComponentsStore })
+    } = useEosComponentsStore()
 
 
     const getConditionValue = useCallback((typeCondition: MenuItemHandlerType, menuItemName: string | IMenuItem) => {

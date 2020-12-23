@@ -155,9 +155,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
             (data: IOption[]) => {
                 let items: IOption[] = data;
                 switch (true) {
-                    case (items.length >= getDataService.resultsAmount):
+                    case (items.length >= (getDataService.resultsAmount || 0)):
                         // При количестве результатов 11 и более отображается надпись "Отображены первые 10 результатов"
-                        let shortArray = items.slice(0, getDataService.resultsAmount - 1);
+                        let shortArray = items.slice(0, (getDataService.resultsAmount || 0) - 1);
                         // Использование useTranslate
                         // const QUERY_AMOUNT_INFO_TEXT: string = optionsAmountInfo.t(optionsAmountInfo.namespace, { amount: getDataService.resultsAmount - 1 });
                         //const QUERY_AMOUNT_INFO_TEXT: string = `Отображены первые ${getDataService.resultsAmount - 1} результатов`;
@@ -165,7 +165,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                         //setQueryAmountInfo(QUERY_AMOUNT_INFO_TEXT);
                         setItems([...shortArray]);
                         break;
-                    case (items.length && items.length <= getDataService.resultsAmount - 1):
+                    case (items.length && items.length <= (getDataService.resultsAmount || 0) - 1):
                         // Убирает надпись "Отображены первые 10 результатов" при количестве элементов списка 10 и менее
                         //setQueryAmountInfo("");
                         setItems(items);

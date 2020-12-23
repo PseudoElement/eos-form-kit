@@ -1,6 +1,6 @@
 import React from 'react'
 import { ApolloClient, ApolloProvider, InMemoryCache, useApolloClient, gql } from "@apollo/react-hooks";
-import { EosTable, useEosComponentsStore, ITableProvider, EosTableTypes, EosTableHelper } from "eos-webui-formgen"
+import { EosTable, ITableProvider, EosTableTypes, EosTableHelper } from "eos-webui-formgen"
 import { Layout } from '@eos/rc-controls';
 
 const TableSmevMessageQueue = () => {
@@ -12,27 +12,31 @@ const TableSmevMessageQueue = () => {
 }
 
 const TableMessageQueue = () => {
-    const apolloClient = useApolloClient();
-
-    const { addActionToStore, scopeStore } = useEosComponentsStore()
-
-    addActionToStore("stop", (props: EosTableTypes.IHandlerProps) => {
-        const tableApi = props.refApi as EosTableTypes.ITableApi
-        if (tableApi) {
-            const state = tableApi.getCurrentTableState()
-            tableApi.setTableState({
-                ...state,
-                quickSearchMode: false
-            })
-        }
-    })
+    const apolloClient = useApolloClient();    
 
     const provider = GetProvider()
-    return <Layout style={{ height: "calc(100vh - 70px)" }}><EosTable scopeEosComponentsStore={scopeStore} provider={provider} /></Layout>
+    return <Layout style={{ height: "calc(100vh - 70px)" }}><EosTable provider={provider} /></Layout>
 
 
     function GetProvider() {
         const tableProvider: ITableProvider = {
+            fetchAction: (name: string) => {
+                switch (name) {
+                    case "stop":
+                        return (props: EosTableTypes.IHandlerProps) => {
+                            const tableApi = props.refApi as EosTableTypes.ITableApi
+                            if (tableApi) {
+                                const state = tableApi.getCurrentTableState()
+                                tableApi.setTableState({
+                                    ...state,
+                                    quickSearchMode: false
+                                })
+                            }
+                        }
+                    default:
+                        return undefined
+                }
+            },
             tableSettingLoad: () => {
                 return new Promise((resolve) => {
                     const setting: EosTableTypes.ITableSettings = {

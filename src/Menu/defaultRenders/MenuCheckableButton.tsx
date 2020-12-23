@@ -10,8 +10,8 @@ function MenuCheckableButton({ renderArgs, buttonChecked }: IControlRenderProps)
         setChecked(buttonChecked)
     }, [buttonChecked])
     return (
-        <SmartCheckableButton checked={checked} onChange={() => setChecked(!checked)}>
-            <Icon renderArgs={{ iconName: renderArgs?.iconName }} />
+        <SmartCheckableButton width={renderArgs?.titleButton ? undefined : 36} checked={checked} onChange={() => setChecked(!checked)}>
+            <Icon renderArgs={{ iconName: renderArgs?.iconName }} />{renderArgs?.titleButton}
         </SmartCheckableButton>
     )
 }

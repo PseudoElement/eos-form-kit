@@ -1,11 +1,12 @@
 import React, { Fragment } from 'react'
+import { useEosComponentsStore } from '../../Hooks/useEosComponentsStore';
 import { IMenuItem } from '../../Menu/types';
 import { IControlRenderProps } from '../types/IControlRenderProps';
 import { ITableApi } from '../types/ITableApi';
 import { FetchAction, FetchCondition, FetchControlRender } from '../types/ITableProvider';
 import { ITableSettings } from '../types/ITableSettings';
 
-interface GenerateRightMenuProps{
+interface GenerateRightMenuProps {
     tableSettings: ITableSettings
     refApi: ITableApi
     fetchControl?: FetchControlRender
@@ -16,16 +17,18 @@ interface GenerateRightMenuProps{
 export function GenerateRightMenu({
     tableSettings,
     refApi,
-    fetchControl} : GenerateRightMenuProps
-) {  
+    fetchControl }: GenerateRightMenuProps
+) {
+
+    const { fetchControlFromStore } = useEosComponentsStore()
+
     const menuItems = (toolsList: IMenuItem[]) => {
-        return (toolsList//.sort((a, b) => a.priority - b.priority)
+        return (toolsList
             .map(menuItem => {
-                //const disableFunc = fetchCondition(menuItem.disableConditionName || `disable.${menuItem.key}.${tableSettings.tableId}`);
-                //const onClickHandler = fetchAction(menuItem.actionName || `${menuItem.key}.${tableSettings.tableId}`);
-                const Component = fetchControl && fetchControl(menuItem.render.renderType);
-                
-                const props: IControlRenderProps = { 
+
+                const Component = (fetchControl && fetchControl(menuItem.render.renderType)) || fetchControlFromStore(menuItem.render.renderType)
+
+                const props: IControlRenderProps = {
                     renderArgs: menuItem.render.renderArgs,
                     refApi: refApi
                 }

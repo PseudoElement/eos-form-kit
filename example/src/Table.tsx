@@ -114,6 +114,12 @@ const GetProvider = () => {
                                 type: "link"
                             },
                         }
+                    }],
+                    rightMenu: [{
+                        key: "ShowFilter",
+                        render: {
+                            renderType: "ShowFilter"
+                        }
                     }]
                 }
                 return resolve(setting)
@@ -168,6 +174,35 @@ const GetProvider = () => {
                 }
                 return resolve(data)
             })
+        },
+        searchFormService: {
+            async getContextAsync() {
+                const newContext = {
+                    "Fields": [
+                        {                            
+                            "label": "inventory:fieldNames.parentName",
+                            "name": "parentName",
+                            "required": false,
+                            "requiredMessage": null,
+                            "type": "FieldText",
+                            "value": null,
+                            "additionalText": null,
+                            "allowClear": false,
+                            "maxLength": null
+                        }
+                    ],
+                    "Mode": 0,
+                    "Tabs": [
+                        {
+                            "ClassName": null,
+                            "CustomType": null,
+                            "Disabled": false,
+                            "ForceRender": null,
+                            "Rows": [{ "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] }]
+                        }]
+                };
+                return newContext;
+            }
         }
     }
 

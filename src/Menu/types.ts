@@ -1,5 +1,4 @@
 import { IRender } from "../EosTable/types/ITableSettings";
-import { ScopeEosComponentsStore } from "../Hooks/useEosComponentsStore";
 
 export interface IMenuItem {
     key: string
@@ -16,7 +15,7 @@ export interface IMenuRender extends Omit<IRender, "renderType"> {
     renderType: MenuRenderTypes
 }
 
-export type MenuRenderTypes = "Icon" | "Button" | "CheckableButton" | "QuickSearch"
+export type MenuRenderTypes = "Icon" | "Button" | "CheckableButton" | "QuickSearch" | "ShowFilter"
 
 interface MenuItemHandler {
     type: MenuItemHandlerType
@@ -52,8 +51,7 @@ export interface IEosMenuButtonApi {
 
 export interface IMenuProps {
     menuItems: IMenuItem[]
-    refApi: any   
-    scopeEosComponentsStore?: ScopeEosComponentsStore
+    refApi: any       
     overflowMenuDisabled?: boolean
     ellipsis?: boolean
     triggerSubMenuAction?: 'click' | 'hover'

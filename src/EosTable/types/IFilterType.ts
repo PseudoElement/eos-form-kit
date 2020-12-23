@@ -1,4 +1,4 @@
-export type FilterType = FilterUnion | { [key: string]: FilteGroupExpression | FilterExpression | FilterValue | FilterValueEmpty }
+export type FilterType = FilterUnion | { [key: string]: FilteGroupExpression | FilterExpression | FilterValue | FilterValueEmpty }///FilterExpressionFragment
 
 type FilterUnion = { [K in FilterUnionKeys]?: FilterType[] }
 type FilteGroupExpression = { [K in FilterExpressionWithGroupsKeys]?: FilterType | FilteGroupExpression | FilterValue }
