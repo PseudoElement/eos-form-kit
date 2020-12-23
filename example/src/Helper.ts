@@ -153,7 +153,13 @@ class Helper {
                     { "key": "1", "value": "Постоянно" },
                     { "key": "2", "value": "Свыше 10 лет" },
                     { "key": "3", "value": "До 10 лет (включительно)" },
-                    { "key": "4", "value": "Личный состав" }]
+                    { "key": "4", "value": "Личный состав" },
+                    { "key": "5", "value": "Обычный"},
+                    { "key": "6", "value": "Специальный", "disabled": false, "isSpecific": true},
+                    { "key": "7", "value": "Специальный заблок.", "disabled": true, "isSpecific": true},
+                    { "key": "8", "value": "Обычный заблок.", "disabled": true, "isSpecific": false},
+                    { "key": "9", "value": "Обычный со св-вами.", "disabled": false, "isSpecific": false, "other": [{ "value": "четыре три", "name": "secondColumn" }, { "value": "девять три", "name": "anotherColumn" } ]},
+                ]
             },
             { "disabled": false, "label": "Наименование", "name": "name", "required": true, "requiredMessage": "inventory:formErrors.name", "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
             { "disabled": false, "label": "Примечание", "name": "note", "required": false, "requiredMessage": null, "type": "FieldMultiText", "value": null, "maxLength": null, "rows": null },
@@ -239,7 +245,7 @@ class Helper {
                 "disabled": false,
                 "label": "Признак",
                 "name": "arhClsAttr",
-                "required": true,
+                "required": false,
                 "requiredMessage": "Признак обязателен для заполнения",
                 "type": "FieldLookup",
                 "value": null,

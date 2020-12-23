@@ -22,13 +22,12 @@ export interface IOption {
     key: string;
     /**Отображаемое значение в UI. */
     value: string;
-    /**
-     * Параметр запрета на выбор значения
-     */
+    /** Параметр запрета на выбор значения */
     disabled?: boolean;
-
     /** Значения других полей */
     other?: IOtherValue[];
+    /** Подскраска поля (необходима для выделения структурного признака синим цветом) */
+    isSpecific?: boolean;
 }
 
 export interface IOtherValue {
@@ -40,6 +39,11 @@ export interface IOtherValue {
 
 /**Поле типа "Выпадающий список". */
 export const Select = React.forwardRef<any, ISelect>((props: ISelect, ref) => {
+    /** Цвет особого элемента списка */
+    const SPECIFIC_ELEM_COROL_VALUE: string = "#2196F3";
+    /** Цвет задизейбленного элемента списка */
+    const DISABLED_ELEM_COROL_VALUE: string = "#BABABA";
+
     return (<BaseField
         ref={ref}
         field={props}
@@ -57,8 +61,14 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect, ref) => {
                     defaultValue={props.defaultValue}
                     onChange={props.onChange}
                 >
-                    {props.values?.map(value => {
-                        return <RcSelect.Option key={value.key} value={value.key}>{value.value}</RcSelect.Option>
+                    {props.values?.map((value: any) => {
+                        return <RcSelect.Option
+                                    key={value?.key} 
+                                    value={value?.key}
+                                    disabled={value?.disabled}
+                                    item={value}
+                                    style={value?.disabled ? {color: DISABLED_ELEM_COROL_VALUE} : value?.isSpecific ? {color: SPECIFIC_ELEM_COROL_VALUE} : {}}
+                                >{value.value}</RcSelect.Option>
                     })}
                 </RcSelect>
             </Form.Item >
