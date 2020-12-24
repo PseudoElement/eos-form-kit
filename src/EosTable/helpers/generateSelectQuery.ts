@@ -9,10 +9,10 @@ export default function generateSelectQuery(tableSettings: ITableSettings, gridU
 
   function getTextField(fieldPath: Omit<IFieldPath, "displayName" | "sortable">): string {
     if (!fieldPath.child) {
-      return fieldPath.apiField
+      return (fieldPath.alias ? fieldPath.alias + ": " : "") + fieldPath.apiField
     }
     else {
-      return fieldPath.apiField + "\n{\n" + getTextField(fieldPath.child) + "\n}"
+      return (fieldPath.alias ? fieldPath.alias + ": " : "") + fieldPath.apiField + "\n{\n" + getTextField(fieldPath.child) + "\n}"
     }
   }
 

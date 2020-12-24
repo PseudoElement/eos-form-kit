@@ -16,4 +16,5 @@ export interface IColumn {
         direction?: "Asc" | "Desc"
     }
     sorterField?: IFieldPath
+    children?: IColumn[]
 }

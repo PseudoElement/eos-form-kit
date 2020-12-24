@@ -1,6 +1,7 @@
-import { FilterType } from ".";
+
 import { IMenuItem } from "../../Menu/types";
 import { IFieldPath } from "./IFieldPath";
+import { FilterExpressionFragment } from "./IFilterType";
 
 export interface ITableSettings {
     tableId: string
@@ -14,16 +15,16 @@ export interface ITableSettings {
     rightMenu?: IMenuItem[]
     contextMenu?: any
     dataProviderName?: string
-    ///cardView?: ICard
-    columnGroups?: ColumnGroups[]
+    ///cardView?: ICard    
     minSelectedRecords?: number
     maxSelectedRecords?: number
     defaultLoadFields?: Omit<IFieldPath, "displayName" | "sortable">[]
-    constFilter?: FilterType ///внешнее состояние, превращенное в фильтр //FilterExpressionFragment
+    constFilter?: FilterExpressionFragment
     ///formFilter: Map<string(key form), Rule>   /// func(tableState, tableSettings, userTableSettings) => FilterExpressionFragment
+    filterExpressionTemplates?: IFilterExpressionTemplates
 }
 
-type ColumnGroups = IColumnGroup | ITableColumnSettings
+type ColumnGroups = IColumnGroup | ITableColumnSettings ///?
 
 interface IColumnGroup {
     name: string
@@ -36,7 +37,7 @@ export interface ITableColumnSettings {
     fields?: IFieldPath[]
     title: string
     description?: string
-    columnRender?: IRender ///required
+    columnRender?: IRender
     sortable?: boolean
     ///selectValues?: Map<string, string>
 }
@@ -62,8 +63,6 @@ export interface IVisualSettings {
     pageSizeOptions?: string[]
 }
 
-
-
 export interface IRender {
     renderType: string,
     renderArgs?: IRenderArgs,
@@ -80,15 +79,12 @@ export interface IRenderArgs {
     [key: string]: string | number | undefined
 }
 
-// export interface IFieldRelationPath {
-//     [key: string]: IFieldPath
-// }
+interface IFilterExpressionTemplates {
+    quickSearchFilter?: FilterExpressionFragment
+    formFilter?: IFormFilterExpressionTemplate[]
+}
 
-//export type IFieldPath = IFieldRelationPath | string
-
-// interface ICard{
-//     title: IFieldPath
-//     description?: IFieldPath
-//     avatarUrl?: IFieldPath
-//     iconName?: string
-// }
+interface IFormFilterExpressionTemplate {
+    fieldName: string
+    template: FilterExpressionFragment
+}

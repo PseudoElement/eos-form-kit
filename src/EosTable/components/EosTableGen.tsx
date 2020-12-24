@@ -11,7 +11,7 @@ import { getColumnsBySettings } from '../helpers/getColumnsBySettings'
 import { getRecordsByKeys, getRowKey } from '../helpers/getRowKey'
 import { E_KEY_CODE } from '../types/EnumTypes'
 import { IColumn } from '../types/IColumn'
-import { FilterType } from '../types/IFilterType'
+import { FilterExpressionFragment } from '../types/IFilterType'
 import { ISorterPath } from '../types/ISorterType'
 import { ITableApi } from '../types/ITableApi'
 import { ITableProvider } from '../types/ITableProvider'
@@ -151,7 +151,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, localize))
     const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchControl, fetchControlFromStore, localize));
     const [sorterList, setSorterList] = useState<ISorterPath[] | undefined>(() => initState.orderby);
-    const [queryFilters, setQueryFilters] = useState<Map<string, FilterType>>(() => initState.filter || new Map());
+    const [queryFilters, setQueryFilters] = useState<Map<string, FilterExpressionFragment>>(() => initState.filter || new Map());
     const [queryAfter, setQueryAfter] = useState(() => afterRecords(initState.currentPage || DEFAULT_CURRENT_PAGE, initState.pageSize || DEFAULT_PAGE_SIZE));
     const [pageSize, setPageSize] = useState<number>(() => initState.pageSize || DEFAULT_PAGE_SIZE);
 
@@ -414,11 +414,88 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     }
 
     const onDropHandler = (_element: any, startIndex: any, lastIndex: any) => {
-        const newColumns = [...columns];
-        newColumns[startIndex] = columns[lastIndex];
-        newColumns[lastIndex] = columns[startIndex];
-        setColumns(newColumns);
+        const findParent = (arr: IColumn[], key: any, prevEl: IColumn | null): IColumn | null => {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].key === key) return prevEl;
+
+                if (arr[i].children) {
+                    return findParent(arr[i].children as IColumn[], key, arr[i]);
+                }
+            }
+
+            return null;
+        };
+
+        const parentEl = findParent(columns, _element.key, null);
+
+        if (parentEl !== null) {
+            const updateTreeData = (arr: IColumn[], parentEl: IColumn): IColumn[] => {
+                return arr.map(item => {
+                    if (item.key === parentEl.key && parentEl.children) {
+                        const newArr = parentEl.children.slice();
+                        newArr[startIndex] = parentEl.children[lastIndex];
+                        newArr[lastIndex] = parentEl.children[startIndex];
+                        return {
+                            ...item,
+                            children: newArr
+                        };
+                    }
+
+                    if (item.children) {
+                        return {
+                            ...item,
+                            children: updateTreeData(item.children, parentEl)
+                        };
+                    }
+
+                    return item;
+                });
+            };
+
+            const newColumns = updateTreeData(columns, parentEl);
+            setColumns(newColumns);
+        } else {
+            const newColumns = columns.slice();
+            newColumns[startIndex] = columns[lastIndex];
+            newColumns[lastIndex] = columns[startIndex];
+            setColumns(newColumns);
+        }
     }
+
+    const onDragOverHandler = (e: any, overKey: string, dragKey: string) => {
+        const findParent = (arr: IColumn[], key: string, prevEl: IColumn | null): IColumn | null => {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].key === key) return prevEl;
+
+                if (arr[i].children) {
+                    return findParent(arr[i].children as IColumn[], key, arr[i]);
+                }
+            }
+
+            return null;
+        };
+
+        const parentEl = findParent(columns, dragKey, null);
+
+        if (parentEl !== null && parentEl.children) {
+            const keys = parentEl.children.map(item => item.key);
+
+            if (!keys.includes(overKey)) {
+                e.dataTransfer.dropEffect = 'none';
+            } else {
+                e.dataTransfer.dropEffect = 'move';
+            }
+        } else {
+            const keys = columns.map(item => item.key);
+
+            if (!keys.includes(overKey)) {
+                e.dataTransfer.dropEffect = 'none';
+            } else {
+                e.dataTransfer.dropEffect = 'move';
+            }
+        }
+    }
+
 
     const onFixedColumnClick = (fixedKeys: any) => {
         const newColumns = columns.map((item) => {
@@ -527,10 +604,11 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     //     return new Promise<any>((resolve) => {
     //         resolve(filterValueObjects?.formFilter)
     //     })
-    // }
+    // }   
 
     const table = () => (
         <Table
+            disableFocusFirstRow 
             isVirtualTable={pageSize > 20}
             fullHeight
             deleteLastColumnWidth
@@ -549,7 +627,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             settings={{
                 isDraggable: true,
                 onDrop: tableSettings.visual?.dragable ? onDropHandler : undefined,
-                onResizable: tableSettings.visual?.resizable ? onResizableHandler : undefined
+                onResizable: tableSettings.visual?.resizable ? onResizableHandler : undefined,
+                onDragOver: tableSettings.visual?.dragable ? onDragOverHandler : undefined,
             }}
             onFixedColumnClick={tableSettings.visual?.fixedColumn ? onFixedColumnClick : undefined}
             bordered={bordered}
@@ -559,7 +638,6 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                     cancelAllOnPage: cancelAllOnPage,
                     selectAll: selectAll,
                     selectAllOnPage: selectAllOnPage
-
                 }
             }
             onRow={(record) => {

@@ -137,7 +137,7 @@ const GetProvider = () => {
                         },
                         {
                             name: "col2",
-                            width: 400,
+                            width: 440,
                             visible: true
                         }
                     ]
@@ -151,8 +151,10 @@ const GetProvider = () => {
                 const data: EosTableTypes.ITableData = {
                     totalCount: 5,
                     records: [{
+                        deleted: true,
                         "key": 1,
-                        col1: "row 1"
+                        col1: "row 1",
+                        col2: "row 2"
                     },
                     {
                         "key": 2,

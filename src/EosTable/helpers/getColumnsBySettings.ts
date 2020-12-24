@@ -1,3 +1,4 @@
+import DefaultDisplay from "../components/ColumnRender/Default";
 import { IColumn } from "../types/IColumn";
 import { FetchControlRender } from "../types/ITableProvider";
 import { ITableSettings } from "../types/ITableSettings";
@@ -20,6 +21,8 @@ export function getColumnsBySettings(tableSettings: ITableSettings,
                         (fetchControl && fetchControl(gridColSettings.columnRender?.renderType))
                         ||
                         (fetchControlGlobal && fetchControlGlobal(gridColSettings.columnRender?.renderType))
+                        ||
+                        DefaultDisplay
                     )
                 const title = localize ? localize(gridColSettings.title) : gridColSettings.title
                 let width = c.width
@@ -33,11 +36,8 @@ export function getColumnsBySettings(tableSettings: ITableSettings,
                     //editable: gridColSettings.columnRender?.isEditable,
                     fixed: c.fixed,
                     sorter: gridColSettings.sortable,
-                    width: width,
-                    //defaultSortOrder: defaultSortOrder,
-                    description: localize ? localize(gridColSettings.description) : gridColSettings.description,
-                    //sorterOrder: c.sorter,
-                    //sorterField: gridColSettings.sorter
+                    width: width,                    
+                    description: localize ? localize(gridColSettings.description) : gridColSettings.description,                    
                 };
                 if (render) {
                     column.render = (value: any, record: any, index: any) =>

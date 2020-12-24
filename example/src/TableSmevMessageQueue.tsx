@@ -12,7 +12,7 @@ const TableSmevMessageQueue = () => {
 }
 
 const TableMessageQueue = () => {
-    const apolloClient = useApolloClient();    
+    const apolloClient = useApolloClient();
 
     const provider = GetProvider()
     return <Layout style={{ height: "calc(100vh - 70px)" }}><EosTable provider={provider} /></Layout>
@@ -62,7 +62,7 @@ const TableMessageQueue = () => {
                                 title: "Тип сведений",
                                 fields: [{ displayName: "Тип сведений", apiField: "smevRequestType", child: { displayName: "Наименование", apiField: "name" } }],
                                 columnRender: {
-                                    renderType: "ReferenceDisplay"
+                                    renderType: "ReferenceDisplayw"
                                 }
                             },
                             {
@@ -108,7 +108,7 @@ const TableMessageQueue = () => {
                                 fields: [{ displayName: "Число попыток", apiField: "tryCount" }],
                             },
                             {
-                                name: "prim",
+                                name: "smevRequestAttachments",
                                 title: "Примечание",
                                 fields: [{ displayName: "Вложения", apiField: "smevRequestAttachments", child: { displayName: "Наименование файла", apiField: "filename" } },
                                 { displayName: "Вложения", apiField: "smevRequestAttachments", child: { displayName: "Ссылка", apiField: "fileLink" } }],
@@ -292,6 +292,58 @@ const TableMessageQueue = () => {
                             }
                         ],
                         quickSearchFilter: [{ apiField: "smevRequestType", child: { displayName: "Наименование", apiField: "name" } }],
+                        filterExpressionTemplates: {
+                            quickSearchFilter: {
+                                or: [{
+                                    fieldName: "smevRequestType",
+                                    template: {
+                                        "smevRequestType": {
+                                            "name": {
+                                                contains: {
+                                                    value: {}
+                                                }
+                                            }
+                                        }
+                                    },
+                                },
+                                {
+                                    fieldName: "clientSystem",
+                                    template: {
+                                        "clientSystem": {
+                                            "name": {
+                                                contains: {
+                                                    value: {}
+                                                }
+                                            }
+                                        }
+                                    },
+                                }]
+                            },
+                            formFilter: [{
+                                fieldName: "smevRequestType",
+                                template: {
+                                    "smevRequestType": {
+                                        "name": {
+                                            contains: {
+                                                value: {}
+                                            }
+                                        }
+                                    }
+                                },
+                            },
+                            {
+                                fieldName: "clientSystem",
+                                template: {
+                                    "clientSystem": {
+                                        "name": {
+                                            contains: {
+                                                value: {}
+                                            }
+                                        }
+                                    }
+                                },
+                            }]
+                        }
                     }
                     return resolve(setting)
                 })
@@ -344,9 +396,9 @@ const TableMessageQueue = () => {
                                 width: 150
                             },
                             {
-                                name: "prim",
+                                name: "smevRequestAttachments",
                                 visible: true,
-                                width: 250
+                                width: 400
                             }
                         ]
                     }

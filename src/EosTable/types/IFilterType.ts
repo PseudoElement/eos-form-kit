@@ -1,7 +1,7 @@
-export type FilterType = FilterUnion | { [key: string]: FilteGroupExpression | FilterExpression | FilterValue | FilterValueEmpty }///FilterExpressionFragment
+export type FilterExpressionFragment = FilterUnion | { [key: string]: FilteGroupExpression | FilterExpression | FilterValue | FilterValueEmpty | FilterExpressionFragment }
 
-type FilterUnion = { [K in FilterUnionKeys]?: FilterType[] }
-type FilteGroupExpression = { [K in FilterExpressionWithGroupsKeys]?: FilterType | FilteGroupExpression | FilterValue }
+type FilterUnion = { [K in FilterUnionKeys]?: FilterExpressionFragment[] }
+type FilteGroupExpression = { [K in FilterExpressionWithGroupsKeys]?: FilterExpressionFragment | FilteGroupExpression | FilterValue }
 type FilterExpression = { [K in FilterExpressionKeys]?: FilterValue }
 
 type FilterExpressionWithGroupsKeys = FilterGroupExpressionKeys | FilterExpressionKeys

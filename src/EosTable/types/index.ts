@@ -1,6 +1,6 @@
 import { IControlRenderProps } from './IControlRenderProps'
 import { IFieldPath } from './IFieldPath'
-import { FilterType } from './IFilterType'
+import { FilterExpressionFragment } from './IFilterType'
 import { ISorterType } from './ISorterType'
 import { ITableApi } from './ITableApi'
 import { ITableData } from './ITableData'
@@ -10,7 +10,7 @@ import { ITableState } from './ITableState'
 import { ITableUserSettings } from './ITableUserSettings'
 
 export {
-    FilterType,
+    FilterExpressionFragment,
     IFieldPath,
     ISorterType, 
     ITableApi, 
