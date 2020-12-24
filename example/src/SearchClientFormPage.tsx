@@ -13,6 +13,9 @@ const SearchClientFormPage: FunctionComponent = () => {
                 "Tabs": Helper.getTabs()
             };
             return newContext;
+        },
+        async getInitialValuesAsync() {
+            return { name: "Наименование" };
         }
     }
     const formApi = useRef<SearchForm.IFormApi>();
