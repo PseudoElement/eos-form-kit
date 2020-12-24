@@ -7,6 +7,7 @@ import { IClientTab, IClientTabs } from '../ClientForms/ClientTabs';
 import { InternalHelper } from '../InternalHelper';
 import { IClientTabProps } from '../ClientForms/AjaxClientForm';
 import FormTitle, { IFormTitleApi } from './FormTitle';
+import { IFormRows } from '../ClientForms/FormRows';
 
 const DEFAULT_TITLE = "Поиск";
 
@@ -61,7 +62,18 @@ export interface IFormApi {
     /**Возвращает ключ активной вкладки. */
     getActivatedTab(): string;
     hideLoading(): void;
-    showLoading(): void;
+    showLoading(): void; 
+    /**Переполучает элемент и отрисовывает его заново. */
+    reloadItem(): void;
+    /**Переполучает схему и элемент. */
+    reload(): void;
+}
+
+interface IClientFormProps {
+    mode?: FormMode;
+    initialValues?: any;
+    tabsComponent?: IClientTabs;
+    rows?: IFormRows;
 }
 
 /**Форма поиска. */
@@ -84,7 +96,17 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
             },
             showLoading() {
                 setSpinLoading(true);
-            }
+            },            
+            reload() {
+                clientFormApi?.current?.reset();
+                setLoadSchema(true);
+            },
+            reloadItem() {
+                clientFormApi?.current?.reset();
+                if (schema) {
+                    setLoadInitialValues(true);
+                }
+            },
         }
         return api;
     });
@@ -92,12 +114,13 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
     const getResourceText = props.getResourceText ?? getDefaultResourceText;
 
     const [schema, setSchema] = useState<any>(null);
-    const [initialValues, setInitialValues] = useState<any>({});
+    // const [initialValues, setInitialValues] = useState<any>({});
 
     const [isSpinLoading, setSpinLoading] = useState(false);
     const [loadSchema, setLoadSchema] = useState(false);
     const [loadInitialValues, setLoadInitialValues] = useState(false);
-    const [clientTabs, setClientTabs] = useState<IClientTabs>();
+    // const [clientTabs, setClientTabs] = useState<IClientTabs>();
+    const [clientFormProps, setClientFormProps] = useState<IClientFormProps>({ mode: FormMode.edit });
 
     const [form] = RcForm.useForm();
     const formInst = React.createRef();
@@ -114,21 +137,22 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
         setLoadSchema(true);
     }, []);
     useEffect(() => {
-        checkFieldsByFormRef();
-    }, [initialValues]);
+        checkFieldsByFormRef(clientFormProps.initialValues);
+    }, [clientFormProps]);
 
     return (
         <div>
             <ClientForm
                 ref={clientFormApi}
                 title={props?.title || DEFAULT_TITLE}
-                initialValues={initialValues}
+                initialValues={clientFormProps.initialValues}
                 formInst={formInst}
                 form={form}
-                mode={FormMode.new}
+                mode={clientFormProps.mode}
                 isSpinLoading={isSpinLoading}
                 onFinish={onFinishAsync}
-                tabsComponent={clientTabs}
+                tabsComponent={clientFormProps.tabsComponent}
+                rows={clientFormProps.rows}
                 onValuesChange={onValuesChange}
                 formTitle={<FormTitle
                     ref={formTitleApi}
@@ -202,15 +226,20 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
         setSpinLoading(true);
         if (props.dataService.getContextAsync)
             props.dataService.getContextAsync()
-                .then((initialValues: any) => {
-                    onLoadSchemaSucceededAsync(initialValues);
+                .then((ctx: any) => {
+                    onLoadSchemaSucceededAsync(ctx);
                 });
     }
 
     async function onLoadInitialValuesSucceeded(initialValues: any) {
         setSpinLoading(false);
-        setInitialValues(initialValues);
-        setClientTabs(InternalHelper.createTabsComponent(schema, getResourceText, props.getCustomtab));
+        const prps: IClientFormProps = {
+            initialValues: initialValues,
+            mode: FormMode.edit,
+            tabsComponent: schema && schema.Tabs ? InternalHelper.createTabsComponent(schema, getResourceText, props.getCustomtab) : undefined,
+            rows: schema && schema.Rows ? InternalHelper.createFormRows(schema, getResourceText) : undefined,
+        };
+        setClientFormProps(prps);
     };
     async function onLoadSchemaSucceededAsync(schema: any) {
         if (props.dataService.modifyContextAsync) {
@@ -227,8 +256,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
         return value;
     }
 
-    function checkFieldsByFormRef() {
-        if (isFieldsEmpty(form?.getFieldsValue())) {
+    function checkFieldsByFormRef(values?: any) {
+        const targerValues = values ? values : form?.getFieldsValue();
+        if (isFieldsEmpty(targerValues)) {
             formTitleApi?.current?.disableSearchButton();
             formTitleApi?.current?.disableClearButton();
         }
@@ -257,11 +287,14 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
         let isEmpty = true;
         if (values)
             for (let i in values)
-                if (values[i] !== undefined && values[i] !== null && values[i] !== "") {
+                if (values[i] !== undefined && values[i] !== null && values[i] !== "" && !isEmptyArray(values[i])) {
                     isEmpty = false;
                     break;
                 }
         return isEmpty;
+    }
+    function isEmptyArray(value: any) {
+        return Object.prototype.toString.call(value) === "[object Array]" && value.length === 0;
     }
 
 });
