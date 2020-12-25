@@ -700,7 +700,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     return <Fragment>
         {searchFormService && <div style={{ paddingBottom: "10px", display: showFilter ? "block" : "none" }}>
-            <SearchForm ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
+            <SearchForm getResourceText={getResourceText} ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
         </div>}
         {tableMenu(tableMemo)}
     </Fragment>
