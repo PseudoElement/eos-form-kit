@@ -11,13 +11,15 @@ import { ITableUserSettings } from '../types/ITableUserSettings'
 interface ITableProps {
     tableId?: string
     provider: ITableProvider
-    initTableState?: ITableState    
+    initTableState?: ITableState
+    getResourceText?: (name: string) => string
 }
 
 const EosTable = React.forwardRef<any, ITableProps>(({
     tableId,
     provider,
-    initTableState    
+    initTableState,
+    getResourceText
 }: ITableProps, ref) => {
     const currentRef = ref ?? useRef<ITableApi>();
 
@@ -37,8 +39,9 @@ const EosTable = React.forwardRef<any, ITableProps>(({
     return <EosTableGen tableSettings={tableSettings}
         tableUserSetiings={gridUserSettings}
         initTableState={initTableState}
-        provider={provider}        
-        ref={currentRef} />
+        provider={provider}
+        ref={currentRef}
+        getResourceText={getResourceText} />
 })
 EosTableGen.displayName = "EosTable"
 export { EosTable }

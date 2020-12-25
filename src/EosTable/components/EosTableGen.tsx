@@ -27,6 +27,7 @@ interface ITableGenProps {
     tableUserSetiings: ITableUserSettings
     initTableState?: ITableState
     provider: Omit<ITableProvider, "tableSettingLoad" | "tableUserSettingLoad">
+    getResourceText?: (name: string) => string
 }
 
 const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
@@ -41,10 +42,11 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         fetchAction,
         fetchControl,
         fetchCondition
-    }
+    },
+    getResourceText
 }: ITableGenProps, ref) => {
 
-    const { fetchControlFromStore, fetchActionFromStore, fetchConditionFromStore, localize } = useEosComponentsStore()
+    const { fetchControlFromStore, fetchActionFromStore, fetchConditionFromStore } = useEosComponentsStore()
 
     //#region ref
     const currentRef = (ref ?? useRef<ITableApi>()) as React.MutableRefObject<ITableApi>;
@@ -148,8 +150,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [currentRowKey, setCurrentRowKey] = useState<string | undefined>(undefined)
     const [currentRecord, setCurrentRecord] = useState<any | undefined>(undefined)
 
-    const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, localize))
-    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchControl, fetchControlFromStore, localize));
+    const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, getResourceText))
+    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchControl, fetchControlFromStore, getResourceText));
     const [sorterList, setSorterList] = useState<ISorterPath[] | undefined>(() => initState.orderby);
     const [queryFilters, setQueryFilters] = useState<Map<string, FilterExpressionFragment>>(() => initState.filter || new Map());
     const [queryAfter, setQueryAfter] = useState(() => afterRecords(initState.currentPage || DEFAULT_CURRENT_PAGE, initState.pageSize || DEFAULT_PAGE_SIZE));
@@ -270,7 +272,9 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     useEffect(() => {
         !isLoading && tableData && triggers?.onUpdateState && triggers.onUpdateState(currentTableState)
-    }, [currentRowKey, selectedRowKeys, pageSize, currentPage, tableData, queryFilters, sorterList, maxSelectedRecords, isLoading, minSelectedRecords])
+    }, [currentRowKey, selectedRowKeys, pageSize, currentPage, tableData, queryFilters, sorterList,
+        maxSelectedRecords, isLoading, minSelectedRecords, filterValueObjects?.formFilter, filterValueObjects?.quickSearchFilter,
+        showFilter, filterOn, quickSearchMode])
 
 
     useEffect(() => {
@@ -608,7 +612,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     const table = () => (
         <Table
-            disableFocusFirstRow 
+            disableFocusFirstRow
             isVirtualTable={pageSize > 20}
             fullHeight
             deleteLastColumnWidth
@@ -695,7 +699,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const searchFormApi = useRef<IFormApi>()
 
     return <Fragment>
-        {searchFormService && <div style={{ height: "300px", display: showFilter ? "block" : "none" }}>
+        {searchFormService && <div style={{ paddingBottom: "10px", display: showFilter ? "block" : "none" }}>
             <SearchForm ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
         </div>}
         {tableMenu(tableMemo)}
