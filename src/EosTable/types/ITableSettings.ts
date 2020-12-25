@@ -7,7 +7,7 @@ export interface ITableSettings {
     tableId: string
     typeName: string
     typePluralName: string
-    columns: ITableColumnSettings[]
+    columns: TableColumn[]
     keyFields: string[]
     visual?: IVisualSettings
     quickSearchFilter?: Omit<IFieldPath, "displayName" | "sortable">[] /// func(tableState, tableSettings, userTableSettings) => FilterExpressionFragment
@@ -24,12 +24,12 @@ export interface ITableSettings {
     filterExpressionTemplates?: IFilterExpressionTemplates
 }
 
-type ColumnGroups = IColumnGroup | ITableColumnSettings ///?
+export type TableColumn = ITableColumnGroupSettings | ITableColumnSettings
 
-interface IColumnGroup {
+export interface ITableColumnGroupSettings {
     name: string
     title: string
-    culumnGroups: ColumnGroups[]
+    columns: TableColumn[]
 }
 
 export interface ITableColumnSettings {

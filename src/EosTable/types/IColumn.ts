@@ -1,20 +1,20 @@
-import { IFieldPath } from "./IFieldPath";
+//import { IFieldPath } from "./IFieldPath";
 
 export interface IColumn {
     key: string
-    dataIndex: string
+    dataIndex?: string
     title?: string
     sorter?: boolean | { multiple: number }
     editable?: boolean
     fixed?: boolean
     width?: number
     render?: (value: any, record: any, index: any) => JSX.Element | undefined
-    defaultSortOrder?: any
+    //defaultSortOrder?: any
     description?: string
-    sorterOrder?: {
-        priority: number
-        direction?: "Asc" | "Desc"
-    }
-    sorterField?: IFieldPath
+    // sorterOrder?: {
+    //     priority: number
+    //     direction?: "Asc" | "Desc"
+    // }
+    //sorterField?: IFieldPath
     children?: IColumn[]
 }

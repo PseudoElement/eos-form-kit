@@ -2,19 +2,24 @@ import { FilterExpressionFragment } from "./IFilterType";
 import { ISorterPath } from "./ISorterType";
 
 
-export interface ITableUserSettings{
+export interface ITableUserSettings {
     tableId: string
-    filterVisible?: boolean,
-    pageSize?: number,
-    columns: IColumnUserSettings[]
-    defaultFilters?: Map<string, FilterExpressionFragment>     
+    filterVisible?: boolean
+    pageSize?: number
+    columns: TableUserColumn[]
+    defaultFilters?: Map<string, FilterExpressionFragment>
     defaultSort?: ISorterPath[]
 }
 
-export interface IColumnUserSettings{
+export interface ITableColumnUserSettings {
     name: string
-    visible: boolean,
-    width?: number,
-    fixed?: boolean,     
-    //isGroup?: boolean    
+    visible: boolean
+    width?: number
+    fixed?: boolean
+}
+
+export type TableUserColumn = ITableUserColumnGroupSettings | ITableColumnUserSettings
+
+export interface ITableUserColumnGroupSettings extends ITableColumnUserSettings {
+    columns: TableUserColumn[]
 }

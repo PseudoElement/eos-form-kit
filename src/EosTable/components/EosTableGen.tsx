@@ -17,7 +17,7 @@ import { ITableApi } from '../types/ITableApi'
 import { ITableProvider } from '../types/ITableProvider'
 import { ITableSettings } from '../types/ITableSettings'
 import { ITableState } from '../types/ITableState'
-import { IColumnUserSettings, ITableUserSettings } from '../types/ITableUserSettings'
+import { ITableUserColumnGroupSettings, ITableUserSettings, TableUserColumn } from '../types/ITableUserSettings'
 import { Store } from 'rc-field-form/lib/interface';
 import { IFilterValueObjects } from '../types/IFilterValueObjects'
 import generateQuickSearchFilter from '../helpers/generateQuickSearchFilter'
@@ -279,20 +279,25 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     useEffect(() => {
         const saveSetting = () => {
-            const tableColumnsSetting = columns.map(column => {
-                const tableColumnSetting: IColumnUserSettings = {
-                    name: column.key,
-                    fixed: column.fixed,
-                    width: column.width,
-                    visible: true
-                }
-                return tableColumnSetting
-            })
+            const getTableUserColumnSettings = (columnTable: IColumn[]) => {
+                return columnTable.map(column => {
+                    const tableColumnSetting: TableUserColumn = {
+                        name: column.key,
+                        fixed: column.fixed,
+                        width: column.width,
+                        visible: true
+                    }
+                    if (column.children) {
+                        (tableColumnSetting as ITableUserColumnGroupSettings).columns = getTableUserColumnSettings(column.children)
+                    }
+                    return tableColumnSetting
+                })
+            }
 
             const savedSetting: ITableUserSettings = {
                 ...tableUserSetiings,
                 pageSize: pageSize,
-                columns: [...tableColumnsSetting],
+                columns: getTableUserColumnSettings(columns),
                 defaultSort: sorterList
             }
             saveUserSetting && saveUserSetting(savedSetting)
