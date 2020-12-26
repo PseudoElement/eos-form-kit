@@ -1,6 +1,6 @@
 import { IControlRenderProps } from './IControlRenderProps'
 import { IFieldPath } from './IFieldPath'
-import { FilterExpressionFragment } from './IFilterType'
+import { FilterExpressionFragment, FilterTypeName } from './IFilterType'
 import { ISorterType } from './ISorterType'
 import { ITableApi } from './ITableApi'
 import { ITableData } from './ITableData'
@@ -25,5 +25,6 @@ export {
     ITableUserSettings,    
     FetchAction, 
     FetchCondition, 
-    FetchControlRender
+    FetchControlRender,
+    FilterTypeName
 }

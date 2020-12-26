@@ -20,6 +20,15 @@ const TableMessageQueue = () => {
 
     function GetProvider() {
         const tableProvider: ITableProvider = {
+            transformFilterToExpressionFragment: (filterTypeName: EosTableTypes.FilterTypeName, tableState: EosTableTypes.ITableState, tableSettings: EosTableTypes.ITableSettings) => {
+                switch (filterTypeName) {
+                    case "quickSearchFilter":
+                        return tableSettings.quickSearchFilter
+                            && EosTableHelper.generateQuickSearchFilterFragment_OldStyle(tableSettings.quickSearchFilter, tableState.filterValueObjects?.quickSearchFilter)
+                    default:
+                        return undefined
+                }
+            },
             fetchAction: (name: string) => {
                 switch (name) {
                     case "stop":
@@ -292,58 +301,6 @@ const TableMessageQueue = () => {
                             }
                         ],
                         quickSearchFilter: [{ apiField: "smevRequestType", child: { displayName: "Наименование", apiField: "name" } }],
-                        filterExpressionTemplates: {
-                            quickSearchFilter: {
-                                or: [{
-                                    fieldName: "smevRequestType",
-                                    template: {
-                                        "smevRequestType": {
-                                            "name": {
-                                                contains: {
-                                                    value: {}
-                                                }
-                                            }
-                                        }
-                                    },
-                                },
-                                {
-                                    fieldName: "clientSystem",
-                                    template: {
-                                        "clientSystem": {
-                                            "name": {
-                                                contains: {
-                                                    value: {}
-                                                }
-                                            }
-                                        }
-                                    },
-                                }]
-                            },
-                            formFilter: [{
-                                fieldName: "smevRequestType",
-                                template: {
-                                    "smevRequestType": {
-                                        "name": {
-                                            contains: {
-                                                value: {}
-                                            }
-                                        }
-                                    }
-                                },
-                            },
-                            {
-                                fieldName: "clientSystem",
-                                template: {
-                                    "clientSystem": {
-                                        "name": {
-                                            contains: {
-                                                value: {}
-                                            }
-                                        }
-                                    }
-                                },
-                            }]
-                        }
                     }
                     return resolve(setting)
                 })

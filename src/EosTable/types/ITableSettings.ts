@@ -1,6 +1,5 @@
-
 import { IMenuItem } from "../../Menu/types";
-import { IFieldPath } from "./IFieldPath";
+import { IFieldPath, IFieldPathShort } from "./IFieldPath";
 import { FilterExpressionFragment } from "./IFilterType";
 
 export interface ITableSettings {
@@ -10,7 +9,7 @@ export interface ITableSettings {
     columns: TableColumn[]
     keyFields: string[]
     visual?: IVisualSettings
-    quickSearchFilter?: Omit<IFieldPath, "displayName" | "sortable">[] /// func(tableState, tableSettings, userTableSettings) => FilterExpressionFragment
+    quickSearchFilter?: IFieldPathShort[]
     menu?: IMenuItem[]
     rightMenu?: IMenuItem[]
     contextMenu?: any
@@ -18,10 +17,8 @@ export interface ITableSettings {
     ///cardView?: ICard    
     minSelectedRecords?: number
     maxSelectedRecords?: number
-    defaultLoadFields?: Omit<IFieldPath, "displayName" | "sortable">[]
-    constFilter?: FilterExpressionFragment
-    ///formFilter: Map<string(key form), Rule>   /// func(tableState, tableSettings, userTableSettings) => FilterExpressionFragment
-    filterExpressionTemplates?: IFilterExpressionTemplates
+    defaultLoadFields?: IFieldPathShort[]
+    constFilter?: FilterExpressionFragment    
 }
 
 export type TableColumn = ITableColumnGroupSettings | ITableColumnSettings
@@ -77,14 +74,4 @@ export interface IRenderArgs {
     typeButton?: 'primary' | 'link' | 'default'
     titleButton?: string
     [key: string]: string | number | undefined
-}
-
-interface IFilterExpressionTemplates {
-    quickSearchFilter?: FilterExpressionFragment
-    formFilter?: IFormFilterExpressionTemplate[]
-}
-
-interface IFormFilterExpressionTemplate {
-    fieldName: string
-    template: FilterExpressionFragment
 }

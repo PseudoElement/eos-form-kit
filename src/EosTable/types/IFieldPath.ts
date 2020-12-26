@@ -5,3 +5,7 @@ export interface IFieldPath {
     sortable?: boolean
     child?: IFieldPath
 }
+
+export interface IFieldPathShort extends Omit<IFieldPath, "displayName" | "sortable" | "child"> {
+    child?: IFieldPathShort
+}

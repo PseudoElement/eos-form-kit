@@ -14,3 +14,6 @@ type FilterExpressionKeys = "equal" | "in" | "startsWith" | "endsWith" | "contai
 type FilterValueEmpty = string | number | boolean | string[] | number[]
 
 type FilterValue = { value: FilterValueEmpty }
+
+
+export type FilterTypeName = "quickSearchFilter" | "formFilter" | "externalFilter"

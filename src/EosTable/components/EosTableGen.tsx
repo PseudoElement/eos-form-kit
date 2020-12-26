@@ -11,7 +11,7 @@ import { getColumnsBySettings } from '../helpers/getColumnsBySettings'
 import { getRecordsByKeys, getRowKey } from '../helpers/getRowKey'
 import { E_KEY_CODE } from '../types/EnumTypes'
 import { IColumn } from '../types/IColumn'
-import { FilterExpressionFragment } from '../types/IFilterType'
+import { FilterExpressionFragment, FilterTypeName } from '../types/IFilterType'
 import { ISorterPath } from '../types/ISorterType'
 import { ITableApi } from '../types/ITableApi'
 import { ITableProvider } from '../types/ITableProvider'
@@ -20,7 +20,6 @@ import { ITableState } from '../types/ITableState'
 import { ITableUserColumnGroupSettings, ITableUserSettings, TableUserColumn } from '../types/ITableUserSettings'
 import { Store } from 'rc-field-form/lib/interface';
 import { IFilterValueObjects } from '../types/IFilterValueObjects'
-import generateQuickSearchFilter from '../helpers/generateQuickSearchFilter'
 
 interface ITableGenProps {
     tableSettings: ITableSettings
@@ -41,7 +40,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         searchFormService,
         fetchAction,
         fetchControl,
-        fetchCondition
+        fetchCondition,
+        transformFilterToExpressionFragment
     },
     getResourceText
 }: ITableGenProps, ref) => {
@@ -170,8 +170,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [minSelectedRecords, setMinSelectedRecords] = useState<number | undefined>(() => initState.minSelectedRecords)
 
     const [quickSearchMode, setQuickSearchMode] = useState(() => initState.quickSearchMode)
-    const [showFilter, setShowFilter] = useState<boolean | undefined>()
-    const [filterOn, setfilterOn] = useState<boolean | undefined>()
+    const [showFormFilter, setShowFormFilter] = useState<boolean | undefined>()
+    const [formFilterMode, setFormFilterMode] = useState<boolean | undefined>()
 
     const [filterValueObjects, setFilterValueObjects] = useState<IFilterValueObjects>()
 
@@ -188,14 +188,14 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         currentRowKey,
         currentRecord,
         quickSearchMode,
-        showFormFilter: showFilter,
-        formFilterMode: filterOn,
-        filterValueObjects
+        showFormFilter,
+        formFilterMode,
+        filterValueObjects: { ...filterValueObjects }
     }
 
     useEffect(() => {
         getTableData()
-    }, [fetchData, queryAfter, sorterList, queryFilters, pageSize, currentPage, filterValueObjects?.formFilter])
+    }, [fetchData, queryAfter, sorterList, queryFilters, pageSize, currentPage])
 
     useEffect(() => {
         tableSettings.menu && setMenu(
@@ -215,7 +215,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     useEffect(() => {
         setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchControl} />)
-    }, [quickSearchMode, showFilter, filterOn])
+    }, [quickSearchMode, showFormFilter, formFilterMode])
 
     useEffect(() => {
         let isUpdate = false
@@ -251,10 +251,10 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         setMaxSelectedRecords(tableState.maxSelectedRecords)
         setMinSelectedRecords(tableState.minSelectedRecords)
         setQuickSearchMode(tableState.quickSearchMode)
-        setShowFilter(tableState.showFormFilter)
+        setShowFormFilter(tableState.showFormFilter)
 
-        if (tableState.formFilterMode !== filterOn) {
-            setfilterOn(tableState.formFilterMode)
+        if (tableState.formFilterMode !== formFilterMode) {
+            setFormFilterMode(tableState.formFilterMode)
             !tableState.formFilterMode && searchFormApi.current?.clearFields()
         }
 
@@ -273,8 +273,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     useEffect(() => {
         !isLoading && tableData && triggers?.onUpdateState && triggers.onUpdateState(currentTableState)
     }, [currentRowKey, selectedRowKeys, pageSize, currentPage, tableData, queryFilters, sorterList,
-        maxSelectedRecords, isLoading, minSelectedRecords, filterValueObjects?.formFilter, filterValueObjects?.quickSearchFilter,
-        showFilter, filterOn, quickSearchMode])
+        maxSelectedRecords, isLoading, minSelectedRecords, filterValueObjects?.formFilter, filterValueObjects?.quickSearchFilter, filterValueObjects?.externalFilter,
+        showFormFilter, formFilterMode, quickSearchMode])
 
 
     useEffect(() => {
@@ -308,23 +308,32 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         }
     }, [columns])
 
-    useEffect(() => {
-        if (tableSettings.quickSearchFilter) {
-            const filters = new Map(queryFilters)
-            if (filterValueObjects?.quickSearchFilter) {
-                filters.set("QuickSearch", generateQuickSearchFilter(tableSettings.quickSearchFilter, filterValueObjects.quickSearchFilter))
-            }
-            else {
-                if (filters.has("QuickSearch")) {
-                    filters.delete("QuickSearch")
-                }
-            }
-            if (!compareMaps(filters, queryFilters))
-                setQueryFilters(filters)
-
-            //const filter = filterValueObjects && filterValueObjects.quickSearchFilter && generateQuickSearchFilter(tableSettings.quickSearchFilter, filterValueObjects.quickSearchFilter)
+    const setFilterFragment = (filterTypeName: FilterTypeName) => {
+        const filterFragment = transformFilterToExpressionFragment && transformFilterToExpressionFragment(filterTypeName, currentTableState, tableSettings, tableUserSetiings)
+        const newFilters = new Map(queryFilters)
+        if (filterFragment) {
+            newFilters.set(filterTypeName, filterFragment)
+            setQueryFilters(newFilters)
         }
+        else {
+            if (queryFilters.has(filterTypeName)) {
+                queryFilters.delete(filterTypeName)
+                setQueryFilters(queryFilters)
+            }
+        }
+    }
+
+    useEffect(() => {
+        setFilterFragment("quickSearchFilter")
     }, [filterValueObjects?.quickSearchFilter])
+
+    useEffect(() => {
+        setFilterFragment("formFilter")
+    }, [filterValueObjects?.formFilter])
+
+    useEffect(() => {
+        setFilterFragment("externalFilter")
+    }, [filterValueObjects?.externalFilter])
 
     const getTableData = async () => {
         if (fetchData) {
@@ -602,11 +611,11 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                     }
                     return prev
                 }))
-        }).then(() => setfilterOn(true))
+        }).then(() => setFormFilterMode(true))
     }
 
     const onCloseClick = () => {
-        setShowFilter(false)
+        setShowFormFilter(false)
     }
 
     // const getInitialValuesAsync = () => {
@@ -704,7 +713,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const searchFormApi = useRef<IFormApi>()
 
     return <Fragment>
-        {searchFormService && <div style={{ paddingBottom: "10px", display: showFilter ? "block" : "none" }}>
+        {searchFormService && <div style={{ paddingBottom: "10px", display: showFormFilter ? "block" : "none" }}>
             <SearchForm getResourceText={getResourceText} ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
         </div>}
         {tableMenu(tableMemo)}

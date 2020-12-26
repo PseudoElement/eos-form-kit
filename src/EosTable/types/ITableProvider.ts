@@ -2,7 +2,7 @@
 import { IMenuItem } from "../../Menu/types";
 import { IDataService } from "../../Search/SearchForm";
 import { IControlRenderProps } from "./IControlRenderProps";
-import { FilterExpressionFragment } from "./IFilterType";
+import { FilterExpressionFragment, FilterTypeName } from "./IFilterType";
 import { ITableApi } from "./ITableApi";
 import { ITableData } from "./ITableData";
 import { ITableSettings } from "./ITableSettings";
@@ -20,7 +20,7 @@ export interface ITableProvider {
     fetchControl?: (name: string) => ((controlProps: IControlRenderProps) => JSX.Element) | undefined
     fetchAction?: (name: string) => ((handlerProps: IHandlerProps) => Promise<void> | void) | undefined
     fetchCondition?: (name: string) => ((handlerProps: IHandlerProps) => boolean) | undefined
-    fetchTransformFilterFunction?: (name: string) => ((tableState: ITableState, tableSettings: ITableSettings, userTableSettings: ITableUserSettings) => FilterExpressionFragment) | undefined
+    transformFilterToExpressionFragment?: (filterTypeName: FilterTypeName, tableState: ITableState, tableSettings: ITableSettings, userTableSettings: ITableUserSettings) => (FilterExpressionFragment | undefined)
 }
 
 export interface Triggers {
@@ -42,7 +42,7 @@ export type FetchControlRender = (name: string) => ((controlProps: IControlRende
 export type FetchAction = (name: string) => ((handlerProps: IHandlerProps) => Promise<void> | void) | undefined
 export type FetchCondition = (name: string) => ((handlerProps: IHandlerProps) => boolean) | undefined
 
-export interface IHandlerProps{
+export interface IHandlerProps {
     refApi: any,
     menuItem: IMenuItem
 }
