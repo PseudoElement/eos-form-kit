@@ -21,6 +21,7 @@ export interface ITableProvider {
     fetchAction?: (name: string) => ((handlerProps: IHandlerProps) => Promise<void> | void) | undefined
     fetchCondition?: (name: string) => ((handlerProps: IHandlerProps) => boolean) | undefined
     transformFilterToExpressionFragment?: (filterTypeName: FilterTypeName, tableState: ITableState, tableSettings: ITableSettings, userTableSettings: ITableUserSettings) => (FilterExpressionFragment | undefined)
+    ///transformDataToCardView?: (tableData: ITableData) => Promise<ITableData>
 }
 
 export interface Triggers {

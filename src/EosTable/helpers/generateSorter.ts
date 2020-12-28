@@ -1,14 +1,13 @@
-import { IColumn } from "../types/IColumn";
 import { IFieldPath } from "../types/IFieldPath";
 import { DirectionSort, ISorterPath, ISorterType } from "../types/ISorterType";
-import { ITableSettings } from "../types/ITableSettings";
+import { ITableColumnGroupSettings, ITableColumnSettings, ITableSettings, TableColumn } from "../types/ITableSettings";
 
 export function getPossibleSortings(tableSettings: ITableSettings, localize?: (key: string) => string) {
     let possibleSortingsTree: ISorterType[] = []
     const possibleSortings: ISorterType[] = []
 
     const getSorterByField = (field: IFieldPath, sorterTypeCurrent: ISorterType, columnName: string, sorterPath?: ISorterPath): any => {
-        const sortPath: ISorterPath = addChildToSorterTypeParent({ [field.apiField]: undefined }, sorterPath)
+        const sortPath: ISorterPath = addChildToSorterTypeParent({ [field.apiField]: {} }, sorterPath)
         const newSorter = { ...sorterTypeCurrent }
         if (field.child) {
             const nameField = localize ? localize(field.child.displayName) : field.child.displayName
@@ -28,6 +27,7 @@ export function getPossibleSortings(tableSettings: ITableSettings, localize?: (k
         else {
             if (field.sortable) {
                 newSorter.sorterPath = sortPath
+                newSorter.json = JSON.stringify(sortPath)
                 newSorter.columnName = columnName
                 possibleSortings.push(newSorter)
                 return newSorter
@@ -36,18 +36,29 @@ export function getPossibleSortings(tableSettings: ITableSettings, localize?: (k
         }
     }
 
-    tableSettings.columns.forEach((column) => {
-        const fields = column.fields
-        if (!fields) return
-        fields.forEach((field) => {
-            const sorterTypeCurrent = possibleSortingsTree.find(s => s.name === field.displayName) ?? { name: field.displayName }
-            const sortingChanged = getSorterByField(field, sorterTypeCurrent, column.name)
-            if (sortingChanged) {
-                possibleSortingsTree = [...possibleSortingsTree.filter(s => s.name !== field.displayName), sortingChanged]
-            }
+    const getPossibleSortingsTree = (tableColumnsSettings: TableColumn[]) => {
+        tableColumnsSettings.forEach((column) => {
+            const columnGroup = column as ITableColumnGroupSettings
+            const columnData = column as ITableColumnSettings
 
+            if (columnGroup.columns) {
+                getPossibleSortingsTree(columnGroup.columns)
+            }
+            else {
+                const fields = columnData.fields
+                if (!fields) return
+                fields.forEach((field) => {
+                    const sorterTypeCurrent = possibleSortingsTree.find(s => s.name === field.displayName) ?? { name: field.displayName }
+                    const sortingChanged = getSorterByField(field, sorterTypeCurrent, column.name)
+                    if (sortingChanged) {
+                        possibleSortingsTree = [...possibleSortingsTree.filter(s => s.name !== field.displayName), sortingChanged]
+                    }
+
+                })
+            }
         })
-    })
+    }
+    getPossibleSortingsTree(tableSettings.columns)
 
     return { tree: possibleSortingsTree, list: possibleSortings }
 }
@@ -55,7 +66,7 @@ export function getPossibleSortings(tableSettings: ITableSettings, localize?: (k
 export function setDirectionToSortPath(sorterPath: ISorterPath, direction: DirectionSort) {
     const relation = Object.keys(sorterPath)[0]
     const value = sorterPath[relation];
-    if (value === undefined) {
+    if (isEmpty(value)) {
         const newObj = Object.create(sorterPath) as ISorterPath
         newObj[relation] = direction
         return newObj
@@ -74,7 +85,7 @@ function addChildToSorterTypeParent(child: ISorterPath, sorterPath?: ISorterPath
     const sortPath = { ...sorterPath }
     const relation = Object.keys(sortPath)[0]
     const value = sortPath[relation];
-    if (value === undefined) {
+    if (isEmpty(value)) {
         sortPath[relation] = child
     }
     else {
@@ -83,32 +94,12 @@ function addChildToSorterTypeParent(child: ISorterPath, sorterPath?: ISorterPath
     return sortPath
 }
 
-export function generateSorter(columns: IColumn[]) {
-    const orderItems: any[] = [];
-    columns.filter(c => c.sorter).sort((a, b) => {
-        if (a.sorterOrder && b.sorterOrder) { return a.sorterOrder.priority - b.sorterOrder.priority; } return 0;
-    }).forEach((column) => {
-        if (column.sorterOrder && column.sorterOrder.direction) {
-            if (column.sorterField && column.sorterOrder) {
-                orderItems.push(getSorterObject(column.sorterField, column.sorterOrder.direction));
-            }
-            else {
-                orderItems.push({ [column.dataIndex]: column.sorterOrder.direction });
-            }
+function isEmpty(obj: any) {
+    for (var prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+            return false;
         }
-    })
-
-    return orderItems.length === 0 ? undefined : orderItems;
-}
-
-function getSorterObject(fieldSort: IFieldPath, orderType: string): any {
-    if (typeof fieldSort === "string") {
-        return { [fieldSort]: orderType }
     }
-    else {
-        const relation = Object.keys(fieldSort)[0]
-        const value = fieldSort[relation];
-        const child = getSorterObject(value, orderType);
-        return { [relation]: child }
-    }
+
+    return JSON.stringify(obj) === JSON.stringify({});
 }

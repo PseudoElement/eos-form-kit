@@ -1,4 +1,4 @@
-import { FilterExpressionFragment } from "./IFilterType";
+import { IFilterValueObjects } from "./IFilterValueObjects";
 import { ISorterPath } from "./ISorterType";
 
 
@@ -7,8 +7,10 @@ export interface ITableUserSettings {
     filterVisible?: boolean
     pageSize?: number
     columns: TableUserColumn[]
-    defaultFilters?: Map<string, FilterExpressionFragment>
+    defaultFilters?: IFilterValueObjects
     defaultSort?: ISorterPath[]
+    highlightingRows?: boolean
+    ellipsisRows?: number
 }
 
 export interface ITableColumnUserSettings {

@@ -9,7 +9,7 @@ export interface IColumn {
     fixed?: boolean
     width?: number
     render?: (value: any, record: any, index: any) => JSX.Element | undefined
-    //defaultSortOrder?: any
+    defaultSortOrder?: any
     description?: string
     // sorterOrder?: {
     //     priority: number

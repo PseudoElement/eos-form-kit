@@ -15,7 +15,7 @@ const TableMessageQueue = () => {
     const apolloClient = useApolloClient();
 
     const provider = GetProvider()
-    return <Layout style={{ height: "calc(100vh - 70px)" }}><EosTable provider={provider} /></Layout>
+    return <Layout style={{ height: "calc(100vh - 70px)" }}><EosTable initTableState={{tableView:"default"}} provider={provider} /></Layout>
 
 
     function GetProvider() {
@@ -54,9 +54,7 @@ const TableMessageQueue = () => {
                         typePluralName: "SmevRequests",
                         keyFields: ["isnRequest"],
                         visual: {
-                            isDifferentRow: true,
                             resizable: true,
-                            ellipsisRows: 3,
                             dragable: true
                         },
                         columns: [
@@ -69,18 +67,20 @@ const TableMessageQueue = () => {
                             {
                                 name: "smevRequestType",
                                 title: "Тип сведений",
-                                fields: [{ displayName: "Тип сведений", apiField: "smevRequestType", child: { displayName: "Наименование", apiField: "name" } }],
+                                fields: [{ displayName: "Тип сведений", apiField: "smevRequestType", child: { alias: "title", displayName: "Наименование", apiField: "name", sortable: true } }],
                                 columnRender: {
                                     renderType: "ReferenceDisplayw"
-                                }
+                                },
+                                sortable: true
                             },
                             {
                                 name: "clientSystem",
                                 title: "Внешняя система",
-                                fields: [{ displayName: "Внешняя система", apiField: "clientSystem", child: { displayName: "Наименование", apiField: "name" } }],
+                                fields: [{ displayName: "Внешняя система", apiField: "clientSystem", child: { displayName: "Наименование", apiField: "name", sortable: true } }],
                                 columnRender: {
                                     renderType: "ReferenceDisplay"
-                                }
+                                },
+                                sortable: true
                             },
                             {
                                 name: "externalId",
@@ -300,7 +300,7 @@ const TableMessageQueue = () => {
                                 title: "Быстрый поиск",
                             }
                         ],
-                        quickSearchFilter: [{ apiField: "smevRequestType", child: { displayName: "Наименование", apiField: "name" } }],
+                        quickSearchFilter: [{ apiField: "smevRequestType", child: { apiField: "name" } }],
                     }
                     return resolve(setting)
                 })
@@ -311,6 +311,17 @@ const TableMessageQueue = () => {
                         tableId: "",
                         filterVisible: false,
                         pageSize: 10,
+                        ellipsisRows: 3,
+                        highlightingRows: true,
+                        defaultSort: [{
+                            smevRequestType: {
+                                name: "Asc"
+                            }
+                        }, {
+                            clientSystem: {
+                                name: "Desc"
+                            }
+                        }],
                         columns: [
                             {
                                 name: "status",

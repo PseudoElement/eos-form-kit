@@ -67,14 +67,17 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const initState: ITableState = useMemo(() => {
         const init: ITableState =
         {
-            orderby: initTableState?.orderby || tableUserSetiings.defaultSort,
-            maxSelectedRecords: initTableState?.maxSelectedRecords || tableSettings.maxSelectedRecords,
-            minSelectedRecords: initTableState?.minSelectedRecords || tableSettings.minSelectedRecords,
-            pageSize: initTableState?.pageSize || tableUserSetiings.pageSize || DEFAULT_PAGE_SIZE,
-            currentPage: initTableState?.currentPage || DEFAULT_CURRENT_PAGE,
-            selectedRowKeys: initTableState?.selectedRowKeys || [],
-            selectedRecords: initTableState?.selectedRecords || [],
-            filter: initTableState?.filter || tableUserSetiings.defaultFilters
+            orderby: initTableState?.orderby ?? tableUserSetiings.defaultSort,
+            maxSelectedRecords: initTableState?.maxSelectedRecords ?? tableSettings.maxSelectedRecords,
+            minSelectedRecords: initTableState?.minSelectedRecords ?? tableSettings.minSelectedRecords,
+            pageSize: initTableState?.pageSize ?? tableUserSetiings.pageSize ?? DEFAULT_PAGE_SIZE,
+            currentPage: initTableState?.currentPage ?? DEFAULT_CURRENT_PAGE,
+            selectedRowKeys: initTableState?.selectedRowKeys ?? [],
+            selectedRecords: initTableState?.selectedRecords ?? [],
+            filter: initTableState?.filter,
+            filterValueObjects: initTableState?.filterValueObjects ?? tableUserSetiings.defaultFilters,
+            showFormFilter: initTableState?.showFormFilter ?? tableUserSetiings.filterVisible,
+            tableView: initTableState?.tableView
         }
         return init
     }, [initTableState, tableUserSetiings, tableSettings])
@@ -151,7 +154,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [currentRecord, setCurrentRecord] = useState<any | undefined>(undefined)
 
     const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, getResourceText))
-    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchControl, fetchControlFromStore, getResourceText));
+    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings, fetchControl, fetchControlFromStore, getResourceText, tableUserSetiings.ellipsisRows, possibleSorting.list));
     const [sorterList, setSorterList] = useState<ISorterPath[] | undefined>(() => initState.orderby);
     const [queryFilters, setQueryFilters] = useState<Map<string, FilterExpressionFragment>>(() => initState.filter || new Map());
     const [queryAfter, setQueryAfter] = useState(() => afterRecords(initState.currentPage || DEFAULT_CURRENT_PAGE, initState.pageSize || DEFAULT_PAGE_SIZE));
@@ -174,6 +177,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [formFilterMode, setFormFilterMode] = useState<boolean | undefined>()
 
     const [filterValueObjects, setFilterValueObjects] = useState<IFilterValueObjects>()
+    const [tableView, setTableView] = useState<"default" | "card">()
 
     const currentTableState: ITableState = {
         after: queryAfter,
@@ -252,6 +256,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         setMinSelectedRecords(tableState.minSelectedRecords)
         setQuickSearchMode(tableState.quickSearchMode)
         setShowFormFilter(tableState.showFormFilter)
+        setTableView(tableState.tableView)
 
         if (tableState.formFilterMode !== formFilterMode) {
             setFormFilterMode(tableState.formFilterMode)
@@ -316,9 +321,9 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             setQueryFilters(newFilters)
         }
         else {
-            if (queryFilters.has(filterTypeName)) {
-                queryFilters.delete(filterTypeName)
-                setQueryFilters(queryFilters)
+            if (newFilters.has(filterTypeName)) {
+                newFilters.delete(filterTypeName)
+                setQueryFilters(newFilters)
             }
         }
     }
@@ -535,10 +540,6 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         return tableSettings.visual?.bordered ? tableSettings.visual.bordered : (tableSettings.visual?.resizable ? "header" : undefined)
     }, [tableSettings.visual])
 
-    const isDifferentRow = useMemo(() => {
-        return tableSettings.visual?.isDifferentRow
-    }, [tableSettings.visual])
-
     const scroll = useMemo(() => { return { x: "max-content", y: "100%" } }, [])
     //#endregion
 
@@ -626,6 +627,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     const table = () => (
         <Table
+            table={tableView}
             disableFocusFirstRow
             isVirtualTable={pageSize > 20}
             fullHeight
@@ -633,15 +635,15 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             scroll={scroll}
             columns={columns}
             dataSource={tableData}
-            isDifferentRow={isDifferentRow}
-            ellipsisRows={tableSettings.visual?.ellipsisRows}
+            isDifferentRow={tableUserSetiings.highlightingRows}
+            ellipsisRows={tableUserSetiings.ellipsisRows}
             loading={isLoading}
             onChange={onTableChange}
             currentRowKey={currentRowKey}
             onChangeCurrentRowKey={onChangeCurrentRowKey}
             pagination={pagination}
             rowKey={rowKeyValue}
-            rowSelection={rowSelection}
+            rowSelection={minSelectedRecords === 0 ? undefined : rowSelection}
             settings={{
                 isDraggable: true,
                 onDrop: tableSettings.visual?.dragable ? onDropHandler : undefined,
@@ -708,7 +710,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         )
     }, [recordsTotalCount, selectedRowKeys, rightMenu, menu])
 
-    const tableMemo = useMemo(table, [columns, tableData, isLoading, selectedRowKeys, currentRowKey])
+    const tableMemo = useMemo(table, [columns, tableData, isLoading, selectedRowKeys, currentRowKey, tableView])
 
     const searchFormApi = useRef<IFormApi>()
 
