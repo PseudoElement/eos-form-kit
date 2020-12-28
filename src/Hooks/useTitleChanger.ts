@@ -1,7 +1,9 @@
 // import { useEffect } from "react";
 
 let pageTitle = document.title;
-
+/**
+ * Хук, который обновляет document.title
+ */
 function useTitleChanger() {
     const setPageTitle = (newTitle: string) => {
         pageTitle = newTitle;
