@@ -1,4 +1,4 @@
-import { FilterType } from "./IFilterType";
+import { FilterExpressionFragment } from "./IFilterType";
 import { IFilterValueObjects } from "./IFilterValueObjects";
 import { ISorterPath } from "./ISorterType";
 
@@ -9,7 +9,7 @@ export interface ITableState {
     readonly tableData?: any[]
     pageSize?: number,
     orderby?: ISorterPath[]
-    filter?: Map<string, FilterType>
+    filter?: Map<string, FilterExpressionFragment>
     selectedRowKeys?: string[]
     currentRowKey?: string
     maxSelectedRecords?: number

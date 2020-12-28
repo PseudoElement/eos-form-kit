@@ -77,15 +77,7 @@ export function useEosComponentsStore() {
 
     function fetchConditionFromStore(name: string) {
         return context.conditions.getItem(name)            
-    }
-
-    function localizationCallback(callback: (key?: string) => string) {
-        context.translation = callback
-    }
-
-    function localize(key?: string) {
-        return (key && context.translation) ? context.translation(key) : (key || "");
-    }
+    }   
 
     return {
         addActionToStore, ///del
@@ -93,8 +85,6 @@ export function useEosComponentsStore() {
         addControlToStore, ///del
         fetchActionFromStore,
         fetchConditionFromStore,
-        fetchControlFromStore,
-        localizationCallback,
-        localize
+        fetchControlFromStore        
     }
 }

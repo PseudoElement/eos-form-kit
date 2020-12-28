@@ -8,6 +8,11 @@ const TableExample = () => {
 
 const GetProvider = () => {
     const tableProvider: ITableProvider = {
+        saveUserSetting: (userSettings: EosTableTypes.ITableUserSettings) => {
+            return new Promise<void>(() => {
+                console.log(userSettings)
+            })
+        },
         tableSettingLoad: () => {
             return new Promise((resolve) => {
                 const setting: EosTableTypes.ITableSettings = {
@@ -24,6 +29,18 @@ const GetProvider = () => {
                             name: "col2",
                             title: "Колонка 2",
                             fields: [{ displayName: "Колонка 2", apiField: "col2" }]
+                        },
+                        {
+                            name: "col3",
+                            title: "Колонка 3",
+                            columns: [{
+                                name: "col3_1",
+                                title: "Колонка 3_1",
+                            },
+                            {
+                                name: "col3_2",
+                                title: "Колонка 3_2",
+                            }]
                         }
                     ],
                     keyFields: ["key"],
@@ -137,8 +154,23 @@ const GetProvider = () => {
                         },
                         {
                             name: "col2",
-                            width: 400,
+                            width: 440,
                             visible: true
+                        },
+                        {
+                            name: "col3", 
+                            visible: true, 
+                            width: 600,                          
+                            columns: [{
+                                name: "col3_1",     
+                                visible: true,
+                                width: 300                         
+                            },
+                            {
+                                name: "col3_2", 
+                                visible: true,
+                                width: 300                                 
+                            }]
                         }
                     ]
                 }
@@ -151,8 +183,10 @@ const GetProvider = () => {
                 const data: EosTableTypes.ITableData = {
                     totalCount: 5,
                     records: [{
+                        deleted: true,
                         "key": 1,
-                        col1: "row 1"
+                        col1: "row 1",
+                        col2: "row 2"
                     },
                     {
                         "key": 2,
@@ -179,7 +213,7 @@ const GetProvider = () => {
             async getContextAsync() {
                 const newContext = {
                     "Fields": [
-                        {                            
+                        {
                             "label": "inventory:fieldNames.parentName",
                             "name": "parentName",
                             "required": false,

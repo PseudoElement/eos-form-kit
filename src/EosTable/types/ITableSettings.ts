@@ -1,34 +1,32 @@
-import { FilterType } from ".";
 import { IMenuItem } from "../../Menu/types";
-import { IFieldPath } from "./IFieldPath";
+import { IFieldPath, IFieldPathShort } from "./IFieldPath";
+import { FilterExpressionFragment } from "./IFilterType";
 
 export interface ITableSettings {
     tableId: string
     typeName: string
     typePluralName: string
-    columns: ITableColumnSettings[]
+    columns: TableColumn[]
     keyFields: string[]
     visual?: IVisualSettings
-    quickSearchFilter?: Omit<IFieldPath, "displayName" | "sortable">[] /// func(tableState, tableSettings, userTableSettings) => FilterExpressionFragment
+    quickSearchFilter?: IFieldPathShort[]
     menu?: IMenuItem[]
     rightMenu?: IMenuItem[]
     contextMenu?: any
     dataProviderName?: string
-    ///cardView?: ICard
-    columnGroups?: ColumnGroups[]
+    ///cardView?: ICard    
     minSelectedRecords?: number
     maxSelectedRecords?: number
-    defaultLoadFields?: Omit<IFieldPath, "displayName" | "sortable">[]
-    constFilter?: FilterType ///внешнее состояние, превращенное в фильтр //FilterExpressionFragment
-    ///formFilter: Map<string(key form), Rule>   /// func(tableState, tableSettings, userTableSettings) => FilterExpressionFragment
+    defaultLoadFields?: IFieldPathShort[]
+    constFilter?: FilterExpressionFragment    
 }
 
-type ColumnGroups = IColumnGroup | ITableColumnSettings
+export type TableColumn = ITableColumnGroupSettings | ITableColumnSettings
 
-interface IColumnGroup {
+export interface ITableColumnGroupSettings {
     name: string
     title: string
-    culumnGroups: ColumnGroups[]
+    columns: TableColumn[]
 }
 
 export interface ITableColumnSettings {
@@ -36,7 +34,7 @@ export interface ITableColumnSettings {
     fields?: IFieldPath[]
     title: string
     description?: string
-    columnRender?: IRender ///required
+    columnRender?: IRender
     sortable?: boolean
     ///selectValues?: Map<string, string>
 }
@@ -62,8 +60,6 @@ export interface IVisualSettings {
     pageSizeOptions?: string[]
 }
 
-
-
 export interface IRender {
     renderType: string,
     renderArgs?: IRenderArgs,
@@ -79,16 +75,3 @@ export interface IRenderArgs {
     titleButton?: string
     [key: string]: string | number | undefined
 }
-
-// export interface IFieldRelationPath {
-//     [key: string]: IFieldPath
-// }
-
-//export type IFieldPath = IFieldRelationPath | string
-
-// interface ICard{
-//     title: IFieldPath
-//     description?: IFieldPath
-//     avatarUrl?: IFieldPath
-//     iconName?: string
-// }

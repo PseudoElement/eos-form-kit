@@ -11,22 +11,22 @@ import { getColumnsBySettings } from '../helpers/getColumnsBySettings'
 import { getRecordsByKeys, getRowKey } from '../helpers/getRowKey'
 import { E_KEY_CODE } from '../types/EnumTypes'
 import { IColumn } from '../types/IColumn'
-import { FilterType } from '../types/IFilterType'
+import { FilterExpressionFragment, FilterTypeName } from '../types/IFilterType'
 import { ISorterPath } from '../types/ISorterType'
 import { ITableApi } from '../types/ITableApi'
 import { ITableProvider } from '../types/ITableProvider'
 import { ITableSettings } from '../types/ITableSettings'
 import { ITableState } from '../types/ITableState'
-import { IColumnUserSettings, ITableUserSettings } from '../types/ITableUserSettings'
+import { ITableUserColumnGroupSettings, ITableUserSettings, TableUserColumn } from '../types/ITableUserSettings'
 import { Store } from 'rc-field-form/lib/interface';
 import { IFilterValueObjects } from '../types/IFilterValueObjects'
-import generateQuickSearchFilter from '../helpers/generateQuickSearchFilter'
 
 interface ITableGenProps {
     tableSettings: ITableSettings
     tableUserSetiings: ITableUserSettings
     initTableState?: ITableState
     provider: Omit<ITableProvider, "tableSettingLoad" | "tableUserSettingLoad">
+    getResourceText?: (name: string) => string
 }
 
 const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
@@ -40,11 +40,13 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         searchFormService,
         fetchAction,
         fetchControl,
-        fetchCondition
-    }
+        fetchCondition,
+        transformFilterToExpressionFragment
+    },
+    getResourceText
 }: ITableGenProps, ref) => {
 
-    const { fetchControlFromStore, fetchActionFromStore, fetchConditionFromStore, localize } = useEosComponentsStore()
+    const { fetchControlFromStore, fetchActionFromStore, fetchConditionFromStore } = useEosComponentsStore()
 
     //#region ref
     const currentRef = (ref ?? useRef<ITableApi>()) as React.MutableRefObject<ITableApi>;
@@ -148,10 +150,10 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [currentRowKey, setCurrentRowKey] = useState<string | undefined>(undefined)
     const [currentRecord, setCurrentRecord] = useState<any | undefined>(undefined)
 
-    const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, localize))
-    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchControl, fetchControlFromStore, localize));
+    const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, getResourceText))
+    const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings.columns, fetchControl, fetchControlFromStore, getResourceText));
     const [sorterList, setSorterList] = useState<ISorterPath[] | undefined>(() => initState.orderby);
-    const [queryFilters, setQueryFilters] = useState<Map<string, FilterType>>(() => initState.filter || new Map());
+    const [queryFilters, setQueryFilters] = useState<Map<string, FilterExpressionFragment>>(() => initState.filter || new Map());
     const [queryAfter, setQueryAfter] = useState(() => afterRecords(initState.currentPage || DEFAULT_CURRENT_PAGE, initState.pageSize || DEFAULT_PAGE_SIZE));
     const [pageSize, setPageSize] = useState<number>(() => initState.pageSize || DEFAULT_PAGE_SIZE);
 
@@ -168,8 +170,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [minSelectedRecords, setMinSelectedRecords] = useState<number | undefined>(() => initState.minSelectedRecords)
 
     const [quickSearchMode, setQuickSearchMode] = useState(() => initState.quickSearchMode)
-    const [showFilter, setShowFilter] = useState<boolean | undefined>()
-    const [filterOn, setfilterOn] = useState<boolean | undefined>()
+    const [showFormFilter, setShowFormFilter] = useState<boolean | undefined>()
+    const [formFilterMode, setFormFilterMode] = useState<boolean | undefined>()
 
     const [filterValueObjects, setFilterValueObjects] = useState<IFilterValueObjects>()
 
@@ -186,14 +188,14 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         currentRowKey,
         currentRecord,
         quickSearchMode,
-        showFormFilter: showFilter,
-        formFilterMode: filterOn,
-        filterValueObjects
+        showFormFilter,
+        formFilterMode,
+        filterValueObjects: { ...filterValueObjects }
     }
 
     useEffect(() => {
         getTableData()
-    }, [fetchData, queryAfter, sorterList, queryFilters, pageSize, currentPage, filterValueObjects?.formFilter])
+    }, [fetchData, queryAfter, sorterList, queryFilters, pageSize, currentPage])
 
     useEffect(() => {
         tableSettings.menu && setMenu(
@@ -213,7 +215,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     useEffect(() => {
         setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchControl} />)
-    }, [quickSearchMode, showFilter, filterOn])
+    }, [quickSearchMode, showFormFilter, formFilterMode])
 
     useEffect(() => {
         let isUpdate = false
@@ -249,10 +251,10 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         setMaxSelectedRecords(tableState.maxSelectedRecords)
         setMinSelectedRecords(tableState.minSelectedRecords)
         setQuickSearchMode(tableState.quickSearchMode)
-        setShowFilter(tableState.showFormFilter)
+        setShowFormFilter(tableState.showFormFilter)
 
-        if (tableState.formFilterMode !== filterOn) {
-            setfilterOn(tableState.formFilterMode)
+        if (tableState.formFilterMode !== formFilterMode) {
+            setFormFilterMode(tableState.formFilterMode)
             !tableState.formFilterMode && searchFormApi.current?.clearFields()
         }
 
@@ -270,25 +272,32 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     useEffect(() => {
         !isLoading && tableData && triggers?.onUpdateState && triggers.onUpdateState(currentTableState)
-    }, [currentRowKey, selectedRowKeys, pageSize, currentPage, tableData, queryFilters, sorterList, maxSelectedRecords, isLoading, minSelectedRecords])
+    }, [currentRowKey, selectedRowKeys, pageSize, currentPage, tableData, queryFilters, sorterList,
+        maxSelectedRecords, isLoading, minSelectedRecords, filterValueObjects?.formFilter, filterValueObjects?.quickSearchFilter, filterValueObjects?.externalFilter,
+        showFormFilter, formFilterMode, quickSearchMode])
 
 
     useEffect(() => {
         const saveSetting = () => {
-            const tableColumnsSetting = columns.map(column => {
-                const tableColumnSetting: IColumnUserSettings = {
-                    name: column.key,
-                    fixed: column.fixed,
-                    width: column.width,
-                    visible: true
-                }
-                return tableColumnSetting
-            })
+            const getTableUserColumnSettings = (columnTable: IColumn[]) => {
+                return columnTable.map(column => {
+                    const tableColumnSetting: TableUserColumn = {
+                        name: column.key,
+                        fixed: column.fixed,
+                        width: column.width,
+                        visible: true
+                    }
+                    if (column.children) {
+                        (tableColumnSetting as ITableUserColumnGroupSettings).columns = getTableUserColumnSettings(column.children)
+                    }
+                    return tableColumnSetting
+                })
+            }
 
             const savedSetting: ITableUserSettings = {
                 ...tableUserSetiings,
                 pageSize: pageSize,
-                columns: [...tableColumnsSetting],
+                columns: getTableUserColumnSettings(columns),
                 defaultSort: sorterList
             }
             saveUserSetting && saveUserSetting(savedSetting)
@@ -299,23 +308,32 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         }
     }, [columns])
 
-    useEffect(() => {
-        if (tableSettings.quickSearchFilter) {
-            const filters = new Map(queryFilters)
-            if (filterValueObjects?.quickSearchFilter) {
-                filters.set("QuickSearch", generateQuickSearchFilter(tableSettings.quickSearchFilter, filterValueObjects.quickSearchFilter))
-            }
-            else {
-                if (filters.has("QuickSearch")) {
-                    filters.delete("QuickSearch")
-                }
-            }
-            if (!compareMaps(filters, queryFilters))
-                setQueryFilters(filters)
-
-            //const filter = filterValueObjects && filterValueObjects.quickSearchFilter && generateQuickSearchFilter(tableSettings.quickSearchFilter, filterValueObjects.quickSearchFilter)
+    const setFilterFragment = (filterTypeName: FilterTypeName) => {
+        const filterFragment = transformFilterToExpressionFragment && transformFilterToExpressionFragment(filterTypeName, currentTableState, tableSettings, tableUserSetiings)
+        const newFilters = new Map(queryFilters)
+        if (filterFragment) {
+            newFilters.set(filterTypeName, filterFragment)
+            setQueryFilters(newFilters)
         }
+        else {
+            if (queryFilters.has(filterTypeName)) {
+                queryFilters.delete(filterTypeName)
+                setQueryFilters(queryFilters)
+            }
+        }
+    }
+
+    useEffect(() => {
+        setFilterFragment("quickSearchFilter")
     }, [filterValueObjects?.quickSearchFilter])
+
+    useEffect(() => {
+        setFilterFragment("formFilter")
+    }, [filterValueObjects?.formFilter])
+
+    useEffect(() => {
+        setFilterFragment("externalFilter")
+    }, [filterValueObjects?.externalFilter])
 
     const getTableData = async () => {
         if (fetchData) {
@@ -414,11 +432,88 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     }
 
     const onDropHandler = (_element: any, startIndex: any, lastIndex: any) => {
-        const newColumns = [...columns];
-        newColumns[startIndex] = columns[lastIndex];
-        newColumns[lastIndex] = columns[startIndex];
-        setColumns(newColumns);
+        const findParent = (arr: IColumn[], key: any, prevEl: IColumn | null): IColumn | null => {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].key === key) return prevEl;
+
+                if (arr[i].children) {
+                    return findParent(arr[i].children as IColumn[], key, arr[i]);
+                }
+            }
+
+            return null;
+        };
+
+        const parentEl = findParent(columns, _element.key, null);
+
+        if (parentEl !== null) {
+            const updateTreeData = (arr: IColumn[], parentEl: IColumn): IColumn[] => {
+                return arr.map(item => {
+                    if (item.key === parentEl.key && parentEl.children) {
+                        const newArr = parentEl.children.slice();
+                        newArr[startIndex] = parentEl.children[lastIndex];
+                        newArr[lastIndex] = parentEl.children[startIndex];
+                        return {
+                            ...item,
+                            children: newArr
+                        };
+                    }
+
+                    if (item.children) {
+                        return {
+                            ...item,
+                            children: updateTreeData(item.children, parentEl)
+                        };
+                    }
+
+                    return item;
+                });
+            };
+
+            const newColumns = updateTreeData(columns, parentEl);
+            setColumns(newColumns);
+        } else {
+            const newColumns = columns.slice();
+            newColumns[startIndex] = columns[lastIndex];
+            newColumns[lastIndex] = columns[startIndex];
+            setColumns(newColumns);
+        }
     }
+
+    const onDragOverHandler = (e: any, overKey: string, dragKey: string) => {
+        const findParent = (arr: IColumn[], key: string, prevEl: IColumn | null): IColumn | null => {
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i].key === key) return prevEl;
+
+                if (arr[i].children) {
+                    return findParent(arr[i].children as IColumn[], key, arr[i]);
+                }
+            }
+
+            return null;
+        };
+
+        const parentEl = findParent(columns, dragKey, null);
+
+        if (parentEl !== null && parentEl.children) {
+            const keys = parentEl.children.map(item => item.key);
+
+            if (!keys.includes(overKey)) {
+                e.dataTransfer.dropEffect = 'none';
+            } else {
+                e.dataTransfer.dropEffect = 'move';
+            }
+        } else {
+            const keys = columns.map(item => item.key);
+
+            if (!keys.includes(overKey)) {
+                e.dataTransfer.dropEffect = 'none';
+            } else {
+                e.dataTransfer.dropEffect = 'move';
+            }
+        }
+    }
+
 
     const onFixedColumnClick = (fixedKeys: any) => {
         const newColumns = columns.map((item) => {
@@ -516,21 +611,22 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                     }
                     return prev
                 }))
-        }).then(() => setfilterOn(true))
+        }).then(() => setFormFilterMode(true))
     }
 
     const onCloseClick = () => {
-        setShowFilter(false)
+        setShowFormFilter(false)
     }
 
     // const getInitialValuesAsync = () => {
     //     return new Promise<any>((resolve) => {
     //         resolve(filterValueObjects?.formFilter)
     //     })
-    // }
+    // }   
 
     const table = () => (
         <Table
+            disableFocusFirstRow
             isVirtualTable={pageSize > 20}
             fullHeight
             deleteLastColumnWidth
@@ -549,7 +645,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             settings={{
                 isDraggable: true,
                 onDrop: tableSettings.visual?.dragable ? onDropHandler : undefined,
-                onResizable: tableSettings.visual?.resizable ? onResizableHandler : undefined
+                onResizable: tableSettings.visual?.resizable ? onResizableHandler : undefined,
+                onDragOver: tableSettings.visual?.dragable ? onDragOverHandler : undefined,
             }}
             onFixedColumnClick={tableSettings.visual?.fixedColumn ? onFixedColumnClick : undefined}
             bordered={bordered}
@@ -559,7 +656,6 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                     cancelAllOnPage: cancelAllOnPage,
                     selectAll: selectAll,
                     selectAllOnPage: selectAllOnPage
-
                 }
             }
             onRow={(record) => {
@@ -617,8 +713,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const searchFormApi = useRef<IFormApi>()
 
     return <Fragment>
-        {searchFormService && <div style={{ height: "300px", display: showFilter ? "block" : "none" }}>
-            <SearchForm ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
+        {searchFormService && <div style={{ paddingBottom: "10px", display: showFormFilter ? "block" : "none" }}>
+            <SearchForm getResourceText={getResourceText} ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
         </div>}
         {tableMenu(tableMemo)}
     </Fragment>

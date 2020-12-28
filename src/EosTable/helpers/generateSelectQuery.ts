@@ -1,18 +1,18 @@
-import { IFieldPath } from "../types/IFieldPath";
-import { ITableSettings } from "../types/ITableSettings";
-import { ITableUserSettings } from "../types/ITableUserSettings";
+import { IFieldPathShort } from "../types/IFieldPath";
+import { ITableColumnGroupSettings, ITableColumnSettings, ITableSettings, TableColumn } from "../types/ITableSettings";
+import { ITableUserColumnGroupSettings, ITableUserSettings, TableUserColumn } from "../types/ITableUserSettings";
 
 
 export default function generateSelectQuery(tableSettings: ITableSettings, gridUserSettings: ITableUserSettings, onlyKeysForSelectedAll?: boolean) {
   const typeName = tableSettings.typeName;
   const typePluralName = tableSettings.typePluralName[0].toLowerCase() + tableSettings.typePluralName.slice(1);
 
-  function getTextField(fieldPath: Omit<IFieldPath, "displayName" | "sortable">): string {
+  function getTextField(fieldPath: IFieldPathShort): string {
     if (!fieldPath.child) {
-      return fieldPath.apiField
+      return (fieldPath.alias ? fieldPath.alias + ": " : "") + fieldPath.apiField
     }
     else {
-      return fieldPath.apiField + "\n{\n" + getTextField(fieldPath.child) + "\n}"
+      return (fieldPath.alias ? fieldPath.alias + ": " : "") + fieldPath.apiField + "\n{\n" + getTextField(fieldPath.child) + "\n}"
     }
   }
 
@@ -20,19 +20,32 @@ export default function generateSelectQuery(tableSettings: ITableSettings, gridU
 
   if (!onlyKeysForSelectedAll) {
 
-    gridUserSettings.columns.filter(c => c.visible).forEach((c) => {
-      let gridCol = tableSettings.columns.find((gridCol) => gridCol.name === c.name);
-      if (gridCol) {
-        if (gridCol.fields) {
-          gridCol.fields.forEach((fieldCol) => {
-            items.push(getTextField(fieldCol));
-          })
+    const setItems = (tableUserColumns: TableUserColumn[], tableColumns: TableColumn[]) => {
+      tableUserColumns.filter(tableUserColumn => tableUserColumn.visible).forEach((tableUserColumn) => {
+        const tableUserGroupColumn = tableUserColumn as ITableUserColumnGroupSettings
+        const tableColumnSettings = tableColumns.find((tableColumn) => tableColumn.name === tableUserColumn.name)
+        const tableColumnGroupSettings = tableColumnSettings as ITableColumnGroupSettings
+
+        if (tableUserGroupColumn.columns && tableColumnGroupSettings.columns) {
+          setItems(tableUserGroupColumn.columns, tableColumnGroupSettings.columns)
         }
         else {
-          items.push(gridCol.name);
+          const tableColumnSettingsData = tableColumnSettings as ITableColumnSettings
+          if (tableColumnSettingsData) {
+            if (tableColumnSettingsData.fields) {
+              tableColumnSettingsData.fields.forEach((fieldCol) => {
+                items.push(getTextField(fieldCol));
+              })
+            }
+            else {
+              items.push(tableColumnSettingsData.name);
+            }
+          }
         }
-      }
-    });
+      })
+    }
+
+    setItems(gridUserSettings.columns, tableSettings.columns)
 
     tableSettings.defaultLoadFields?.forEach((fieldCol) => {
       items.push(getTextField(fieldCol));
