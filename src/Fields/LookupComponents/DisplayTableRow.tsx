@@ -73,6 +73,8 @@ export interface IDisplayTableRow {
     hiddenDeleteToolTitle?: boolean;
     /**Скрыть подпись тулы добавления строки в тултип.*/
     hiddenAddRowToolTitle?: boolean;
+    /**Максимальное количество символов в текстовых полях */
+    maxInputLength?: number;
 
     onDataChange?(item?: any): void;
 
@@ -83,6 +85,7 @@ export interface IDisplayTableRow {
 const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     value,
     mode,
+    onChange,
     onDataChange,
     dataService: getDataService,
     label,
@@ -99,7 +102,8 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     addRowToolbarWarning,
     deleteRowsToolbarWarning,
     hiddenDeleteToolTitle,
-    hiddenAddRowToolTitle
+    hiddenAddRowToolTitle,
+    maxInputLength
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
@@ -191,6 +195,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
         setSelectedRowKeys([]);
     }, [value]);
     useEffect(() => {
+        if (onChange) {
+            onChange(formData.current)
+        }
         if (onDataChange) 
             onDataChange(formData.current);      
     }, [formData.current]);
@@ -228,9 +235,6 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     );
 
     function addNewRow() {
-        if (onDataChange) {
-            onDataChange(formData.current);
-        } 
         let values: IValue[] = formData.current ? formData.current : [];
 
         let newRow: IValue;
@@ -383,6 +387,7 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                         />);
                     }
                     return (<FieldText
+                        maxLength={maxInputLength}
                         type="FieldText"
                         mode={(column.disabled || isDisplay()) ? FormMode.display : FormMode.edit}
                         defaultValue={value}

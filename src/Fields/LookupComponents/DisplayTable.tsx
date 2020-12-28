@@ -81,6 +81,7 @@ export interface IDisplayTable {
 const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     value,
     mode,
+    onChange,
     onDataChange,
     notFoundContent,
     dataService,
@@ -160,6 +161,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         setSelectedRowKeys([]);
     }, [value]);
     useEffect(() => {
+        if (onChange) {
+            onChange(formData.current);
+        }  
         if (onDataChange) {
             onDataChange(formData.current);
         }  
