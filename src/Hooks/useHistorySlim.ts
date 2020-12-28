@@ -14,6 +14,7 @@ export interface IHistorySlimState {
 
 /**Хук, позволяющий работать с историей браузера.*/
 function useHistorySlim() {
+    let counter = 1;
     const history = useHistory();
     const { state: historyState, clearState } = useHistoryWriter();
     const push = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
@@ -32,7 +33,7 @@ function useHistorySlim() {
     const pushRecover = (key: number, path?: string) => {
         const currentState = getStateByKey(key);
         const myPath = path ? path : "/";
-        history.push(myPath, currentState);
+        history.push(myPath, currentState?.previous); // Нужно передавать предыдущее состояние, потому что в нем хранится правильная информация о предыдущей странице.
     }
     /**
      * Добавляет запись в историю с записью текущего состояния и всех состояний из useHistoryState.
@@ -168,7 +169,7 @@ function useHistorySlim() {
          * Уникальный ключ. Возвращает количество миллисекунд с 1 января 1970 года.
          * https://www.w3schools.com/jsref/jsref_valueof_date.asp
          */
-        nextState.key = new Date().valueOf();
+        nextState.key = new Date().valueOf() + counter++;
         return nextState;
     }
     function addCurrent(state: IHistorySlimState, stateItem?: IHistorySlimItem | IHistorySlimItem[]) {
