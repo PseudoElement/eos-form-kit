@@ -53,6 +53,10 @@ import React, {
     hiddenDeleteToolTitle?: boolean;
     /**Скрыть подпись тулы добавления строки в тултип.*/
     hiddenAddRowToolTitle?: boolean;
+    /**Максимальное количество символов в текстовых полях */
+    maxInputLength?: number;
+    /**Вызовется, когда значение поля изменится. */
+    onChange?(item?: any): void;
  }
  
  /**
@@ -96,12 +100,14 @@ import React, {
                          defaultColumnIndex={props.defaultColumnIndex}
                          modalWindowTitle={props.modalWindowTitle}
                          defaultColumnLabel={props.defaultColumnLabel}
+                         maxInputLength={props.maxInputLength}
                          showHeader={props.showHeader}
                          mode={props.mode}
                          dataService={props.dataService}
                          notFoundContent={props.notFoundContent}
                          type={props.type}
                          otherColumns={props.otherColumns}
+                         onChange={props.onChange}
                          onDataChange={(row: any) => {
                              context.setFieldValue(props.name || '', row)
                          }}

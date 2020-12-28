@@ -22,6 +22,7 @@ class Helper {
                 "addRowToolbarWarning": "Такой элемент уже существует",
                 "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
                 "required": true,
+                "maxInputLength": 15,
                 "allowDuplication": false,
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMultiRow",
