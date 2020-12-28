@@ -46,8 +46,7 @@ const GetProvider = () => {
                     keyFields: ["key"],
                     visual: {
                         dragable: true,
-                        resizable: true,
-                        isDifferentRow: true
+                        resizable: true,                        
                     },
                     menu: [{
                         key: "add",

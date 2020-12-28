@@ -11,7 +11,7 @@ export function generateQuickSearchFilterFragment_OldStyle(quickSearchFilter: IF
     }
     else {
       const child: any = getItemByField(fieldPath.child)
-      return { [fieldPath.apiField]: { or: [...child] } };
+      return { [fieldPath.apiField]: { ...child } };
     }
 
   }
@@ -30,7 +30,7 @@ export function generateQuickSearchFilterFragment(quickSearchFilter: IFieldPathS
     }
     else {
       const child: any = getItemByField(fieldPath.child)
-      return { [fieldPath.apiField]: { or: [...child] } };
+      return { [fieldPath.apiField]: { ...child } };
     }
 
   }

@@ -49,14 +49,12 @@ export interface IFieldSort {
     child?: IFieldSort
 }
 
-export interface IVisualSettings {
-    isDifferentRow?: boolean
+export interface IVisualSettings {    
     dragable?: boolean
     resizable?: boolean
     bordered?: "header" | "all" | undefined
     fixedColumn?: boolean
-    showSelectedBtn?: boolean,
-    ellipsisRows?: number
+    showSelectedBtn?: boolean,    
     pageSizeOptions?: string[]
 }
 

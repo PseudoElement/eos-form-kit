@@ -3,6 +3,8 @@ export interface ISorterType {
     sorterPath?: ISorterPath
     children?: ISorterType[]
     columnName?: string
+    json?: string
+    direction?: DirectionSort
 }
 
 export interface ISorterPath {
