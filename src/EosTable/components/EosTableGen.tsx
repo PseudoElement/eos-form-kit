@@ -77,6 +77,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             filter: initTableState?.filter,
             filterValueObjects: initTableState?.filterValueObjects ?? tableUserSetiings.defaultFilters,
             showFormFilter: initTableState?.showFormFilter ?? tableUserSetiings.filterVisible,
+            tableView: initTableState?.tableView
         }
         return init
     }, [initTableState, tableUserSetiings, tableSettings])
@@ -176,6 +177,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [formFilterMode, setFormFilterMode] = useState<boolean | undefined>()
 
     const [filterValueObjects, setFilterValueObjects] = useState<IFilterValueObjects>()
+    const [tableView, setTableView] = useState<"default" | "card">()
 
     const currentTableState: ITableState = {
         after: queryAfter,
@@ -254,6 +256,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         setMinSelectedRecords(tableState.minSelectedRecords)
         setQuickSearchMode(tableState.quickSearchMode)
         setShowFormFilter(tableState.showFormFilter)
+        setTableView(tableState.tableView)
 
         if (tableState.formFilterMode !== formFilterMode) {
             setFormFilterMode(tableState.formFilterMode)
@@ -624,6 +627,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     const table = () => (
         <Table
+            table={tableView}
             disableFocusFirstRow
             isVirtualTable={pageSize > 20}
             fullHeight
@@ -706,7 +710,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         )
     }, [recordsTotalCount, selectedRowKeys, rightMenu, menu])
 
-    const tableMemo = useMemo(table, [columns, tableData, isLoading, selectedRowKeys, currentRowKey])
+    const tableMemo = useMemo(table, [columns, tableData, isLoading, selectedRowKeys, currentRowKey, tableView])
 
     const searchFormApi = useRef<IFormApi>()
 

@@ -15,7 +15,7 @@ export interface ITableState {
     maxSelectedRecords?: number
     minSelectedRecords?: number
     currentPage?: number
-    tableView?: "table" | "card"
+    tableView?: "default" | "card"
     forcedReloadData?: boolean
     quickSearchMode?: boolean
     readonly lastUnSelectedRecords?: any[]

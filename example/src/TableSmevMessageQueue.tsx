@@ -15,7 +15,7 @@ const TableMessageQueue = () => {
     const apolloClient = useApolloClient();
 
     const provider = GetProvider()
-    return <Layout style={{ height: "calc(100vh - 70px)" }}><EosTable provider={provider} /></Layout>
+    return <Layout style={{ height: "calc(100vh - 70px)" }}><EosTable initTableState={{tableView:"default"}} provider={provider} /></Layout>
 
 
     function GetProvider() {
@@ -67,7 +67,7 @@ const TableMessageQueue = () => {
                             {
                                 name: "smevRequestType",
                                 title: "Тип сведений",
-                                fields: [{ displayName: "Тип сведений", apiField: "smevRequestType", child: { displayName: "Наименование", apiField: "name", sortable: true } }],
+                                fields: [{ displayName: "Тип сведений", apiField: "smevRequestType", child: { alias: "title", displayName: "Наименование", apiField: "name", sortable: true } }],
                                 columnRender: {
                                     renderType: "ReferenceDisplayw"
                                 },
