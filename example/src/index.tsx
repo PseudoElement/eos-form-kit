@@ -131,7 +131,7 @@ const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
                 }}>Назад useBackUrlHistory.toBack</a>
             {/* </Menu> */}
             {backStory && backStory.length > 0 ? (<div>{backStory.map(item => {
-                return (<div style={{ display: "inline-block", marginRight: 10, border: "1px solid green" }}><a href={item.state.url} onClick={(event) => {
+                return (<div style={{ display: "inline-block", marginRight: 10, border: "1px solid green " }}><a href={item.state.url} onClick={(event) => {
                     debugger
                     pushRecover(item.key);
                     event.preventDefault();
