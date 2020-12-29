@@ -195,6 +195,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
         setSelectedRowKeys([]);
     }, [value]);
     useEffect(() => {
+        if(formData.current === value) {
+            return;
+        }
         if (onChange) {
             onChange(formData.current)
         }
