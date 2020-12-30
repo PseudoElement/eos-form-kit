@@ -161,12 +161,6 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         setSelectedRowKeys([]);
     }, [value]);
     useEffect(() => {
-        if(formData.current === value) {
-            return;
-        }
-        if (onChange) {
-            onChange(formData.current);
-        }  
         if (onDataChange) {
             onDataChange(formData.current);
         }  
@@ -236,11 +230,15 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         //     newRow = { key: row.key, value: row.value };  
         // }
 
-        const newValues = [...values, newRow];
+        const newValues: IValue[] = [...values, newRow];
         if (dataSource && getDataSource) {
             setDataSource([...dataSource, ...getDataSource([newRow]) ]);
         }
         formData.current = newValues;
+
+        if (onChange && newValues.length === formData.current?.length) {
+            onChange(newValues);
+        }  
     };
     function isDisplay() {
         return FormMode.display === mode;
@@ -282,6 +280,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             setDataSource(newDataSource);
             formData.current = newFormData;
             setSelectedRowKeys([]);
+            if (onChange) {
+                onChange(newFormData);
+            }  
         }
     };
     function getDataSource(values?: IValue[]) {

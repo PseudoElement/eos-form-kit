@@ -195,12 +195,6 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
         setSelectedRowKeys([]);
     }, [value]);
     useEffect(() => {
-        if(formData.current === value) {
-            return;
-        }
-        if (onChange) {
-            onChange(formData.current)
-        }
         if (onDataChange) 
             onDataChange(formData.current);      
     }, [formData.current]);
@@ -257,6 +251,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
         const newValues = [...values, newRow];
         setDataSource(getDataSource(newValues));
         formData.current = newValues;
+        if (onChange) {
+            onChange(newValues);
+        }
     }
     function isDisplay() {
         return FormMode.display === mode;
@@ -298,6 +295,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
             setDataSource(newDataSource);
             formData.current = newFormData;
             setSelectedRowKeys([]);
+            if (onChange) {
+                onChange(newFormData);
+            }
         }
     };
     function getDataSource(values?: IValue[]) {
@@ -385,6 +385,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                                         row.other = item?.other;
                                     } 
                                     setDataSource(getDataSource(formData.current));
+                                    if (onChange) {
+                                        onChange(formData.current);
+                                    }
                                 }
                             }}
                         />);
@@ -413,6 +416,9 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                                 }
                                 else {
                                     otherValue.value = changedValue;
+                                }
+                                if (onChange) {
+                                    onChange(formData.current);
                                 }
                                 //formData.current = [...formData.current]
                             }
