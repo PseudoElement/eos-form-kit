@@ -13,7 +13,9 @@ export enum CellType {
     /**Поля идут один за другим в одном столбце. */
     autoCell = 1,
     /**В одном столбце два поля между которыми текст. */
-    threeFields = 2
+    threeFields = 2,
+    /**Настройки столбца в котором поля идут один за другим и можно указать ширину столбца. */
+    widthAutoCell = 3
 }
 
 /**Настройки столбца. */
@@ -44,9 +46,16 @@ export interface IThreeFieldsCell extends IFormCell {
     /**Правое поле. */
     rightField?: IField;
 }
+/**Настройки столбца в котором поля идут один за другим и можно указать ширину столбца. */
+export interface IWidthAutoCell extends IFormCell {
+    /**Ширина столбца. */
+    width?: WidthType;
+    /**Список полей. */
+    fields?: IField[];
+}
 
 /**Компонент для отрисовки столбца внутри формы. */
-const FormCell: FunctionComponent<IFormCell | IWidthCell | IAutoCell | IThreeFieldsCell> = (props: IFormCell | IWidthCell | IAutoCell | IThreeFieldsCell) => {
+const FormCell: FunctionComponent<IFormCell | IWidthCell | IAutoCell | IThreeFieldsCell | IWidthAutoCell> = (props: IFormCell | IWidthCell | IAutoCell | IThreeFieldsCell | IWidthAutoCell) => {
     switch (props.type) {
         case CellType.autoCell:
             return (
@@ -56,12 +65,15 @@ const FormCell: FunctionComponent<IFormCell | IWidthCell | IAutoCell | IThreeFie
             return (
                 <ThreeFieldsCell {...props} />
             );
+        case CellType.widthAutoCell:
+            return (
+                <WidthAutoCell {...props} />
+            );
         case CellType.widthCell:
         default:
             return (
                 <WidthCell  {...props} />
             );
-
     }
 }
 
@@ -107,6 +119,23 @@ const ThreeFieldsCell: FunctionComponent<IThreeFieldsCell> = (props: IThreeField
                         React.createElement(fields[props?.rightField?.type], { ...props?.rightField, })
                     }
                 </Col>
+            </Row>
+        </Col>
+    );
+}
+const WidthAutoCell: FunctionComponent<IWidthAutoCell> = (props: IWidthAutoCell) => {
+    return (
+        <Col xs={props.width} md={props.width} >
+            <Row align="middle" style={{ flexWrap: "nowrap" }}>
+                {
+                    props.fields?.map(field => {
+                        const reactElement = React.createElement(fields[field.type], { ...field, key: field.name });
+                        return (
+                            <Col flex="0 0 auto" style={{ alignSelf: "flex-end", paddingRight: "20px" }}>
+                                {reactElement}
+                            </Col>);
+                    })
+                }
             </Row>
         </Col>
     );
