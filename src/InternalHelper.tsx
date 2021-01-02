@@ -1,6 +1,6 @@
 import { IClientTabProps, IContext } from "./ClientForms/AjaxClientForm";
 import { IClientTab, IClientTabs, IFieldsInfo } from "./ClientForms/ClientTabs";
-import { CellType, IAutoCell, IThreeFieldsCell, IWidthCell } from "./ClientForms/FormCell";
+import { CellType, IAutoCell, IThreeFieldsCell, IWidthCell, IWidthAutoCell } from "./ClientForms/FormCell";
 import { FormMode } from "./ClientForms/FormMode";
 import { CellsType, IFormRow } from "./ClientForms/FormRow";
 import { IFormRows } from "./ClientForms/FormRows";
@@ -117,6 +117,16 @@ class InternalHelper {
                 }
                 fieldNames = autoCell.fields?.map(field => field.name) || [];
                 result = autoCell;
+                break;
+            case CellType.widthAutoCell:
+                // IWidthAutoCell 
+                 let widthAutoCell: IWidthAutoCell = {
+                    type: CellType.widthAutoCell,
+                    width: cell.Width,
+                    fields: this.getFields(mode, fields, cell.Fields, getResourceText)
+                }
+                fieldNames = widthAutoCell.fields?.map(field => field.name) || [];
+                result = widthAutoCell;
                 break;
             case CellType.widthCell:
             default:

@@ -9,7 +9,7 @@ export { default as useHistoryListener } from './Hooks/useHistoryListener';
 export { default as useTitleChanger } from './Hooks/useTitleChanger';
 
 export { default as ClientTabs, IClientTabs, IClientTab, IClientTabsApi, IFieldsInfo } from './ClientForms/ClientTabs';
-export { default as FormCell, IFormCell, IWidthCell, IAutoCell, IThreeFieldsCell, CellType, WidthType } from './ClientForms/FormCell';
+export { default as FormCell, IFormCell, IWidthCell, IAutoCell, IThreeFieldsCell, IWidthAutoCell, CellType, WidthType } from './ClientForms/FormCell';
 export { default as FormRow, IFormRow } from './ClientForms/FormRow';
 export { default as FormRows, IFormRows } from './ClientForms/FormRows';
 export { default as ToolBar, IToolBar } from './ClientForms/ToolBar/ToolBar';
