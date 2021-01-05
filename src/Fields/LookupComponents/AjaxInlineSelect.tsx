@@ -1,28 +1,13 @@
-import React, { useEffect, useState, useRef, ReactNode } from 'react';
+import React, { useState, useRef, ReactNode } from 'react';
 import { Select as RcSelect, Spin } from "@eos/rc-controls";
 
 /** Структура и описание пропсов AjaxSelect */
-export interface ISelect {
+export interface IInlineSelect {
     /** Объект для осуществления запроса */
     dataService?: IDataService;
 
-    /**Вызовется, когда значение поля изменится. */
-    onChange?(item?: any): void;
-
-    /** Имя поля */
-    fieldName?: string;
-
-    /** Объект значения поля*/
-    value?: IOptionItem;
-
     /** Текст при отсутсвии элементов */
     notFoundContent?: string;
-
-    /** Обзяательность заполнения поля */
-    required?: boolean;
-
-    /** конекст */
-    ctx?: any;
 
     /** ручной ввод */
     manualInputAllowed?: boolean;
@@ -32,6 +17,9 @@ export interface ISelect {
 
     /** отображение инфо текста */
     showResultInfoText?: boolean;
+
+    /**вызовется при выборе элемента списка */
+    onValueSelected(item?: any): void;
 }
 
 /** Структура элемента выпадающего списка */
@@ -70,24 +58,14 @@ export interface IDataService {
 }
 
 /** Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке */
-export const Select = React.forwardRef<any, ISelect>(({
-    onChange,
-    fieldName,
-    value,
+export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
     notFoundContent,
-    required,
     dataService: getDataService,
-    ctx,
     manualInputAllowed,
     showResultInfoText,
-    resultInfoText
+    resultInfoText,
+    onValueSelected
 }) => {
-    /** Объект значения */
-    const [currentValue, setCurrentValue] = useState<IOptionItem | undefined>(value);
-    useEffect(() => {
-        setCurrentValue(value);
-    }, [value])
-
     /** Объект индикатор загрузки */
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -140,7 +118,7 @@ export const Select = React.forwardRef<any, ISelect>(({
                     } 
                     else {
                         setShowInfo(false)
-                        setIsSingleElem(items?.length === 1);
+                        setIsSingleElem(items.length === 1);
                         setItems(items);
                     }
                 }
@@ -148,7 +126,7 @@ export const Select = React.forwardRef<any, ISelect>(({
                     if (showResultInfoText === true || showResultInfoText === undefined) {
                         setShowInfo(true);
                     }      
-                    setIsSingleElem(items?.length === 1);       
+                    setIsSingleElem(items.length === 1);       
                     setItems(items);
                 }
                 setIsLoading(false);
@@ -165,23 +143,13 @@ export const Select = React.forwardRef<any, ISelect>(({
 
     /** Очистка значения формы */
     let onClear = () => {
-        setCurrentValue(undefined);
-        setValueToForm(undefined);
-        if (onChange)
-            onChange(null);
         loadItemById("");
     }
 
     /** Отправка запроса на показ дополнительных вариантов введенного значения при фокусе на поле */
     let onFocus = () => {
-        // Если поле со значением, то отправить запрос со значением на поиск
-        if (currentValue?.value) {
-            loadItemById(currentValue?.value?.trim());
-        } 
-        else {
-            // Если без - пустую строку на показ всех доступных значений
-            loadItemById("");
-        }
+        // отправить запрос со значением на поиск
+        loadItemById("");
         setIsOpen(true)
     }
 
@@ -192,23 +160,6 @@ export const Select = React.forwardRef<any, ISelect>(({
         // Получить сделать запрос на получение данных по обрезанной строке
         value = value?.trim() ?? '';
         loadItemById(value);
-
-        // Приведение value полученных объектов к UpperCase для дальнейшего сравнения
-        let options: any = items?.map(item => item?.value?.toLocaleUpperCase());
-
-        // Если есть options совпадающий с введенной строкой и они не равны пустой строке, то сделать значение выбранным, 
-        // если нет - остается предыдущее введенное значение либо значение
-        if (options?.indexOf(value?.toLocaleUpperCase().trim()) > -1 && value?.trim() !== "") {
-            // не проставлять задизейбленный элемент
-            if (!items[options.indexOf(value?.toLocaleUpperCase().trim())].disabled) {
-                // Проставить объект IOptionItem в отображение
-                setIsSingleElem(items?.length === 1);
-                setCurrentValue({ value: value, key: items[options.indexOf(value?.toLocaleUpperCase().trim())].key });
-
-                // Проставить объект IOptionItem в форму
-                setValueToForm({ value: value, key: items[options.indexOf(value?.toLocaleUpperCase().trim())].key, ...items[options.indexOf(value?.toLocaleUpperCase().trim())]});    
-            }
-        }
     }
 
     /** Проставка выбранного значения в поле
@@ -216,18 +167,24 @@ export const Select = React.forwardRef<any, ISelect>(({
      * @param option объект {key, value, label(аналогичен value)}
      */
     let onSelect = (value: any, option: any) => {
-        setCurrentValue(option?.item);
-        setValueToForm(option?.item);
         if (value) {
             loadItemById(value?.trim() ?? ''); 
         }
-        if (onChange) {
-            onChange(option?.item);
+        if (onValueSelected) {
+            onValueSelected(option?.item);
         }
         setIsOpen(false)
         if (focusRef?.current && focusRef?.current?.blur) {
             focusRef?.current?.blur();
         }
+        handleSetFocus();
+    }
+
+    let handleSetFocus = () => {
+        if (focusRef?.current && focusRef?.current?.focus) {
+            focusRef?.current?.focus();
+        }
+        onFocus();
     }
 
     /** событие по потере фокуса */
@@ -238,9 +195,8 @@ export const Select = React.forwardRef<any, ISelect>(({
     return (
         <Spin spinning={isLoading}>
             <RcSelect ref={focusRef}
-                required={required}
                 showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
-                value={currentValue?.value}
+                value={''}
                 notFoundContent={notFoundContent}
                 onSearch={handleSearch}
                 onFocus={onFocus}
@@ -304,17 +260,5 @@ export const Select = React.forwardRef<any, ISelect>(({
                 return `Отображены все результаты`;
             }
         }
-    }
-
-    /**
-     * Проставляет значение в форму.
-     * @param value Значение для простановки в форму.
-     */
-    function setValueToForm(value?: IOptionItem): boolean {
-        if (ctx) {
-            ctx.setFieldValue(fieldName, value);
-            return true;
-        }
-        return false;
     }
 });

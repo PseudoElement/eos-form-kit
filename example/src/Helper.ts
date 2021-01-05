@@ -6,6 +6,8 @@ class Helper {
         const RESULT_AMOUNT_LIMIT: number = 2;
         /** Фактически требуемое количество элементов при запросе, чтобы указать, что отображены только первые элементы запроса, а не все */
         const LOADING_ELEMENTS_AMOUNT: number = RESULT_AMOUNT_LIMIT + 1;
+        /** массив для проверки отработки инлайн лукапа */
+        let tempArray: any[] = [];
 
         const fields = [
             {
@@ -290,6 +292,52 @@ class Helper {
                     // resultsAmount: LOADING_ELEMENTS_AMOUNT
                 },
             },
+            // test inlineLookup
+            {
+                "disabled": false,
+                "label": "Справочник",
+                "name": "classifs",
+                "type": "FieldLookup",
+                "value": null,
+                "notFoundContent": "Нет элементов",
+                "resultInfoText": `Отображены первые ${RESULT_AMOUNT_LIMIT} элементов`,
+                "inlineMode": true,
+                "onValueSelected": (item: any) => {
+                    tempArray.push(item);
+                    console.log(tempArray);
+                },
+                "dataService": {
+                    loadDataAsync: async (search?: string) => {
+                        const result: AjaxSelect.IOptionItem[] = [
+                            { key: "value1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
+                            { key: "value2", value: "два",  other: [{ value: "два три", name: "secondColumn" }] },
+                            { key: "value3", value: "три",  other: [{ value: "три три", name: "secondColumn" }] },
+                            { key: "value4", value: "четыре",  other: [{ value: "четыре три", name: "secondColumn" }] },
+                            { key: "value5", value: "пять", disabled: false, isSpecific: false },
+                            { key: "value6", value: "шесть",  disabled: true, isSpecific: false },
+                            { key: "value7", value: "семь",  disabled: false, isSpecific: true },
+                            { key: "value8", value: "восемь",  disabled: true, isSpecific: true },
+                            { key: "value9", value: "девять", disabled: false, isSpecific: false, other: [{ value: "два один", name: "secondColumn" }] },
+                            { key: "value10", value: "десять",  disabled: true, isSpecific: false, other: [{ value: "два два", name: "secondColumn" }] },
+                            { key: "value11", value: "одиннадцать",  disabled: false, isSpecific: true, other: [{ value: "два три", name: "secondColumn" }] },
+                            { key: "value12", value: "двенадцать",  disabled: true, isSpecific: true, other: [{ value: "два четыре", name: "secondColumn" }] }
+                        ]
+                        if (search) {
+                            let res = result.filter((item) => {
+                                if (item && item.value && item?.value?.indexOf(search) >= 0) {
+                                    return true;
+                                }
+                                return false;
+                            })
+                            return res.length > 0 ? res : [];
+                        }
+                        else {
+                            return result;
+                        }
+                    },
+                    resultsAmount: LOADING_ELEMENTS_AMOUNT
+                }
+            },
         ];
         if (mode === FormMode.display)
             for (let field of fields)
@@ -344,7 +392,9 @@ class Helper {
                     {
                         "Cells": [
                             // test lookup w/o manual input
-                            { "Type": 0, "Fields": ["arhClsAttr"], "Width": 12 }
+                            { "Type": 0, "Fields": ["arhClsAttr"], "Width": 12 },
+                            // test inlineLookup (results in console)
+                            { "Type": 0, "Fields": ["classifs"], "Width": 12 }
                         ]
                     }
                 ],
