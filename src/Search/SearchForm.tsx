@@ -39,6 +39,8 @@ export interface IForm {
     getResourceText?: (name: string) => string;
     /**Метод для получения кастомной вкладки. */
     getCustomtab?: (tab: IClientTabProps) => IClientTab | undefined;
+    /**Обработчик события при изменении значений полей формы. */
+    onValuesChange?(changedValues: any, values: any): void;
 }
 
 /**DI объект для выполнения различных запросов. */
@@ -62,7 +64,7 @@ export interface IFormApi {
     /**Возвращает ключ активной вкладки. */
     getActivatedTab(): string;
     hideLoading(): void;
-    showLoading(): void; 
+    showLoading(): void;
     /**Переполучает элемент и отрисовывает его заново. */
     reloadItem(): void;
     /**Переполучает схему и элемент. */
@@ -96,7 +98,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
             },
             showLoading() {
                 setSpinLoading(true);
-            },            
+            },
             reload() {
                 clientFormApi?.current?.reset();
                 setLoadSchema(true);
@@ -277,6 +279,8 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref: React.Mutab
             formTitleApi?.current?.enableSearchButton();
             formTitleApi?.current?.enableClearButton();
         }
+        if (props.onValuesChange)
+            props.onValuesChange(changedValues, values);
     }
     function onClearClick() {
         targetRef?.current?.clearFields();

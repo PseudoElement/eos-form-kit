@@ -81,6 +81,7 @@ export interface IDisplayTable {
 const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     value,
     mode,
+    onChange,
     onDataChange,
     notFoundContent,
     dataService,
@@ -229,11 +230,15 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         //     newRow = { key: row.key, value: row.value };  
         // }
 
-        const newValues = [...values, newRow];
+        const newValues: IValue[] = [...values, newRow];
         if (dataSource && getDataSource) {
             setDataSource([...dataSource, ...getDataSource([newRow]) ]);
         }
         formData.current = newValues;
+
+        if (onChange && newValues.length === formData.current?.length) {
+            onChange(newValues);
+        }  
     };
     function isDisplay() {
         return FormMode.display === mode;
@@ -275,6 +280,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             setDataSource(newDataSource);
             formData.current = newFormData;
             setSelectedRowKeys([]);
+            if (onChange) {
+                onChange(newFormData);
+            }  
         }
     };
     function getDataSource(values?: IValue[]) {

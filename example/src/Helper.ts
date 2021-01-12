@@ -22,6 +22,7 @@ class Helper {
                 "addRowToolbarWarning": "Такой элемент уже существует",
                 "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
                 "required": true,
+                "maxInputLength": 15,
                 "allowDuplication": false,
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMultiRow",
@@ -147,6 +148,11 @@ class Helper {
             { "disabled": true, "label": "Находится в", "name": "parentName2", "required": false, "requiredMessage": null, "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
             { "disabled": false, "label": "Номер", "name": "ind2", "required": true, "requiredMessage": "inventory:formErrors.ind", "type": "FieldText", "value": null, "additionalText": null, "allowClear": true, "maxLength": 24 },
             { "disabled": false, "label": "Том", "name": "volumeNum2", "required": false, "requiredMessage": null, "type": "FieldInteger", "value": null, "max": 32767, "min": 0, "showCounter": false },
+            { "disabled": false, "label": "Номер", "name": "ind3", "required": true, "requiredMessage": "inventory:formErrors.ind", "type": "FieldText", "value": null, "additionalText": null, "allowClear": true, "maxLength": 24 },
+            { "disabled": false, "label": "Том", "name": "volumeNum3", "required": false, "requiredMessage": null, "type": "FieldInteger", "value": null, "max": 32767, "min": 0, "showCounter": false },
+            { "disabled": false, "label": "Номер", "name": "ind4", "required": true, "requiredMessage": "inventory:formErrors.ind", "type": "FieldText", "value": null, "additionalText": null, "allowClear": true, "maxLength": 24 },
+            { "disabled": false, "label": "Том", "name": "volumeNum4", "required": false, "requiredMessage": null, "type": "FieldInteger", "value": null, "max": 32767, "min": 0, "showCounter": false },
+         
             {
                 "disabled": false, "label": "Категория", "name": "keepCategory", "required": true, "requiredMessage": "inventory:formErrors.keepCategory", "type": "FieldSelect", "value": null,
                 "values": [
@@ -356,7 +362,7 @@ class Helper {
                             { "Type": 0, "Fields": ["ind2"], "Width": 8 },
                             { "Type": 0, "Fields": ["volumeNum2"], "Width": 4 }]
                     },
-                    { "Cells": [{ "Type": 0, "Fields": ["name2"], "Width": 24 }] }
+                    { "Cells": [{ "Type": 3, "Fields": ["ind3", "volumeNum3"], "Width": 24 }] }
                 ],
                 "Title": "Раздел описи2"
             }

@@ -81,6 +81,8 @@ export interface ILookupMulti extends IField {
     hiddenDeleteToolTitle?: boolean;
     /**Скрыть подпись тулы добавления строки в тултип.*/
     hiddenAddRowToolTitle?: boolean;
+    /**Вызовется, когда значение поля изменится. */
+    onChange?(item?: any): void;
 }
 
 /**
@@ -128,6 +130,7 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         type={props.type}
                         otherColumns={props.otherColumns}
                         hideDefaultColumn={props.hideDefaultColumn}
+                        onChange={props.onChange}
                         onDataChange={(row: any) => {
                             context.setFieldValue(props.name || '', row)
                         }}
