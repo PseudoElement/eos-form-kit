@@ -12,7 +12,7 @@ export interface ITableSettings {
     quickSearchFilter?: IFieldPathShort[]
     menu?: IMenuItem[]
     rightMenu?: IMenuItem[]
-    contextMenu?: any
+    contextMenu?: IMenuItem[]
     dataProviderName?: string
     ///cardView?: ICard    
     minSelectedRecords?: number

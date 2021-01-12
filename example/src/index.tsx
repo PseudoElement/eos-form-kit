@@ -157,7 +157,7 @@ const MainMenuItem: FunctionComponent<IMainMenuItem> = (props: IMainMenuItem) =>
                 pushPrevious(props.url, { name: "page", value: `Переход в "${props.title}"` });
                 console.log(currentState);
                 const backStory = getBackPageStateAsArray();
-                debugger
+                //debugger
                 console.log(backStory);
                 event.preventDefault();
                 event.stopPropagation();

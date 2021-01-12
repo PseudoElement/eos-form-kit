@@ -1,9 +1,20 @@
 import React from 'react'
 import { EosTable, ITableProvider, EosTableTypes } from "eos-webui-formgen"
+import { IHandlerProps } from '../../dist/EosTable/types'
 
 const TableExample = () => {
     const provider = GetProvider()
-    return <div style={{ height: "calc(100vh - 48px)" }}><EosTable provider={provider} /></div>
+    provider.fetchAction = (name: string) => {
+        switch (name) {
+            case "delete":
+                return (handlerProps: IHandlerProps) => {
+                    console.log(handlerProps)
+                }
+            default:
+                return undefined
+        }
+    }
+    return <div style={{ height: "calc(100vh - 48px)" }}><EosTable provider={provider} initTableState={{ maxSelectedRecords: 2 }} /></div>
 }
 
 const GetProvider = () => {
@@ -46,17 +57,23 @@ const GetProvider = () => {
                     keyFields: ["key"],
                     visual: {
                         dragable: true,
-                        resizable: true,                        
+                        resizable: true,
                     },
                     menu: [{
                         key: "add",
                         render: {
                             renderType: "Icon",
                             renderArgs: {
-                                iconName: "PlusIcon"
+                                iconName: "PlusIcon"                                
                             }
                         },
                         title: "Добавить"
+                    },
+                    {
+                        key: "divider",
+                        render: {
+                            renderType: "Divider"
+                        }
                     },
                     {
                         key: "edit",
@@ -136,7 +153,41 @@ const GetProvider = () => {
                         render: {
                             renderType: "ShowFilter"
                         }
-                    }]
+                    }],
+                    contextMenu: [
+                        {
+                            key: "edit",
+                            render: {
+                                renderType: "Button",
+                                renderArgs: {
+                                    iconName: "EditIcon",
+                                    titleButton: "Редактирвать",
+                                    typeButton: "link"
+                                }
+                            },
+                            handlers: [{
+                                type: "onClick",
+                                handlerName: "delete"
+                            }]
+                        },
+                        {
+                            key: "divider",
+                            render: {
+                                renderType: "Divider"
+                            }
+                        },
+                        {
+                            key: "delete",
+                            render: {
+                                renderType: "Button",
+                                renderArgs: {
+                                    iconName: "BinIcon",
+                                    titleButton: "Удалить",
+                                    typeButton: "link"
+                                }
+                            }
+
+                        }],
                 }
                 return resolve(setting)
             })
@@ -157,18 +208,18 @@ const GetProvider = () => {
                             visible: true
                         },
                         {
-                            name: "col3", 
-                            visible: true, 
-                            width: 600,                          
+                            name: "col3",
+                            visible: true,
+                            width: 600,
                             columns: [{
-                                name: "col3_1",     
+                                name: "col3_1",
                                 visible: true,
-                                width: 300                         
+                                width: 300
                             },
                             {
-                                name: "col3_2", 
+                                name: "col3_2",
                                 visible: true,
-                                width: 300                                 
+                                width: 300
                             }]
                         }
                     ]
@@ -225,14 +276,9 @@ const GetProvider = () => {
                         }
                     ],
                     "Mode": 0,
-                    "Tabs": [
-                        {
-                            "ClassName": null,
-                            "CustomType": null,
-                            "Disabled": false,
-                            "ForceRender": null,
-                            "Rows": [{ "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] }]
-                        }]
+
+                    "Rows": [{ "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] }]
+
                 };
                 return newContext;
             }

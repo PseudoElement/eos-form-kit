@@ -11,11 +11,17 @@ export interface IMenuItem {
 }
 
 
-export interface IMenuRender extends Omit<IRender, "renderType"> {
-    renderType: MenuRenderTypes
+export interface IMenuRender extends IRender {    
 }
 
-export type MenuRenderTypes = "Icon" | "Button" | "CheckableButton" | "QuickSearch" | "ShowFilter"
+export enum MenuRenderTypes {
+    Icon = "Icon",
+    Button = "Button",
+    CheckableButton = "CheckableButton",
+    QuickSearch = "QuickSearch",
+    ShowFilter = "ShowFilter",
+    Divider = "Divider"
+}
 
 interface MenuItemHandler {
     type: MenuItemHandlerType
@@ -40,7 +46,7 @@ export interface IEosMenuButtonProps {
     type?: 'primary' | 'link' | 'default'
     visible?: boolean
     component?: React.FC
-    renderType: MenuRenderTypes
+    renderType: string
 }
 
 export interface IEosMenuButtonApi {
