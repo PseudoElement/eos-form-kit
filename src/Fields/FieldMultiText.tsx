@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, TextArea } from "@eos/rc-controls";
+import { Form, SmartTextArea } from "@eos/rc-controls";
 import IField from "./IField";
 import { BaseField } from "./BaseField";
 import { Rule } from "rc-field-form/lib/interface";
@@ -28,7 +28,7 @@ export const MultiText = React.forwardRef<any, IMultiText>((props: IMultiText, r
     function getNew(props: IMultiText, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <TextArea style={{ width: "100%" }} ref={ref} required={props.required} rows={props.rows ?? DEFAULT_ROWS} maxLength={props.maxLength} />
+                <SmartTextArea width={"100%"} ref={ref} required={props.required} rows={props.rows ?? DEFAULT_ROWS} maxLength={props.maxLength} />
             </Form.Item>
         );
     }
@@ -38,7 +38,7 @@ export const MultiText = React.forwardRef<any, IMultiText>((props: IMultiText, r
     function getDisplay(props: IMultiText, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <TextArea style={{ width: "100%" }} ref={ref} rows={props.rows ?? DEFAULT_ROWS} readOnly />
+                <SmartTextArea width={"100%"} ref={ref} rows={props.rows ?? DEFAULT_ROWS} readOnly />
             </Form.Item>
         );
     }

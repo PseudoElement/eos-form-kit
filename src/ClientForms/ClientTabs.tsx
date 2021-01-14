@@ -1,4 +1,4 @@
-import { Badge, Tabs } from "@eos/rc-controls";
+import { SmartBadge, Tabs } from "@eos/rc-controls";
 import React, { ReactElement, ReactText, useEffect, useImperativeHandle, useState } from "react";
 import { IFormRow } from "./FormRow";
 import FormRows from "./FormRows";
@@ -142,7 +142,7 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
                         tabs && tabs.map(tab => {
                             return (
                                 <Tabs.TabPane disabled={tab.disabled} forceRender={tab.forceRender}
-                                    tab={<Badge count={tab.count ? tab.count : undefined} type="text">{tab.title}</Badge>} key={tab.key} >
+                                    tab={<SmartBadge count={tab.count ? tab.count : undefined} type="text">{tab.title}</SmartBadge>} key={tab.key} >
                                     { tab.rows && <FormRows rows={tab.rows} />}
                                     { tab.children}
                                 </Tabs.TabPane>

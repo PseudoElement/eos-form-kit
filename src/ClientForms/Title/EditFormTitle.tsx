@@ -1,4 +1,4 @@
-import { Button, CloseIcon, Col, Divider, Row, Space, Typography } from "@eos/rc-controls";
+import { SmartButton, CloseIcon, Col, Divider, Row, Space, SmartTypography } from "@eos/rc-controls";
 import React, { forwardRef, useImperativeHandle, useRef } from "react";
 import TitleIcon, { ITitleIconApi } from "./TitleIcon";
 import TitleText, { ITitleTextApi } from "./TitleText";
@@ -23,7 +23,7 @@ export interface IEditFormTitle {
 /**Компонент отображения заголовка формы изменения. */
 const EditFormTitle = forwardRef<any, IEditFormTitle>((props: IEditFormTitle, ref: any) => {
     const SAVE_TEXT = "Сохранить";
-    const { Paragraph } = Typography;
+    const { Paragraph } = SmartTypography;
 
     const selfRef = useRef();
     const titleIconApi = useRef<ITitleIconApi>();
@@ -61,8 +61,8 @@ const EditFormTitle = forwardRef<any, IEditFormTitle>((props: IEditFormTitle, re
                 </Col>
                 <Col flex="0 0 auto">
                     <Space size="small" direction="horizontal">
-                        <Button type="primary" htmlType="submit">{SAVE_TEXT}</Button>
-                        <Button onClick={props.onCancelClick} type="link"><CloseIcon /></Button>
+                        <SmartButton type="primary" htmlType="submit">{SAVE_TEXT}</SmartButton>
+                        <SmartButton onClick={props.onCancelClick} type="link"><CloseIcon /></SmartButton>
                     </Space>
                 </Col>
             </Row>

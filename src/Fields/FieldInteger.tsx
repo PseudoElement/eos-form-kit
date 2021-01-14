@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Number } from "@eos/rc-controls";
+import { Form, SmartNumber } from "@eos/rc-controls";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 import { Rule } from "rc-field-form/lib/interface"
@@ -33,7 +33,7 @@ export const Integer = React.forwardRef<any, IInteger>((props: IInteger, ref) =>
     function getNew(props: IInteger, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <Number ref={ref} style={{ width: "100%" }} required={props.required} defaultValue={props.defaultValue} min={props.min} max={props.max} counter={props.showCounter} />
+                <SmartNumber ref={ref} width={"100%"} required={props.required} defaultValue={props.defaultValue} min={props.min} max={props.max} counter={props.showCounter} />
             </Form.Item>
         );
     }

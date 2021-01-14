@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Row, Typography } from "@eos/rc-controls";
+import { Row, SmartTypography } from "@eos/rc-controls";
 import FormCell, { IFormCell, IAutoCell, IWidthCell, IThreeFieldsCell } from "./FormCell";
 
 
@@ -10,9 +10,9 @@ interface IFormRowTitle {
 /**Заголовок строки. */
 const FormRowTitle: FunctionComponent<IFormRowTitle> = (props: IFormRowTitle) => {
     return (
-        <Typography.Paragraph style={{ fontSize: "18px", color: "#646464", marginTop: "15px", marginBottom: "5px" }}>
+        <SmartTypography.Paragraph style={{ fontSize: "18px", color: "#646464", marginTop: "15px", marginBottom: "5px" }}>
             {props.title}
-        </Typography.Paragraph>
+        </SmartTypography.Paragraph>
     )
 }
 

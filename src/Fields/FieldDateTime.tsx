@@ -46,6 +46,7 @@ export const DateTime = React.forwardRef<any, IDateTime>((props: IDateTime, ref)
                     ref={ref}
                     picker={getPickerMode(props.dateTimeMode)}
                     required={props.required}
+                    //width={"100%"}
                     style={{ width: "100%" }}
                     disabledDate={(e) => {
                         if (props.minDate || props.maxDate) {
@@ -81,6 +82,7 @@ export const DateTime = React.forwardRef<any, IDateTime>((props: IDateTime, ref)
                     ref={ref}
                     picker={getPickerMode(props.dateTimeMode)}
                     required={props.required}
+                    //width={"100%"}
                     style={{ width: "100%" }}
                     disabledDate={(e) => {
                         if (props.minDate || props.maxDate) {

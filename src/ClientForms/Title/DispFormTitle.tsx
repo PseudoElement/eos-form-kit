@@ -1,4 +1,4 @@
-import { Button, CloseIcon, Col, Divider, EditIcon, Row, Space, Typography } from "@eos/rc-controls";
+import { SmartButton, CloseIcon, Col, Divider, EditIcon, Row, Space, SmartTypography } from "@eos/rc-controls";
 import React, { forwardRef, ReactNode, useImperativeHandle, useRef } from "react";
 import TitleIcon, { ITitleIconApi } from "./TitleIcon";
 import TitleText, { ITitleTextApi } from "./TitleText";
@@ -27,7 +27,7 @@ export interface IDispFormTitle {
 
 /**Компонент отображения заголовка формы просмотра. */
 const DispFormTitle = forwardRef<any, IDispFormTitle>((props: IDispFormTitle, ref: any) => {
-    const { Paragraph } = Typography;
+    const { Paragraph } = SmartTypography;
 
     const selfRef = useRef();
     const titleIconApi = useRef<ITitleIconApi>();
@@ -61,14 +61,14 @@ const DispFormTitle = forwardRef<any, IDispFormTitle>((props: IDispFormTitle, re
                     <Space size="small" direction="horizontal">
                         {props.additionalButtons && props.additionalButtons}
                         {!props.disableEditButton &&
-                            <Button onClick={props.onEditClick} type="link">
+                            <SmartButton onClick={props.onEditClick} type="link">
                                 <EditIcon />
-                            </Button>
+                            </SmartButton>
                         }
                         {!props.disableCloseButton &&
-                            <Button onClick={props.onCancelClick} type="link">
+                            <SmartButton onClick={props.onCancelClick} type="link">
                                 <CloseIcon />
-                            </Button>
+                            </SmartButton>
                         }
                     </Space>
                 </Col>

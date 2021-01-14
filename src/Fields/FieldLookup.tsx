@@ -1,5 +1,5 @@
 import React, { useContext, useMemo } from "react";
-import { Form, Input } from "@eos/rc-controls";
+import { Form, SmartInput } from "@eos/rc-controls";
 import IField from "./IField";
 import { Select as AjaxSelect, IDataService } from "./LookupComponents/AjaxSelect";
 import DisplayInput from "./LookupComponents/DisplayInput";
@@ -69,7 +69,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
         return (
             <React.Fragment>
                 <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
-                    <Input ref={ref}/>
+                    <SmartInput ref={ref}/>
                 </Form.Item>
                 <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
                     <AjaxSelect
