@@ -1,4 +1,4 @@
-import { Form, Checkbox as RcCheckbox } from "@eos/rc-controls";
+import { Form, SmartCheckbox as RcCheckbox } from "@eos/rc-controls";
 import React from "react";
 import { BaseField } from "./BaseField";
 import IField from "./IField";
@@ -35,7 +35,7 @@ export const Checkbox = React.forwardRef<any, ICheckbox>((props: ICheckbox, ref:
     function getDisplay(props: ICheckbox, ref: any, rules?: Rule[]) {
         return (
             <Form.Item valuePropName={ref ? "checked" : "checked"} label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <RcCheckbox disabled={true}>{props.description}</RcCheckbox>
+                <RcCheckbox readOnly={true}>{props.description}</RcCheckbox>
             </Form.Item>
         );
     }
