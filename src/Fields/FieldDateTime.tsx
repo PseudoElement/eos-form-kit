@@ -142,8 +142,7 @@ function getPickerMode(mode?: DateTimeMode) {
         case DateTimeMode.year:
             return "year";
         case DateTimeMode.default:
-            return "date";
         default:
-            return undefined;
+            return "date";
     }
 }
