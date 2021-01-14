@@ -20,6 +20,7 @@ import { ITableState } from '../types/ITableState'
 import { ITableUserColumnGroupSettings, ITableUserSettings, TableUserColumn } from '../types/ITableUserSettings'
 import { Store } from 'rc-field-form/lib/interface';
 import { IFilterValueObjects } from '../types/IFilterValueObjects'
+import GenerateContextMenu from '../helpers/generateContextMenu'
 
 interface ITableGenProps {
     tableSettings: ITableSettings
@@ -384,6 +385,16 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         (!maxSelectedRecords || maxSelectedRecords === 0 || elems.length <= maxSelectedRecords) && setSelectRecordsAndKeys(select, undefined, elems)
     };
 
+    const disableChechBoxIfSelectedRowsEqualsMaxSelectedRecords = (record: any) => {
+        if (selectedRowKeys && maxSelectedRecords && maxSelectedRecords > 0) {
+            if (selectedRowKeys.length >= maxSelectedRecords) {
+                const currentKey = rowKeyValue(record)
+                return (selectedRowKeys.indexOf(currentKey) === -1)
+            }
+        }
+        return false
+    }
+
     const rowSelection: any = {
         selectedRowKeys: selectedRowKeys,
         onSelectedRowKeys: setSelectedRowKeys,
@@ -392,7 +403,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         onSelect: onSelect,
         onSelectAll: onSelectAllOnPage,
         getCheckboxProps: (record: any) => ({
-            disabled: disableSelectRecord && disableSelectRecord(record),
+            disabled: (disableSelectRecord && disableSelectRecord(record)) || disableChechBoxIfSelectedRowsEqualsMaxSelectedRecords(record),
         }),
     };
     //#endregion
@@ -535,6 +546,22 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     }
     //#endregion
 
+    const onContextMenu = (record: any, index: number) => {
+        return tableSettings.contextMenu ? GenerateContextMenu({
+            rowRecord: record,
+            rowIndex: index,
+            rowKey: rowKeyValue(record),
+            fetchAction,
+            fetchControl,
+            fetchCondition,
+            fetchActionFromStore,
+            fetchConditionFromStore,
+            fetchControlFromStore,
+            menuItems: tableSettings.contextMenu,
+            refApi: currentRef.current
+        }) : <Fragment />
+    }
+
     //#region Memo Settings
     const bordered = useMemo(() => {
         return tableSettings.visual?.bordered ? tableSettings.visual.bordered : (tableSettings.visual?.resizable ? "header" : undefined)
@@ -649,6 +676,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 onDrop: tableSettings.visual?.dragable ? onDropHandler : undefined,
                 onResizable: tableSettings.visual?.resizable ? onResizableHandler : undefined,
                 onDragOver: tableSettings.visual?.dragable ? onDragOverHandler : undefined,
+                onContextMenu: onContextMenu
             }}
             onFixedColumnClick={tableSettings.visual?.fixedColumn ? onFixedColumnClick : undefined}
             bordered={bordered}

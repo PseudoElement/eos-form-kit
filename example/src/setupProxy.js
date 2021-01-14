@@ -9,7 +9,7 @@ module.exports = function (app) {
             `${publicUrl}/smevdispatcher/Gql/Query`,
         ],
         createProxyMiddleware({
-            target: `http://192.168.0.157/SmevDispatcher`,
+            target: `http://192.168.0.157/SmevDispatcher.12_1`,
             changeOrigin: true,
             pathRewrite: pathRewrite,
             onProxyReq: onProxyReq
