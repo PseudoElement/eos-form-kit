@@ -1,5 +1,5 @@
 import React from 'react'
-import { EosTable, ITableProvider, EosTableTypes } from "eos-webui-formgen"
+import { EosTable, ITableProvider, EosTableTypes, EosMenuTypes } from "eos-webui-formgen"
 import { IHandlerProps } from '../../dist/EosTable/types'
 
 const TableExample = () => {
@@ -34,6 +34,7 @@ const GetProvider = () => {
                         {
                             name: "col1",
                             title: "Колонка 1",
+                            sortable: true,
                             fields: [{ displayName: "Колонка 1", apiField: "col1" }]
                         },
                         {
@@ -62,12 +63,13 @@ const GetProvider = () => {
                     menu: [{
                         key: "add",
                         render: {
-                            renderType: "Icon",
+                            renderType: EosMenuTypes.MenuRenderTypes.Button,
                             renderArgs: {
-                                iconName: "PlusIcon"                                
+                                iconName: "PlusIcon",
+                                titleButton: "Добавить",
+                                typeButton: "default"
                             }
                         },
-                        title: "Добавить"
                     },
                     {
                         key: "divider",
@@ -78,11 +80,19 @@ const GetProvider = () => {
                     {
                         key: "edit",
                         render: {
-                            renderType: "Icon",
+                            renderType: EosMenuTypes.MenuRenderTypes.Button,
                             renderArgs: {
-                                iconName: "EditIcon"
+                                iconName: "EditIcon",
+                                titleButton: "Редактирвать",
+                                typeButton: "link"
                             }
                         },
+                        handlers: [
+                            {
+                                type: "disabled",
+                                handlerName: "unSelectedOne"
+                            }
+                        ],
                         title: "Редактирвать"
                     },
                     {
@@ -101,8 +111,12 @@ const GetProvider = () => {
                             renderType: "Icon",
                             renderArgs: {
                                 iconName: "BinIcon"
-                            }
+                            },
                         },
+                        handlers: [{
+                            type: "disabled",
+                            handlerName: "unSelected"
+                        }],
                         children: [
                             {
                                 key: "delete1",

@@ -56,6 +56,8 @@ export interface IVisualSettings {
     fixedColumn?: boolean
     showSelectedBtn?: boolean,    
     pageSizeOptions?: string[]
+    filterAreaMaxHeight?: number
+    filterAreaMinHeight?: number
 }
 
 export interface IRender {

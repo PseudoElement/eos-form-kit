@@ -11,6 +11,7 @@ export interface ITableUserSettings {
     defaultSort?: ISorterPath[]
     highlightingRows?: boolean
     ellipsisRows?: number
+    filterAreaHeight?: number
 }
 
 export interface ITableColumnUserSettings {

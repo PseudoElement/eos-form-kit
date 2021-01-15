@@ -1,6 +1,6 @@
 import { Table } from '@eos/rc-controls'
 import { PaginationProps } from '@eos/rc-controls/lib/pagination'
-import React, { Fragment, ReactElement, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import React, { Fragment, ReactElement, SyntheticEvent, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { Form as SearchForm, IFormApi } from '../../Search/SearchForm'
 import { useEosComponentsStore } from '../../Hooks/useEosComponentsStore'
 import GenMenuItems from '../components/GenMenuItems'
@@ -64,6 +64,9 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     const DEFAULT_PAGE_SIZE = 10
     const DEFAULT_CURRENT_PAGE = 1
+    const DEFAULT_FILTER_AREA_HEIGHT = 200
+    const FILTER_AREA_MAX_HEIGHT = 400
+    const FILTER_AREA_MIN_HEIGHT = 100
 
     const initState: ITableState = useMemo(() => {
         const init: ITableState =
@@ -78,7 +81,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             filter: initTableState?.filter,
             filterValueObjects: initTableState?.filterValueObjects ?? tableUserSetiings.defaultFilters,
             showFormFilter: initTableState?.showFormFilter ?? tableUserSetiings.filterVisible,
-            tableView: initTableState?.tableView
+            tableView: initTableState?.tableView,
+            filterAreaHeight: initTableState?.filterAreaHeight ?? tableUserSetiings.filterAreaHeight,
         }
         return init
     }, [initTableState, tableUserSetiings, tableSettings])
@@ -176,6 +180,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [quickSearchMode, setQuickSearchMode] = useState(() => initState.quickSearchMode)
     const [showFormFilter, setShowFormFilter] = useState<boolean | undefined>()
     const [formFilterMode, setFormFilterMode] = useState<boolean | undefined>()
+    const [filterAreaHeight, setFilterAreaHeight] = useState(() => initState.filterAreaHeight || DEFAULT_FILTER_AREA_HEIGHT)
 
     const [filterValueObjects, setFilterValueObjects] = useState<IFilterValueObjects>()
     const [tableView, setTableView] = useState<"default" | "card">()
@@ -304,7 +309,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 ...tableUserSetiings,
                 pageSize: pageSize,
                 columns: getTableUserColumnSettings(columns),
-                defaultSort: sorterList
+                defaultSort: sorterList,
+                filterAreaHeight: filterAreaHeight
             }
             saveUserSetting && saveUserSetting(savedSetting)
         }
@@ -312,7 +318,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         return () => {
             clearTimeout(timeout);
         }
-    }, [columns])
+    }, [columns, filterAreaHeight, sorterList])
 
     const setFilterFragment = (filterTypeName: FilterTypeName) => {
         const filterFragment = transformFilterToExpressionFragment && transformFilterToExpressionFragment(filterTypeName, currentTableState, tableSettings, tableUserSetiings)
@@ -724,6 +730,12 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         >
         </Table>)
 
+    const onResize: any =  (_e: SyntheticEvent, resizeData: any) => {
+        setFilterAreaHeight(resizeData.size.height)       
+    };
+
+    const searchFormApi = useRef<IFormApi>()
+
     const tableMenu = useCallback((children: ReactElement) => {
         return (
             <Table.Menu
@@ -732,22 +744,23 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 selectedRowCount={selectedRowKeys.length}
                 submenu={rightMenu}
                 menu={menu}
+                tableFilterProps={{
+                    filterHeight: filterAreaHeight,
+                    maxFilterHeight: tableSettings.visual?.filterAreaMaxHeight || FILTER_AREA_MAX_HEIGHT,
+                    minFilterHeight: tableSettings.visual?.filterAreaMinHeight || FILTER_AREA_MIN_HEIGHT,
+                    isFilterVisible: showFormFilter === true,
+                    onResize: onResize,                    
+                    tableFilterContent: searchFormService && <SearchForm getResourceText={getResourceText} ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
+                }}
             >
                 {children}
             </Table.Menu>
         )
-    }, [recordsTotalCount, selectedRowKeys, rightMenu, menu])
+    }, [recordsTotalCount, selectedRowKeys, rightMenu, menu, showFormFilter, filterAreaHeight])
 
     const tableMemo = useMemo(table, [columns, tableData, isLoading, selectedRowKeys, currentRowKey, tableView])
 
-    const searchFormApi = useRef<IFormApi>()
-
-    return <Fragment>
-        {searchFormService && <div style={{ paddingBottom: "10px", display: showFormFilter ? "block" : "none" }}>
-            <SearchForm getResourceText={getResourceText} ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
-        </div>}
-        {tableMenu(tableMemo)}
-    </Fragment>
+    return tableMenu(tableMemo)    
 })
 EosTableGen.displayName = "EosTableGen"
 

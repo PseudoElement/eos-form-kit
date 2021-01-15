@@ -22,4 +22,5 @@ export interface ITableState {
     showFormFilter?: boolean
     readonly formFilterMode?: boolean
     filterValueObjects?: IFilterValueObjects
+    filterAreaHeight?: number
 }
