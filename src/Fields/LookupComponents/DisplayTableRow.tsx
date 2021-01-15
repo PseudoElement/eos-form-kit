@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Menu, Table, PlusIcon, BinIcon, Collapse, Badge, message, modalMessage, Button } from "@eos/rc-controls";
+import { Menu, Table, PlusIcon, BinIcon, Collapse, SmartBadge, message, modalMessage, SmartButton } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
 import { IValue, IColumn, IOtherValue, } from "../FieldLookupMulti";
 import { IDataService, 
@@ -206,8 +206,8 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
                     header={
                         <div style={{ borderBottom: '1px solid #E6E6E6' }}>
                             {(!required || formData.current?.length) ?
-                                <Badge count={formData.current?.length} type="text" >{label}</Badge> :
-                                <Badge count={' '} type="text" color="red">{label}</Badge>
+                                <SmartBadge count={formData.current?.length} type="text" >{label}</SmartBadge> :
+                                <SmartBadge showZero={true} count={0} type="text" badgeColor={"red"}>{label}</SmartBadge>
                             }
                         </div>
                     }>
@@ -322,20 +322,22 @@ const DisplayTableRow = React.forwardRef<any, IDisplayTableRow>(({
     }
     function showDeleteModalMessage() {
         modalMessage("warning", deleteRowsToolbarWarning || '', [
-            <Button style={{ width: 88 }} 
+            <SmartButton 
+                    width={88}
                     key="1" 
                     onClick={(e) => {
                     deleteMultiLookupLookupRows();
                     modalMessage.destroy(e);
             }}> 
                 Да 
-            </Button>, 
-            <Button style={{ width: 88 }} 
+            </SmartButton>, 
+            <SmartButton
+                    width={88}
                     key="2" 
                     onClick={(e) => modalMessage.destroy(e)} 
                     type="primary">
                 Нет
-            </Button>
+            </SmartButton>
         ]);
     }
     function getColumns(otherColumns?: IColumn[]) {

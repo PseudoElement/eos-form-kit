@@ -1,6 +1,6 @@
 {
   "name": "@eos/form-generator",
-  "version": "1.2.11",
+  "version": "1.3.0",
   "description": "Generator for new, edit, disp forms",
   "author": "Soldatov",
   "license": "MIT",
@@ -24,7 +24,7 @@
     "deploy": "gh-pages -d example/build"
   },
   "peerDependencies": {
-    "@eos/rc-controls": "^1.6.1",
+    "@eos/rc-controls": "1.6.1",
     "@types/react-router-dom": "^5.1.5",
     "rc-animate": "^3.1.1",
     "react": "^16.0.0",

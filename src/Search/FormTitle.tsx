@@ -1,5 +1,5 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Button, Row, Col, Space, Typography, Divider } from "@eos/rc-controls";
+import { SmartButton, Row, Col, Space, SmartTypography, Divider } from "@eos/rc-controls";
 
 /**Настройки компонента заголовка формы поиска. */
 export interface IFormTitle {
@@ -54,7 +54,7 @@ export interface IFormTitleApi {
 /**Компонент заголовока формы поиска. */
 const FormTitle = React.forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
     const DEFAULT_TITLE = "Поиск";
-    const { Paragraph } = Typography;
+    const { Paragraph } = SmartTypography;
 
     const clearApi = useRef<IButtonApi>();
     const closeApi = useRef<IButtonApi>();
@@ -147,7 +147,7 @@ const ClearButton = React.forwardRef<any, IButton>((props: IButton, ref: any) =>
     }, [props.title]);
 
     return (
-        <Button disabled={isDisabled} onClick={props.onClick}>{title ?? DEFAULT_TITLE}</Button>
+        <SmartButton disabled={isDisabled} onClick={props.onClick}>{title ?? DEFAULT_TITLE}</SmartButton>
     );
 });
 const CloseButton = React.forwardRef<any, IButton>((props: IButton, ref: any) => {
@@ -180,7 +180,7 @@ const CloseButton = React.forwardRef<any, IButton>((props: IButton, ref: any) =>
     }, [props.title]);
 
     return (
-        <Button disabled={isDisabled} onClick={props.onClick}>{title ?? DEFAULT_TITLE}</Button>
+        <SmartButton disabled={isDisabled} onClick={props.onClick}>{title ?? DEFAULT_TITLE}</SmartButton>
     );
 });
 const SearchButton = React.forwardRef<any, IButton>((props: IButton, ref: any) => {
@@ -213,6 +213,6 @@ const SearchButton = React.forwardRef<any, IButton>((props: IButton, ref: any) =
     }, [props.title]);
 
     return (
-        <Button type="primary" htmlType="submit" disabled={isDisabled} onClick={props.onClick}>{title ?? DEFAULT_TITLE}</Button>
+        <SmartButton type="primary" htmlType="submit" disabled={isDisabled} onClick={props.onClick}>{title ?? DEFAULT_TITLE}</SmartButton>
     );
 });

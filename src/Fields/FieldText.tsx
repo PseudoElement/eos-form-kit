@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { Form, Input } from "@eos/rc-controls";
+import { Form, SmartInput } from "@eos/rc-controls";
 import { FieldsHelper } from "./FieldsHelper";
 import IField from "./IField";
 import { Rule } from "rc-field-form/lib/interface"
@@ -43,7 +43,7 @@ export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
     function getNew(props: IText, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <Input onChange={onChange} value={props.value} defaultValue={props.defaultValue} suffix={getSuffix(props)} style={{ width: "100%" }} ref={ref} required={props.required} allowClear={props.allowClear} maxLength={props.maxLength} />
+                <SmartInput onChange={onChange} value={props.value} defaultValue={props.defaultValue} hideSuffix={getSuffix(props) === undefined} suffix={getSuffix(props)} width={"100%"} ref={ref} required={props.required} allowClear={props.allowClear} maxLength={props.maxLength} />
             </Form.Item>
         );
     }

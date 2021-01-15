@@ -1,5 +1,5 @@
 import React, { useState, useRef, useImperativeHandle  } from "react";
-import { Modal, Form} from "@eos/rc-controls";
+import { SmartModal, Form} from "@eos/rc-controls";
 import IField from "../IField";
 import { Select as AjaxSelect, IDataService, IOptionItem } from "./AjaxSelect";
 import { IValue } from "../FieldLookupMulti";
@@ -50,7 +50,7 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
     //const tableModalApi = useRef<ITableModalApi>();
     return (
         <div>
-            <Modal
+            <SmartModal
             title={props.modalWindowTitle ?? ''}
                 visible={lookupVisible}
                 onCancel={() => {
@@ -73,7 +73,7 @@ export const TableModal = React.forwardRef<any, ITableModal>((props: ITableModal
                         notFoundContent={props.notFoundContent}
                     />
                 </Form.Item>
-            </Modal>
+            </SmartModal>
         </div>
     );
 });

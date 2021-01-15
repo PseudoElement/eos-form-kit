@@ -2,7 +2,7 @@ import React, {
    useContext,
     useMemo
 } from "react";
-import { Form, Input } from "@eos/rc-controls";
+import { Form, SmartInput } from "@eos/rc-controls";
 import IField from "./IField";
 import { IDataService } from "./LookupComponents/AjaxSelect";
 import DisplayTable from "./LookupComponents/DisplayTable";
@@ -106,7 +106,7 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
         return (
             <div>
                  <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
-                     <Input ref={ref}/>
+                     <SmartInput ref={ref}/>
                  </Form.Item>
                 <Form.Item name={props.name} rules={rules}>
                     <DisplayTable
