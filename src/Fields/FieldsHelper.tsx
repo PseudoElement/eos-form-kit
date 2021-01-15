@@ -1,6 +1,6 @@
 
 import React, { ReactElement, ReactNode } from "react";
-import { Form, Icon, InfoIcon, Input, Tooltip } from "@eos/rc-controls";
+import { Form, Icon, InfoIcon, SmartInput, SmartTooltip } from "@eos/rc-controls";
 import { Rule } from "rc-field-form/lib/interface";
 import { IOptionItem, IOtherValue } from "../Fields/LookupComponents/AjaxSelect";
 
@@ -58,7 +58,7 @@ class FieldsHelper {
     static getDisplayField(label?: string, name?: string, value?: string, suffix?: ReactNode, defaultValue?: string,  onChange?: any) {
         return (
             <Form.Item label={label} name={name} style={{ marginBottom: 0, textTransform: "uppercase" }}>
-                <Input readOnly={true} style={{ width: "100%" }} defaultValue={defaultValue} value={value} suffix={suffix} onChange={onChange}/>
+                <SmartInput readOnly={true} width={"100%"} defaultValue={defaultValue} value={value} hideSuffix={(suffix === undefined)} suffix={suffix} onChange={onChange}/>
             </Form.Item>
         );
     }
@@ -70,9 +70,9 @@ class FieldsHelper {
      */
     static getInputSuffix(text: string, icon?: ReactElement): ReactNode {
         const suffix: ReactNode = (
-            <Tooltip placement="bottom" title={text}>
+            <SmartTooltip placement="bottom" title={text}>
                 <Icon style={{ color: DEFAULT_ICONS_COLOR }} component={icon ?? <InfoIcon />} />
-            </Tooltip>);
+            </SmartTooltip>);
         return suffix;
     }
 }

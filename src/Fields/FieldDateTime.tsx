@@ -1,4 +1,4 @@
-import { DatePicker, Form } from "@eos/rc-controls";
+import { SmartDatePicker, Form } from "@eos/rc-controls";
 import React from "react";
 import moment from 'moment';
 import IField from "./IField";
@@ -7,7 +7,6 @@ import { BaseField } from "./BaseField";
 import { Rule } from "rc-field-form/lib/interface";
 
 
-const DATE_MOMENT_PATTERN = "DD.MM.yyyy";
 
 /**Настройки поля типа "Дата". */
 export interface IDateTime extends IField {
@@ -41,12 +40,11 @@ export const DateTime = React.forwardRef<any, IDateTime>((props: IDateTime, ref)
     function getNew(props: IDateTime, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules} >
-                <DatePicker
-                    format={props.dateTimeMode !== DateTimeMode.year ? DATE_MOMENT_PATTERN : undefined}
+                <SmartDatePicker
                     ref={ref}
                     picker={getPickerMode(props.dateTimeMode)}
                     required={props.required}
-                    style={{ width: "100%" }}
+                    width={"100%"}
                     disabledDate={(e) => {
                         if (props.minDate || props.maxDate) {
                             if (props.dateTimeMode === DateTimeMode.year) {
@@ -74,14 +72,13 @@ export const DateTime = React.forwardRef<any, IDateTime>((props: IDateTime, ref)
     function getDisplay(props: IDateTime, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ textTransform: "uppercase", marginBottom: "0px" }} rules={rules} >
-                <DatePicker
-                    disabled={true}
+                <SmartDatePicker
+                    readOnly={true}
                     inputReadOnly={true}
-                    format={props.dateTimeMode !== DateTimeMode.year ? DATE_MOMENT_PATTERN : undefined}
                     ref={ref}
                     picker={getPickerMode(props.dateTimeMode)}
                     required={props.required}
-                    style={{ width: "100%" }}
+                    width={"100%"}
                     disabledDate={(e) => {
                         if (props.minDate || props.maxDate) {
                             if (props.dateTimeMode === DateTimeMode.year) {
@@ -144,7 +141,8 @@ function getPickerMode(mode?: DateTimeMode) {
     switch (mode) {
         case DateTimeMode.year:
             return "year";
+        case DateTimeMode.default:
         default:
-            return undefined;
+            return "date";
     }
 }

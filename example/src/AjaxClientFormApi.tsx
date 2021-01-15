@@ -5,7 +5,7 @@ import "eos-webui-controls/dist/main.css";
 import { AjaxClientForm, FormMode, IToolBar, parseFormMode, EosMenu, EosTableTypes, useEosComponentsStore, EosMenuTypes } from "eos-webui-formgen";
 import { Helper } from './Helper';
 import { useRouteMatch } from 'react-router-dom';
-import { Button } from '@eos/rc-controls';
+import { SmartButton } from '@eos/rc-controls';
 
 interface IPageParams {
     id?: string;
@@ -311,22 +311,22 @@ const ButtonsPanel = forwardRef<any, IButtonsPanel>((props: IButtonsPanel, ref: 
 
     return (<div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div>
-            <Button onClick={props.onSkeletonLoadingClick}>Скелетон</Button>
-            <Button onClick={props.onTripleSkeletonLoadingClick}>3 скелетона</Button>
-            <Button onClick={props.onSpinnerClick}>Спиннер</Button>
-            <Button onClick={props.onEditTitleClick}>Заголовок</Button>
-            <Button onClick={props.onLookupSetClick}>Задать срок хранения</Button>
-            <Button onClick={props.onNameSetClick}>Задать наименование</Button>
-            <Button onClick={props.onLookupMultiSetClick}>Задать особенности 1</Button>
-            <Button onClick={props.onLookupMultiSetClick2}>Задать особенности 2</Button>
-            <Button onClick={props.onLookupMultiRowSetClick}>Задать Мультилукап 2</Button>
-            <Button onClick={props.onReloadItemClick}>ReloadItem</Button>
-            <Button onClick={props.onReloadClick}>Reload</Button>
-            <Button onClick={props.onSetFiveCountClick}>SetCount(5)</Button>
-            <Button onClick={props.onClearCountClick}>SetCount(undefined)</Button>
-            <Button onClick={props.onSetZeroCountClick}>SetCount(0)</Button>
-            <Button onClick={props.onEnableFieldsClick}>Enable fields</Button>
-            <Button onClick={props.onDisableFieldsClick}>Disable fields</Button>
+            <SmartButton onClick={props.onSkeletonLoadingClick}>Скелетон</SmartButton>
+            <SmartButton onClick={props.onTripleSkeletonLoadingClick}>3 скелетона</SmartButton>
+            <SmartButton onClick={props.onSpinnerClick}>Спиннер</SmartButton>
+            <SmartButton onClick={props.onEditTitleClick}>Заголовок</SmartButton>
+            <SmartButton onClick={props.onLookupSetClick}>Задать срок хранения</SmartButton>
+            <SmartButton onClick={props.onNameSetClick}>Задать наименование</SmartButton>
+            <SmartButton onClick={props.onLookupMultiSetClick}>Задать особенности 1</SmartButton>
+            <SmartButton onClick={props.onLookupMultiSetClick2}>Задать особенности 2</SmartButton>
+            <SmartButton onClick={props.onLookupMultiRowSetClick}>Задать Мультилукап 2</SmartButton>
+            <SmartButton onClick={props.onReloadItemClick}>ReloadItem</SmartButton>
+            <SmartButton onClick={props.onReloadClick}>Reload</SmartButton>
+            <SmartButton onClick={props.onSetFiveCountClick}>SetCount(5)</SmartButton>
+            <SmartButton onClick={props.onClearCountClick}>SetCount(undefined)</SmartButton>
+            <SmartButton onClick={props.onSetZeroCountClick}>SetCount(0)</SmartButton>
+            <SmartButton onClick={props.onEnableFieldsClick}>Enable fields</SmartButton>
+            <SmartButton onClick={props.onDisableFieldsClick}>Disable fields</SmartButton>
         </div>
         <div>{text}</div>
     </div>);
