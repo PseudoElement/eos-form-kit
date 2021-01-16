@@ -43,7 +43,7 @@ export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
     function getNew(props: IText, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <SmartInput onChange={onChange} value={props.value} defaultValue={props.defaultValue} hideSuffix={getSuffix(props) === undefined} suffix={getSuffix(props)} width={"100%"} ref={ref} required={props.required} allowClear={props.allowClear} maxLength={props.maxLength} />
+                <SmartInput onChange={onChange} value={props.value} defaultValue={props.defaultValue} iconType={(getSuffix(props) === undefined) ? "none" : undefined} suffix={getSuffix(props)} width={"100%"} ref={ref} required={props.required} allowClear={props.allowClear} maxLength={props.maxLength} />
             </Form.Item>
         );
     }
