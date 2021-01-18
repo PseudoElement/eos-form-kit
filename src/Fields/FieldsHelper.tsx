@@ -58,7 +58,7 @@ class FieldsHelper {
     static getDisplayField(label?: string, name?: string, value?: string, suffix?: ReactNode, defaultValue?: string,  onChange?: any) {
         return (
             <Form.Item label={label} name={name} style={{ marginBottom: 0, textTransform: "uppercase" }}>
-                <SmartInput readOnly={true} width={"100%"} defaultValue={defaultValue} value={value} hideSuffix={(suffix === undefined)} suffix={suffix} onChange={onChange}/>
+                <SmartInput readOnly={true} width={"100%"} defaultValue={defaultValue} value={value} iconType={(suffix === undefined) ? "none" : undefined} suffix={suffix} onChange={onChange}/>
             </Form.Item>
         );
     }
