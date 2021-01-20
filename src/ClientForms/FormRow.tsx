@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { Row, SmartTypography } from "@eos/rc-controls";
 import FormCell, { IFormCell, IAutoCell, IWidthCell, IThreeFieldsCell } from "./FormCell";
+import { IBaseFormRow } from "./FormRows";
 
 
 interface IFormRowTitle {
@@ -25,7 +26,7 @@ export interface IFormRowApi {
 }
 
 /**Настройки компонента строки с полями внутри формы. */
-export interface IFormRow {
+export interface IFormRow extends IBaseFormRow {
     /**Заголовок в виде текста размером 18px строки */
     title?: string;
     /**Список столбцов. */
