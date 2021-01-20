@@ -13,7 +13,9 @@ export interface IClientTabs {
     onTabClick?: (key: string | number, e?: MouseEvent) => void;
     /**Если передать информацию о полях, то вкладка будет автоматически раскрываться, если в ней не валидное поле. */
     fields?: IFieldsInfo[];
-    invalidFields?: any;
+    invalidFields?: any;    
+    /**Метод для получения кастомной строки с произвольной разметкой. */
+    getCustomRow?: (customType: string) => ReactElement | ReactElement[] | undefined;
 }
 /**Настройки вкладки. */
 export interface IClientTab {
@@ -143,7 +145,7 @@ const ClientTabs = React.forwardRef<any, IClientTabs>((props: IClientTabs, ref) 
                             return (
                                 <Tabs.TabPane disabled={tab.disabled} forceRender={tab.forceRender}
                                     tab={<SmartBadge count={tab.count ? tab.count : undefined} type="text">{tab.title}</SmartBadge>} key={tab.key} >
-                                    { tab.rows && <FormRows rows={tab.rows} />}
+                                    { tab.rows && <FormRows rows={tab.rows} getCustomRow={props.getCustomRow} />}
                                     { tab.children}
                                 </Tabs.TabPane>
                             )
