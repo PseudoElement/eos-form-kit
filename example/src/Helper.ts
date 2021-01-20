@@ -312,6 +312,10 @@ class Helper {
                 "Disabled": false,
                 "ForceRender": null,
                 "Rows": [
+                    {
+                        CustomType: "customFormRow",
+                        Type: RowType.CustomFormRow
+                    },
                     { "Cells": [{ "Type": 0, "Fields": ["multiLookupRow"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["multiLookup1"], "Width": 24 }] },
                     // { "Cells": [{ "Type": 0, "Fields": ["multiLookup2"], "Width": 24 }] },
@@ -327,7 +331,7 @@ class Helper {
                             { "Cells": [{ "Type": 0, "Fields": ["parentName"], "Width": 24 }] },
                         ]
                     },
-                    
+
                     {
                         "Title": "Заглавие строки",
                         "Cells": [{ "Type": 0, "Fields": ["ind"], "Width": 8 },
@@ -394,7 +398,7 @@ class Helper {
                             { "Cells": [{ "Type": 0, "Fields": ["ind5"], "Width": 24 }] },
                             { "Cells": [{ "Type": 0, "Fields": ["volumeNum5"], "Width": 24 }] }
                         ]
-                    }                   
+                    }
                 ],
                 "Title": "Третья вкладка"
             }

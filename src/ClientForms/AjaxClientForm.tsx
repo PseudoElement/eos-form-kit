@@ -1,5 +1,5 @@
 import { Form as RcForm } from "@eos/rc-controls";
-import React, { ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { ReactElement, ReactNode, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Form as ClientForm, IFormApi as IClientFormApi } from "./ClientForm";
 import { IClientTab, IClientTabs } from "./ClientTabs";
 import { FormMode } from "./FormMode";
@@ -44,6 +44,8 @@ export interface IForm {
     getResourceText: (name: string) => string;
     /**Метод для получения кастомной вкладки. */
     getCustomtab?: (tab: IClientTabProps) => IClientTab | undefined;
+    /**Метод для получения кастомной строки с произвольной разметкой. */
+    getCustomRow?: (customType: string) => ReactElement | ReactElement[] | undefined;
 
     onCancelClick?: (event: any, mode: FormMode) => void;
     /**Вызовется, когда будет подгружена схема формы с сервера. */
@@ -343,6 +345,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             onTabsChange={props.onTabsChange}
             tabsComponent={clientFormProps.tabsComponent}
             rows={clientFormProps.rows}
+            getCustomRow={props.getCustomRow}
             toolbar={props.toolbar}
             enableLeftIcon={props.enableLeftIcon}
             leftIconTitle={props.leftIconTitle}

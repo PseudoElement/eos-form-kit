@@ -3,7 +3,7 @@ import { IClientTab, IClientTabs, IFieldsInfo } from "./ClientForms/ClientTabs";
 import { CellType, IAutoCell, IThreeFieldsCell, IWidthCell, IWidthAutoCell } from "./ClientForms/FormCell";
 import { FormMode } from "./ClientForms/FormMode";
 import { CellsType, IFormRow } from "./ClientForms/FormRow";
-import { IBaseFormRow, IFormRows, RowType } from "./ClientForms/FormRows";
+import { IBaseFormRow, ICustomFormRow, IFormRows, RowType } from "./ClientForms/FormRows";
 import { ISelect } from "./Fields/FieldSelect";
 import { ICheckbox } from "./Fields/FieldCheckbox";
 import IField from "./Fields/IField";
@@ -66,6 +66,13 @@ class InternalHelper {
             for (let row of rows) {
                 if (row) {
                     switch (row.Type) {
+                        case RowType.CustomFormRow:
+                            let customFormRowRow: ICustomFormRow = {
+                                customType: row.CustomType,
+                                type: row.Type
+                            };
+                            formRows.push(customFormRowRow);
+                            break;
                         case RowType.CollapsableFormRow:
                             let cFormRow: ICollapsableFormRow = {};
                             cFormRow.title = row.Title;
@@ -96,6 +103,13 @@ class InternalHelper {
             for (let row of rows) {
                 if (row) {
                     switch (row.Type) {
+                        case RowType.CustomFormRow:
+                            let customFormRowRow: ICustomFormRow = {
+                                customType: row.CustomType,
+                                type: row.Type
+                            };
+                            formRows.push(customFormRowRow);
+                            break;
                         case RowType.CollapsableFormRow:
                             let cFormRow: ICollapsableFormRow = {};
                             cFormRow.title = row.Title;
