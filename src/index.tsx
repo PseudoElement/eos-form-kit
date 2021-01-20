@@ -11,7 +11,9 @@ export { default as useTitleChanger } from './Hooks/useTitleChanger';
 export { default as ClientTabs, IClientTabs, IClientTab, IClientTabsApi, IFieldsInfo } from './ClientForms/ClientTabs';
 export { default as FormCell, IFormCell, IWidthCell, IAutoCell, IThreeFieldsCell, IWidthAutoCell, CellType, WidthType } from './ClientForms/FormCell';
 export { default as FormRow, IFormRow } from './ClientForms/FormRow';
-export { default as FormRows, IFormRows } from './ClientForms/FormRows';
+export { default as FormRows, IFormRows, RowType } from './ClientForms/FormRows';
+export { default as CollapsableFormRow, ICollapsableFormRow } from './ClientForms/CollapsableFormRow';
+
 export { default as ToolBar, IToolBar } from './ClientForms/ToolBar/ToolBar';
 
 export { default as Skeleton } from './ClientForms/Skeleton/Skeleton';

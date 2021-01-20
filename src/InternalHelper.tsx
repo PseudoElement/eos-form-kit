@@ -3,10 +3,11 @@ import { IClientTab, IClientTabs, IFieldsInfo } from "./ClientForms/ClientTabs";
 import { CellType, IAutoCell, IThreeFieldsCell, IWidthCell, IWidthAutoCell } from "./ClientForms/FormCell";
 import { FormMode } from "./ClientForms/FormMode";
 import { CellsType, IFormRow } from "./ClientForms/FormRow";
-import { IFormRows } from "./ClientForms/FormRows";
+import { IBaseFormRow, IFormRows, RowType } from "./ClientForms/FormRows";
 import { ISelect } from "./Fields/FieldSelect";
 import { ICheckbox } from "./Fields/FieldCheckbox";
 import IField from "./Fields/IField";
+import { ICollapsableFormRow } from "./ClientForms/CollapsableFormRow";
 
 class InternalHelper {
     static createTabsComponent(schema: IContext, getResourceText: (name: string) => string, getCustomtab?: (tab: IClientTabProps) => IClientTab | undefined): IClientTabs {
@@ -63,33 +64,58 @@ class InternalHelper {
         let formRows: IFormRow[] = [];
         if (fields && rows) {
             for (let row of rows) {
-                let formRow: IFormRow = { cells: [] };
-                // formRow.title = row.Title;
                 if (row) {
-                    formRow.title = row.Title;
-                    if (row.Cells)
-                        for (let cell of row.Cells) {
-                            formRow?.cells?.push(this.getCell(mode, fields, cell, tabFields, getResourceText))
-                        }
+                    switch (row.Type) {
+                        case RowType.CollapsableFormRow:
+                            let cFormRow: ICollapsableFormRow = {};
+                            cFormRow.title = row.Title;
+                            cFormRow.collapsable = row.Collapsable;
+                            cFormRow.type = row.Type;
+                            cFormRow.rows = this.getTabRows(mode, fields, row.Rows, tabFields, getResourceText);
+                            formRows.push(cFormRow);
+                            break;
+                        case RowType.FormRow:
+                        default:
+                            let formRow: IFormRow = { cells: [] };
+                            formRow.title = row.Title;
+                            if (row.Cells)
+                                for (let cell of row.Cells) {
+                                    formRow?.cells?.push(this.getCell(mode, fields, cell, tabFields, getResourceText))
+                                }
+                            formRows.push(formRow);
+                            break;
+                    }
                 }
-                formRows.push(formRow);
             }
         }
         return formRows;
     }
-    private static getRows(mode: FormMode, fields: any, rows: any, getResourceText: (name: string) => string): IFormRow[] {
-        let formRows: IFormRow[] = [];
+    private static getRows(mode: FormMode, fields: any, rows: any, getResourceText: (name: string) => string): IBaseFormRow[] {
+        let formRows: IBaseFormRow[] = [];
         if (fields && rows) {
             for (let row of rows) {
-                let formRow: IFormRow = { cells: [] };
                 if (row) {
-                    formRow.title = row.Title;
-                    if (row.Cells)
-                        for (let cell of row.Cells) {
-                            formRow?.cells?.push(this.getCell(mode, fields, cell, null, getResourceText))
-                        }
+                    switch (row.Type) {
+                        case RowType.CollapsableFormRow:
+                            let cFormRow: ICollapsableFormRow = {};
+                            cFormRow.title = row.Title;
+                            cFormRow.collapsable = row.Collapsable;
+                            cFormRow.type = row.Type;
+                            cFormRow.rows = this.getRows(mode, fields, row.Rows, getResourceText);
+                            formRows.push(cFormRow);
+                            break;
+                        case RowType.FormRow:
+                        default:
+                            let formRow: IFormRow = { cells: [] };
+                            formRow.title = row.Title;
+                            if (row.Cells)
+                                for (let cell of row.Cells) {
+                                    formRow?.cells?.push(this.getCell(mode, fields, cell, null, getResourceText))
+                                }
+                            formRows.push(formRow);
+                            break;
+                    }
                 }
-                formRows.push(formRow);
             }
         }
         return formRows;
@@ -120,7 +146,7 @@ class InternalHelper {
                 break;
             case CellType.widthAutoCell:
                 // IWidthAutoCell 
-                 let widthAutoCell: IWidthAutoCell = {
+                let widthAutoCell: IWidthAutoCell = {
                     type: CellType.widthAutoCell,
                     width: cell.Width,
                     fields: this.getFields(mode, fields, cell.Fields, getResourceText)
