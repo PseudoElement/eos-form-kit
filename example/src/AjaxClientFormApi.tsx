@@ -154,7 +154,7 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 },
                 children: [{
                     key: "child1",
-                    
+
                     render: {
                         renderType: "Button",
                         renderArgs: {
@@ -261,6 +261,14 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 }}
                 disableEditButton={true}
                 disableCloseButton={true}
+                getCustomRow={(customType: string) => {
+                    switch (customType) {
+                        case "customFormRow":
+                            return (<div>Произвольная строчка</div>);
+                        default:
+                            return undefined;
+                    }
+                }}
             />
         </React.Fragment >
     );

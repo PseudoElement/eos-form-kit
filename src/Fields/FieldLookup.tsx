@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from "react";
 import { Form, SmartInput } from "@eos/rc-controls";
 import IField from "./IField";
 import { Select as AjaxSelect, IDataService } from "./LookupComponents/AjaxSelect";
+import { InlineSelect as AjaxInlineSelect} from "./LookupComponents/AjaxInlineSelect"
 import DisplayInput from "./LookupComponents/DisplayInput";
 import { Rule } from "rc-field-form/lib/interface";
 import { BaseField } from "./BaseField";
@@ -32,6 +33,12 @@ export interface ILookup extends IField {
 
     /** инфотекст */
     resultInfoText?: string;
+
+    /** инлайн мод */
+    inlineMode?: boolean;
+
+    /** обработка изменения значения !!!ТОЛЬКО ДЛЯ ИНЛЙАН МОДА!!! */
+    onValueSelected?(item?: any): void;
 }
 /**
  * Функция, через которую надо прогонять значение лукапа при сохранении формы. 
@@ -64,30 +71,52 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
     return memoLookup;
 
     function getNew(props: ILookup, ref: any, rules?: Rule[]) {
-        const ctx: IFormContext = useContext(FormContext)
+        const ctx: IFormContext = useContext(FormContext);
         // реф поставлен на инпут для установления фокуса при незаполненном поле
-        return (
-            <React.Fragment>
-                <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
-                    <SmartInput ref={ref}/>
-                </Form.Item>
-                <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                    <AjaxSelect
-                        dataService={props.dataService}
-                        ref={ref}
-                        ctx={ctx}
-                        fieldName={props.name}
-                        required={props.required}
-                        onChange={props.onChange}
-                        notFoundContent={props.notFoundContent}
-                        manualInputAllowed={props.manualInputAllowed}
-                        resultInfoText={props.resultInfoText}
-                        showResultInfoText={props.showResultInfoText}
-                    />
-                </Form.Item>
-            </React.Fragment>
+        if (props.inlineMode === true && props.onValueSelected) {
+            return (
+                <React.Fragment>
+                    <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
+                        <SmartInput ref={ref}/>
+                    </Form.Item>
+                    <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                        <AjaxInlineSelect
+                            dataService={props.dataService}
+                            ref={ref}
+                            onValueSelected={props.onValueSelected}
+                            notFoundContent={props.notFoundContent}
+                            manualInputAllowed={props.manualInputAllowed}
+                            resultInfoText={props.resultInfoText}
+                            showResultInfoText={props.showResultInfoText}
+                        />
+                    </Form.Item>
+                </React.Fragment>
+            );
+        }
+        else {
+            return (
+                <React.Fragment>
+                    <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
+                        <SmartInput ref={ref}/>
+                    </Form.Item>
+                    <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
+                        <AjaxSelect
+                            dataService={props.dataService}
+                            ref={ref}
+                            ctx={ctx}
+                            fieldName={props.name}
+                            required={props.required}
+                            onChange={props.onChange}
+                            notFoundContent={props.notFoundContent}
+                            manualInputAllowed={props.manualInputAllowed}
+                            resultInfoText={props.resultInfoText}
+                            showResultInfoText={props.showResultInfoText}
+                        />
+                    </Form.Item>
+                </React.Fragment>
+            );
+        }
 
-        );
     }
     function getEdit(props: ILookup, ref: any, rules?: Rule[]) {
         return getNew(props, ref, rules);

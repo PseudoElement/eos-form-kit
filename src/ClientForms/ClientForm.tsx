@@ -1,5 +1,5 @@
 import React, {
-    forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle,
+    forwardRef, ReactElement, ReactNode, useCallback, useEffect, useImperativeHandle,
     useMemo,
     useRef, useState
 } from "react";
@@ -106,6 +106,8 @@ export interface IForm {
     tabsComponent?: IClientTabs;
     /**Список строк с полями, необходимо указывать, если нет вкладок. */
     rows?: IFormRows;
+    /**Метод для получения кастомной строки с произвольной разметкой. */
+    getCustomRow?: (customType: string) => ReactElement | ReactElement[] | undefined;
 
     /**Компонент заголовка формы. */
     formTitle?: ReactNode | ReactNode[];
@@ -424,8 +426,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                                 if (props.onTabsChange)
                                     props.onTabsChange(activeKey);
                             }}
+                            getCustomRow={props.getCustomRow}
                         />
-                        {props.rows && <FormRows rows={props?.rows?.rows} />}
+                        {props.rows && <FormRows rows={props?.rows?.rows} getCustomRow={props.getCustomRow} />}
                     </RcForm>
                 </Col>
             </Row>
