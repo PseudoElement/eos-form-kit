@@ -1,4 +1,3 @@
-import DefaultDisplay from "../components/ColumnRender/Default";
 import { ISorterType } from "../types";
 import { IColumn } from "../types/IColumn";
 import { DirectionSort } from "../types/ISorterType";

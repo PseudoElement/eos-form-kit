@@ -9,12 +9,17 @@ import { ITableState } from '../types/ITableState'
 import { ITableUserSettings } from '../types/ITableUserSettings'
 
 interface ITableProps {
+    /**Уникальный идентификатор настроек таблицы в системе*/
     tableId?: string
+    /**Провайдер*/
     provider: ITableProvider
+    /**Начальное состояние таблицы*/
     initTableState?: ITableState
+    /**Функция локализации*/
     getResourceText?: (name: string) => string
 }
 
+/** Таблица-генератор */
 const EosTable = React.forwardRef<any, ITableProps>(({
     tableId,
     provider,
