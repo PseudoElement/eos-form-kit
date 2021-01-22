@@ -1,4 +1,3 @@
-import DefaultDisplay from "../components/ColumnRender/Default";
 import { ISorterType } from "../types";
 import { IColumn } from "../types/IColumn";
 import { DirectionSort } from "../types/ISorterType";
@@ -13,7 +12,7 @@ export function getColumnsBySettings(tableSettings: ITableSettings,
     localize?: (key?: string) => string,
     ellipsisRows?: number,
     listPossibleSorting?: ISorterType[]
-): IColumn[] {   
+): IColumn[] {
 
     const defaultSortings = getSorterColumnByUserSetting(tableUserSettings, listPossibleSorting)
 
@@ -43,14 +42,14 @@ export function getColumnsBySettings(tableSettings: ITableSettings,
                     else {
                         const tableColumnSettings = gridColSettings as ITableColumnSettings
                         if (tableColumnSettings) {
-                            const render = tableColumnSettings.columnRender?.renderType !== undefined &&
+                            const render = (tableColumnSettings.columnRender?.renderType !== undefined &&
                                 (
                                     (fetchControl && fetchControl(tableColumnSettings.columnRender?.renderType))
                                     ||
                                     (fetchControlGlobal && fetchControlGlobal(tableColumnSettings.columnRender?.renderType))
-                                    ||
-                                    DefaultDisplay
-                                )
+                                ))
+                                || (fetchControlGlobal && fetchControlGlobal("DefaultDisplay"))
+
                             const title = localize ? localize(tableColumnSettings.title) : tableColumnSettings.title
                             let width = c.width
                             if (!width && title) {

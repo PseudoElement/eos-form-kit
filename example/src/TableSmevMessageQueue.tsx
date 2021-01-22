@@ -76,10 +76,7 @@ const TableMessageQueue = () => {
                             {
                                 name: "clientSystem",
                                 title: "Внешняя система",
-                                fields: [{ displayName: "Внешняя система", apiField: "clientSystem", child: { displayName: "Наименование", apiField: "name", sortable: true } }],
-                                columnRender: {
-                                    renderType: "ReferenceDisplay"
-                                },
+                                fields: [{ displayName: "Внешняя система", apiField: "clientSystem", child: { displayName: "Наименование", apiField: "name", sortable: true } }],                                
                                 sortable: true
                             },
                             {
