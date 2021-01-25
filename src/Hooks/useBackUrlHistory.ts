@@ -17,11 +17,11 @@ export interface IBackPageInfo {
 
 
 export interface IBackUrlHistory {
-    push(path: string, state?: IHistorySlimItem): void;
+    push(path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void;
     goBack(): void;
-    pushRecover(key: number, path?: string): void
+    pushRecover(key: number, path?: string, state?: IHistorySlimItem | IHistorySlimItem[]): void
     pushPrevious(path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void;
-    pushKeepPrevious(path: string): void;
+    pushKeepPrevious(path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void;
     pushPopPrevious(path: string, state?: IHistorySlimItem | IHistorySlimItem[] | undefined): void;
     getState(): any;
     getPreviousState(): any;
@@ -53,7 +53,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
     /**
     * Дублирует метод push у хука useHistorySlim
     */
-    const push = (path: string, state?: IHistorySlimItem): void => {
+    const push = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
         slimPush(path, state);
     }
     /**
@@ -65,15 +65,15 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
     /**
      * Дублирует метод pushRecover у хука useHistorySlim, только подпихивая свою урлу на которую нужно перейти.
      */
-    const pushRecover = (key: number, path?: string): void => {
+    const pushRecover = (key: number, path?: string, state?: IHistorySlimItem | IHistorySlimItem[]): void => {
         let myPath = null;
         if (path)
             myPath = path;
         else {
-            const state = slimGetStateByKey(key);
-            myPath = state?.current && state?.current[backStateName] ? state?.current[backStateName].url : null;
+            const stateByKey = slimGetStateByKey(key);
+            myPath = stateByKey?.current && stateByKey?.current[backStateName] ? stateByKey?.current[backStateName].url : null;
         }
-        slimPushRecover(key, myPath);
+        slimPushRecover(key, myPath, state);
     }
     /**
     * Дублирует метод pushPrevious у хука useHistorySlim и кладет в историю объект IBackUrlHistoryObject
