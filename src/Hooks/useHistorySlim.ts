@@ -30,10 +30,16 @@ function useHistorySlim() {
      * Возвращает по ключу к определенному состоянию
      * @param key ключ истории к которому нужно вернуться.
      */
-    const pushRecover = (key: number, path?: string) => {
+    const pushRecover = (key: number, path?: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
         const currentState = getStateByKey(key);
         const myPath = path ? path : "/";
-        history.push(myPath, currentState?.previous); // Нужно передавать предыдущее состояние, потому что в нем хранится правильная информация о предыдущей странице.
+
+        let nextState = currentState?.previous ? currentState?.previous : createState();
+        addCurrent(nextState, state);
+
+        // Нужно передавать предыдущее состояние, потому что в нем хранится правильная информация о предыдущей странице.
+        // history.push(myPath, currentState?.previous);
+        history.push(myPath, nextState);
     }
     /**
      * Добавляет запись в историю с записью текущего состояния и всех состояний из useHistoryState.
