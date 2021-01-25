@@ -219,7 +219,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 fetchConditionFromStore,
                 fetchControlFromStore,
                 menuItems: tableSettings.menu,
-                refApi: currentRef.current
+                refApi: currentRef.current,
+                locale: getResourceText
             }))
 
         setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchControl} />)
