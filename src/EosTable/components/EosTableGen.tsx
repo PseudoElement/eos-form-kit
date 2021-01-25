@@ -83,6 +83,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             showFormFilter: initTableState?.showFormFilter ?? tableUserSetiings.filterVisible,
             tableView: initTableState?.tableView,
             filterAreaHeight: initTableState?.filterAreaHeight ?? tableUserSetiings.filterAreaHeight,
+            currentRowKey: initTableState?.currentRowKey
         }
         return init
     }, [initTableState, tableUserSetiings, tableSettings])
@@ -200,7 +201,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         quickSearchMode,
         showFormFilter,
         formFilterMode,
-        filterValueObjects: { ...filterValueObjects }
+        filterValueObjects: { ...filterValueObjects },
+        recordsTotalCount
     }
 
     useEffect(() => {
@@ -217,7 +219,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 fetchConditionFromStore,
                 fetchControlFromStore,
                 menuItems: tableSettings.menu,
-                refApi: currentRef.current
+                refApi: currentRef.current,
+                locale: getResourceText
             }))
 
         setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchControl} />)
@@ -354,6 +357,10 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 .then(({ records, totalCount }) => {
                     setRecordsTotalCount(totalCount);
                     setTableData(records)
+                    if (currentRowKey && records.length > 0) {
+                        setCurrentRecord(records[0])
+                        setCurrentRowKey(rowKeyValue(records[0]))
+                    }
                 })
                 .catch((error) => console.error(error))
                 .finally(() => {
@@ -730,8 +737,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         >
         </Table>)
 
-    const onResize: any =  (_e: SyntheticEvent, resizeData: any) => {
-        setFilterAreaHeight(resizeData.size.height)       
+    const onResize: any = (_e: SyntheticEvent, resizeData: any) => {
+        setFilterAreaHeight(resizeData.size.height)
     };
 
     const searchFormApi = useRef<IFormApi>()
@@ -749,7 +756,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                     maxFilterHeight: tableSettings.visual?.filterAreaMaxHeight || FILTER_AREA_MAX_HEIGHT,
                     minFilterHeight: tableSettings.visual?.filterAreaMinHeight || FILTER_AREA_MIN_HEIGHT,
                     isFilterVisible: showFormFilter === true,
-                    onResize: onResize,                    
+                    onResize: onResize,
                     tableFilterContent: searchFormService && <SearchForm getResourceText={getResourceText} ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
                 }}
             >
@@ -760,7 +767,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     const tableMemo = useMemo(table, [columns, tableData, isLoading, selectedRowKeys, currentRowKey, tableView])
 
-    return tableMenu(tableMemo)    
+    return tableMenu(tableMemo)
 })
 EosTableGen.displayName = "EosTableGen"
 

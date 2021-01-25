@@ -12,6 +12,8 @@ export interface ITableState {
     readonly currentRecord?: any
     /**Данные таблицы */
     readonly tableData?: any[]
+    /**Общее количество данных */
+    readonly recordsTotalCount?: number
     /**Количество загружаемых данных */
     pageSize?: number,
     /**Сортировка */

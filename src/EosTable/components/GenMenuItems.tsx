@@ -16,10 +16,23 @@ export interface IGenMenuItemProps {
     rowRecord?: any
     rowIndex?: number
     rowKey?: string
-    dividerOrientation?: "vertical" | "horizontal"
+    dividerOrientation?: "vertical" | "horizontal",
+    locale?: (key: string) => string
 }
 
-function GenMenuItems({ fetchAction, fetchCondition, fetchControl, menuItems, refApi, fetchControlFromStore, fetchActionFromStore, fetchConditionFromStore, rowRecord, rowIndex, rowKey, dividerOrientation = "vertical" }: IGenMenuItemProps) {
+function GenMenuItems({ fetchAction,
+    fetchCondition,
+    fetchControl,
+    menuItems,
+    refApi,
+    fetchControlFromStore,
+    fetchActionFromStore,
+    fetchConditionFromStore,
+    rowRecord,
+    rowIndex,
+    rowKey,
+    dividerOrientation = "vertical",
+    locale }: IGenMenuItemProps) {
 
     const items = (toolsList: IMenuItem[]) => {
         return (toolsList
@@ -35,7 +48,14 @@ function GenMenuItems({ fetchAction, fetchCondition, fetchControl, menuItems, re
                 const Component = (fetchControl && fetchControl(menuItem.render.renderType)) || (fetchControlFromStore(menuItem.render.renderType))
 
                 const controlProps: IControlRenderProps = {
-                    renderArgs: menuItem.render.renderArgs,
+                    renderArgs: {
+                        ...menuItem.render.renderArgs,
+                        titleButton: menuItem.render.renderArgs?.titleButton
+                            ? (locale
+                                ? locale(menuItem.render.renderArgs.titleButton)
+                                : menuItem.render.renderArgs.titleButton)
+                            : undefined
+                    },
                     refApi: refApi
                 }
 
@@ -46,12 +66,12 @@ function GenMenuItems({ fetchAction, fetchCondition, fetchControl, menuItems, re
                     rowRecord,
                     rowKey
                 }
-
+                const title = menuItem.title ? (locale ? locale(menuItem.title) : menuItem.title) : undefined
                 if (menuItem.children) {
                     return <Menu.SubMenu
                         icon={Component && <Component {...controlProps} />}
                         key={menuItem.key}
-                        title={menuItem.title}
+                        title={title}
                         disabled={disableFunc && (disableFunc(handlerProps))}
                         morePanelElement={menuItem.fold}>
                         {items(menuItem.children)}
@@ -59,7 +79,7 @@ function GenMenuItems({ fetchAction, fetchCondition, fetchControl, menuItems, re
                 }
                 else {
                     return <Menu.Item
-                        title={menuItem.title}
+                        title={title}
                         key={menuItem.key}
                         onClick={onClickFunc && (() => onClickFunc(handlerProps))}
                         disabled={disableFunc && disableFunc(handlerProps)}
