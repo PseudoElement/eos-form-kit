@@ -9,7 +9,7 @@ import AjaxClientFormPage2 from "./AjaxClientFormPage2";
 import AjaxClientFormApi from "./AjaxClientFormApi";
 import NotFoundPage from "./NotFoundPage";
 import { ConfigProvider } from 'eos-webui-controls';
-import { EosComponentsProvider, useBackUrlHistory, useHistoryListener, useTitleChanger } from 'eos-webui-formgen';
+import { EosComponentsProvider, useBackUrlHistory, useHistoryListener } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 import TestPage from './Pages/Test';
 import { TableExample } from './Table';
@@ -103,11 +103,6 @@ interface IMainMenu {
 const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
     const { toBack, getBackPageStateAsArray, pushRecover } = useBackUrlHistory()
     const backStory: any[] = getBackPageStateAsArray();
-
-    let { pageTitle } = useTitleChanger();
-    useEffect(() => {
-        console.log(pageTitle);
-    }, [pageTitle])
 
     return (
         // <Menu mode="horizontal">
