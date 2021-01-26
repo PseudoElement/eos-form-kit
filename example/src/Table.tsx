@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { EosTable, ITableProvider, EosTableTypes, EosMenuTypes } from "eos-webui-formgen"
 import { IHandlerProps } from '../../dist/EosTable/types'
 
@@ -254,7 +254,7 @@ const GetProvider = () => {
                     },
                     {
                         "key": 2,
-                        col1: "row 2"
+                        col1: <Fragment/>
                     },
                     {
                         "key": 3,
