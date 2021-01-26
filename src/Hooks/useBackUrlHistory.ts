@@ -17,19 +17,49 @@ export interface IBackPageInfo {
 
 
 export interface IBackUrlHistory {
+    /**
+     * Выполняет переход с добавлением в историю записи.
+     * @param path Путь для перехода.
+     * @param state Состояние которое будет как current в следующей записи истории.
+     */
     push(path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void;
+    /**Выполняет переход по истории назад. Аналогичен клику по кнопке браузера "Назад". */
     goBack(): void;
-    pushRecover(key: number, path?: string, state?: IHistorySlimItem | IHistorySlimItem[]): void
+    /**
+     * Выполняет переход по ключу к определенному состоянию.
+     * @param key Ключ.
+     * @param path Путь.
+     * @param state Состояние которое будет как current в следующей записи истории.
+     */
+    pushRecover(key: number, path?: string, state?: IHistorySlimItem | IHistorySlimItem[]): void;
+    /**
+     * Выполняет переход с добавлением в историю записи. Текущее состояние становится предыдущим.
+     * @param path Путь.
+     * @param state Состояние которое будет как current в следующей записи истории.
+     */
     pushPrevious(path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void;
+    /**
+     * Выполняет переход с добавлением в историю записи. Текущее состояния остаётся текущим.
+     * @param path Путь.
+     * @param state Состояние которое будет как current в следующей записи истории.
+     */
     pushKeepPrevious(path: string, state?: IHistorySlimItem | IHistorySlimItem[]): void;
+    /**
+     *  Выполняет переход с добавлением в историю записи. Текущее состояние выбивается.
+     * @param path Путь.
+     * @param state Состояние которое будет как current в следующей записи истории.
+     */
     pushPopPrevious(path: string, state?: IHistorySlimItem | IHistorySlimItem[] | undefined): void;
     getState(): any;
     getPreviousState(): any;
     getStateByName(name: string): any;
     getBackPageStateAsArray(): any[];
     getBackPageInfoStateByKey(key: number): IBackPageInfo | null;
-
-    toBack(): void;
+    /**
+     * Выполняет переход с добавлением в историю записи на предыдущую страницу из истории. Текущее состояние выбивается.
+     * @param state Состояние которое будет как current в следующей записи истории.
+     */
+    toBack(state?: IHistorySlimItem | IHistorySlimItem[]): void;
 }
 /**
  * Хук, который работает на основе хука useHistorySlim и записываеть объект IBackUrlHistoryObject в историю
