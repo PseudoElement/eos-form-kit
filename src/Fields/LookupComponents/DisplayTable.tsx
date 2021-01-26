@@ -70,6 +70,8 @@ export interface IDisplayTable {
     hiddenDeleteToolTitle?: boolean;
     /**Скрыть подпись тулы добавления строки в тултип.*/
     hiddenAddRowToolTitle?: boolean;
+    /**Событие при нажатии на кнопку "Добавить"*/
+    onAdd(): void;
 
     onDataChange?(item?: any): void;
 
@@ -100,7 +102,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     addRowToolbarWarning,
     deleteRowsToolbarWarning,
     hiddenDeleteToolTitle,
-    hiddenAddRowToolTitle
+    hiddenAddRowToolTitle,
+    onAdd
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
@@ -130,7 +133,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             component: <PlusIcon />,
             title: addRowToolbarTitle || 'Добавить строку',
             disabled: isDisplay(),
-            onClick: showModalLookup,
+            onClick: onAdd,
             hiddenTitle: hiddenDeleteToolTitle || false,
             key: addRowToolbarTitle || 'PlusIcon'
         },
@@ -368,9 +371,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             }
         });
     }
-    function showModalLookup() {
-        tableModalApi?.current?.showModal();
-    }
+    // function showModalLookup() {
+    //     tableModalApi?.current?.showModal();
+    // }
     function showDeleteModalMessage() {
         modalMessage("warning", deleteRowsToolbarWarning || '', [
             <SmartButton 

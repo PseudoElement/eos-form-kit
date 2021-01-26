@@ -28,6 +28,7 @@ class Helper {
                 "type": "FieldLookupMultiRow",
                 "value": null,
                 "notFoundContent": "Нет элементов",
+                "onAdd": () => console.log('addRow'),
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
@@ -71,6 +72,7 @@ class Helper {
                 "type": "FieldLookupMulti",
                 "value": null,
                 "notFoundContent": "Нет элементов",
+                "onAdd": () => console.log('addRow'),
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
