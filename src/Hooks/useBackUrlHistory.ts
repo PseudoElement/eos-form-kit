@@ -29,7 +29,7 @@ export interface IBackUrlHistory {
     getBackPageStateAsArray(): any[];
     getBackPageInfoStateByKey(key: number): IBackPageInfo | null;
 
-    toBack(): void;
+    toBack(state?: IHistorySlimItem | IHistorySlimItem[]): void;
 }
 /**
  * Хук, который работает на основе хука useHistorySlim и записываеть объект IBackUrlHistoryObject в историю
