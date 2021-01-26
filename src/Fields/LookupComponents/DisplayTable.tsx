@@ -133,7 +133,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             component: <PlusIcon />,
             title: addRowToolbarTitle || 'Добавить строку',
             disabled: isDisplay(),
-            onClick: onAdd,
+            onClick: onAdd || showModalLookup,
             hiddenTitle: hiddenDeleteToolTitle || false,
             key: addRowToolbarTitle || 'PlusIcon'
         },
@@ -371,9 +371,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             }
         });
     }
-    // function showModalLookup() {
-    //     tableModalApi?.current?.showModal();
-    // }
+    function showModalLookup() {
+        tableModalApi?.current?.showModal();
+    }
     function showDeleteModalMessage() {
         modalMessage("warning", deleteRowsToolbarWarning || '', [
             <SmartButton 
