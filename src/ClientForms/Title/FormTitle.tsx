@@ -34,6 +34,13 @@ export interface IFormTitle {
     disableCloseButton?: boolean;
     /**Дополнительные кнопки между заголовком и кнопкой закрытия формы просмотра. */
     additionalDispFormTitleButtons?: ReactNode | ReactNode[];
+
+     /**Текст кнопки "Закрыть". */
+     closeTitle?: string;
+     /**Текст кнопки "Сохранить". */
+     finishTitle?: string;
+     /**Текст кнопки "Изменить". */
+     editTitle?: string;
 }
 
 /**Компонент отображения заголовка формы. */
@@ -61,6 +68,8 @@ const FormTitle = forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
                             disableEditButton={props.disableEditButton}
                             disableCloseButton={props.disableCloseButton}
                             additionalButtons={props.additionalDispFormTitleButtons}
+                            closeTitle={props.closeTitle}
+                            editTitle={props.editTitle}
                         />
                         : <EditFormTitle
                             ref={ref}
@@ -69,6 +78,8 @@ const FormTitle = forwardRef<any, IFormTitle>((props: IFormTitle, ref: any) => {
                             enableLeftIcon={props.enableLeftIcon}
                             isHiddenLeftIcon={props.isHiddenLeftIcon}
                             leftIconTitle={props.leftIconTitle}
+                            closeTitle={props.closeTitle}
+                            finishTitle={props.finishTitle}
                         />)}
         </React.Fragment>
     );
