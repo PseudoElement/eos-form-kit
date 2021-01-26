@@ -101,6 +101,9 @@ const ArcPage: FunctionComponent = () => {
 
                     }
                 }}
+                closeTitle={"Закрыть1"}
+                editTitle={"Изменить1"}
+                finishTitle={"Сохранить1"}
 
             />
         </React.Fragment>

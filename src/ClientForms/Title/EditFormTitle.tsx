@@ -5,7 +5,7 @@ import TitleText, { ITitleTextApi } from "./TitleText";
 import { IFormTitleApi } from "./FormTitle";
 
 /**API компонента отображения заголовка формы изменения. */
-export interface IDispFormTitleApi extends IFormTitleApi{ }
+export interface IDispFormTitleApi extends IFormTitleApi { }
 
 /**Настройки компонента отображения заголовка формы изменения. */
 export interface IEditFormTitle {
@@ -18,6 +18,11 @@ export interface IEditFormTitle {
     isHiddenLeftIcon?: boolean;
     /**Текст по наведению на иконку @ перед наименованием */
     leftIconTitle?: string;
+
+    /**Текст кнопки "Закрыть". */
+    closeTitle?: string;
+    /**Текст кнопки "Сохранить". */
+    finishTitle?: string;
 }
 
 /**Компонент отображения заголовка формы изменения. */
@@ -61,8 +66,8 @@ const EditFormTitle = forwardRef<any, IEditFormTitle>((props: IEditFormTitle, re
                 </Col>
                 <Col flex="0 0 auto">
                     <Space size="small" direction="horizontal">
-                        <SmartButton type="primary" htmlType="submit">{SAVE_TEXT}</SmartButton>
-                        <SmartButton onClick={props.onCancelClick} type="link"><CloseIcon /></SmartButton>
+                        <SmartButton tooltip={props.finishTitle ?? SAVE_TEXT} type="primary" htmlType="submit">{props.finishTitle ?? SAVE_TEXT}</SmartButton>
+                        <SmartButton tooltip={props.closeTitle} onClick={props.onCancelClick} type="link"><CloseIcon /></SmartButton>
                     </Space>
                 </Col>
             </Row>

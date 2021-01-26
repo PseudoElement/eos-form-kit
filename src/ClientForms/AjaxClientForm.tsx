@@ -65,6 +65,13 @@ export interface IForm {
     onValuesChange?(changedValues: any, values: any): void;
 
 
+    /**Текст кнопки "Закрыть". */
+    closeTitle?: string;
+    /**Текст кнопки "Сохранить". */
+    finishTitle?: string;
+    /**Текст кнопки "Изменить". */
+    editTitle?: string;
+
     /**Тулбар с кнопками. */
     toolbar?: IToolBar;
     /**Включает отрисовку иконки @ перед наименованием. */
@@ -354,6 +361,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             disableEditButton={props.disableEditButton}
             disableCloseButton={props.disableCloseButton}
             additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
+            closeTitle={props.closeTitle}
+            finishTitle={props.finishTitle}
+            editTitle={props.editTitle}
         />
     );
     function onSaveSucceeded() {
