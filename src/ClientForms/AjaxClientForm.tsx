@@ -168,7 +168,11 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
 
     const [loadSchema, setLoadSchema] = useState(false);
     const [isLoadingSchema, setLoadingSchema] = useState(false);
-    const [loadItem, setLoadItem] = useState(false);
+    // const [loadItem, setLoadItem] = useState(false);
+    const loadItem = useRef<boolean>(false);
+    // const [counter, setCounter] = useState<number>((prevState: number) => { return prevState + 1; });
+    const [counter, setCount] = useState(0);
+
     const [isLoadingItem, setLoadingItem] = useState(false);
     const [clientFormProps, setClientFormProps] = useState<IClientFormProps>({ mode: props.mode });
 
@@ -195,7 +199,10 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             reloadItem() {
                 clientFormApi?.current?.reset();
                 if (schema) {
-                    setLoadItem(true);
+                    // setLoadItem(true);
+                    loadItem.current = true;
+                    setCount(prev => { return prev + 1 });
+                    // loadItemAsync();
                 }
             },
             showLeftIcon() {
@@ -261,11 +268,11 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     useEffect(() => {
         if (loadSchema)
             loadSchemaAsync(props.mode);
-    }, [loadSchema]);
+    }, [loadSchema, counter]);
     useEffect(() => {
-        if (loadItem)
+        if (loadItem?.current === true)
             loadItemAsync();
-    }, [loadItem]);
+    }, [counter]);
 
     const loadSchemaAsync = async function (mode: FormMode) {
         setLoadSchema(false);
@@ -274,11 +281,14 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setSchema(context);
         if (props.onContextLoaded)
             props.onContextLoaded(context);
-        setLoadItem(true);
+        // setLoadItem(true);
+        loadItem.current = true;        
+        setCount(prev => { return prev + 1 });
         setLoadingSchema(false);
     }
     const loadItemAsync = async function () {
-        setLoadItem(false);
+        // setLoadItem(false);
+        loadItem.current = false;
         setLoadingItem(true);
         if (props.dataService.getInitialValuesAsync)
             props.dataService.getInitialValuesAsync()
