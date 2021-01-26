@@ -26,6 +26,9 @@ export interface ILookupAutoComplete extends IField {
     resultObject?: string;
     resultKey?: string;
     searchField?: string;
+
+    /** Событие при клике на кнопку */
+    onButtonClick?(): void
 }
 /**
  * Функция, через которую надо прогонять значение лукапа при сохранении формы. 
@@ -71,6 +74,7 @@ export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((pr
                     required={props.required}
                     onChange={props.onChange}
                     notFoundContent={props.notFoundContent}
+                    onButtonClick={props.onButtonClick}
                 />
             </Form.Item>
         );

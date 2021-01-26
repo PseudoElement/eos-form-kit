@@ -259,6 +259,7 @@ class Helper {
                 "requiredMessage": "Признак обязателен для заполнения",
                 "type": "FieldLookup",
                 "value": null,
+                "onButtonClick": () => console.log("onButtonClick"),
                 "notFoundContent": "Нет элементов",
                 "manualInputAllowed": false,
                 "showResultInfoText": false,
