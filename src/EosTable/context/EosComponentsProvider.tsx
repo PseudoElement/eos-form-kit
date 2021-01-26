@@ -4,7 +4,6 @@ import { Icon, MenuButton, QuickSearch, MenuCheckableButton, ShowFilter } from '
 import { FileLinks } from '../components/ColumnRender';
 import CheckboxDisplay from '../components/ColumnRender/Checkbox';
 import DateTimeDisplay from '../components/ColumnRender/DateTime';
-import DefaultDisplay from '../components/ColumnRender/Default';
 import ReferenceDisplay from '../components/ColumnRender/Reference';
 import unSelected from '../conditions/unSelected';
 import unSelectedOne from '../conditions/unSelectedOne';
@@ -26,7 +25,6 @@ export default function EosComponentsProvider({
 
     addControlToStore("CheckboxDisplay", CheckboxDisplay)
     addControlToStore("DateTimeDisplay", DateTimeDisplay)
-    addControlToStore("DefaultDisplay", DefaultDisplay)
     addControlToStore("ReferenceDisplay", ReferenceDisplay)
     addControlToStore("LinksDisplay", FileLinks)
     addControlToStore("Button", MenuButton)
