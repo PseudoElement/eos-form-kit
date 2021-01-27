@@ -1,7 +1,7 @@
 import { FormMode, FieldDateTime, AjaxSelect, AjaxAutoComplete, FieldLookupMulti, RowType } from "eos-webui-formgen";
 
 class Helper {
-    static getFields(mode: FormMode) {
+    static getFields(mode: FormMode, onAddClick?: () => void) {
         /** Огрничение на отображаемое количество элементов запроса */
         const RESULT_AMOUNT_LIMIT: number = 2;
         /** Фактически требуемое количество элементов при запросе, чтобы указать, что отображены только первые элементы запроса, а не все */
@@ -116,6 +116,10 @@ class Helper {
                 "type": "FieldLookupMulti",
                 "value": null,
                 "notFoundContent": "Нет элементов",
+                "onAdd": () => {
+                    debugger;
+                    onAddClick && onAddClick()
+                },
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
