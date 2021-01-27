@@ -2,7 +2,7 @@ import React, { forwardRef, FunctionComponent, useEffect, useImperativeHandle, u
 
 
 import "eos-webui-controls/dist/main.css";
-import { AjaxClientForm, FormMode, IToolBar, parseFormMode, EosMenu, EosTableTypes, useEosComponentsStore, EosMenuTypes } from "eos-webui-formgen";
+import { AjaxClientForm, FormMode, IToolBar, parseFormMode, EosMenu, EosTableTypes, useEosComponentsStore, EosMenuTypes, useBackUrlHistory } from "eos-webui-formgen";
 import { Helper } from './Helper';
 import { useRouteMatch } from 'react-router-dom';
 import { SmartButton } from '@eos/rc-controls';
@@ -14,6 +14,7 @@ interface IPageParams {
 
 const AjaxClientFormApi: FunctionComponent = () => {
     const { addActionToStore, addConditionToStore } = useEosComponentsStore()
+    const { pushPrevious } = useBackUrlHistory();
     addActionToStore("add", (handlerProps: EosTableTypes.IHandlerProps) => { alert(handlerProps.menuItem.key) })
     addActionToStore("disable", () => {
         menuRefApi.current?.setButtonDisabled("add")
@@ -43,17 +44,17 @@ const AjaxClientFormApi: FunctionComponent = () => {
     const dataService: AjaxClientForm.IDataService = {
         async getContextAsync(mode: FormMode) {
             const dispContext = {
-                "Fields": Helper.getFields(FormMode.display),
+                "Fields": Helper.getFields(FormMode.display, () => pushPrevious("/lookupPage")),
                 "Mode": FormMode.display,
                 "Tabs": Helper.getTabs()
             };
             const editContext = {
-                "Fields": Helper.getFields(FormMode.edit),
+                "Fields": Helper.getFields(FormMode.edit, () => pushPrevious("/lookupPage")),
                 "Mode": FormMode.edit,
                 "Tabs": Helper.getTabs()
             };
             const newContext = {
-                "Fields": Helper.getFields(FormMode.new),
+                "Fields": Helper.getFields(FormMode.new, () => pushPrevious("/lookupPage")),
                 "Mode": FormMode.new,
                 "Tabs": Helper.getTabs()
             };
@@ -208,12 +209,12 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onClearCountClick={() => { formApi?.current?.setTabCount("0"); }}
                 onSetZeroCountClick={() => { formApi?.current?.setTabCount("0", 0); }}
                 onDisableFieldsClick={() => {
-                    const fields = Helper.getFields(mode);
+                    const fields = Helper.getFields(mode, () => pushPrevious("/lookupPage"));
                     for (let field of fields)
                         formApi?.current?.disableField(field.name);
                 }}
                 onEnableFieldsClick={() => {
-                    const fields = Helper.getFields(mode);
+                    const fields = Helper.getFields(mode, () => pushPrevious("/lookupPage"));
                     for (let field of fields)
                         formApi?.current?.enableField(field.name);
                 }}
