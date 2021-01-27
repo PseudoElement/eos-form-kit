@@ -69,7 +69,7 @@ export interface IDataService {
     loadDataAsync(search?: string): Promise<IOptionItem[]>;
 
     /** метод для справочников */
-    loadDataAsync2(search?: string): Promise<any[]>;
+    loadData2Async(search?: string): Promise<any[]>;
 
     /** Количество запрашивамых результатов */
     resultsAmount?: number;

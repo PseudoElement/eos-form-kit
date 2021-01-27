@@ -151,7 +151,8 @@ const ArcPage: FunctionComponent = () => {
                     name: Fields.ISN_KEEP_CLAUSE,
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService()
+                    dataService: getDataService(),
+                    onButtonClick: () => { pushPrevious("/lookupPage") },
                 },
                 {
                     type: "FieldLookup",
@@ -336,7 +337,8 @@ const ArcPage: FunctionComponent = () => {
                     name: Fields.ISN_KEEP_CLAUSE,
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService()
+                    dataService: getDataService(),
+                    onButtonClick: () => { pushPrevious("/lookupPage") }
                 },
                 {
                     type: "FieldLookup",

@@ -12,6 +12,7 @@ import { ConfigProvider } from 'eos-webui-controls';
 import { EosComponentsProvider, useBackUrlHistory, useHistoryListener, useTitleChanger } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 import TestPage from './Pages/Test';
+import LookupPage from './Pages/LookupPage';
 import { TableExample } from './Table';
 import { TableSmevMessageQueue } from './TableSmevMessageQueue';
 
@@ -182,6 +183,7 @@ ReactDOM.render(
                     <Route exact path="/form3/:mode/:id?" component={AjaxClientFormApi} />
                     <Route exact path="/table" component={TableExample} />
                     <Route exact path="/tableSmevMessageQueue" component={TableSmevMessageQueue} />
+                    <Route exact path="/lookupPage" component={LookupPage} />
                     <Route path="*" component={NotFoundPage} />
                 </Switch>
             </BrowserRouter>
