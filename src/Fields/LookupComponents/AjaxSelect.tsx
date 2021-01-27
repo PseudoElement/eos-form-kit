@@ -68,6 +68,9 @@ export interface IDataService {
     /** Функция useLazyQuery для отправки и обработки запроса */
     loadDataAsync(search?: string): Promise<IOptionItem[]>;
 
+    /** метод для справочников */
+    loadDataAsync2(search?: string): Promise<any[]>;
+
     /** Количество запрашивамых результатов */
     resultsAmount?: number;
 }

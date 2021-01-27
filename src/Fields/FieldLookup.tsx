@@ -41,7 +41,13 @@ export interface ILookup extends IField {
     onValueSelected?(item?: any): void;
 
     /** Событие при клике на кнопку */
-    onButtonClick?(): void
+    onButtonClick?(): void;
+
+    /** имя свойства */
+    valueProperty?: string;
+    
+    /** имя свойства */
+    keyProperty?: string;
 }
 /**
  * Функция, через которую надо прогонять значение лукапа при сохранении формы. 
