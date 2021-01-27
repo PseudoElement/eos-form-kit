@@ -10,10 +10,64 @@ const LookupPage: FunctionComponent = () => {
             {
                 const items: IHistorySlimItem = {
                     name: "LookupDialogResult",
-                    value: { isnKeepPeriod: 'valueKeepPeriod', multiLookup1: 'valueMultiLookup1' }
+                    value: { 
+                        isnKeepPeriod: {
+                            code: null, 
+                            deleted: false, 
+                            description: null, 
+                            isEpk: "N", 
+                            isFolder: 0, 
+                            isPersonal: "N", 
+                            isnKeepPeriod: 1, 
+                            keepYears: 1, 
+                            key: "1", 
+                            name: "1 год", 
+                            note: null, 
+                            protected: "N", 
+                            title: "1 год",
+                            data: {
+                                code: null, 
+                                deleted: "N", 
+                                isEpk: "N", 
+                                isPersonal: "N", 
+                                isnKeepPeriod: 1, 
+                                keepYears: 1, 
+                                name: "1 год", 
+                                note: null, 
+                                protected: "N"
+                            }
+                        }, 
+                        multiLookup1: {
+                            code: null, 
+                            deleted: false, 
+                            description: null, 
+                            isEpk: "N", 
+                            isFolder: 0, 
+                            isPersonal: "N", 
+                            isnKeepPeriod: 2, 
+                            keepYears: 2, 
+                            key: "2", 
+                            name: "5 лет", 
+                            note: null, 
+                            protected: "N", 
+                            title: "5 лет",
+                            data: {
+                                code: null, 
+                                deleted: "N", 
+                                isEpk: "N", 
+                                isPersonal: "N", 
+                                isnKeepPeriod: 2, 
+                                keepYears: 5, 
+                                name: "5 лет", 
+                                note: null, 
+                                protected: "N"
+                            }
+                        } 
+                    }
                 }
                 toBack(items);            
-                }}>Завершить выбор</SmartButton>
+            }
+        }>Завершить выбор</SmartButton>
     </div>)
 }
 export default LookupPage;
