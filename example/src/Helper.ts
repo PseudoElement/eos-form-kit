@@ -30,25 +30,6 @@ class Helper {
                 "notFoundContent": "Нет элементов",
                 "onAdd": () => console.log('addRow'),
                 "dataService": {
-                    loadData2Async: async (search?: string) => {
-                        const result: FieldLookupMulti.IValue[] = [
-                            { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
-                            { key: "2", value: "два", other: [{ value: "один шесть", name: "secondColumn" }] },
-                            { key: "3", value: "три" },
-                            { key: "4", value: "четыре" }
-                        ]
-                        if (search) {
-                            return result.filter((item) => {
-                                if (item && item.value && item?.value?.indexOf(search) >= 0) {
-                                    return true;
-                                }
-                                return false;
-                            }) ?? [];
-                        }
-                        else {
-                            return result;
-                        }
-                    },
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
                             { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
@@ -98,55 +79,25 @@ class Helper {
                     loadData2Async: async () => {
                         return [{
                             code: null,
-                            deleted: false,
-                            description: null,
+                            deleted: "F",
                             isEpk: "N",
-                            isFolder: 0,
                             isPersonal: "N",
-                            isnKeepPeriod: 2,
-                            keepYears: 2,
-                            key: "6",
-                            name: "6 лет",
+                            isnKeepPeriod: 6,
+                            keepYears: 5,
+                            name: "11 лет",
                             note: null,
-                            protected: "N",
-                            title: "5 лет",
-                            data: {
-                                code: null,
-                                deleted: "N",
-                                isEpk: "N",
-                                isPersonal: "N",
-                                isnKeepPeriod: 6,
-                                keepYears: 5,
-                                name: "11 лет",
-                                note: null,
-                                protected: "N"
-                            }
+                            protected: "N"
                         },
                         {
                             code: null,
-                            deleted: false,
-                            description: null,
+                            deleted: "N",
                             isEpk: "N",
-                            isFolder: 0,
                             isPersonal: "N",
                             isnKeepPeriod: 3,
-                            keepYears: 2,
-                            key: "7",
-                            name: "7 лет",
+                            keepYears: 5,
+                            name: "10 лет",
                             note: null,
-                            protected: "N",
-                            title: "5 лет",
-                            data: {
-                                code: null,
-                                deleted: "N",
-                                isEpk: "N",
-                                isPersonal: "N",
-                                isnKeepPeriod: 3,
-                                keepYears: 5,
-                                name: "10 лет",
-                                note: null,
-                                protected: "N"
-                            }
+                            protected: "N"
                         }]
                         // const result: FieldLookupMulti.IValue[] = [
                         //     { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
@@ -170,7 +121,7 @@ class Helper {
                     resultsAmount: 10,
                 },
                 "otherColumns": [
-                    { "label": "Колонка 2", "name": "deleted", "disabled": false }
+                    { "label": "Колонка 2", "name": "deleted" }
                 ]
             },
             {
@@ -518,20 +469,6 @@ class Helper {
                         { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }] }
                     ],
                     "multiLookup1": [{
-                        code: null,
-                        deleted: false,
-                        description: null,
-                        isEpk: "N",
-                        isFolder: 0,
-                        isPersonal: "N",
-                        isnKeepPeriod: 2,
-                        keepYears: 2,
-                        key: "6",
-                        name: "6 лет",
-                        note: null,
-                        protected: "N",
-                        title: "5 лет",
-                        data: {
                             code: null,
                             deleted: "N",
                             isEpk: "N",
@@ -541,25 +478,10 @@ class Helper {
                             name: "6 лет",
                             note: null,
                             protected: "N"
-                        }
                     },
                     {
-                        code: null,
-                        deleted: false,
-                        description: null,
-                        isEpk: "N",
-                        isFolder: 0,
-                        isPersonal: "N",
-                        isnKeepPeriod: 3,
-                        keepYears: 2,
-                        key: "7",
-                        name: "7 лет",
-                        note: null,
-                        protected: "N",
-                        title: "5 лет",
-                        data: {
                             code: null,
-                            deleted: "N",
+                            deleted: "F",
                             isEpk: "N",
                             isPersonal: "N",
                             isnKeepPeriod: 3,
@@ -567,7 +489,6 @@ class Helper {
                             name: "5 лет",
                             note: null,
                             protected: "N"
-                        }
                     }],
                     "multiLookup2": [
                         { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }, { value: "двадцать шесть", name: "anotherColumn" }] },

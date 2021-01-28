@@ -136,7 +136,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
     const [rowFromLookup, setRowFromLookup] = useState<IValue | undefined>();
-    const historyStore = useHistorySlim().getStateByName("LookupDialogResult");
+    const historyState = useHistorySlim().getStateByName("LookupDialogResult");
 
     const tableModalApi = useRef<ITableModalApi>();
 
@@ -175,8 +175,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     ];
 
     useEffect(() => {    
-        if (name && historyStore  && historyStore[name]) {
-            let newFormData = [...value, ...historyStore[name]];
+        if (name && historyState  && historyState[name]) {
+            let newFormData = [...value, ...getHistoryStateData(historyState[name])];
             formData.current = newFormData;        
             if (onChange) {
                 onChange(newFormData);
@@ -441,11 +441,11 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         if(otherColumns) {
             newData = data.map((item) => {
                 return { 
-                    key: item?.data?.[key],
-                    value: item?.data?.[value],
+                    key: item?.[key],
+                    value: item?.[value],
                     other: otherColumns.map(e => {
                         return {
-                            value: item?.data?.[e.name],
+                            value: item?.[e.name],
                             name: e.name
                         }
                     })
@@ -454,12 +454,15 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         } else {
             newData = data.map((item) => {
             return { 
-               key: item?.data?.[key],
-               value: item?.data?.[value],
+               key: item?.[key],
+               value: item?.[value],
             };
         });
         }
         return newData;
+    }
+    function getHistoryStateData(data: any) {
+        return data.map((item: any) => item?.data)
     }
     // function checkBackUrl(backUrl: string) {
     //     backUrl = backUrl;
