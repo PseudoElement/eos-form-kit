@@ -39,6 +39,15 @@ export interface ILookup extends IField {
 
     /** обработка изменения значения !!!ТОЛЬКО ДЛЯ ИНЛЙАН МОДА!!! */
     onValueSelected?(item?: any): void;
+
+    /** Событие при клике на кнопку */
+    onButtonClick?(): void;
+
+    /** имя свойства */
+    valueProperty?: string;
+    
+    /** имя свойства */
+    keyProperty?: string;
 }
 /**
  * Функция, через которую надо прогонять значение лукапа при сохранении формы. 
@@ -88,6 +97,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             manualInputAllowed={props.manualInputAllowed}
                             resultInfoText={props.resultInfoText}
                             showResultInfoText={props.showResultInfoText}
+                            onButtonClick={props.onButtonClick}
                         />
                     </Form.Item>
                 </React.Fragment>
@@ -111,6 +121,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             manualInputAllowed={props.manualInputAllowed}
                             resultInfoText={props.resultInfoText}
                             showResultInfoText={props.showResultInfoText}
+                            onButtonClick={props.onButtonClick}
                         />
                     </Form.Item>
                 </React.Fragment>

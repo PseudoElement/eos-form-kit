@@ -7,6 +7,11 @@ import { Store } from 'rc-field-form/lib/interface';
 import { InternalHelper } from '../InternalHelper';
 import { IFormRows } from "./FormRows";
 import { IToolBar } from "./ToolBar/ToolBar";
+import { FieldDateTime, IField } from "..";
+import moment from 'moment';
+import useHistoryWriter from "../Hooks/useHistoryState";
+import useHistoryListener from "../Hooks/useHistoryListener";
+
 
 /**DI объект для выполнения различных запросов. */
 export interface IDataService {
@@ -65,6 +70,13 @@ export interface IForm {
     onValuesChange?(changedValues: any, values: any): void;
 
 
+    /**Текст кнопки "Закрыть". */
+    closeTitle?: string;
+    /**Текст кнопки "Сохранить". */
+    finishTitle?: string;
+    /**Текст кнопки "Изменить". */
+    editTitle?: string;
+
     /**Тулбар с кнопками. */
     toolbar?: IToolBar;
     /**Включает отрисовку иконки @ перед наименованием. */
@@ -80,6 +92,8 @@ export interface IForm {
     disableCloseButton?: boolean;
     /**Дополнительные кнопки между заголовком и кнопкой закрытия формы просмотра. */
     additionalDispFormTitleButtons?: ReactNode | ReactNode[];
+    /**true - если между переходами по страницам не сохранять значения полей в window.history. */
+    notRestoreFields?: boolean;
 }
 /**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
@@ -154,6 +168,9 @@ interface IClientFormProps {
 
 /**Генератор форм выполняющий запрос за элементом и схемой через DI.*/
 export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
+    const { setState } = useHistoryWriter();
+    const { currentState } = useHistoryListener("FormValues");
+
     const [schema, setSchema] = useState<IContext | null>(null);
     const [isFirstLoading, setFirstLoading] = useState(true);
     const [isSkeletonLoading, setSkeletonLoading] = useState(false);
@@ -161,7 +178,11 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
 
     const [loadSchema, setLoadSchema] = useState(false);
     const [isLoadingSchema, setLoadingSchema] = useState(false);
-    const [loadItem, setLoadItem] = useState(false);
+    // const [loadItem, setLoadItem] = useState(false);
+    const loadItem = useRef<boolean>(false);
+    // const [counter, setCounter] = useState<number>((prevState: number) => { return prevState + 1; });
+    const [counter, setCount] = useState(0);
+
     const [isLoadingItem, setLoadingItem] = useState(false);
     const [clientFormProps, setClientFormProps] = useState<IClientFormProps>({ mode: props.mode });
 
@@ -188,7 +209,10 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             reloadItem() {
                 clientFormApi?.current?.reset();
                 if (schema) {
-                    setLoadItem(true);
+                    // setLoadItem(true);
+                    loadItem.current = true;
+                    setCount(prev => { return prev + 1 });
+                    // loadItemAsync();
                 }
             },
             showLeftIcon() {
@@ -254,11 +278,11 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     useEffect(() => {
         if (loadSchema)
             loadSchemaAsync(props.mode);
-    }, [loadSchema]);
+    }, [loadSchema, counter]);
     useEffect(() => {
-        if (loadItem)
+        if (loadItem?.current === true)
             loadItemAsync();
-    }, [loadItem]);
+    }, [counter]);
 
     const loadSchemaAsync = async function (mode: FormMode) {
         setLoadSchema(false);
@@ -267,19 +291,27 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setSchema(context);
         if (props.onContextLoaded)
             props.onContextLoaded(context);
-        setLoadItem(true);
+        // setLoadItem(true);
+        loadItem.current = true;
+        setCount(prev => { return prev + 1 });
         setLoadingSchema(false);
     }
     const loadItemAsync = async function () {
-        setLoadItem(false);
-        setLoadingItem(true);
-        if (props.dataService.getInitialValuesAsync)
-            props.dataService.getInitialValuesAsync()
-                .then((initialValues: any) => {
-                    onLoadItemSucceeded(initialValues);
-                });
-        else
-            onLoadItemSucceeded({});
+        if (props.notRestoreFields || !currentState) {
+            // setLoadItem(false);
+            loadItem.current = false;
+            setLoadingItem(true);
+            if (props.dataService.getInitialValuesAsync)
+                props.dataService.getInitialValuesAsync()
+                    .then((initialValues: any) => {
+                        onLoadItemSucceeded(initialValues);
+                    });
+            else
+                onLoadItemSucceeded({});
+        }
+        else {
+            onLoadItemSucceeded(prepareValuesForRestore(currentState));
+        }
     }
     const onLoadItemSucceeded = async function (data: any) {
         if (props.dataService.modifyContextAsync) {
@@ -340,7 +372,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             onEditClick={props.onEditClick}
             onCancelClick={props.onCancelClick}
             onFinish={onFinish}
-            onValuesChange={props.onValuesChange}
+            onValuesChange={onValuesChange}
             onFieldsWasModified={props.onFieldsWasModified}
             onTabsChange={props.onTabsChange}
             tabsComponent={clientFormProps.tabsComponent}
@@ -354,6 +386,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             disableEditButton={props.disableEditButton}
             disableCloseButton={props.disableCloseButton}
             additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
+            closeTitle={props.closeTitle}
+            finishTitle={props.finishTitle}
+            editTitle={props.editTitle}
         />
     );
     function onSaveSucceeded() {
@@ -377,5 +412,74 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             setSkeletonLoading(false);
             setSpinLoading(true);
         }
+    }
+    function onValuesChange(changedValues: any, values: any) {
+        if (!props.notRestoreFields) {
+            const backupValues = prepareValuesForBackup(values);
+            setState("FormValues", backupValues);
+        }
+
+        if (props.onValuesChange)
+            props.onValuesChange(changedValues, values);
+    }
+
+    function prepareValuesForBackup(values: any) {
+        let result = {};
+        if (values) {
+            for (let i in values) {
+                const fieldSchema: IField | null = getFieldSchema(i);
+                if (fieldSchema?.type === "FieldDateTime") {
+                    const fieldDateTime: FieldDateTime.IDateTime = fieldSchema as FieldDateTime.IDateTime;
+                    if (fieldDateTime.dateTimeMode === FieldDateTime.DateTimeMode.year)
+                        result[i] = moment.isMoment(values[i]) ? (values[i] as moment.Moment).year() : undefined;
+                    else
+                        result[i] = moment.isMoment(values[i]) ? values[i].toISOString() : undefined;
+                }
+                else {
+                    result[i] = values[i];
+                }
+            }
+            return result;
+        }
+        else {
+            return null;
+        }
+    }
+
+    function prepareValuesForRestore(values: any) {
+        let result = {};
+        if (values) {
+            for (let i in values) {
+                const fieldSchema: IField | null = getFieldSchema(i);
+                if (fieldSchema?.type === "FieldDateTime") {
+                    const fieldDateTime: FieldDateTime.IDateTime = fieldSchema as FieldDateTime.IDateTime;
+                    // if (fieldDateTime.dateTimeMode === FieldDateTime.DateTimeMode.year)
+                    //     // FieldDateTime.getFieldValueForClientRender(props.mode,values[i], fieldDateTime.dateTimeMode );
+                    //     result[i] = moment.isMoment(values[i]) ? (values[i] as moment.Moment).year() : undefined;
+                    // else
+                    //     result[i] = moment.isMoment(values[i]) ? values[i].toISOString() : undefined;
+                    result[i] = FieldDateTime.getFieldValueForClientRender(props.mode, values[i], fieldDateTime.dateTimeMode);
+                }
+                else {
+                    result[i] = values[i];
+                }
+            }
+            return result;
+        }
+        else {
+            return null;
+        }
+    }
+
+    function getFieldSchema(name: string): IField | null {
+        if (schema && schema.Fields) {
+            for (let item of schema.Fields) {
+                const field: IField = item;
+                if (field.name === name) {
+                    return field;
+                }
+            }
+        }
+        return null;
     }
 })

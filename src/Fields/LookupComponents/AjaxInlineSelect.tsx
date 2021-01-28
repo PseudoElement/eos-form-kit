@@ -1,5 +1,5 @@
 import React, { useState, useRef, ReactNode } from 'react';
-import { Select as RcSelect, Spin } from "@eos/rc-controls";
+import { Select as RcSelect, Spin, Button, DirectoryBookIcon } from "@eos/rc-controls";
 
 /** Структура и описание пропсов AjaxSelect */
 export interface IInlineSelect {
@@ -20,6 +20,9 @@ export interface IInlineSelect {
 
     /**вызовется при выборе элемента списка */
     onValueSelected(item?: any): void;
+    
+    /** Событие при клике на кнопку */
+    onButtonClick?(): void
 }
 
 /** Структура элемента выпадающего списка */
@@ -64,7 +67,8 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
     manualInputAllowed,
     showResultInfoText,
     resultInfoText,
-    onValueSelected
+    onValueSelected,
+    onButtonClick
 }) => {
     /** Объект индикатор загрузки */
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -194,23 +198,28 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
 
     return (
         <Spin spinning={isLoading}>
-            <RcSelect ref={focusRef}
-                showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
-                value={''}
-                notFoundContent={notFoundContent}
-                onSearch={handleSearch}
-                onFocus={onFocus}
-                onClear={onClear}
-                onSelect={onSelect}
-                delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
-                open={isOpen}
-                onBlur={onBlur}
-                allowClear={true}
-                filterOption={false}
-                defaultActiveFirstOption={isSingleElem}
-            >
-                {getOptionList()}
-            </RcSelect>
+            <div style={{display: "flex"}}>
+                <RcSelect ref={focusRef}
+                    showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
+                    value={''}
+                    notFoundContent={notFoundContent}
+                    onSearch={handleSearch}
+                    onFocus={onFocus}
+                    onClear={onClear}
+                    onSelect={onSelect}
+                    delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
+                    open={isOpen}
+                    onBlur={onBlur}
+                    allowClear={true}
+                    filterOption={false}
+                    defaultActiveFirstOption={isSingleElem}
+                >
+                    {getOptionList()}
+                </RcSelect>
+                {onButtonClick && <Button onClick={onButtonClick}>
+                    <DirectoryBookIcon />
+                </Button>}
+            </div>
         </Spin>
     );
 

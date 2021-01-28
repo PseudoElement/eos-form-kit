@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AutoComplete as RcAutoComplete, Spin } from '@eos/rc-controls';
+import { AutoComplete as RcAutoComplete, Spin, Button, DirectoryBookIcon } from '@eos/rc-controls';
 
 /**
  * Структура и описание пропсов AjaxAutoComplete
@@ -35,6 +35,9 @@ export interface IAutoComplete {
 
     /** конекст */
     ctx?: any;
+
+    /** Событие при клике на кнопку */
+    onButtonClick?(): void
 }
 
 /**
@@ -79,7 +82,8 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
     notFoundContent,
     // required,
     dataService: getDataService,
-    ctx
+    ctx,
+    onButtonClick
 }, ref) => {
 
     /**
@@ -228,42 +232,47 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
 
     return (
         <Spin spinning={isLoading}>
-            <RcAutoComplete ref={ref}
-                // При возвращении контролу AutoComplete свойства для отображения красной точки обязательности заполнения поля при пустом его значении - раскомментить
-                // required={required}
-                // При появлении у контрола AutoComplete свойства для отображения иконки лупы - добавить
-                notFoundContent={notFoundContent}
-                value={currentValue?.value}
-                allowClear={true}
-                onSelect={onSelect}
-                onFocus={onFocus}
-                delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
-                onClear={onClear}
-                onSearch={handleSearch}
-                options={
-                    queryAmountInfo === ''
-                        ? items.map((item: IOptionItem) => {
-                            return {
-                                value: item?.value ?? `${item.key}`,
-                                label: item?.value ?? `${item.key}`,
-                                item: item,
-                                disabled: item?.disabled
-                            }
-                        })
-
-                        : [{
-                            label: queryAmountInfo,
-                            options: items.map((item: IOptionItem) => {
+            <div style={{display: "flex"}}>
+                <RcAutoComplete ref={ref}
+                    // При возвращении контролу AutoComplete свойства для отображения красной точки обязательности заполнения поля при пустом его значении - раскомментить
+                    // required={required}
+                    // При появлении у контрола AutoComplete свойства для отображения иконки лупы - добавить
+                    notFoundContent={notFoundContent}
+                    value={currentValue?.value}
+                    allowClear={true}
+                    onSelect={onSelect}
+                    onFocus={onFocus}
+                    delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
+                    onClear={onClear}
+                    onSearch={handleSearch}
+                    options={
+                        queryAmountInfo === ''
+                            ? items.map((item: IOptionItem) => {
                                 return {
-                                    value: item.value ?? `${item.key}`,
+                                    value: item?.value ?? `${item.key}`,
                                     label: item?.value ?? `${item.key}`,
                                     item: item,
                                     disabled: item?.disabled
                                 }
                             })
-                        }]
-                }>
-            </RcAutoComplete >
+
+                            : [{
+                                label: queryAmountInfo,
+                                options: items.map((item: IOptionItem) => {
+                                    return {
+                                        value: item.value ?? `${item.key}`,
+                                        label: item?.value ?? `${item.key}`,
+                                        item: item,
+                                        disabled: item?.disabled
+                                    }
+                                })
+                            }]
+                    }>
+                </RcAutoComplete >
+                    {onButtonClick && <Button onClick={onButtonClick}>
+                        <DirectoryBookIcon />
+                    </Button>}
+            </div>
         </Spin>
     );
 

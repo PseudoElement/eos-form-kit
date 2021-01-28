@@ -23,6 +23,10 @@ export interface IDispFormTitle {
     disableCloseButton?: boolean;
     /**Дополнительные кнопки между заголовком и кнопкой закрытия формы просмотра. */
     additionalButtons?: ReactNode | ReactNode[];
+     /**Текст кнопки "Закрыть". */
+     closeTitle?: string;
+     /**Текст кнопки "Изменить". */
+     editTitle?: string;
 }
 
 /**Компонент отображения заголовка формы просмотра. */
@@ -61,12 +65,12 @@ const DispFormTitle = forwardRef<any, IDispFormTitle>((props: IDispFormTitle, re
                     <Space size="small" direction="horizontal">
                         {props.additionalButtons && props.additionalButtons}
                         {!props.disableEditButton &&
-                            <SmartButton onClick={props.onEditClick} type="link">
+                            <SmartButton tooltip={props.editTitle} onClick={props.onEditClick} type="link">
                                 <EditIcon />
                             </SmartButton>
                         }
                         {!props.disableCloseButton &&
-                            <SmartButton onClick={props.onCancelClick} type="link">
+                            <SmartButton tooltip={props.closeTitle}  onClick={props.onCancelClick} type="link">
                                 <CloseIcon />
                             </SmartButton>
                         }

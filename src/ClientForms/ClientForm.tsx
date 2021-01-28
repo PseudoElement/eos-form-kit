@@ -135,6 +135,13 @@ export interface IForm {
 
     /**Дополнительные кнопки между заголовком и кнопкой закрытия формы просмотра. */
     additionalDispFormTitleButtons?: ReactNode | ReactNode[];
+
+     /**Текст кнопки "Закрыть". */
+     closeTitle?: string;
+     /**Текст кнопки "Сохранить". */
+     finishTitle?: string;
+     /**Текст кнопки "Изменить". */
+     editTitle?: string;
 }
 
 /**Клиентская форма. */
@@ -410,6 +417,9 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
                                 disableEditButton={props.disableEditButton}
                                 disableCloseButton={props.disableCloseButton}
                                 additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
+                                closeTitle={props.closeTitle}
+                                finishTitle={props.finishTitle}
+                                editTitle={props.editTitle}
                             />}
                         <ToolBar {...props.toolbar}></ToolBar>
                         <ClientTabs ref={clientTabsApi}

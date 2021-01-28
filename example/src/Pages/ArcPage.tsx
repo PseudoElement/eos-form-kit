@@ -101,6 +101,9 @@ const ArcPage: FunctionComponent = () => {
 
                     }
                 }}
+                closeTitle={"Закрыть1"}
+                editTitle={"Изменить1"}
+                finishTitle={"Сохранить1"}
 
             />
         </React.Fragment>
@@ -148,7 +151,8 @@ const ArcPage: FunctionComponent = () => {
                     name: Fields.ISN_KEEP_CLAUSE,
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService()
+                    dataService: getDataService(),
+                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
                 },
                 {
                     type: "FieldLookup",
@@ -157,7 +161,8 @@ const ArcPage: FunctionComponent = () => {
                     required: false,
                     requiredMessage: t("arc:errors.isnKeepPeriod"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService()
+                    dataService: getDataService(),
+                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
                 },
                 { type: "FieldMultiText", name: Fields.NAME, label: "arc:fields.name", rows: 3, maxLength: 2000, required: false, requiredMessage: t("arc:errors.name") } as FieldMultiText.IMultiText,
                 { type: "FieldInteger", name: Fields.VOLUME_NUM, label: "arc:fields.volumeNum", showCounter: false, max: 999 },
@@ -342,7 +347,8 @@ const ArcPage: FunctionComponent = () => {
                     required: false,
                     requiredMessage: t("arc:errors.isnKeepPeriod"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService()
+                    dataService: getDataService(),
+                    onButtonClick: () => { pushPrevious("/lookupPage") }
                 },
                 { type: "FieldMultiText", name: Fields.NAME, label: "arc:fields.name", rows: 3, maxLength: 2000, required: false, requiredMessage: t("arc:errors.name") } as FieldMultiText.IMultiText,
                 { type: "FieldInteger", name: Fields.VOLUME_NUM, label: "arc:fields.volumeNum", showCounter: false, max: 999 },

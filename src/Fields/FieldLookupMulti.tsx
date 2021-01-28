@@ -83,6 +83,8 @@ export interface ILookupMulti extends IField {
     hiddenAddRowToolTitle?: boolean;
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
+    /**Событие при нажатии на кнопку "Добавить"*/
+    onAdd(): void;
 }
 
 /**
@@ -134,6 +136,7 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         onDataChange={(row: any) => {
                             context.setFieldValue(props.name || '', row)
                         }}
+                        onAdd={props.onAdd}
                     />
                 </Form.Item>
             </div>
