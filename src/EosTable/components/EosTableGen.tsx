@@ -289,7 +289,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     }, [tableState])
 
     useEffect(() => {
-        !isLoading && tableData && triggers?.onUpdateState && triggers.onUpdateState(currentTableState)
+        triggers?.onUpdateState && triggers.onUpdateState(currentTableState)
     }, [currentRowKey, selectedRowKeys, pageSize, currentPage, tableData, queryFilters, sorterList,
         maxSelectedRecords, isLoading, minSelectedRecords, filterValueObjects?.formFilter, filterValueObjects?.quickSearchFilter, filterValueObjects?.externalFilter,
         showFormFilter, formFilterMode, quickSearchMode])
