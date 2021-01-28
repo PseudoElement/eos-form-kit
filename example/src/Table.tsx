@@ -8,10 +8,21 @@ const TableExample = () => {
         switch (name) {
             case "delete":
                 return (handlerProps: IHandlerProps) => {
-                    console.log(handlerProps)
+                    const api = handlerProps.refApi as EosTableTypes.ITableApi
+                    const state = api.getCurrentTableState()
+                    api.setTableState({
+                        ...state, 
+                        currentRowKey: undefined,                       
+                        forcedReloadData: true
+                    })
                 }
             default:
                 return undefined
+        }
+    }
+    provider.triggers = {
+        onRowClick: (prop) => {
+            console.log(prop.tableState?.currentRowKey)
         }
     }
     return <div style={{ height: "calc(100vh - 48px)" }}><EosTable provider={provider} initTableState={{ maxSelectedRecords: 2 }} /></div>
@@ -116,7 +127,7 @@ const GetProvider = () => {
                         handlers: [{
                             type: "disabled",
                             handlerName: "unSelected"
-                        }],
+                        },],
                         children: [
                             {
                                 key: "delete1",
@@ -126,7 +137,11 @@ const GetProvider = () => {
                                         iconName: "BinIcon"
                                     }
                                 },
-                                title: 'Удалить'
+                                title: 'Удалить',
+                                handlers: [{
+                                    type: "onClick",
+                                    handlerName: "delete"
+                                },],
                             }
                         ],
                     },
@@ -254,7 +269,7 @@ const GetProvider = () => {
                     },
                     {
                         "key": 2,
-                        col1: <Fragment/>
+                        col1: <Fragment />
                     },
                     {
                         "key": 3,

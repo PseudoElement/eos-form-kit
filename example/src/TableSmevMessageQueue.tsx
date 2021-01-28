@@ -69,7 +69,7 @@ const TableMessageQueue = () => {
                                 title: "Тип сведений",
                                 fields: [{ displayName: "Тип сведений", apiField: "smevRequestType", child: { alias: "title", displayName: "Наименование", apiField: "name", sortable: true } }],
                                 columnRender: {
-                                    renderType: "ReferenceDisplayw"
+                                    renderType: "ReferenceDisplay"
                                 },
                                 sortable: true
                             },
@@ -77,7 +77,10 @@ const TableMessageQueue = () => {
                                 name: "clientSystem",
                                 title: "Внешняя система",
                                 fields: [{ displayName: "Внешняя система", apiField: "clientSystem", child: { displayName: "Наименование", apiField: "name", sortable: true } }],                                
-                                sortable: true
+                                sortable: true,
+                                columnRender: {
+                                    renderType: "ReferenceDisplay"
+                                },
                             },
                             {
                                 name: "externalId",

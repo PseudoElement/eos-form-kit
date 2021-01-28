@@ -209,20 +209,20 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         getTableData()
     }, [fetchData, queryAfter, sorterList, queryFilters, pageSize, currentPage])
 
-    useEffect(() => {
-        tableSettings.menu && setMenu(
-            GenMenuItems({
-                fetchAction,
-                fetchCondition,
-                fetchControl,
-                fetchActionFromStore,
-                fetchConditionFromStore,
-                fetchControlFromStore,
-                menuItems: tableSettings.menu,
-                refApi: currentRef.current,
-                locale: getResourceText
-            }))
+    const mainMenuCallback = useCallback(() => tableSettings.menu ? GenMenuItems({
+        fetchAction,
+        fetchCondition,
+        fetchControl,
+        fetchActionFromStore,
+        fetchConditionFromStore,
+        fetchControlFromStore,
+        menuItems: tableSettings.menu,
+        refApi: currentRef.current,
+        locale: getResourceText
+    }) : [], [currentRef.current])
 
+    useEffect(() => {
+        setMenu(mainMenuCallback())
         setRightMenu(<GenerateRightMenu tableSettings={tableSettings} refApi={currentRef.current} fetchAction={fetchAction} fetchCondition={fetchCondition} fetchControl={fetchControl} />)
     }, [selectedRowKeys, currentRowKey, queryFilters])
 
@@ -281,6 +281,10 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             const record = tableState.currentRowKey && getValueByKey([tableState.currentRowKey.toString()])[0]
             setCurrentRecord(record)
         }
+        else {
+            tableState.forcedReloadData && setMenu(mainMenuCallback())
+        }
+
         tableState.forcedReloadData && !isUpdate && getTableData()
     }, [tableState])
 
@@ -357,7 +361,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 .then(({ records, totalCount }) => {
                     setRecordsTotalCount(totalCount);
                     setTableData(records)
-                    if (currentRowKey && records.length > 0) {
+                    if (tableState.currentRowKey && records.length > 0) {
                         setCurrentRecord(records[0])
                         setCurrentRowKey(rowKeyValue(records[0]))
                     }

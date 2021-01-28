@@ -1,4 +1,4 @@
-import { FilterType } from ".";
+import { FilterExpressionFragment } from ".";
 import { ISorterPath } from "./ISorterType";
 
 export interface IPreparedQuery {
@@ -7,6 +7,6 @@ export interface IPreparedQuery {
         after: string | number | undefined,
         first: number | undefined,
         orderby: ISorterPath[] | undefined
-        filter: FilterType | undefined
+        filter: FilterExpressionFragment | undefined
     }
 }
