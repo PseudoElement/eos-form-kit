@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import "eos-webui-controls/dist/main.css";
 import {
     AjaxClientForm, FormMode, parseFormMode, FieldCheckbox, FieldDateTime, FieldMultiText, AjaxSelect, useBackUrlHistory,
-    useHistoryListener, useHistorySlim
+    useHistoryListener
 } from "eos-webui-formgen";
 import { Helper } from '../Helper';
 import { useRouteMatch } from 'react-router-dom';
@@ -57,7 +57,6 @@ const ArcPage: FunctionComponent = () => {
     const formApi = useRef<AjaxClientForm.IFormApi>();
     const { currentState } = useHistoryListener("activeKey");
     const { toBack } = useBackUrlHistory();
-    let tempUseHistorySlimState = useHistorySlim().getStateByName( "LookupDialogResult" );
 
     return (
         <React.Fragment>
@@ -153,7 +152,7 @@ const ArcPage: FunctionComponent = () => {
                     name: Fields.ISN_KEEP_CLAUSE,
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataServiceIsnKeepClause("name", "isnKeepClause"),
+                    dataService: getDataServiceIsnKeepClause(),
                     valueProperty: "name",
                     keyProperty: "isnKeepClause",
                     onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
@@ -165,7 +164,7 @@ const ArcPage: FunctionComponent = () => {
                     required: false,
                     requiredMessage: t("arc:errors.isnKeepPeriod"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataServiceIsnKeepPeriod("name", "isnKeepPeriod"),
+                    dataService: getDataServiceIsnKeepPeriod(),
                     valueProperty: "name",
                     keyProperty: "isnKeepPeriod",
                     onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
@@ -344,7 +343,7 @@ const ArcPage: FunctionComponent = () => {
                     name: Fields.ISN_KEEP_CLAUSE,
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataServiceIsnKeepClause("name", "isnKeepClause"),
+                    dataService: getDataServiceIsnKeepClause(),
                     valueProperty: "name",
                     keyProperty: "isnKeepClause",
                     onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
@@ -356,7 +355,7 @@ const ArcPage: FunctionComponent = () => {
                     required: false,
                     requiredMessage: t("arc:errors.isnKeepPeriod"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataServiceIsnKeepPeriod("name", "isnKeepPeriod"),
+                    dataService: getDataServiceIsnKeepPeriod(),
                     valueProperty: "name",
                     keyProperty: "isnKeepPeriod",
                     onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
@@ -668,7 +667,7 @@ const ArcPage: FunctionComponent = () => {
         };
     }
 
-    function getDataServiceIsnKeepPeriod(keyProperty?: string, valueProperty?: string) {
+    function getDataServiceIsnKeepPeriod() {
         return {
             loadDataAsync: async (search?: string) => {
                 const result: AjaxSelect.IOptionItem[] = [
@@ -689,34 +688,39 @@ const ArcPage: FunctionComponent = () => {
                     return result;
                 }
             },
-            loadData2Async: async (search?: string) => {
-                let result: any[] = [];
-                if (keyProperty !== null && keyProperty !== undefined 
-                    && valueProperty !== null && valueProperty !== undefined
-                    && tempUseHistorySlimState?.[keyProperty]?.[0]?.data?.[keyProperty] !== null && tempUseHistorySlimState?.[keyProperty]?.[0]?.data?.[keyProperty] !== undefined
-                    && tempUseHistorySlimState?.[keyProperty]?.[0]?.data?.[valueProperty] !== null && tempUseHistorySlimState?.[keyProperty]?.[0]?.data?.[valueProperty] !== undefined) {
-                        result = [{
-                            key: tempUseHistorySlimState[keyProperty][0].data[keyProperty],
-                            value: tempUseHistorySlimState[keyProperty][0].data[valueProperty]
-                        }];
+            loadData2Async: async () => {
+                return [{
+                    code: null,
+                    deleted: false,
+                    description: null,
+                    isEpk: "N",
+                    isFolder: 0,
+                    isPersonal: "N",
+                    isnKeepPeriod: 1,
+                    keepYears: 1,
+                    key: "1",
+                    name: "1 год",
+                    note: null,
+                    protected: "N",
+                    title: "1 год",
+                    data: {
+                        code: null,
+                        deleted: "N",
+                        isEpk: "N",
+                        isPersonal: "N",
+                        isnKeepPeriod: 1,
+                        keepYears: 1,
+                        name: "1 год",
+                        note: null,
+                        protected: "N"
                     }
-                if (search) {
-                    return result.filter((item: any) => {
-                        if (item && item.value && item?.value?.indexOf(search) >= 0) {
-                            return true;
-                        }
-                        return false;
-                    }) ?? [];
-                }
-                else {
-                    return result;
-                }
+                }];
             },
             resultsAmount: 3
         };
     }
 
-    function getDataServiceIsnKeepClause(keyProperty?: string, valueProperty?: string) {
+    function getDataServiceIsnKeepClause() {
         return {
             loadDataAsync: async (search?: string) => {
                 const result: AjaxSelect.IOptionItem[] = [
@@ -737,29 +741,33 @@ const ArcPage: FunctionComponent = () => {
                     return result;
                 }
             },
-            loadData2Async: async (search?: string) => {
-                let result: any[] = [];
-                if (keyProperty !== null && keyProperty !== undefined 
-                    && valueProperty !== null && valueProperty !== undefined
-                    && tempUseHistorySlimState?.[keyProperty]?.[0]?.data?.[keyProperty] !== null && tempUseHistorySlimState?.[keyProperty]?.[0]?.data?.[keyProperty] !== undefined
-                    && tempUseHistorySlimState?.[keyProperty]?.[0]?.data?.[valueProperty] !== null && tempUseHistorySlimState?.[keyProperty]?.[0]?.data?.[valueProperty] !== undefined) {
-                        result = [{
-                            key: tempUseHistorySlimState[keyProperty][0].data[keyProperty],
-                            value: tempUseHistorySlimState[keyProperty][0].data[valueProperty]
-                        }];
-                    }                
-                if (search) {
-                    return result.filter((item: any) => {
-                        if (item && item.value && item?.value?.indexOf(search) >= 0) {
-                            return true;
-                        }
-                        return false;
-                    }) ?? [];
-                }
-                else {
-                    return result;
-                }
-            },
+            loadData2Async: async () => {
+                return [{
+                    code: null,
+                    deleted: false,
+                    description: null,
+                    isEpk: "N",
+                    isFolder: 0,
+                    isPersonal: "N",
+                    isnKeepClause: 1,
+                    keepYears: 1,
+                    key: "1",
+                    name: "1 год",
+                    note: null,
+                    protected: "N",
+                    title: "1 год",
+                    data: {
+                        code: null,
+                        deleted: "N",
+                        isEpk: "N",
+                        isPersonal: "N",
+                        isnKeepClause: 1,
+                        keepYears: 1,
+                        name: "1 год",
+                        note: null,
+                        protected: "N"
+                    }
+                }];            },
             resultsAmount: 3
         };
     }
