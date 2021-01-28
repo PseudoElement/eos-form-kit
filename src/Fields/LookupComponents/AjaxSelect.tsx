@@ -218,8 +218,8 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
             data.forEach((item: any) => {
                 if (props.keyProperty !== null && props.keyProperty !== undefined && props.valueProperty !== null && props.valueProperty !== undefined) {
                     result.push({
-                        key: item?.data?.[props.keyProperty],
-                        value: item?.data?.[props.valueProperty]
+                        key: item?.[props.keyProperty],
+                        value: item?.[props.valueProperty]
                     });
                 }
             })
