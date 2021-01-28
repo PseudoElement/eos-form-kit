@@ -8,8 +8,7 @@ import { ITableModalApi, TableModal } from "./TableModal";;
 import { IDataService, 
     //IOptionItem 
 } from "./AjaxSelect";
-//import { Text as FieldText } from "../FieldText";
-//import { AjaxSelect } from '../..';
+import useHistorySlim from '../../Hooks/useHistorySlim';
 export interface ITableMenuTool {
     key: string | number;
     component?: JSX.Element;
@@ -22,7 +21,7 @@ export interface ITableMenuTool {
 };
 
 export interface IDisplayTable {
-    value?: IValue[];
+    value?: any;
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
 
@@ -70,7 +69,14 @@ export interface IDisplayTable {
     hiddenDeleteToolTitle?: boolean;
     /**Скрыть подпись тулы добавления строки в тултип.*/
     hiddenAddRowToolTitle?: boolean;
-    /**Событие при нажатии на кнопку "Добавить"*/
+    /**
+     * событие при нажатии на кнопку "Добавить".
+     * Для работы выбора из справочника необxодимо задать:
+     * valueProperty - Значение свойства.
+     * keyProperty - Ключ свойства.
+     * loadData2Async в dataService.
+     * onAdd - событие при нажатии на кнопку "Добавить".
+     * */ 
     onAdd(): void;
 
     onDataChange?(item?: any): void;
@@ -78,13 +84,33 @@ export interface IDisplayTable {
     rules: any;
 
     otherColumns?: IColumn[];
+    /**
+     * Значение свойства.
+     * Для работы выбора из справочника необxодимо задать:
+     * valueProperty - Значение свойства.
+     * keyProperty - Ключ свойства.
+     * loadData2Async в dataService.
+     * onAdd - событие при нажатии на кнопку "Добавить".
+     * */  
+    valueProperty?: string;
+    /**
+     * Ключ свойства.
+     * Для работы выбора из справочника необxодимо задать:
+     * valueProperty - Значение свойства.
+     * keyProperty - Ключ свойства.
+     * loadData2Async в dataService.
+     * onAdd - событие при нажатии на кнопку "Добавить".
+     * */  
+    keyProperty?: string;
 }
 
 const DisplayTable = React.forwardRef<any, IDisplayTable>(({
+    valueProperty,
+    keyProperty,
+    name,
     value,
     mode,
     onChange,
-    onDataChange,
     notFoundContent,
     dataService,
     type,
@@ -110,6 +136,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
     const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
     const [rowFromLookup, setRowFromLookup] = useState<IValue | undefined>();
+    const historyStore = useHistorySlim().getStateByName("LookupDialogResult");
 
     const tableModalApi = useRef<ITableModalApi>();
 
@@ -147,6 +174,16 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         }
     ];
 
+    useEffect(() => {    
+        if (name && historyStore  && historyStore[name]) {
+            let newFormData = [...value, ...historyStore[name]];
+            formData.current = newFormData;        
+            if (onChange) {
+                onChange(newFormData);
+            }
+        }
+    }, []);
+
     useEffect(() => {
         if (rowFromLookup && formData.current) {
             getRowFromLookup(rowFromLookup);
@@ -154,7 +191,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     }, [rowFromLookup]);
     useEffect(() => {
         if (value) {
-            setDataSource(getDataSource(value));
+            setDataSource(getDataSource(getInitialValue(value)));
             formData.current = value;
         } 
         else {
@@ -163,11 +200,6 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         }
         setSelectedRowKeys([]);
     }, [value]);
-    useEffect(() => {
-        if (onDataChange) {
-            onDataChange(formData.current);
-        }  
-    }, [formData.current]);
 
     return (
         <div>
@@ -288,8 +320,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             }  
         }
     };
-    function getDataSource(values?: IValue[]) {
-        let data = values?.map((value: IValue) => {
+    function getDataSource(values?: any[]) {
+        let data = values?.map((value: any) => {
             let row = { key: getRowKey(), defaultColumn: value.value };
             if (value.other) {
                 for (let column of value.other) {
@@ -394,6 +426,28 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             </SmartButton>
         ]);
     }
+    function getInitialValue(data: any[]) {        
+        if(valueProperty && keyProperty && data) {
+            return mapData(data, keyProperty, valueProperty);
+        }
+
+        return data; 
+    }
+    function mapData(data: any[], key: string, value: string) {
+        if (data?.length <= 0) {
+            return []
+        }
+        const newData = data.map((item) => {
+           return { 
+               key: item?.data?.[key],
+               value: item?.data?.[value],
+        };
+        });
+        return newData;
+    }
+    // function checkBackUrl(backUrl: string) {
+    //     backUrl = backUrl;
+    // }
 });
 
 export default DisplayTable;

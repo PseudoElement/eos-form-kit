@@ -1,7 +1,7 @@
 import { FormMode, FieldDateTime, AjaxSelect, AjaxAutoComplete, FieldLookupMulti, RowType } from "eos-webui-formgen";
 
 class Helper {
-    static getFields(mode: FormMode, onMultiLookupAddClick?: () => void) {
+    static getFields(mode: FormMode, onMultiLookupAddClick?: (path: string) => void) {
         /** Огрничение на отображаемое количество элементов запроса */
         const RESULT_AMOUNT_LIMIT: number = 2;
         /** Фактически требуемое количество элементов при запросе, чтобы указать, что отображены только первые элементы запроса, а не все */
@@ -30,6 +30,25 @@ class Helper {
                 "notFoundContent": "Нет элементов",
                 "onAdd": () => console.log('addRow'),
                 "dataService": {
+                    loadData2Async: async (search?: string) => {
+                        const result: FieldLookupMulti.IValue[] = [
+                            { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
+                            { key: "2", value: "два", other: [{ value: "один шесть", name: "secondColumn" }] },
+                            { key: "3", value: "три" },
+                            { key: "4", value: "четыре" }
+                        ]
+                        if (search) {
+                            return result.filter((item) => {
+                                if (item && item.value && item?.value?.indexOf(search) >= 0) {
+                                    return true;
+                                }
+                                return false;
+                            }) ?? [];
+                        }
+                        else {
+                            return result;
+                        }
+                    },
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
                             { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
@@ -72,26 +91,81 @@ class Helper {
                 "type": "FieldLookupMulti",
                 "value": null,
                 "notFoundContent": "Нет элементов",
-                "onAdd": () => console.log('addRow'),
+                "valueProperty": "name",
+                "keyProperty": "isnKeepPeriod",
+                "onAdd": () => onMultiLookupAddClick && onMultiLookupAddClick('/lookupPage?f=multiLookup1'),
                 "dataService": {
-                    loadDataAsync: async (search?: string) => {
-                        const result: FieldLookupMulti.IValue[] = [
-                            { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
-                            { key: "2", value: "два", other: [{ value: "два три", name: "secondColumn" }] },
-                            { key: "3", value: "три", other: [{ value: "три три", name: "secondColumn" }] },
-                            { key: "4", value: "четыре", other: [{ value: "четыре три", name: "secondColumn" }] }
-                        ]
-                        if (search) {
-                            return result.filter((item) => {
-                                if (item && item.value && item?.value?.indexOf(search) >= 0) {
-                                    return true;
-                                }
-                                return false;
-                            }) ?? [];
-                        }
-                        else {
-                            return result;
-                        }
+                    loadData2Async: async () => {
+                        return [{
+                            code: null,
+                            deleted: false,
+                            description: null,
+                            isEpk: "N",
+                            isFolder: 0,
+                            isPersonal: "N",
+                            isnKeepPeriod: 2,
+                            keepYears: 2,
+                            key: "6",
+                            name: "6 лет",
+                            note: null,
+                            protected: "N",
+                            title: "5 лет",
+                            data: {
+                                code: null,
+                                deleted: "N",
+                                isEpk: "N",
+                                isPersonal: "N",
+                                isnKeepPeriod: 6,
+                                keepYears: 5,
+                                name: "11 лет",
+                                note: null,
+                                protected: "N"
+                            }
+                        },
+                        {
+                            code: null,
+                            deleted: false,
+                            description: null,
+                            isEpk: "N",
+                            isFolder: 0,
+                            isPersonal: "N",
+                            isnKeepPeriod: 3,
+                            keepYears: 2,
+                            key: "7",
+                            name: "7 лет",
+                            note: null,
+                            protected: "N",
+                            title: "5 лет",
+                            data: {
+                                code: null,
+                                deleted: "N",
+                                isEpk: "N",
+                                isPersonal: "N",
+                                isnKeepPeriod: 3,
+                                keepYears: 5,
+                                name: "10 лет",
+                                note: null,
+                                protected: "N"
+                            }
+                        }]
+                        // const result: FieldLookupMulti.IValue[] = [
+                        //     { key: "1", value: "один", other: [{ value: "один три", name: "secondColumn" }] },
+                        //     { key: "2", value: "два", other: [{ value: "два три", name: "secondColumn" }] },
+                        //     { key: "3", value: "три", other: [{ value: "три три", name: "secondColumn" }] },
+                        //     { key: "4", value: "четыре", other: [{ value: "четыре три", name: "secondColumn" }] }
+                        // ]
+                        // if (search) {
+                        //     return result.filter((item) => {
+                        //         if (item && item.value && item?.value?.indexOf(search) >= 0) {
+                        //             return true;
+                        //         }
+                        //         return false;
+                        //     }) ?? [];
+                        // }
+                        // else {
+                        //     return result;
+                        // }
+
                     },
                     resultsAmount: 10,
                 }
@@ -116,7 +190,6 @@ class Helper {
                 "type": "FieldLookupMulti",
                 "value": null,
                 "notFoundContent": "Нет элементов",
-                "onAdd": () => onMultiLookupAddClick && onMultiLookupAddClick(),
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
@@ -441,12 +514,58 @@ class Helper {
                         { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }] },
                         { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }] }
                     ],
-                    "multiLookup1": [
-                        { key: "10", value: "десять", },
-                        { key: "11", value: "одинадцать" },
-                        { key: "12", value: "двенадцать" },
-                        { key: "13", value: "тринадцать" }
-                    ],
+                    "multiLookup1": [{
+                        code: null,
+                        deleted: false,
+                        description: null,
+                        isEpk: "N",
+                        isFolder: 0,
+                        isPersonal: "N",
+                        isnKeepPeriod: 2,
+                        keepYears: 2,
+                        key: "6",
+                        name: "6 лет",
+                        note: null,
+                        protected: "N",
+                        title: "5 лет",
+                        data: {
+                            code: null,
+                            deleted: "N",
+                            isEpk: "N",
+                            isPersonal: "N",
+                            isnKeepPeriod: 6,
+                            keepYears: 5,
+                            name: "6 лет",
+                            note: null,
+                            protected: "N"
+                        }
+                    },
+                    {
+                        code: null,
+                        deleted: false,
+                        description: null,
+                        isEpk: "N",
+                        isFolder: 0,
+                        isPersonal: "N",
+                        isnKeepPeriod: 3,
+                        keepYears: 2,
+                        key: "7",
+                        name: "7 лет",
+                        note: null,
+                        protected: "N",
+                        title: "5 лет",
+                        data: {
+                            code: null,
+                            deleted: "N",
+                            isEpk: "N",
+                            isPersonal: "N",
+                            isnKeepPeriod: 3,
+                            keepYears: 5,
+                            name: "5 лет",
+                            note: null,
+                            protected: "N"
+                        }
+                    }],
                     "multiLookup2": [
                         { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }, { value: "двадцать шесть", name: "anotherColumn" }] },
                         { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }, { value: "двадцать семь", name: "anotherColumn" }] },
