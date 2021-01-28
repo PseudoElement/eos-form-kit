@@ -1,7 +1,6 @@
-import { SmartTypography } from '@eos/rc-controls';
-import React from 'react';
 import { IControlRenderProps } from '../../types/IControlRenderProps';
 
-export default function ReferenceDisplay({ valueInCell, renderArgs }: IControlRenderProps) {
-    return <SmartTypography.Paragraph title={valueInCell.name} ellipsis={{ rows: renderArgs?.ellipsisRows || 3 }} >{valueInCell.name}</SmartTypography.Paragraph>
+export default function ReferenceDisplay({ valueInCell }: IControlRenderProps) {
+    const keys = Object.keys(valueInCell).filter(k => k !== "__typename" && typeof valueInCell[k] === 'string')
+    return keys.length > 0 ? valueInCell[keys[0]] : 'Reference Object'
 }

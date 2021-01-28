@@ -49,7 +49,7 @@ export interface Triggers {
 };
 
 export interface TriggerArgs {
-    /**Состояние таблицы */
+    /**Мутированное состояние таблицы, начальное брать из tableApi.getCurrentTableState */
     tableState?: ITableState
     /**Настройки таблицы */
     tableSetting?: ITableSettings
