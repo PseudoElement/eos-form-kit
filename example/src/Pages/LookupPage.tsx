@@ -110,6 +110,58 @@ const LookupPage: FunctionComponent = () => {
             protected: "N"
         }
     }];
+    const multiLookup2 = [{
+        code: null,
+        deleted: false,
+        description: null,
+        isEpk: "N",
+        isFolder: 0,
+        isPersonal: "N",
+        isnKeepPeriod: 2,
+        keepYears: 2,
+        key: "2",
+        name: "5 лет",
+        note: null,
+        protected: "N",
+        title: "5 лет",
+        data: {
+            code: null,
+            deleted: "N",
+            isEpk: "N",
+            isPersonal: "N",
+            isnKeepPeriod: 2,
+            keepYears: 5,
+            name: "5 лет",
+            note: null,
+            protected: "N"
+        }
+    },
+    {
+        code: null,
+        deleted: false,
+        description: null,
+        isEpk: "N",
+        isFolder: 0,
+        isPersonal: "N",
+        isnKeepPeriod: 3,
+        keepYears: 2,
+        key: "2",
+        name: "5 лет",
+        note: null,
+        protected: "N",
+        title: "5 лет",
+        data: {
+            code: null,
+            deleted: "N",
+            isEpk: "N",
+            isPersonal: "N",
+            isnKeepPeriod: 3,
+            keepYears: 5,
+            name: "5 лет",
+            note: null,
+            protected: "N"
+        }
+    }];
 
     const url = new URLSearchParams(document.location.search);
     let historyValue: any = null;
@@ -123,6 +175,9 @@ const LookupPage: FunctionComponent = () => {
             break;
         case "multiLookup1":
             historyValue = { multiLookup1: multiLookup1 };
+            break;
+        case "multiLookup2":
+            historyValue = { multiLookup2: multiLookup2 };
             break;
     }
 
