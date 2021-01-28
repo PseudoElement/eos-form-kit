@@ -152,6 +152,8 @@ const ArcPage: FunctionComponent = () => {
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
                     dataService: getDataService(),
+                    valueProperty: "name",
+                    keyProperty: "isnKeepClause",
                     onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
                 },
                 {
@@ -162,6 +164,8 @@ const ArcPage: FunctionComponent = () => {
                     requiredMessage: t("arc:errors.isnKeepPeriod"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
                     dataService: getDataService(),
+                    valueProperty: "name",
+                    keyProperty: "isnKeepPeriod",
                     onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
                 },
                 { type: "FieldMultiText", name: Fields.NAME, label: "arc:fields.name", rows: 3, maxLength: 2000, required: false, requiredMessage: t("arc:errors.name") } as FieldMultiText.IMultiText,
@@ -348,6 +352,8 @@ const ArcPage: FunctionComponent = () => {
                     requiredMessage: t("arc:errors.isnKeepPeriod"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
                     dataService: getDataService(),
+                    valueProperty: "name",
+                    keyProperty: "isnKeepClause",
                     onButtonClick: () => { pushPrevious("/lookupPage") }
                 },
                 { type: "FieldMultiText", name: Fields.NAME, label: "arc:fields.name", rows: 3, maxLength: 2000, required: false, requiredMessage: t("arc:errors.name") } as FieldMultiText.IMultiText,
@@ -362,7 +368,10 @@ const ArcPage: FunctionComponent = () => {
                     required: false,
                     requiredMessage: t("arc:errors.isnSecurLevel"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService()
+                    dataService: getDataService(),
+                    valueProperty: "name",
+                    keyProperty: "isnKeepPeriod",
+                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
                 },
                 { type: "FieldText", name: Fields.ARCHIVAL_CODE, label: "arc:fields.archivalCode", maxLength: 300 },
                 { type: "FieldDateTime", name: Fields.MIN_DOC_DATE, label: "arc:fields.minDocDate" },

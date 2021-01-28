@@ -35,6 +35,25 @@ export interface ISelect {
 
     /** Событие при клике на кнопку */
     onButtonClick?(): void
+
+    /** значение свойства 
+     * Необходимо так же передать 
+     * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
+     * keyProperty
+     * loadData2Async в dataService
+    */    
+    valueProperty?: string;
+    
+    /** ключ свойства 
+     * Необходимо так же передать 
+     * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
+     * valueProperty
+     * loadData2Async в dataService
+    */    
+    keyProperty?: string;
+
+    /** объект из useBackUrlHistory useHistorySlim().getStateByName( "LookupDialogResult" ) */
+    receivedValue?: any;
 }
 
 /** Структура элемента выпадающего списка */
@@ -68,8 +87,14 @@ export interface IDataService {
     /** Функция useLazyQuery для отправки и обработки запроса */
     loadDataAsync(search?: string): Promise<IOptionItem[]>;
 
-    /** метод для справочников */
-    loadData2Async(search?: string): Promise<any[]>;
+    /** метод для справочников 
+     * Необходимо так же передать 
+     * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
+     * keyProperty
+     * valueProperty
+     * loadData2Async в dataService
+    */
+    loadData2Async?(search?: string): Promise<any[]>;
 
     /** Количество запрашивамых результатов */
     resultsAmount?: number;
@@ -87,13 +112,33 @@ export const Select = React.forwardRef<any, ISelect>(({
     manualInputAllowed,
     showResultInfoText,
     resultInfoText,
-    onButtonClick
+    onButtonClick,
+    keyProperty,
+    valueProperty,
+    receivedValue
 }) => {
     /** Объект значения */
     const [currentValue, setCurrentValue] = useState<IOptionItem | undefined>(value);
     useEffect(() => {
         setCurrentValue(value);
-    }, [value])
+    }, [value]);
+
+    useEffect(() => {
+        if (keyProperty !== null && keyProperty !== undefined 
+            && valueProperty !== null && valueProperty !== undefined
+            && receivedValue?.[keyProperty]?.[0]?.data?.[keyProperty] !== null && receivedValue?.[keyProperty]?.[0]?.data?.[keyProperty] !== undefined
+            && receivedValue?.[keyProperty]?.[0]?.data?.[valueProperty] !== null && receivedValue?.[keyProperty]?.[0]?.data?.[valueProperty] !== undefined) {
+                let tempValue = {
+                    key: receivedValue[keyProperty][0].data[keyProperty],
+                    value: receivedValue[keyProperty][0].data[valueProperty]
+                };
+                setCurrentValue(tempValue);
+                setValueToForm(tempValue);
+                if (onChange) {
+                    onChange(tempValue);
+                }
+            }
+    }, [receivedValue]);
 
     /** Объект индикатор загрузки */
     const [isLoading, setIsLoading] = useState<boolean>(false);
