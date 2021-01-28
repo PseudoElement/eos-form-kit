@@ -9,6 +9,8 @@ export interface IFormContext {
     setFieldValue(name: string, value?: any): void,
     disableField(name: string): void;
     enableField(name: string): void;
+    hideField(name: string): void;
+    showField(name: string): void;
     hideLeftIcon(): void;
     showLeftIcon(): void;
     setLeftIconTitle(title?: string): void;
@@ -23,6 +25,7 @@ export interface IFormContext {
 export interface IField {
     name: string;
     disabled?: boolean;
+    hidden?: boolean;
 }
 
 export interface IFormHeader {
@@ -41,6 +44,8 @@ export const defaultContext: IFormContext = {
     setFieldValue() { },
     disableField() { },
     enableField() { },
+    hideField() { },
+    showField() { },
     reset() { },
     hideLeftIcon() { },
     showLeftIcon() { },
