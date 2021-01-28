@@ -52,6 +52,8 @@ export interface IFormApi {
     setFieldValue(name: string, value?: any): void;
     disableField(name: string): void;
     enableField(name: string): void;
+    hideField(name: string): void;
+    showField(name: string): void;
     getFieldsValue(): Store;
     reset(): void;
     setDisabledMenuButton(disable: boolean, name: string): void
@@ -136,12 +138,12 @@ export interface IForm {
     /**Дополнительные кнопки между заголовком и кнопкой закрытия формы просмотра. */
     additionalDispFormTitleButtons?: ReactNode | ReactNode[];
 
-     /**Текст кнопки "Закрыть". */
-     closeTitle?: string;
-     /**Текст кнопки "Сохранить". */
-     finishTitle?: string;
-     /**Текст кнопки "Изменить". */
-     editTitle?: string;
+    /**Текст кнопки "Закрыть". */
+    closeTitle?: string;
+    /**Текст кнопки "Сохранить". */
+    finishTitle?: string;
+    /**Текст кнопки "Изменить". */
+    editTitle?: string;
 }
 
 /**Клиентская форма. */
@@ -159,7 +161,40 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         setFieldValue(name: string, value?: any) {
             setFieldValue(name, value);
         },
-
+        hideField: useCallback((name: string) => {
+            if (!formContext.fields)
+                formContext.fields = [];
+            let field: IField | null = null;
+            for (let i = 0; i < formContext.fields.length; i++) {
+                if (formContext.fields[i].name === name) {
+                    field = formContext.fields[i];
+                    break;
+                }
+            }
+            if (!field) {
+                field = { name: name };
+                formContext.fields.push(field);
+            }
+            field.hidden = true;
+            setFormContext({ ...formContext });
+        }, []),
+        showField: useCallback((name: string) => {
+            if (!formContext.fields)
+                formContext.fields = [];
+            let field: IField | null = null;
+            for (let i = 0; i < formContext.fields.length; i++) {
+                if (formContext.fields[i].name === name) {
+                    field = formContext.fields[i];
+                    break;
+                }
+            }
+            if (!field) {
+                field = { name: name };
+                formContext.fields.push(field);
+            }
+            field.hidden = false;
+            setFormContext({ ...formContext });
+        }, []),
         disableField: useCallback((name: string) => {
             if (!formContext.fields)
                 formContext.fields = [];
@@ -330,8 +365,12 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             },
             enableField(name: string) {
                 formContext.enableField(name);
-                // formRowsApi?.current?.enableField(name);
-                // clientTabsApi?.current?.enableField(name);
+            },
+            hideField(name: string) {
+                formContext.hideField(name);
+            },
+            showField(name: string) {
+                formContext.showField(name);
             },
             getFieldsValue(): Store {
                 rcFormForm?.getFieldsValue();

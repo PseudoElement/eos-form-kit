@@ -218,6 +218,14 @@ const AjaxClientFormApi: FunctionComponent = () => {
                     for (let field of fields)
                         formApi?.current?.enableField(field.name);
                 }}
+                onHideFieldsClick={() => {
+                    formApi?.current?.hideField("ind");
+                    formApi?.current?.hideField("name");
+                }}
+                onShowFieldsClick={() => {
+                    formApi?.current?.showField("ind");
+                    formApi?.current?.showField("name");
+                }}
             />
             <AjaxClientForm.Form
                 toolbar={toolbar}
@@ -300,6 +308,10 @@ interface IButtonsPanel {
 
     onDisableFieldsClick?(): void;
     onEnableFieldsClick?(): void;
+
+    onHideFieldsClick?(): void;
+    onShowFieldsClick?(): void;
+
 }
 interface IButtonsPanelApi {
     setText(text?: string): void;
@@ -336,6 +348,8 @@ const ButtonsPanel = forwardRef<any, IButtonsPanel>((props: IButtonsPanel, ref: 
             <SmartButton onClick={props.onSetZeroCountClick}>SetCount(0)</SmartButton>
             <SmartButton onClick={props.onEnableFieldsClick}>Enable fields</SmartButton>
             <SmartButton onClick={props.onDisableFieldsClick}>Disable fields</SmartButton>
+            <SmartButton onClick={props.onHideFieldsClick}>Hide fields</SmartButton>
+            <SmartButton onClick={props.onShowFieldsClick}>Show fields</SmartButton>
         </div>
         <div>{text}</div>
     </div>);
