@@ -152,10 +152,10 @@ const ArcPage: FunctionComponent = () => {
                     name: Fields.ISN_KEEP_CLAUSE,
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataServiceIsnKeepClause(),
-                    valueProperty: "name",
-                    keyProperty: "isnKeepClause",
-                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
+                    dataService: getDataService(),
+                    // valueProperty: "name",
+                    // keyProperty: "isnKeepClause",
+                    // onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
                 },
                 {
                     type: "FieldLookup",
@@ -343,10 +343,10 @@ const ArcPage: FunctionComponent = () => {
                     name: Fields.ISN_KEEP_CLAUSE,
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataServiceIsnKeepClause(),
-                    valueProperty: "name",
-                    keyProperty: "isnKeepClause",
-                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
+                    dataService: getDataService(),
+                    // valueProperty: "name",
+                    // keyProperty: "isnKeepClause",
+                    // onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
                 },
                 {
                     type: "FieldLookup",
@@ -702,75 +702,54 @@ const ArcPage: FunctionComponent = () => {
                     name: "1 год",
                     note: null,
                     protected: "N",
-                    title: "1 год",
-                    data: {
-                        code: null,
-                        deleted: "N",
-                        isEpk: "N",
-                        isPersonal: "N",
-                        isnKeepPeriod: 1,
-                        keepYears: 1,
-                        name: "1 год",
-                        note: null,
-                        protected: "N"
-                    }
+                    title: "1 год"
                 }];
             },
             resultsAmount: 3
         };
     }
 
-    function getDataServiceIsnKeepClause() {
-        return {
-            loadDataAsync: async (search?: string) => {
-                const result: AjaxSelect.IOptionItem[] = [
-                    { key: "1", value: "один" },
-                    { key: "2", value: "два" },
-                    { key: "3", value: "три" },
-                    { key: "4", value: "четыре" }
-                ]
-                if (search) {
-                    return result.filter((item) => {
-                        if (item && item.value && item?.value?.indexOf(search) >= 0) {
-                            return true;
-                        }
-                        return false;
-                    }) ?? [];
-                }
-                else {
-                    return result;
-                }
-            },
-            loadData2Async: async () => {
-                return [{
-                    code: null,
-                    deleted: false,
-                    description: null,
-                    isEpk: "N",
-                    isFolder: 0,
-                    isPersonal: "N",
-                    isnKeepClause: 1,
-                    keepYears: 1,
-                    key: "1",
-                    name: "1 год",
-                    note: null,
-                    protected: "N",
-                    title: "1 год",
-                    data: {
-                        code: null,
-                        deleted: "N",
-                        isEpk: "N",
-                        isPersonal: "N",
-                        isnKeepClause: 1,
-                        keepYears: 1,
-                        name: "1 год",
-                        note: null,
-                        protected: "N"
-                    }
-                }];            },
-            resultsAmount: 3
-        };
-    }
+    // function getDataServiceIsnKeepClause() {
+    //     return {
+    //         loadDataAsync: async (search?: string) => {
+    //             const result: AjaxSelect.IOptionItem[] = [
+    //                 { key: "1", value: "один" },
+    //                 { key: "2", value: "два" },
+    //                 { key: "3", value: "три" },
+    //                 { key: "4", value: "четыре" }
+    //             ]
+    //             if (search) {
+    //                 return result.filter((item) => {
+    //                     if (item && item.value && item?.value?.indexOf(search) >= 0) {
+    //                         return true;
+    //                     }
+    //                     return false;
+    //                 }) ?? [];
+    //             }
+    //             else {
+    //                 return result;
+    //             }
+    //         },
+    //         loadData2Async: async () => {
+    //             return [{
+    //                 code: null,
+    //                 deleted: false,
+    //                 description: null,
+    //                 isEpk: "N",
+    //                 isFolder: 0,
+    //                 isPersonal: "N",
+    //                 isnKeepClause: 1,
+    //                 keepYears: 1,
+    //                 key: "1",
+    //                 name: "1 год",
+    //                 note: null,
+    //                 protected: "N",
+    //                 title: "1 год"
+    //             }];            
+    //         },
+    //         resultsAmount: 3
+    //     };
+    // }
     function t(value: string) { return value; }
 
 }
