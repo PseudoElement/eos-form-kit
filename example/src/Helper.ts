@@ -84,7 +84,7 @@ class Helper {
                 "deleteRowsToolbarTitle": "Удалить строки",
                 "addRowToolbarWarning": "Такой элемент уже существует",
                 "deleteRowsToolbarWarning": "Вы действительно хотите удалить выбранные данные?",
-                "showHeader": false,
+                "showHeader": true,
                 "required": true,
                 "allowTakes": true,
                 "requiredMessage": "Поле обязательное к заполнению",
@@ -168,7 +168,10 @@ class Helper {
 
                     },
                     resultsAmount: 10,
-                }
+                },
+                "otherColumns": [
+                    { "label": "Колонка 2", "name": "deleted", "disabled": false }
+                ]
             },
             {
                 "disabled": false,

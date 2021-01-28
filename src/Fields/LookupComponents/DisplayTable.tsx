@@ -118,7 +118,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     required,
     showHeader,
     defaultColumnLabel,
-    defaultColumnIndex,
+    defaultColumnIndex = 0,
     modalWindowTitle,
     allowDuplication,
     otherColumns,
@@ -437,12 +437,28 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         if (data?.length <= 0) {
             return []
         }
-        const newData = data.map((item) => {
-           return { 
+        let newData
+        if(otherColumns) {
+            newData = data.map((item) => {
+                return { 
+                    key: item?.data?.[key],
+                    value: item?.data?.[value],
+                    other: otherColumns.map(e => {
+                        return {
+                            value: item?.data?.[e.name],
+                            name: e.name
+                        }
+                    })
+             };
+             });
+        } else {
+            newData = data.map((item) => {
+            return { 
                key: item?.data?.[key],
                value: item?.data?.[value],
-        };
+            };
         });
+        }
         return newData;
     }
     // function checkBackUrl(backUrl: string) {
