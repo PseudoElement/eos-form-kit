@@ -408,6 +408,15 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         return false
     }
 
+    const spaceAllowChecked = (rowKey: string) => {
+        if (maxSelectedRecords && maxSelectedRecords > 1) {
+            if (selectedRowKeys.length >= maxSelectedRecords) {
+                return (selectedRowKeys.indexOf(rowKey) > -1)
+            }
+        }
+        return true
+    }
+
     const rowSelection: any = {
         selectedRowKeys: selectedRowKeys,
         onSelectedRowKeys: setSelectedRowKeys,
@@ -704,10 +713,11 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                                 return;
                             case E_KEY_CODE.SPACE:
                                 e.preventDefault();
-                                if (currentRowKey) {
+                                if (currentRowKey && spaceAllowChecked(currentRowKey)) {
                                     const selected = !selectedRowKeys.includes(currentRowKey)
                                     setSelectRecordsAndKeys(selected, [currentRowKey])
                                 }
+                                return
                             case E_KEY_CODE.PAGE_UP:
                                 e.preventDefault()
                                 onPageUp(e.altKey)
