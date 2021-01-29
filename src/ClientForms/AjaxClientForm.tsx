@@ -52,9 +52,11 @@ export interface IForm {
     /**Метод для получения кастомной строки с произвольной разметкой. */
     getCustomRow?: (customType: string) => ReactElement | ReactElement[] | undefined;
 
+    /**Обработчик клика по кнопке "Отмена". */
     onCancelClick?: (event: any, mode: FormMode) => void;
     /**Вызовется, когда будет подгружена схема формы с сервера. */
     onContextLoaded?(context: any): void;
+    /**Обработчик клика по кнопке "Изменить". */
     onEditClick?: (event: any) => void;
     /**Вызовется, когда какое-то поле было изменено. */
     onFieldsWasModified?: (wasModified: boolean) => void;
@@ -64,7 +66,9 @@ export interface IForm {
     onFinishSucceeded?(): void;
     /**Позволяет переопределить действие генератора форм после неудачного сохранения.*/
     onFinishFailed?(): void;
+    /**Теоретически метод вызовется после отрисовки гененратора, но не всегда срабатывает корректно. */
     onRendered?(): void;
+    /**Вызовется при активации вкладки. */
     onTabsChange?: (activeKey: string) => void;
     /**Обработчик события при изменении значений полей формы. */
     onValuesChange?(changedValues: any, values: any): void;
@@ -88,7 +92,9 @@ export interface IForm {
 
     /**true - если необходимо заблокировать отрисовку заголовка формы с кнопками. */
     disableHeader?: boolean;
+    /**Отключает кнопку изменения. */
     disableEditButton?: boolean;
+    /**Отключает кнопку закрытия. */
     disableCloseButton?: boolean;
     /**Дополнительные кнопки между заголовком и кнопкой закрытия формы просмотра. */
     additionalDispFormTitleButtons?: ReactNode | ReactNode[];
@@ -153,6 +159,8 @@ export interface IFormApi {
     setFieldValue(name: string, value?: any): void;
     disableField(name: string): void;
     enableField(name: string): void;
+    hideField(name: string): void;
+    showField(name: string): void;
     getFieldsValue(): Store;
     setDisabledMenuButton(disable: boolean, name: string): void
     setVisibleMenuButton(visible: boolean, name: string): void
@@ -245,6 +253,12 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             enableField(name: string) {
                 clientFormApi?.current?.enableField(name);
             },
+            hideField(name: string) {
+                clientFormApi?.current?.hideField(name);
+            },
+            showField(name: string) {
+                clientFormApi?.current?.showField(name);
+            },
             getFieldsValue(): Store {
                 return clientFormApi?.current?.getFieldsValue() || {};
             },
@@ -297,21 +311,33 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setLoadingSchema(false);
     }
     const loadItemAsync = async function () {
-        if (props.notRestoreFields || !currentState) {
-            // setLoadItem(false);
-            loadItem.current = false;
-            setLoadingItem(true);
-            if (props.dataService.getInitialValuesAsync)
-                props.dataService.getInitialValuesAsync()
-                    .then((initialValues: any) => {
-                        onLoadItemSucceeded(initialValues);
-                    });
-            else
-                onLoadItemSucceeded({});
-        }
-        else {
-            onLoadItemSucceeded(prepareValuesForRestore(currentState));
-        }
+        // if (props.notRestoreFields || !currentState) {
+        //     // setLoadItem(false);
+        //     loadItem.current = false;
+        //     setLoadingItem(true);
+        //     if (props.dataService.getInitialValuesAsync)
+        //         props.dataService.getInitialValuesAsync()
+        //             .then((initialValues: any) => {
+        //                 onLoadItemSucceeded(initialValues);
+        //             });
+        //     else
+        //         onLoadItemSucceeded({});
+        // }
+        // else {
+        //     onLoadItemSucceeded(prepareValuesForRestore(currentState));
+        // }
+
+        // setLoadItem(false);
+        loadItem.current = false;
+        setLoadingItem(true);
+        if (props.dataService.getInitialValuesAsync)
+            props.dataService.getInitialValuesAsync()
+                .then((initialValues: any) => {
+                    onLoadItemSucceeded(initialValues);
+                });
+        else
+            onLoadItemSucceeded({});
+
     }
     const onLoadItemSucceeded = async function (data: any) {
         if (props.dataService.modifyContextAsync) {
@@ -320,9 +346,11 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         }
         setLoadingItem(false);
         setFirstLoading(false);
+        const values = props.notRestoreFields || !currentState ? data : prepareValuesForRestore(currentState);
+
         const context: IContext | null = schema as IContext;
         const prps: IClientFormProps = {
-            initialValues: data,
+            initialValues: values,
             mode: props.mode,
             tabsComponent: context && context.Tabs ? InternalHelper.createTabsComponent(context, props.getResourceText, props.getCustomtab) : undefined,
             rows: context && context.Rows ? InternalHelper.createFormRows(context, props.getResourceText) : undefined,

@@ -35,6 +35,23 @@ export interface ISelect {
 
     /** Событие при клике на кнопку */
     onButtonClick?(): void
+
+    /** значение свойства 
+     * в настройки лукап поля необходимо передать значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
+     * keyProperty
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
+    */    
+    valueProperty?: string;
+    
+    /** ключ свойства 
+     * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
+     * в настройки лукап поля необходимо передатьvalueProperty
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
+    */    
+    keyProperty?: string;
+
+    /** объект из useBackUrlHistory useHistorySlim().getStateByName( "LookupDialogResult" ) */
+    receivedValue?: any;
 }
 
 /** Структура элемента выпадающего списка */
@@ -68,32 +85,51 @@ export interface IDataService {
     /** Функция useLazyQuery для отправки и обработки запроса */
     loadDataAsync(search?: string): Promise<IOptionItem[]>;
 
-    /** метод для справочников */
-    loadData2Async(search?: string): Promise<any[]>;
+    /** метод для справочников 
+     * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
+     * в настройки лукап поля необходимо передать keyProperty
+     * в настройки лукап поля необходимо передать valueProperty
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
+    */
+    loadData2Async?(search?: string): Promise<any[]>;
 
     /** Количество запрашивамых результатов */
     resultsAmount?: number;
 }
 
 /** Поле с выпадающим списком, реагирует на изменения в поле последующим запросом на совпадения по подстроке */
-export const Select = React.forwardRef<any, ISelect>(({
-    onChange,
-    fieldName,
-    value,
-    notFoundContent,
-    required,
-    dataService: getDataService,
-    ctx,
-    manualInputAllowed,
-    showResultInfoText,
-    resultInfoText,
-    onButtonClick
-}) => {
+export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
     /** Объект значения */
-    const [currentValue, setCurrentValue] = useState<IOptionItem | undefined>(value);
+    const [currentValue, setCurrentValue] = useState<IOptionItem | undefined>(props.value);
     useEffect(() => {
-        setCurrentValue(value);
-    }, [value])
+        setCurrentValue(props.value);
+    }, [props.value]);
+
+    useEffect(() => {
+        /** Значение имя поля по умолчанию */
+        let defaultFieldName = props.fieldName ?? 'defaultFieldName';
+        /** Имя ключа свойства пришедшего из справочника */
+        let tempKeyProperty = props.keyProperty ?? undefined;
+        /** Имя значения свойства пришедшего из справочника */
+        let tempValueProperty = props.valueProperty ?? undefined;
+        /** Первый элемент */
+        let firsetElem = props.receivedValue?.[defaultFieldName]?.[0] ?? undefined;
+        /** Ключ свойства пришедшего из справочника */
+        let tempKey = tempKeyProperty && tempValueProperty && (firsetElem?.data?.[tempKeyProperty] ?? undefined) ? firsetElem.data[tempKeyProperty] : undefined;
+        /** Значение свойства пришедшего из справочника */
+        let tempValue = tempKeyProperty && tempValueProperty && (firsetElem?.data?.[tempValueProperty] ?? undefined) ? firsetElem.data[tempValueProperty] : undefined;
+        if (tempKeyProperty && tempValueProperty && tempKey && tempValue) {
+            let valueToSet = {
+                key: tempKey,
+                value: tempValue
+            };
+            setCurrentValue(valueToSet);
+            setValueToForm(valueToSet);
+            if (props.onChange) {
+                props.onChange(valueToSet);
+            }
+        }
+    }, [props.receivedValue]);
 
     /** Объект индикатор загрузки */
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -133,49 +169,82 @@ export const Select = React.forwardRef<any, ISelect>(({
      */
     async function loadItemById(search?: string) {
         setIsLoading(true);
-        return getDataService?.loadDataAsync(search ?? '').then(
-            (data: IOptionItem[]) => {
-                let items: IOptionItem[] = data;
-                if (getDataService?.resultsAmount !== null && getDataService?.resultsAmount !== undefined) {
-                    if (items?.length >= getDataService?.resultsAmount) {
-                        let shortArray = items?.slice(0, getDataService?.resultsAmount - 1);
-                        if (showResultInfoText === true || showResultInfoText === undefined) {
-                            setShowInfo(true);
-                        }
-                        setIsSingleElem([...shortArray].length === 1);
-                        setItems([...shortArray]);
-                    } 
-                    else {
-                        setShowInfo(false)
-                        setIsSingleElem(items?.length === 1);
-                        setItems(items);
-                    }
+        if (props.keyProperty && props.valueProperty && props.dataService?.loadData2Async) {
+            return props.dataService?.loadData2Async(search ?? '')
+                .then((data: any[]) => {
+                    const preparedData = prepareData(data);
+                    loadItemsSucceeeded(preparedData);
+                })
+                .catch((err: any) => {
+                    loadItemsFailed(err);
+                })
+        }
+        else {
+            return props.dataService?.loadDataAsync(search ?? '')
+                .then((data: IOptionItem[]) => {
+                    loadItemsSucceeeded(data);
+                })
+                .catch((err: any) => {
+                    loadItemsFailed(err);
+                })
+        }
+
+    }
+
+    function loadItemsSucceeeded(data: IOptionItem[]) {
+        let items: IOptionItem[] = data;
+        if (props.dataService?.resultsAmount !== null && props.dataService?.resultsAmount !== undefined) {
+            if (items?.length >= props.dataService?.resultsAmount) {
+                let shortArray = items?.slice(0, props.dataService?.resultsAmount - 1);
+                if (props.showResultInfoText === true || props.showResultInfoText === undefined) {
+                    setShowInfo(true);
                 }
-                else {
-                    if (showResultInfoText === true || showResultInfoText === undefined) {
-                        setShowInfo(true);
-                    }      
-                    setIsSingleElem(items?.length === 1);       
-                    setItems(items);
-                }
-                setIsLoading(false);
+                setIsSingleElem([...shortArray].length === 1);
+                setItems([...shortArray]);
+            } 
+            else {
+                setShowInfo(false)
+                setIsSingleElem(items?.length === 1);
+                setItems(items);
             }
-        )
-            .catch(
-                (err: any) => {
-                    console.error(err);
-                    setItems([]);
-                    setIsLoading(false)
+        }
+        else {
+            if (props.showResultInfoText === true || props.showResultInfoText === undefined) {
+                setShowInfo(true);
+            }      
+            setIsSingleElem(items?.length === 1);       
+            setItems(items);
+        }
+        setIsLoading(false);
+    }
+
+    function prepareData(data: any[]): IOptionItem[] {
+        let result: IOptionItem[] = [];
+        if (props.keyProperty !== null && props.keyProperty !== undefined && props.valueProperty !== null && props.valueProperty !== undefined) {
+            data.forEach((item: any) => {
+                if (props.keyProperty !== null && props.keyProperty !== undefined && props.valueProperty !== null && props.valueProperty !== undefined) {
+                    result.push({
+                        key: item?.[props.keyProperty],
+                        value: item?.[props.valueProperty]
+                    });
                 }
-            )
+            })
+        }
+        return result; 
+    }
+
+    function loadItemsFailed(err: any) {
+        console.error(err);
+        setItems([]);
+        setIsLoading(false)
     }
 
     /** Очистка значения формы */
     let onClear = () => {
         setCurrentValue(undefined);
         setValueToForm(undefined);
-        if (onChange)
-            onChange(null);
+        if (props.onChange)
+        props.onChange(null);
         loadItemById("");
     }
 
@@ -228,8 +297,8 @@ export const Select = React.forwardRef<any, ISelect>(({
         if (value) {
             loadItemById(value?.trim() ?? ''); 
         }
-        if (onChange) {
-            onChange(option?.item);
+        if (props.onChange) {
+            props.onChange(option?.item);
         }
         setIsOpen(false)
         if (focusRef?.current && focusRef?.current?.blur) {
@@ -246,10 +315,10 @@ export const Select = React.forwardRef<any, ISelect>(({
         <Spin spinning={isLoading}>
             <div style={{display: "flex"}}>
                 <RcSelect ref={focusRef}
-                    required={required}
-                    showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
+                    required={props.required}
+                    showSearch={props.manualInputAllowed !== undefined && props.manualInputAllowed !== null ? props.manualInputAllowed : true }
                     value={currentValue?.value}
-                    notFoundContent={notFoundContent}
+                    notFoundContent={props.notFoundContent}
                     onSearch={handleSearch}
                     onFocus={onFocus}
                     onClear={onClear}
@@ -263,7 +332,7 @@ export const Select = React.forwardRef<any, ISelect>(({
                 >
                     {getOptionList()}
                 </RcSelect>
-                {onButtonClick && <Button onClick={onButtonClick}>
+                {props.onButtonClick && <Button onClick={props.onButtonClick}>
                     <DirectoryBookIcon />
                 </Button>}
             </div>
@@ -303,14 +372,14 @@ export const Select = React.forwardRef<any, ISelect>(({
 
     /** получить информационный текст */
     function getInfoText(): string {
-        if (resultInfoText) {
+        if (props.resultInfoText) {
             // переданный текст
-            return resultInfoText;
+            return props.resultInfoText;
         }
         else {
             // предустановленный текст
-            if (getDataService?.resultsAmount !== null && getDataService?.resultsAmount !== undefined) {
-                return `Отображены первые ${getDataService?.resultsAmount - 1} элементов`;
+            if (props.dataService?.resultsAmount !== null && props.dataService?.resultsAmount !== undefined) {
+                return `Отображены первые ${props.dataService?.resultsAmount - 1} элементов`;
             }
             else {
                 return `Отображены все результаты`;
@@ -323,8 +392,8 @@ export const Select = React.forwardRef<any, ISelect>(({
      * @param value Значение для простановки в форму.
      */
     function setValueToForm(value?: IOptionItem): boolean {
-        if (ctx) {
-            ctx.setFieldValue(fieldName, value);
+        if (props.ctx) {
+            props.ctx.setFieldValue(props.fieldName, value);
             return true;
         }
         return false;

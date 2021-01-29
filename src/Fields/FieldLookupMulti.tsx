@@ -83,8 +83,33 @@ export interface ILookupMulti extends IField {
     hiddenAddRowToolTitle?: boolean;
     /**Вызовется, когда значение поля изменится. */
     onChange?(item?: any): void;
-    /**Событие при нажатии на кнопку "Добавить"*/
+    /**
+     * событие при нажатии на кнопку "Добавить".
+     * Для работы выбора из справочника необxодимо задать:
+     * valueProperty - Значение свойства.
+     * keyProperty - Ключ свойства.
+     * loadData2Async в dataService.
+     * onAdd - событие при нажатии на кнопку "Добавить".
+     * */ 
     onAdd(): void;
+    /**
+     * Значение свойства.
+     * Для работы выбора из справочника необxодимо задать:
+     * valueProperty - Значение свойства.
+     * keyProperty - Ключ свойства.
+     * loadData2Async в dataService.
+     * onAdd - событие при нажатии на кнопку "Добавить".
+     * */ 
+    valueProperty?: string;
+    /**
+     * Ключ свойства.
+     * Для работы выбора из справочника необxодимо задать:
+     * valueProperty - Значение свойства.
+     * keyProperty - Ключ свойства.
+     * loadData2Async в dataService.
+     * onAdd - событие при нажатии на кнопку "Добавить".
+     * */ 
+    keyProperty?: string;
 }
 
 /**
@@ -112,7 +137,10 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                  </Form.Item>
                 <Form.Item name={props.name} rules={rules}>
                     <DisplayTable
+                        valueProperty={props.valueProperty}
+                        keyProperty={props.keyProperty}
                         rules={rules}
+                        name={props.name}
                         label={props.label || ''}
                         required={props.required}
                         allowDuplication={props.allowDuplication}

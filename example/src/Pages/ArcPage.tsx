@@ -57,6 +57,7 @@ const ArcPage: FunctionComponent = () => {
     const formApi = useRef<AjaxClientForm.IFormApi>();
     const { currentState } = useHistoryListener("activeKey");
     const { toBack } = useBackUrlHistory();
+
     return (
         <React.Fragment>
             <div>currentState={currentState ? "true" : "false"}</div>
@@ -152,7 +153,9 @@ const ArcPage: FunctionComponent = () => {
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
                     dataService: getDataService(),
-                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
+                    // valueProperty: "name",
+                    // keyProperty: "isnKeepClause",
+                    // onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
                 },
                 {
                     type: "FieldLookup",
@@ -161,7 +164,9 @@ const ArcPage: FunctionComponent = () => {
                     required: false,
                     requiredMessage: t("arc:errors.isnKeepPeriod"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService(),
+                    dataService: getDataServiceIsnKeepPeriod(),
+                    valueProperty: "name",
+                    keyProperty: "isnKeepPeriod",
                     onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
                 },
                 { type: "FieldMultiText", name: Fields.NAME, label: "arc:fields.name", rows: 3, maxLength: 2000, required: false, requiredMessage: t("arc:errors.name") } as FieldMultiText.IMultiText,
@@ -338,7 +343,10 @@ const ArcPage: FunctionComponent = () => {
                     name: Fields.ISN_KEEP_CLAUSE,
                     label: "arc:fields.isnKeepClause",
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService()
+                    dataService: getDataService(),
+                    // valueProperty: "name",
+                    // keyProperty: "isnKeepClause",
+                    // onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
                 },
                 {
                     type: "FieldLookup",
@@ -347,8 +355,10 @@ const ArcPage: FunctionComponent = () => {
                     required: false,
                     requiredMessage: t("arc:errors.isnKeepPeriod"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService(),
-                    onButtonClick: () => { pushPrevious("/lookupPage") }
+                    dataService: getDataServiceIsnKeepPeriod(),
+                    valueProperty: "name",
+                    keyProperty: "isnKeepPeriod",
+                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
                 },
                 { type: "FieldMultiText", name: Fields.NAME, label: "arc:fields.name", rows: 3, maxLength: 2000, required: false, requiredMessage: t("arc:errors.name") } as FieldMultiText.IMultiText,
                 { type: "FieldInteger", name: Fields.VOLUME_NUM, label: "arc:fields.volumeNum", showCounter: false, max: 999 },
@@ -362,7 +372,10 @@ const ArcPage: FunctionComponent = () => {
                     required: false,
                     requiredMessage: t("arc:errors.isnSecurLevel"),
                     notFoundContent: t("ajaxSelect:notFoundContentDefaultText"),
-                    dataService: getDataService()
+                    dataService: getDataService(),
+                    valueProperty: "name",
+                    keyProperty: "isnKeepPeriod",
+                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
                 },
                 { type: "FieldText", name: Fields.ARCHIVAL_CODE, label: "arc:fields.archivalCode", maxLength: 300 },
                 { type: "FieldDateTime", name: Fields.MIN_DOC_DATE, label: "arc:fields.minDocDate" },
@@ -653,6 +666,90 @@ const ArcPage: FunctionComponent = () => {
             resultsAmount: 3
         };
     }
+
+    function getDataServiceIsnKeepPeriod() {
+        return {
+            loadDataAsync: async (search?: string) => {
+                const result: AjaxSelect.IOptionItem[] = [
+                    { key: "1", value: "один" },
+                    { key: "2", value: "два" },
+                    { key: "3", value: "три" },
+                    { key: "4", value: "четыре" }
+                ]
+                if (search) {
+                    return result.filter((item) => {
+                        if (item && item.value && item?.value?.indexOf(search) >= 0) {
+                            return true;
+                        }
+                        return false;
+                    }) ?? [];
+                }
+                else {
+                    return result;
+                }
+            },
+            loadData2Async: async () => {
+                return [{
+                    code: null,
+                    deleted: false,
+                    description: null,
+                    isEpk: "N",
+                    isFolder: 0,
+                    isPersonal: "N",
+                    isnKeepPeriod: 1,
+                    keepYears: 1,
+                    key: "1",
+                    name: "1 год",
+                    note: null,
+                    protected: "N",
+                    title: "1 год"
+                }];
+            },
+            resultsAmount: 3
+        };
+    }
+
+    // function getDataServiceIsnKeepClause() {
+    //     return {
+    //         loadDataAsync: async (search?: string) => {
+    //             const result: AjaxSelect.IOptionItem[] = [
+    //                 { key: "1", value: "один" },
+    //                 { key: "2", value: "два" },
+    //                 { key: "3", value: "три" },
+    //                 { key: "4", value: "четыре" }
+    //             ]
+    //             if (search) {
+    //                 return result.filter((item) => {
+    //                     if (item && item.value && item?.value?.indexOf(search) >= 0) {
+    //                         return true;
+    //                     }
+    //                     return false;
+    //                 }) ?? [];
+    //             }
+    //             else {
+    //                 return result;
+    //             }
+    //         },
+    //         loadData2Async: async () => {
+    //             return [{
+    //                 code: null,
+    //                 deleted: false,
+    //                 description: null,
+    //                 isEpk: "N",
+    //                 isFolder: 0,
+    //                 isPersonal: "N",
+    //                 isnKeepClause: 1,
+    //                 keepYears: 1,
+    //                 key: "1",
+    //                 name: "1 год",
+    //                 note: null,
+    //                 protected: "N",
+    //                 title: "1 год"
+    //             }];            
+    //         },
+    //         resultsAmount: 3
+    //     };
+    // }
     function t(value: string) { return value; }
 
 }

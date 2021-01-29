@@ -44,17 +44,17 @@ const AjaxClientFormApi: FunctionComponent = () => {
     const dataService: AjaxClientForm.IDataService = {
         async getContextAsync(mode: FormMode) {
             const dispContext = {
-                "Fields": Helper.getFields(FormMode.display, () => pushPrevious("/lookupPage")),
+                "Fields": Helper.getFields(FormMode.display, (path) => pushPrevious(path)),
                 "Mode": FormMode.display,
                 "Tabs": Helper.getTabs()
             };
             const editContext = {
-                "Fields": Helper.getFields(FormMode.edit, () => pushPrevious("/lookupPage")),
+                "Fields": Helper.getFields(FormMode.edit, (path) => pushPrevious(path)),
                 "Mode": FormMode.edit,
                 "Tabs": Helper.getTabs()
             };
             const newContext = {
-                "Fields": Helper.getFields(FormMode.new, () => pushPrevious("/lookupPage")),
+                "Fields": Helper.getFields(FormMode.new, (path) => pushPrevious(path)),
                 "Mode": FormMode.new,
                 "Tabs": Helper.getTabs()
             };
@@ -209,14 +209,22 @@ const AjaxClientFormApi: FunctionComponent = () => {
                 onClearCountClick={() => { formApi?.current?.setTabCount("0"); }}
                 onSetZeroCountClick={() => { formApi?.current?.setTabCount("0", 0); }}
                 onDisableFieldsClick={() => {
-                    const fields = Helper.getFields(mode, () => pushPrevious("/lookupPage"));
+                    const fields = Helper.getFields(mode, (path) => pushPrevious(path));
                     for (let field of fields)
                         formApi?.current?.disableField(field.name);
                 }}
                 onEnableFieldsClick={() => {
-                    const fields = Helper.getFields(mode, () => pushPrevious("/lookupPage"));
+                    const fields = Helper.getFields(mode, (path) => pushPrevious(path));
                     for (let field of fields)
                         formApi?.current?.enableField(field.name);
+                }}
+                onHideFieldsClick={() => {
+                    formApi?.current?.hideField("ind");
+                    formApi?.current?.hideField("name");
+                }}
+                onShowFieldsClick={() => {
+                    formApi?.current?.showField("ind");
+                    formApi?.current?.showField("name");
                 }}
             />
             <AjaxClientForm.Form
@@ -300,6 +308,10 @@ interface IButtonsPanel {
 
     onDisableFieldsClick?(): void;
     onEnableFieldsClick?(): void;
+
+    onHideFieldsClick?(): void;
+    onShowFieldsClick?(): void;
+
 }
 interface IButtonsPanelApi {
     setText(text?: string): void;
@@ -336,6 +348,8 @@ const ButtonsPanel = forwardRef<any, IButtonsPanel>((props: IButtonsPanel, ref: 
             <SmartButton onClick={props.onSetZeroCountClick}>SetCount(0)</SmartButton>
             <SmartButton onClick={props.onEnableFieldsClick}>Enable fields</SmartButton>
             <SmartButton onClick={props.onDisableFieldsClick}>Disable fields</SmartButton>
+            <SmartButton onClick={props.onHideFieldsClick}>Hide fields</SmartButton>
+            <SmartButton onClick={props.onShowFieldsClick}>Show fields</SmartButton>
         </div>
         <div>{text}</div>
     </div>);

@@ -7,6 +7,7 @@ import DisplayInput from "./LookupComponents/DisplayInput";
 import { Rule } from "rc-field-form/lib/interface";
 import { BaseField } from "./BaseField";
 import { FormContext, IFormContext } from "../Context/Context";
+import useHistorySlim from './../Hooks/useHistorySlim';
 
 /**
  * Настройки лукап поля.
@@ -43,10 +44,18 @@ export interface ILookup extends IField {
     /** Событие при клике на кнопку */
     onButtonClick?(): void;
 
-    /** имя свойства */
+    /** наименование зачения свойства 
+     * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
+     * в настройки лукап поля необходимо передать keyProperty
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
+    */
     valueProperty?: string;
     
-    /** имя свойства */
+    /** наименование ключа свойства 
+     * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
+     * в настройки лукап поля необходимо передать valueProperty
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
+    */
     keyProperty?: string;
 }
 /**
@@ -67,6 +76,11 @@ export function getFieldValueForPost(value: any) {
 
 /** Лукап поле. */
 export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
+    /** значение, полученное из выбора в справочнике, значение из useBackUrlHistory().toBack(значение) */
+    let tempUseHistorySlimState = useHistorySlim().getStateByName( "LookupDialogResult" );
+    /** если значение из справочника не получено, то будет undefined для предотвращения перерисовки */
+    let receivedValue = tempUseHistorySlimState !== null && tempUseHistorySlimState !== undefined ? tempUseHistorySlimState : undefined;
+
     const memoLookup = useMemo(() => {   
         return (<BaseField
             ref={ref}
@@ -75,7 +89,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
             getEditField={getEdit}
             getDisplayField={getDisplay}
         />);
-    }, [props.mode, props.label, props.name])
+    }, [props.mode, props.label, props.name, receivedValue])
 
     return memoLookup;
 
@@ -114,7 +128,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             dataService={props.dataService}
                             ref={ref}
                             ctx={ctx}
-                            fieldName={props.name}
+                            fieldName={props?.name}
                             required={props.required}
                             onChange={props.onChange}
                             notFoundContent={props.notFoundContent}
@@ -122,6 +136,9 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             resultInfoText={props.resultInfoText}
                             showResultInfoText={props.showResultInfoText}
                             onButtonClick={props.onButtonClick}
+                            valueProperty={props?.valueProperty}
+                            keyProperty={props?.keyProperty}
+                            receivedValue={receivedValue}
                         />
                     </Form.Item>
                 </React.Fragment>
