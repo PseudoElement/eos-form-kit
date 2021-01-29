@@ -20,10 +20,10 @@ const TableExample = () => {
                 return undefined
         }
     }
-    provider.triggers = {
-        onRowClick: (prop) => {
-            console.log(prop.tableState?.currentRowKey)
-        }
+    provider.triggers = {        
+        onUpdateState: (tableState) => {
+            console.log(tableState.currentRecord)
+        },
     }
     return <div style={{ height: "calc(100vh - 48px)" }}><EosTable provider={provider} initTableState={{ maxSelectedRecords: 2 }} /></div>
 }
