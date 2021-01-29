@@ -399,7 +399,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     };
 
     const disableChechBoxIfSelectedRowsEqualsMaxSelectedRecords = (record: any) => {
-        if (selectedRowKeys && maxSelectedRecords && maxSelectedRecords > 0) {
+        if (selectedRowKeys && maxSelectedRecords && maxSelectedRecords > 1) {
             if (selectedRowKeys.length >= maxSelectedRecords) {
                 const currentKey = rowKeyValue(record)
                 return (selectedRowKeys.indexOf(currentKey) === -1)
