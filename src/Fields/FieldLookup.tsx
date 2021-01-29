@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from "react";
 import { Form, SmartInput } from "@eos/rc-controls";
 import IField from "./IField";
 import { Select as AjaxSelect, IDataService } from "./LookupComponents/AjaxSelect";
-import { InlineSelect as AjaxInlineSelect} from "./LookupComponents/AjaxInlineSelect"
+import { InlineSelect as AjaxInlineSelect } from "./LookupComponents/AjaxInlineSelect"
 import DisplayInput from "./LookupComponents/DisplayInput";
 import { Rule } from "rc-field-form/lib/interface";
 import { BaseField } from "./BaseField";
@@ -50,7 +50,7 @@ export interface ILookup extends IField {
      * в настройки лукап поля необходимо передать loadData2Async в dataService
     */
     valueProperty?: string;
-    
+
     /** наименование ключа свойства 
      * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
      * в настройки лукап поля необходимо передать valueProperty
@@ -77,11 +77,11 @@ export function getFieldValueForPost(value: any) {
 /** Лукап поле. */
 export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
     /** значение, полученное из выбора в справочнике, значение из useBackUrlHistory().toBack(значение) */
-    let tempUseHistorySlimState = useHistorySlim().getStateByName( "LookupDialogResult" );
+    let tempUseHistorySlimState = useHistorySlim().getStateByName("LookupDialogResult");
     /** если значение из справочника не получено, то будет undefined для предотвращения перерисовки */
     let receivedValue = tempUseHistorySlimState !== null && tempUseHistorySlimState !== undefined ? tempUseHistorySlimState : undefined;
 
-    const memoLookup = useMemo(() => {   
+    const memoLookup = useMemo(() => {
         return (<BaseField
             ref={ref}
             field={props}
@@ -100,7 +100,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
             return (
                 <React.Fragment>
                     <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
-                        <SmartInput ref={ref}/>
+                        <SmartInput ref={ref} />
                     </Form.Item>
                     <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
                         <AjaxInlineSelect
@@ -112,6 +112,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             resultInfoText={props.resultInfoText}
                             showResultInfoText={props.showResultInfoText}
                             onButtonClick={props.onButtonClick}
+                            placeholder={props.placeholder}
                         />
                     </Form.Item>
                 </React.Fragment>
@@ -121,7 +122,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
             return (
                 <React.Fragment>
                     <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
-                        <SmartInput ref={ref}/>
+                        <SmartInput ref={ref} />
                     </Form.Item>
                     <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
                         <AjaxSelect
@@ -139,6 +140,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             valueProperty={props?.valueProperty}
                             keyProperty={props?.keyProperty}
                             receivedValue={receivedValue}
+                            placeholder={props.placeholder}
                         />
                     </Form.Item>
                 </React.Fragment>

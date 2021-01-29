@@ -10,7 +10,7 @@ import { IToolBar } from "./ToolBar/ToolBar";
 import { FieldDateTime, IField } from "..";
 import moment from 'moment';
 import useHistoryWriter from "../Hooks/useHistoryState";
-import useHistoryListener from "../Hooks/useHistoryListener";
+import useHistoryListener, { HistoryActionType } from "../Hooks/useHistoryListener";
 
 
 /**DI объект для выполнения различных запросов. */
@@ -100,6 +100,8 @@ export interface IForm {
     additionalDispFormTitleButtons?: ReactNode | ReactNode[];
     /**true - если между переходами по страницам не сохранять значения полей в window.history. */
     notRestoreFields?: boolean;
+    /**Необходимо ли скрывать автоматически анимацию выполнения запроса (скелетон или спиннер).  */
+    autoHideLoadingAfterSaved?: boolean;
 }
 /**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
@@ -177,7 +179,7 @@ interface IClientFormProps {
 /**Генератор форм выполняющий запрос за элементом и схемой через DI.*/
 export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     const { setState } = useHistoryWriter();
-    const { currentState } = useHistoryListener("FormValues");
+    const { currentState, getRedirectType } = useHistoryListener("FormValues");
 
     const [schema, setSchema] = useState<IContext | null>(null);
     const [isFirstLoading, setFirstLoading] = useState(true);
@@ -346,7 +348,14 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         }
         setLoadingItem(false);
         setFirstLoading(false);
-        const values = props.notRestoreFields || !currentState ? data : prepareValuesForRestore(currentState);
+
+        // const values = props.notRestoreFields || !currentState ? data : prepareValuesForRestore(currentState);
+        //  Данные для формы.
+        let values: any = {};
+        if (props.notRestoreFields || !currentState || getRedirectType() === HistoryActionType.none)
+            values = data;
+        else
+            values = prepareValuesForRestore(currentState);
 
         const context: IContext | null = schema as IContext;
         const prps: IClientFormProps = {
@@ -422,10 +431,16 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
     function onSaveSucceeded() {
         if (props.onFinishSucceeded)
             props.onFinishSucceeded();
+        if (props.autoHideLoadingAfterSaved) {
+            hideLoading();
+        }
     }
     function onSaveFailed() {
         if (props.onFinishFailed)
             props.onFinishFailed();
+        if (props.autoHideLoadingAfterSaved) {
+            hideLoading();
+        }
     }
     function hideLoading() {
         setSkeletonLoading(false);

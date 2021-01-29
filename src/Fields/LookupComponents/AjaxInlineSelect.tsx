@@ -23,6 +23,9 @@ export interface IInlineSelect {
     
     /** Событие при клике на кнопку */
     onButtonClick?(): void
+    
+    /**html атрибут placeholder. */
+    placeholder?: string;
 }
 
 /** Структура элемента выпадающего списка */
@@ -68,7 +71,8 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
     showResultInfoText,
     resultInfoText,
     onValueSelected,
-    onButtonClick
+    onButtonClick,    
+    placeholder
 }) => {
     /** Объект индикатор загрузки */
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -200,6 +204,7 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
         <Spin spinning={isLoading}>
             <div style={{display: "flex"}}>
                 <RcSelect ref={focusRef}
+                    placeholder={placeholder}
                     showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
                     value={''}
                     notFoundContent={notFoundContent}

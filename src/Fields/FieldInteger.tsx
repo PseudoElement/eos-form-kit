@@ -33,7 +33,7 @@ export const Integer = React.forwardRef<any, IInteger>((props: IInteger, ref) =>
     function getNew(props: IInteger, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <SmartNumber ref={ref} width={"100%"} required={props.required} defaultValue={props.defaultValue} min={props.min} max={props.max} counter={props.showCounter} />
+                <SmartNumber placeholder={props.placeholder} ref={ref} width={"100%"} required={props.required} defaultValue={props.defaultValue} min={props.min} max={props.max} counter={props.showCounter} />
             </Form.Item>
         );
     }
