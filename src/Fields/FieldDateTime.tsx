@@ -41,6 +41,7 @@ export const DateTime = React.forwardRef<any, IDateTime>((props: IDateTime, ref)
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules} >
                 <SmartDatePicker
+                    placeholder={props.placeholder}
                     ref={ref}
                     picker={getPickerMode(props.dateTimeMode)}
                     required={props.required}

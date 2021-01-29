@@ -19,4 +19,6 @@ export default interface IField {
     disabled?: boolean;
     /**Значение по умолчанию. */
     value?: string;
+    /**html атрибут placeholder. */
+    placeholder?: string;
 }
