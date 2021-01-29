@@ -37,18 +37,16 @@ export interface ISelect {
     onButtonClick?(): void
 
     /** значение свойства 
-     * Необходимо так же передать 
-     * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
+     * в настройки лукап поля необходимо передать значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
      * keyProperty
-     * loadData2Async в dataService
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
     */    
     valueProperty?: string;
     
     /** ключ свойства 
-     * Необходимо так же передать 
      * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
-     * valueProperty
-     * loadData2Async в dataService
+     * в настройки лукап поля необходимо передатьvalueProperty
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
     */    
     keyProperty?: string;
 
@@ -88,11 +86,10 @@ export interface IDataService {
     loadDataAsync(search?: string): Promise<IOptionItem[]>;
 
     /** метод для справочников 
-     * Необходимо так же передать 
      * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
-     * keyProperty
-     * valueProperty
-     * loadData2Async в dataService
+     * в настройки лукап поля необходимо передать keyProperty
+     * в настройки лукап поля необходимо передать valueProperty
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
     */
     loadData2Async?(search?: string): Promise<any[]>;
 
@@ -109,20 +106,29 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
     }, [props.value]);
 
     useEffect(() => {
-        if (props.keyProperty !== null && props.keyProperty !== undefined 
-            && props.valueProperty !== null && props.valueProperty !== undefined
-            && props.receivedValue?.[props.keyProperty]?.[0]?.data?.[props.keyProperty] !== null && props.receivedValue?.[props.keyProperty]?.[0]?.data?.[props.keyProperty] !== undefined
-            && props.receivedValue?.[props.keyProperty]?.[0]?.data?.[props.valueProperty] !== null && props.receivedValue?.[props.keyProperty]?.[0]?.data?.[props.valueProperty] !== undefined) {
-                let tempValue = {
-                    key: props.receivedValue[props.keyProperty][0].data[props.keyProperty],
-                    value: props.receivedValue[props.keyProperty][0].data[props.valueProperty]
-                };
-                setCurrentValue(tempValue);
-                setValueToForm(tempValue);
-                if (props.onChange) {
-                    props.onChange(tempValue);
-                }
+        /** Значение имя поля по умолчанию */
+        let defaultFieldName = props.fieldName ?? 'defaultFieldName';
+        /** Имя ключа свойства пришедшего из справочника */
+        let tempKeyProperty = props.keyProperty ?? undefined;
+        /** Имя значения свойства пришедшего из справочника */
+        let tempValueProperty = props.valueProperty ?? undefined;
+        /** Первый элемент */
+        let firsetElem = props.receivedValue?.[defaultFieldName]?.[0] ?? undefined;
+        /** Ключ свойства пришедшего из справочника */
+        let tempKey = tempKeyProperty && tempValueProperty && (firsetElem?.data?.[tempKeyProperty] ?? undefined) ? firsetElem.data[tempKeyProperty] : undefined;
+        /** Значение свойства пришедшего из справочника */
+        let tempValue = tempKeyProperty && tempValueProperty && (firsetElem?.data?.[tempValueProperty] ?? undefined) ? firsetElem.data[tempValueProperty] : undefined;
+        if (tempKeyProperty && tempValueProperty && tempKey && tempValue) {
+            let valueToSet = {
+                key: tempKey,
+                value: tempValue
+            };
+            setCurrentValue(valueToSet);
+            setValueToForm(valueToSet);
+            if (props.onChange) {
+                props.onChange(valueToSet);
             }
+        }
     }, [props.receivedValue]);
 
     /** Объект индикатор загрузки */

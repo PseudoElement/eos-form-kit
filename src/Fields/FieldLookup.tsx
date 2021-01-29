@@ -44,19 +44,17 @@ export interface ILookup extends IField {
     /** Событие при клике на кнопку */
     onButtonClick?(): void;
 
-    /** зачение свойства 
-     * Необходимо так же передать 
+    /** наименование зачения свойства 
      * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
-     * keyProperty
-     * loadData2Async в dataService
+     * в настройки лукап поля необходимо передать keyProperty
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
     */
     valueProperty?: string;
     
-    /** ключ свойства 
-     * Необходимо так же передать 
+    /** наименование ключа свойства 
      * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
-     * valueProperty
-     * loadData2Async в dataService
+     * в настройки лукап поля необходимо передать valueProperty
+     * в настройки лукап поля необходимо передать loadData2Async в dataService
     */
     keyProperty?: string;
 }
@@ -130,7 +128,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             dataService={props.dataService}
                             ref={ref}
                             ctx={ctx}
-                            fieldName={props.name}
+                            fieldName={props?.name}
                             required={props.required}
                             onChange={props.onChange}
                             notFoundContent={props.notFoundContent}
