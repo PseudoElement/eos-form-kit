@@ -311,21 +311,33 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setLoadingSchema(false);
     }
     const loadItemAsync = async function () {
-        if (props.notRestoreFields || !currentState) {
-            // setLoadItem(false);
-            loadItem.current = false;
-            setLoadingItem(true);
-            if (props.dataService.getInitialValuesAsync)
-                props.dataService.getInitialValuesAsync()
-                    .then((initialValues: any) => {
-                        onLoadItemSucceeded(initialValues);
-                    });
-            else
-                onLoadItemSucceeded({});
-        }
-        else {
-            onLoadItemSucceeded(prepareValuesForRestore(currentState));
-        }
+        // if (props.notRestoreFields || !currentState) {
+        //     // setLoadItem(false);
+        //     loadItem.current = false;
+        //     setLoadingItem(true);
+        //     if (props.dataService.getInitialValuesAsync)
+        //         props.dataService.getInitialValuesAsync()
+        //             .then((initialValues: any) => {
+        //                 onLoadItemSucceeded(initialValues);
+        //             });
+        //     else
+        //         onLoadItemSucceeded({});
+        // }
+        // else {
+        //     onLoadItemSucceeded(prepareValuesForRestore(currentState));
+        // }
+
+        // setLoadItem(false);
+        loadItem.current = false;
+        setLoadingItem(true);
+        if (props.dataService.getInitialValuesAsync)
+            props.dataService.getInitialValuesAsync()
+                .then((initialValues: any) => {
+                    onLoadItemSucceeded(initialValues);
+                });
+        else
+            onLoadItemSucceeded({});
+
     }
     const onLoadItemSucceeded = async function (data: any) {
         if (props.dataService.modifyContextAsync) {
@@ -334,9 +346,11 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         }
         setLoadingItem(false);
         setFirstLoading(false);
+        const values = props.notRestoreFields || !currentState ? data : prepareValuesForRestore(currentState);
+
         const context: IContext | null = schema as IContext;
         const prps: IClientFormProps = {
-            initialValues: data,
+            initialValues: values,
             mode: props.mode,
             tabsComponent: context && context.Tabs ? InternalHelper.createTabsComponent(context, props.getResourceText, props.getCustomtab) : undefined,
             rows: context && context.Rows ? InternalHelper.createFormRows(context, props.getResourceText) : undefined,
