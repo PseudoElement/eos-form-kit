@@ -156,8 +156,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
     const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
     const [lastSelectedRowKey, setLastSelectedRowKey] = useState<string>()
-    const [currentRowKey, setCurrentRowKey] = useState<string | undefined>(undefined)
-    const [currentRecord, setCurrentRecord] = useState<any | undefined>(undefined)
+    const [currentRowKey, setCurrentRowKey] = useState<string | undefined>(undefined)    
 
     const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, getResourceText))
     const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings, fetchControl, fetchControlFromStore, getResourceText, tableUserSetiings.ellipsisRows, possibleSorting.list));
@@ -197,7 +196,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         pageSize,
         maxSelectedRecords,
         currentRowKey,
-        currentRecord,
+        currentRecord: currentRowKey && getValueByKey([currentRowKey])[0],
         quickSearchMode,
         showFormFilter,
         formFilterMode,
@@ -277,9 +276,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         }
 
         if (tableState.currentRowKey !== currentRowKey) {
-            setCurrentRowKey(tableState.currentRowKey?.toString())
-            const record = tableState.currentRowKey && getValueByKey([tableState.currentRowKey.toString()])[0]
-            setCurrentRecord(record)
+            setCurrentRowKey(tableState.currentRowKey?.toString())            
         }
         else {
             tableState.forcedReloadData && setMenu(mainMenuCallback())
@@ -361,8 +358,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 .then(({ records, totalCount }) => {
                     setRecordsTotalCount(totalCount);
                     setTableData(records)
-                    if (tableState.currentRowKey && records.length > 0) {
-                        setCurrentRecord(records[0])
+                    if (tableState.currentRowKey && records.length > 0) {                        
                         setCurrentRowKey(rowKeyValue(records[0]))
                     }
                 })
@@ -403,13 +399,22 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     };
 
     const disableChechBoxIfSelectedRowsEqualsMaxSelectedRecords = (record: any) => {
-        if (selectedRowKeys && maxSelectedRecords && maxSelectedRecords > 0) {
+        if (selectedRowKeys && maxSelectedRecords && maxSelectedRecords > 1) {
             if (selectedRowKeys.length >= maxSelectedRecords) {
                 const currentKey = rowKeyValue(record)
                 return (selectedRowKeys.indexOf(currentKey) === -1)
             }
         }
         return false
+    }
+
+    const spaceAllowChecked = (rowKey: string) => {
+        if (maxSelectedRecords && maxSelectedRecords > 1) {
+            if (selectedRowKeys.length >= maxSelectedRecords) {
+                return (selectedRowKeys.indexOf(rowKey) > -1)
+            }
+        }
+        return true
     }
 
     const rowSelection: any = {
@@ -590,14 +595,12 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const onChangeCurrentRowKey = (rowKey: string) => {
         if (rowKey) {
             const record = getValueByKey([rowKey])[0]
-            setCurrentRowKey(rowKey)
-            setCurrentRecord(record)
+            setCurrentRowKey(rowKey)            
             const state: ITableState = { ...currentTableState, currentRecord: record, currentRowKey: rowKey }
             triggers?.onRowClick && triggers.onRowClick({ tableApi: currentRef.current, tableSetting: tableSettings, userSetting: tableUserSetiings, tableState: state })
         }
         else {
-            setCurrentRowKey(undefined)
-            setCurrentRecord(undefined)
+            setCurrentRowKey(undefined)            
         }
     };
 
@@ -661,13 +664,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     const onCloseClick = () => {
         setShowFormFilter(false)
-    }
-
-    // const getInitialValuesAsync = () => {
-    //     return new Promise<any>((resolve) => {
-    //         resolve(filterValueObjects?.formFilter)
-    //     })
-    // }   
+    }   
 
     const table = () => (
         <Table
@@ -716,10 +713,11 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                                 return;
                             case E_KEY_CODE.SPACE:
                                 e.preventDefault();
-                                if (currentRowKey) {
+                                if (currentRowKey && spaceAllowChecked(currentRowKey)) {
                                     const selected = !selectedRowKeys.includes(currentRowKey)
                                     setSelectRecordsAndKeys(selected, [currentRowKey])
                                 }
+                                return
                             case E_KEY_CODE.PAGE_UP:
                                 e.preventDefault()
                                 onPageUp(e.altKey)
