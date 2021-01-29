@@ -168,10 +168,10 @@ const LookupPage: FunctionComponent = () => {
     const fieldName = url.get("f");
     switch (fieldName) {
         case "isnKeepClause":
-            historyValue = { isnKeepClause: isnKeepClause };
+            historyValue = { ISN_KEEP_CLAUSE: isnKeepClause };
             break;
         case "isnKeepPeriod":
-            historyValue = { isnKeepPeriod: isnKeepPeriod };
+            historyValue = { ISN_KEEP_PERIOD: isnKeepPeriod };
             break;
         case "multiLookup1":
             historyValue = { multiLookup1: multiLookup1 };
