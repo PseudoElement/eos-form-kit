@@ -7,10 +7,12 @@ import { Store } from 'rc-field-form/lib/interface';
 import { InternalHelper } from '../InternalHelper';
 import { IFormRows } from "./FormRows";
 import { IToolBar } from "./ToolBar/ToolBar";
-import { FieldDateTime, IField } from "..";
 import moment from 'moment';
 import useHistoryWriter from "../Hooks/useHistoryState";
 import useHistoryListener, { HistoryActionType } from "../Hooks/useHistoryListener";
+// import { IField } from "..";
+import IField from "../Fields/IField";
+import { IDateTime, getFieldValueForClientRender, DateTimeMode } from "../Fields/FieldDateTime";
 
 
 /**DI объект для выполнения различных запросов. */
@@ -102,6 +104,8 @@ export interface IForm {
     notRestoreFields?: boolean;
     /**Необходимо ли скрывать автоматически анимацию выполнения запроса (скелетон или спиннер).  */
     autoHideLoadingAfterSaved?: boolean;
+    stopAnimation?: boolean;
+    initialShownForm?: boolean
 }
 /**Настройки вкладок генератора форм. */
 export interface IClientTabProps {
@@ -164,8 +168,12 @@ export interface IFormApi {
     hideField(name: string): void;
     showField(name: string): void;
     getFieldsValue(): Store;
-    setDisabledMenuButton(disable: boolean, name: string): void
-    setVisibleMenuButton(visible: boolean, name: string): void
+    setDisabledMenuButton(disable: boolean, name: string): void;
+    setVisibleMenuButton(visible: boolean, name: string): void;
+    /**Включает анимация загрузки данных. */
+    enableAnimation(): void;
+    /**Выключает анимация загрузки данных. */
+    disableAnimation(): void;
 }
 
 
@@ -195,6 +203,8 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
 
     const [isLoadingItem, setLoadingItem] = useState(false);
     const [clientFormProps, setClientFormProps] = useState<IClientFormProps>({ mode: props.mode });
+
+    let stopAnimation = useRef(props.stopAnimation ?? false);
 
     const selfRef = useRef();
     useImperativeHandle(ref ?? selfRef, (): IFormApi => {
@@ -270,6 +280,12 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             setVisibleMenuButton(visible: boolean, name: string) {
                 clientFormApi?.current?.setVisibleMenuButton(visible, name);
             },
+            enableAnimation() {
+                stopAnimation.current = false;
+            },
+            disableAnimation() {
+                stopAnimation.current = true;
+            }
         }
         return api;
     });
@@ -426,6 +442,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             closeTitle={props.closeTitle}
             finishTitle={props.finishTitle}
             editTitle={props.editTitle}
+            initialShownForm={props.initialShownForm}
         />
     );
     function onSaveSucceeded() {
@@ -447,13 +464,18 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setSpinLoading(false);
     }
     function showLoading() {
-        if (isFirstLoading) {
-            setSkeletonLoading(true);
-            setSpinLoading(false);
+        if (!stopAnimation.current) {
+            if (isFirstLoading) {
+                setSkeletonLoading(true);
+                setSpinLoading(false);
+            }
+            else {
+                setSkeletonLoading(false);
+                setSpinLoading(true);
+            }
         }
         else {
-            setSkeletonLoading(false);
-            setSpinLoading(true);
+            hideLoading();
         }
     }
     function onValuesChange(changedValues: any, values: any) {
@@ -472,8 +494,8 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             for (let i in values) {
                 const fieldSchema: IField | null = getFieldSchema(i);
                 if (fieldSchema?.type === "FieldDateTime") {
-                    const fieldDateTime: FieldDateTime.IDateTime = fieldSchema as FieldDateTime.IDateTime;
-                    if (fieldDateTime.dateTimeMode === FieldDateTime.DateTimeMode.year)
+                    const fieldDateTime: IDateTime = fieldSchema as IDateTime;
+                    if (fieldDateTime.dateTimeMode === DateTimeMode.year)
                         result[i] = moment.isMoment(values[i]) ? (values[i] as moment.Moment).year() : undefined;
                     else
                         result[i] = moment.isMoment(values[i]) ? values[i].toISOString() : undefined;
@@ -495,13 +517,13 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             for (let i in values) {
                 const fieldSchema: IField | null = getFieldSchema(i);
                 if (fieldSchema?.type === "FieldDateTime") {
-                    const fieldDateTime: FieldDateTime.IDateTime = fieldSchema as FieldDateTime.IDateTime;
+                    const fieldDateTime: IDateTime = fieldSchema as IDateTime;
                     // if (fieldDateTime.dateTimeMode === FieldDateTime.DateTimeMode.year)
                     //     // FieldDateTime.getFieldValueForClientRender(props.mode,values[i], fieldDateTime.dateTimeMode );
                     //     result[i] = moment.isMoment(values[i]) ? (values[i] as moment.Moment).year() : undefined;
                     // else
                     //     result[i] = moment.isMoment(values[i]) ? values[i].toISOString() : undefined;
-                    result[i] = FieldDateTime.getFieldValueForClientRender(props.mode, values[i], fieldDateTime.dateTimeMode);
+                    result[i] = getFieldValueForClientRender(props.mode, values[i], fieldDateTime.dateTimeMode);
                 }
                 else {
                     result[i] = values[i];
