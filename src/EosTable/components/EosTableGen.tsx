@@ -156,7 +156,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
     const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
     const [lastSelectedRowKey, setLastSelectedRowKey] = useState<string>()
-    const [currentRowKey, setCurrentRowKey] = useState<string | undefined>(undefined)    
+    const [currentRowKey, setCurrentRowKey] = useState<string | undefined>(undefined)
 
     const [possibleSorting] = useState(() => getPossibleSortings(tableSettings, getResourceText))
     const [columns, setColumns] = useState<IColumn[]>(() => getColumnsBySettings(tableSettings, tableUserSetiings, fetchControl, fetchControlFromStore, getResourceText, tableUserSetiings.ellipsisRows, possibleSorting.list));
@@ -276,7 +276,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         }
 
         if (tableState.currentRowKey !== currentRowKey) {
-            setCurrentRowKey(tableState.currentRowKey?.toString())            
+            setCurrentRowKey(tableState.currentRowKey?.toString())
         }
         else {
             tableState.forcedReloadData && setMenu(mainMenuCallback())
@@ -358,7 +358,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                 .then(({ records, totalCount }) => {
                     setRecordsTotalCount(totalCount);
                     setTableData(records)
-                    if (tableState.currentRowKey && records.length > 0) {                        
+                    if (tableState.currentRowKey && records.length > 0) {
                         setCurrentRowKey(rowKeyValue(records[0]))
                     }
                 })
@@ -385,7 +385,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         showMoreBtn: false,//tableDataTotalCount > tableVisibleCount,
         pageSizeOptions: tableSettings.visual?.pageSizeOptions,
         current: currentPage,
-        onChange: handlePaginationChange
+        onChange: handlePaginationChange,
+        hideOnSinglePage: tableSettings.visual?.hidePaginationOnSinglePage
     }
     //#endregion
 
@@ -595,12 +596,12 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const onChangeCurrentRowKey = (rowKey: string) => {
         if (rowKey) {
             const record = getValueByKey([rowKey])[0]
-            setCurrentRowKey(rowKey)            
+            setCurrentRowKey(rowKey)
             const state: ITableState = { ...currentTableState, currentRecord: record, currentRowKey: rowKey }
             triggers?.onRowClick && triggers.onRowClick({ tableApi: currentRef.current, tableSetting: tableSettings, userSetting: tableUserSetiings, tableState: state })
         }
         else {
-            setCurrentRowKey(undefined)            
+            setCurrentRowKey(undefined)
         }
     };
 
@@ -664,7 +665,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
     const onCloseClick = () => {
         setShowFormFilter(false)
-    }   
+    }
 
     const table = () => (
         <Table
@@ -672,7 +673,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
             disableFocusFirstRow
             isVirtualTable={pageSize > 20}
             fullHeight
-            deleteLastColumnWidth
+            deleteLastColumnWidth={tableSettings.visual?.dimensionlessLastColumn}
             scroll={scroll}
             columns={columns}
             dataSource={tableData}
