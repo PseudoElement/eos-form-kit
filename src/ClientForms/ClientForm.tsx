@@ -150,7 +150,7 @@ export interface IForm {
 export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
     const [wasModified, setWasModified] = useState(false);
     const [invalidFields, setInvalidFields] = useState<any>(null);
-    const [rcFormDisplayStyle, setRcFormDisplayStyle] = useState<"none" | "">(props.initialShownForm ? "" : "none");
+    const [isFormVisible, setFormVisible] = useState<boolean>(props.initialShownForm ? true : false);
     const selfRcFormUseForm = RcForm.useForm();
     const selfRcFormRef = React.createRef();
 
@@ -410,86 +410,93 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
         setWasModified(false);
     }, [props.mode]);
 
-    const elements =
-        <SpinMaximized spinning={props.isSpinLoading}>
-            <Row style={{ height: "100%" }} justify="center">
-                <Col style={{ width: "800px", height: "100%", paddingTop: "20px" }}>
-                    <Animate showProp="visible" transitionName="fade"
-                        onEnd={() => {
-                            setRcFormDisplayStyle(props.isSkeletonLoading ? "none" : "");
-                        }}>
-                        <Skeleton visible={props.isSkeletonLoading} />
-                    </Animate>
-                    <RcForm
-                        form={rcFormForm}
-                        ref={rcFormRef}
-                        style={{ height: "100%", display: rcFormDisplayStyle }}
-                        name="basic" layout="vertical"
-                        initialValues={props.initialValues}
-                        onFinish={(values: Store) => {
-                            let formValues: Store;
-                            if (props.noTrimFieldValues)
-                                formValues = values;
-                            else
-                                formValues = trim(values);
 
-                            if (props?.onFinish)
-                                props?.onFinish(formValues);
+    const memoizedForm = useMemo(() => {
+        return (
+                <RcForm
+                    form={rcFormForm}
+                    ref={rcFormRef}
+                    // style={{ height: "100%", display: rcFormDisplayStyle }}
+                    style={{ height: "100%" }}
+                    name="basic" layout="vertical"
+                    initialValues={props.initialValues}
+                    onFinish={(values: Store) => {
+                        let formValues: Store;
+                        if (props.noTrimFieldValues)
+                            formValues = values;
+                        else
+                            formValues = trim(values);
+
+                        if (props?.onFinish)
+                            props?.onFinish(formValues);
+                    }}
+                    onFinishFailed={onFinishFailed}
+                    onValuesChange={(changedValues: any, values: any) => {
+                        setWasModified(true);
+                        if (props.onValuesChange)
+                            props.onValuesChange(changedValues, values);
+                    }} >
+                    {!props.disableHeader &&
+                        <FormTitle
+                            ref={formTitleApi}
+                            formTitle={props.formTitle}
+                            mode={mode}
+                            title={props.title}
+                            onCancelClick={(e) => onCancelClick(e)}
+                            onEditClick={props.onEditClick}
+                            enableLeftIcon={props.enableLeftIcon}
+                            isHiddenLeftIcon={props.isHiddenLeftIcon}
+                            leftIconTitle={props.leftIconTitle}
+                            disableEditButton={props.disableEditButton}
+                            disableCloseButton={props.disableCloseButton}
+                            additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
+                            closeTitle={props.closeTitle}
+                            finishTitle={props.finishTitle}
+                            editTitle={props.editTitle}
+                        />}
+                    <ToolBar {...props.toolbar}></ToolBar>
+                    <ClientTabs ref={clientTabsApi}
+                        className={props?.tabsComponent?.className}
+                        tabBarStyle={props?.tabsComponent?.tabBarStyle}
+                        defaultActiveKey={currentState ?? props.tabsComponent?.defaultActiveKey}
+                        tabs={props?.tabsComponent?.tabs}
+                        fields={props?.tabsComponent?.fields}
+                        invalidFields={invalidFields}
+                        onChange={(activeKey: string) => {
+                            setState("activeKey", activeKey);
+                            if (props.tabsComponent && props.tabsComponent.onChange)
+                                props.tabsComponent.onChange(activeKey);
+                            if (props.onTabsChange)
+                                props.onTabsChange(activeKey);
                         }}
-                        onFinishFailed={onFinishFailed}
-                        onValuesChange={(changedValues: any, values: any) => {
-                            setWasModified(true);
-                            if (props.onValuesChange)
-                                props.onValuesChange(changedValues, values);
-                        }} >
-                        {!props.disableHeader &&
-                            <FormTitle
-                                ref={formTitleApi}
-                                formTitle={props.formTitle}
-                                mode={mode}
-                                title={props.title}
-                                onCancelClick={(e) => onCancelClick(e)}
-                                onEditClick={props.onEditClick}
-                                enableLeftIcon={props.enableLeftIcon}
-                                isHiddenLeftIcon={props.isHiddenLeftIcon}
-                                leftIconTitle={props.leftIconTitle}
-                                disableEditButton={props.disableEditButton}
-                                disableCloseButton={props.disableCloseButton}
-                                additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
-                                closeTitle={props.closeTitle}
-                                finishTitle={props.finishTitle}
-                                editTitle={props.editTitle}
-                            />}
-                        <ToolBar {...props.toolbar}></ToolBar>
-                        <ClientTabs ref={clientTabsApi}
-                            className={props?.tabsComponent?.className}
-                            tabBarStyle={props?.tabsComponent?.tabBarStyle}
-                            defaultActiveKey={currentState ?? props.tabsComponent?.defaultActiveKey}
-                            tabs={props?.tabsComponent?.tabs}
-                            fields={props?.tabsComponent?.fields}
-                            invalidFields={invalidFields}
-                            onChange={(activeKey: string) => {
-                                setState("activeKey", activeKey);
-                                if (props.tabsComponent && props.tabsComponent.onChange)
-                                    props.tabsComponent.onChange(activeKey);
-                                if (props.onTabsChange)
-                                    props.onTabsChange(activeKey);
-                            }}
-                            getCustomRow={props.getCustomRow}
-                        />
-                        {props.rows && <FormRows rows={props?.rows?.rows} getCustomRow={props.getCustomRow} />}
-                    </RcForm>
-                </Col>
-            </Row>
-        </SpinMaximized>;
+                        getCustomRow={props.getCustomRow}
+                    />
+                    {props.rows && <FormRows rows={props?.rows?.rows} getCustomRow={props.getCustomRow} />}
+                </RcForm>
+        );
+    }, [props.initialValues, mode]);
 
     const memoizedElements = useMemo(() => {
-        return (elements)
-    }, [props.initialValues, props.mode, props.isSkeletonLoading, props.isSpinLoading, rcFormDisplayStyle]);
-    // const memoizedElements = elements;
+        return (
+            <SpinMaximized spinning={props.isSpinLoading}>
+                <Row style={{ height: "100%" }} justify="center">
+                    <Col style={{ width: "800px", height: "100%", paddingTop: "20px" }}>
+                        <Animate showProp="visible" transitionName="fade"
+                            onEnd={() => {
+                                // setRcFormDisplayStyle(props.isSkeletonLoading ? "none" : "");
+                                setFormVisible(props.isSkeletonLoading ? false : true);
+                            }}>
+                            <Skeleton visible={props.isSkeletonLoading} />
+                        </Animate>
+                        {isFormVisible && memoizedForm}
+                    </Col>
+                </Row>
+            </SpinMaximized>
+        );
+    }, [props.isSkeletonLoading, props.isSpinLoading, isFormVisible, props.initialValues, mode]);
+    // }, [props.isSkeletonLoading, props.isSpinLoading]);
 
     return (<FormContext.Provider value={formContext}>{memoizedElements}</FormContext.Provider>);
-    // return memoizedElements;
 
     function onCancelClick(e: Event) {
         if (mode !== FormMode.edit) {
