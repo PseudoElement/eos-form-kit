@@ -1,6 +1,6 @@
 import './index.css'
 
-import React, { FunctionComponent, useEffect } from 'react'
+import React, { FunctionComponent } from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import SearchClientFormPage from "./SearchClientFormPage";
@@ -106,9 +106,9 @@ const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
     const backStory: any[] = getBackPageStateAsArray();
 
     let { pageTitle } = useTitleChanger();
-    useEffect(() => {
-        console.log(pageTitle);
-    }, [pageTitle])
+    // useEffect(() => {
+    //     console.log(pageTitle);
+    // }, [pageTitle])
 
     return (
         // <Menu mode="horizontal">
