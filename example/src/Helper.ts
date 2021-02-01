@@ -1,5 +1,55 @@
 import { FormMode, FieldDateTime, AjaxSelect, AjaxAutoComplete, FieldLookupMulti, RowType } from "eos-webui-formgen";
 
+const secondItem = {
+    "E_DOCUMENT": true,
+    "multiLookupRow": [
+        { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }] },
+        { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }] }
+    ],
+    "multiLookup1": [{
+            code: null,
+            deleted: "N",
+            isEpk: "N",
+            isPersonal: "N",
+            isnKeepPeriod: 6,
+            keepYears: 5,
+            name: "6 лет",
+            note: null,
+            protected: "N"
+    },
+    {
+            code: null,
+            deleted: "F",
+            isEpk: "N",
+            isPersonal: "N",
+            isnKeepPeriod: 3,
+            keepYears: 5,
+            name: "5 лет",
+            note: null,
+            protected: "N"
+    }],
+    "multiLookup2": [
+        { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }, { value: "двадцать шесть", name: "anotherColumn" }] },
+        { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }, { value: "двадцать семь", name: "anotherColumn" }] },
+    ],
+    "parentName2": "Находися в 2-ом элементе",
+    "parentName": "Находися в 1-ом элементе",
+    "ind": "Номер 1",
+    "volumeNum": 1,
+    "keepCategory": "1",
+    "name": "Наименование 1",
+    "note": "Примечание 1",
+    "startYear": FieldDateTime.getFieldValueForClientRender(FormMode.edit, "2013", FieldDateTime.DateTimeMode.year),
+    "endYear": FieldDateTime.getFieldValueForClientRender(FormMode.edit, "2020", FieldDateTime.DateTimeMode.year),
+    "startYear2": FieldDateTime.getFieldValueForClientRender(FormMode.edit, "2013", FieldDateTime.DateTimeMode.year),
+    "endYear2": FieldDateTime.getFieldValueForClientRender(FormMode.edit, "2020", FieldDateTime.DateTimeMode.year),
+    "name2": "Наименование 11",
+    "ind2": "Номер 11",
+    "volumeNum2": 11,
+    "keepPeriod": { key: "3", value: "три", other: [{ value: "три три", name: "secondColumn" }] }
+}
+
+
 class Helper {
     static getFields(mode: FormMode, onMultiLookupAddClick?: (path: string) => void) {
         /** Огрничение на отображаемое количество элементов запроса */
@@ -462,54 +512,6 @@ class Helper {
     static getInitialValues(mode: FormMode, id: number) {
         switch (id) {
             case 1:
-                const secondItem = {
-                    "E_DOCUMENT": true,
-                    "multiLookupRow": [
-                        { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }] },
-                        { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }] }
-                    ],
-                    "multiLookup1": [{
-                            code: null,
-                            deleted: "N",
-                            isEpk: "N",
-                            isPersonal: "N",
-                            isnKeepPeriod: 6,
-                            keepYears: 5,
-                            name: "6 лет",
-                            note: null,
-                            protected: "N"
-                    },
-                    {
-                            code: null,
-                            deleted: "F",
-                            isEpk: "N",
-                            isPersonal: "N",
-                            isnKeepPeriod: 3,
-                            keepYears: 5,
-                            name: "5 лет",
-                            note: null,
-                            protected: "N"
-                    }],
-                    "multiLookup2": [
-                        { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }, { value: "двадцать шесть", name: "anotherColumn" }] },
-                        { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }, { value: "двадцать семь", name: "anotherColumn" }] },
-                    ],
-                    "parentName2": "Находися в 2-ом элементе",
-                    "parentName": "Находися в 1-ом элементе",
-                    "ind": "Номер 1",
-                    "volumeNum": 1,
-                    "keepCategory": "1",
-                    "name": "Наименование 1",
-                    "note": "Примечание 1",
-                    "startYear": FieldDateTime.getFieldValueForClientRender(mode, "2013", FieldDateTime.DateTimeMode.year),
-                    "endYear": FieldDateTime.getFieldValueForClientRender(mode, "2020", FieldDateTime.DateTimeMode.year),
-                    "startYear2": FieldDateTime.getFieldValueForClientRender(mode, "2013", FieldDateTime.DateTimeMode.year),
-                    "endYear2": FieldDateTime.getFieldValueForClientRender(mode, "2020", FieldDateTime.DateTimeMode.year),
-                    "name2": "Наименование 11",
-                    "ind2": "Номер 11",
-                    "volumeNum2": 11,
-                    "keepPeriod": { key: "3", value: "три", other: [{ value: "три три", name: "secondColumn" }] }
-                }
                 return secondItem;
             case 2:
                 const firstItem = {
