@@ -42,7 +42,7 @@ export interface ILookup extends IField {
     onValueSelected?(item?: any): void;
 
     /** Событие при клике на кнопку */
-    onButtonClick?(): void;
+    onOpenLookupDialogClick?(): void;
 
     /** наименование зачения свойства 
      * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
@@ -111,7 +111,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             manualInputAllowed={props.manualInputAllowed}
                             resultInfoText={props.resultInfoText}
                             showResultInfoText={props.showResultInfoText}
-                            onButtonClick={props.onButtonClick}
+                            onOpenLookupDialogClick={props.onOpenLookupDialogClick}
                             placeholder={props.placeholder}
                         />
                     </Form.Item>
@@ -136,7 +136,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             manualInputAllowed={props.manualInputAllowed}
                             resultInfoText={props.resultInfoText}
                             showResultInfoText={props.showResultInfoText}
-                            onButtonClick={props.onButtonClick}
+                            onOpenLookupDialogClick={props.onOpenLookupDialogClick}
                             valueProperty={props?.valueProperty}
                             keyProperty={props?.keyProperty}
                             receivedValue={receivedValue}

@@ -22,7 +22,7 @@ export interface IInlineSelect {
     onValueSelected(item?: any): void;
     
     /** Событие при клике на кнопку */
-    onButtonClick?(): void
+    onOpenLookupDialogClick?(): void
     
     /**html атрибут placeholder. */
     placeholder?: string;
@@ -71,7 +71,7 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
     showResultInfoText,
     resultInfoText,
     onValueSelected,
-    onButtonClick,    
+    onOpenLookupDialogClick,    
     placeholder
 }) => {
     /** Объект индикатор загрузки */
@@ -221,7 +221,7 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
                 >
                     {getOptionList()}
                 </RcSelect>
-                {onButtonClick && <Button onClick={onButtonClick}>
+                {onOpenLookupDialogClick && <Button onClick={onOpenLookupDialogClick}>
                     <DirectoryBookIcon />
                 </Button>}
             </div>
