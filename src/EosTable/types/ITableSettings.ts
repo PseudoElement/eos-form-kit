@@ -81,6 +81,10 @@ export interface IVisualSettings {
     filterAreaMaxHeight?: number
     /** Максимальная высота для области фильтра */
     filterAreaMinHeight?: number
+    /** Скрывать пагинацию, если данные умещаются на одной странице */
+    hidePaginationOnSinglePage?: boolean
+    /** Безразмерная ширина последнего столбца */
+    dimensionlessLastColumn?: boolean
 }
 
 /** Рендер */

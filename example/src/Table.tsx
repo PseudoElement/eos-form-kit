@@ -70,6 +70,7 @@ const GetProvider = () => {
                     visual: {
                         dragable: true,
                         resizable: true,
+                        hidePaginationOnSinglePage: true
                     },
                     menu: [{
                         key: "add",
