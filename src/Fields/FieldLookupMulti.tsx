@@ -89,16 +89,16 @@ export interface ILookupMulti extends IField {
      * valueProperty - Значение свойства.
      * keyProperty - Ключ свойства.
      * loadData2Async в dataService.
-     * onAdd - событие при нажатии на кнопку "Добавить".
+     * onOpenLookupDialogClick - событие при нажатии на кнопку "Добавить".
      * */ 
-    onAdd(): void;
+    onOpenLookupDialogClick(): void;
     /**
      * Значение свойства.
      * Для работы выбора из справочника необxодимо задать:
      * valueProperty - Значение свойства.
      * keyProperty - Ключ свойства.
      * loadData2Async в dataService.
-     * onAdd - событие при нажатии на кнопку "Добавить".
+     * onOpenLookupDialogClick - событие при нажатии на кнопку "Добавить".
      * */ 
     valueProperty?: string;
     /**
@@ -107,7 +107,7 @@ export interface ILookupMulti extends IField {
      * valueProperty - Значение свойства.
      * keyProperty - Ключ свойства.
      * loadData2Async в dataService.
-     * onAdd - событие при нажатии на кнопку "Добавить".
+     * onOpenLookupDialogClick - событие при нажатии на кнопку "Добавить".
      * */ 
     keyProperty?: string;
 }
@@ -164,7 +164,7 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         onDataChange={(row: any) => {
                             context.setFieldValue(props.name || '', row)
                         }}
-                        onAdd={props.onAdd}
+                        onOpenLookupDialogClick={props.onOpenLookupDialogClick}
                     />
                 </Form.Item>
             </div>
