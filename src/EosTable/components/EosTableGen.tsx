@@ -385,7 +385,8 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         showMoreBtn: false,//tableDataTotalCount > tableVisibleCount,
         pageSizeOptions: tableSettings.visual?.pageSizeOptions,
         current: currentPage,
-        onChange: handlePaginationChange
+        onChange: handlePaginationChange,
+        hideOnSinglePage: true        
     }
     //#endregion
 
