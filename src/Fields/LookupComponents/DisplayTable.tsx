@@ -75,9 +75,9 @@ export interface IDisplayTable {
      * valueProperty - Значение свойства.
      * keyProperty - Ключ свойства.
      * loadData2Async в dataService.
-     * onAdd - событие при нажатии на кнопку "Добавить".
+     * onOpenLookupDialogClick - событие при нажатии на кнопку "Добавить".
      * */ 
-    onAdd(): void;
+    onOpenLookupDialogClick(): void;
 
     onDataChange?(item?: any): void;
 
@@ -90,7 +90,7 @@ export interface IDisplayTable {
      * valueProperty - Значение свойства.
      * keyProperty - Ключ свойства.
      * loadData2Async в dataService.
-     * onAdd - событие при нажатии на кнопку "Добавить".
+     * onOpenLookupDialogClick - событие при нажатии на кнопку "Добавить".
      * */  
     valueProperty?: string;
     /**
@@ -99,7 +99,7 @@ export interface IDisplayTable {
      * valueProperty - Значение свойства.
      * keyProperty - Ключ свойства.
      * loadData2Async в dataService.
-     * onAdd - событие при нажатии на кнопку "Добавить".
+     * onOpenLookupDialogClick - событие при нажатии на кнопку "Добавить".
      * */  
     keyProperty?: string;
 }
@@ -129,7 +129,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     deleteRowsToolbarWarning,
     hiddenDeleteToolTitle,
     hiddenAddRowToolTitle,
-    onAdd
+    onOpenLookupDialogClick
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
@@ -160,7 +160,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             component: <PlusIcon />,
             title: addRowToolbarTitle || 'Добавить строку',
             disabled: isDisplay(),
-            onClick: onAdd || showModalLookup,
+            onClick: onOpenLookupDialogClick || showModalLookup,
             hiddenTitle: hiddenDeleteToolTitle || false,
             key: addRowToolbarTitle || 'PlusIcon'
         },

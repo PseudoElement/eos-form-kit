@@ -28,7 +28,7 @@ class Helper {
                 "type": "FieldLookupMultiRow",
                 "value": null,
                 "notFoundContent": "Нет элементов",
-                "onAdd": () => console.log('addRow'),
+                "onOpenLookupDialogClick": () => console.log('addRow'),
                 "dataService": {
                     loadDataAsync: async (search?: string) => {
                         const result: FieldLookupMulti.IValue[] = [
@@ -74,7 +74,7 @@ class Helper {
                 "notFoundContent": "Нет элементов",
                 "valueProperty": "name",
                 "keyProperty": "isnKeepPeriod",
-                "onAdd": () => onMultiLookupAddClick && onMultiLookupAddClick('/lookupPage?f=multiLookup1'),
+                "onOpenLookupDialogClick": () => onMultiLookupAddClick && onMultiLookupAddClick('/lookupPage?f=multiLookup1'),
                 "dataService": {
                     loadData2Async: async () => {
                         return [{
