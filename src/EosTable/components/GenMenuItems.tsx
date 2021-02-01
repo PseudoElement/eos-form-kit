@@ -43,8 +43,18 @@ function GenMenuItems({ fetchAction,
                 const disableHandler = menuItem.handlers?.find(m => m.type === "disabled")
                 const onClickHandler = menuItem.handlers?.find(m => m.type === "onClick")
 
-                const disableFunc = disableHandler && ((fetchCondition && fetchCondition(disableHandler.handlerName)) || (fetchConditionFromStore(disableHandler.handlerName)))
-                const onClickFunc = onClickHandler && ((fetchAction && fetchAction(onClickHandler.handlerName)) || (fetchActionFromStore(onClickHandler.handlerName)))
+                const disableFunc = (disableHandler
+                    && ((fetchCondition
+                        && fetchCondition(disableHandler.handlerName))
+                        || (fetchConditionFromStore(disableHandler.handlerName))
+                    )) || (fetchCondition && fetchCondition(menuItem.key))
+                    
+                const onClickFunc = (onClickHandler
+                    && ((fetchAction
+                        && fetchAction(onClickHandler.handlerName))
+                        || (fetchActionFromStore(onClickHandler.handlerName))
+                    )) || (fetchAction && fetchAction(menuItem.key))
+
                 const Component = (fetchControl && fetchControl(menuItem.render.renderType)) || (fetchControlFromStore(menuItem.render.renderType))
 
                 const controlProps: IControlRenderProps = {
