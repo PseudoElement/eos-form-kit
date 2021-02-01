@@ -346,7 +346,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     // };
     function getRowKey() {
         let newKey = `${Math.random()}`;
-        const isUnique = formData.current?.find((e: IValue) => e.key === newKey);
+        const isUnique = formData.current?.find((e: IValue) => e?.key === newKey);
         if (isUnique) {
             newKey  = getRowKey();
         }
