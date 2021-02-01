@@ -40,18 +40,21 @@ export interface ISelect {
      * в настройки лукап поля необходимо передать значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
      * keyProperty
      * в настройки лукап поля необходимо передать loadData2Async в dataService
-    */    
+    */
     valueProperty?: string;
-    
+
     /** ключ свойства 
      * значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
      * в настройки лукап поля необходимо передатьvalueProperty
      * в настройки лукап поля необходимо передать loadData2Async в dataService
-    */    
+    */
     keyProperty?: string;
 
     /** объект из useBackUrlHistory useHistorySlim().getStateByName( "LookupDialogResult" ) */
     receivedValue?: any;
+
+    /**html атрибут placeholder. */
+    placeholder?: string;
 }
 
 /** Структура элемента выпадающего списка */
@@ -201,7 +204,7 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
                 }
                 setIsSingleElem([...shortArray].length === 1);
                 setItems([...shortArray]);
-            } 
+            }
             else {
                 setShowInfo(false)
                 setIsSingleElem(items?.length === 1);
@@ -211,8 +214,8 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
         else {
             if (props.showResultInfoText === true || props.showResultInfoText === undefined) {
                 setShowInfo(true);
-            }      
-            setIsSingleElem(items?.length === 1);       
+            }
+            setIsSingleElem(items?.length === 1);
             setItems(items);
         }
         setIsLoading(false);
@@ -230,7 +233,7 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
                 }
             })
         }
-        return result; 
+        return result;
     }
 
     function loadItemsFailed(err: any) {
@@ -244,7 +247,7 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
         setCurrentValue(undefined);
         setValueToForm(undefined);
         if (props.onChange)
-        props.onChange(null);
+            props.onChange(null);
         loadItemById("");
     }
 
@@ -253,7 +256,7 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
         // Если поле со значением, то отправить запрос со значением на поиск
         if (currentValue?.value) {
             loadItemById(currentValue?.value?.trim());
-        } 
+        }
         else {
             // Если без - пустую строку на показ всех доступных значений
             loadItemById("");
@@ -282,7 +285,7 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
                 setCurrentValue({ value: value, key: items[options.indexOf(value?.toLocaleUpperCase().trim())].key });
 
                 // Проставить объект IOptionItem в форму
-                setValueToForm({ value: value, key: items[options.indexOf(value?.toLocaleUpperCase().trim())].key, ...items[options.indexOf(value?.toLocaleUpperCase().trim())]});    
+                setValueToForm({ value: value, key: items[options.indexOf(value?.toLocaleUpperCase().trim())].key, ...items[options.indexOf(value?.toLocaleUpperCase().trim())] });
             }
         }
     }
@@ -295,7 +298,7 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
         setCurrentValue(option?.item);
         setValueToForm(option?.item);
         if (value) {
-            loadItemById(value?.trim() ?? ''); 
+            loadItemById(value?.trim() ?? '');
         }
         if (props.onChange) {
             props.onChange(option?.item);
@@ -313,10 +316,11 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
 
     return (
         <Spin spinning={isLoading}>
-            <div style={{display: "flex"}}>
+            <div style={{ display: "flex" }}>
                 <RcSelect ref={focusRef}
+                    placeholder={props.placeholder}
                     required={props.required}
-                    showSearch={props.manualInputAllowed !== undefined && props.manualInputAllowed !== null ? props.manualInputAllowed : true }
+                    showSearch={props.manualInputAllowed !== undefined && props.manualInputAllowed !== null ? props.manualInputAllowed : true}
                     value={currentValue?.value}
                     notFoundContent={props.notFoundContent}
                     onSearch={handleSearch}
@@ -342,30 +346,30 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
     // Получить список элементов для отрисовки
     function getOptionList(): ReactNode | ReactNode[] {
         if (showInfo) {
-            return [<RcSelect.Option key={INFO_ELEM_KEY_VALUE} value={INFO_ELEM_KEY_VALUE} disabled style={{cursor: INFO_ELEM_CURSOR_VALUE}}>{INFO_ELEM_TEXT_VALUE}</RcSelect.Option>,
-                ...items.map((item: IOptionItem) => {
-                    return <RcSelect.Option 
-                                key={`${item?.key}`} 
-                                value={item?.value ?? `${item?.key}`}
-                                disabled={item?.disabled}
-                                item={item}
-                                style={item?.disabled ? {color: DISABLED_ELEM_COLOR_VALUE} : item?.isSpecific ? {color: SPECIFIC_ELEM_COLOR_VALUE} : {}}
-                                >
-                                    {item?.value ?? `${item?.key}`}
-                            </RcSelect.Option>
+            return [<RcSelect.Option key={INFO_ELEM_KEY_VALUE} value={INFO_ELEM_KEY_VALUE} disabled style={{ cursor: INFO_ELEM_CURSOR_VALUE }}>{INFO_ELEM_TEXT_VALUE}</RcSelect.Option>,
+            ...items.map((item: IOptionItem) => {
+                return <RcSelect.Option
+                    key={`${item?.key}`}
+                    value={item?.value ?? `${item?.key}`}
+                    disabled={item?.disabled}
+                    item={item}
+                    style={item?.disabled ? { color: DISABLED_ELEM_COLOR_VALUE } : item?.isSpecific ? { color: SPECIFIC_ELEM_COLOR_VALUE } : {}}
+                >
+                    {item?.value ?? `${item?.key}`}
+                </RcSelect.Option>
             })]
-        } 
+        }
         else {
             return items.map((item: IOptionItem) => {
-                return <RcSelect.Option 
-                            key={`${item?.key}`} 
-                            value={item?.value ?? `${item?.key}`}
-                            disabled={item?.disabled}
-                            item={item}
-                            style={item?.disabled ? {color: DISABLED_ELEM_COLOR_VALUE} : item?.isSpecific ? {color: SPECIFIC_ELEM_COLOR_VALUE} : {}}
-                            >
-                                {item?.value ?? `${item?.key}`}
-                        </RcSelect.Option>
+                return <RcSelect.Option
+                    key={`${item?.key}`}
+                    value={item?.value ?? `${item?.key}`}
+                    disabled={item?.disabled}
+                    item={item}
+                    style={item?.disabled ? { color: DISABLED_ELEM_COLOR_VALUE } : item?.isSpecific ? { color: SPECIFIC_ELEM_COLOR_VALUE } : {}}
+                >
+                    {item?.value ?? `${item?.key}`}
+                </RcSelect.Option>
             })
         }
     }

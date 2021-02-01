@@ -56,6 +56,7 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect, ref) => {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules} >
                 <RcSelect
+                    placeholder={props.placeholder}
                     ref={ref}
                     required={props.required}
                     defaultValue={props.defaultValue}

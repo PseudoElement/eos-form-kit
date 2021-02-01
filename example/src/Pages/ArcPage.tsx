@@ -6,7 +6,7 @@ import {
     AjaxClientForm, FormMode, parseFormMode, FieldCheckbox, FieldDateTime, FieldMultiText, AjaxSelect, useBackUrlHistory,
     useHistoryListener
 } from "eos-webui-formgen";
-import { Helper } from '../Helper';
+// import { Helper } from '../Helper';
 import { useRouteMatch } from 'react-router-dom';
 import Fields from './Fields';
 
@@ -28,7 +28,7 @@ const ArcPage: FunctionComponent = () => {
             return getContext(mode);
         },
         async getInitialValuesAsync() {
-            await Helper.sleepAsync(1000);
+            // await Helper.sleepAsync(1000);
             return {};
         },
         getTitle: function () {
@@ -62,6 +62,8 @@ const ArcPage: FunctionComponent = () => {
         <React.Fragment>
             <div>currentState={currentState ? "true" : "false"}</div>
             <AjaxClientForm.Form
+                // initialShownForm={true}
+                // stopAnimation={true}
                 ref={formApi}
                 mode={mode}
                 dataService={dataService}

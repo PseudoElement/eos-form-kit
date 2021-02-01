@@ -28,7 +28,7 @@ export const MultiText = React.forwardRef<any, IMultiText>((props: IMultiText, r
     function getNew(props: IMultiText, ref: any, rules?: Rule[]) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <SmartTextArea width={"100%"} ref={ref} required={props.required} rows={props.rows ?? DEFAULT_ROWS} maxLength={props.maxLength} />
+                <SmartTextArea placeholder={props.placeholder} width={"100%"} ref={ref} required={props.required} rows={props.rows ?? DEFAULT_ROWS} maxLength={props.maxLength} />
             </Form.Item>
         );
     }
