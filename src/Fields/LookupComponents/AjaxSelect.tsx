@@ -34,7 +34,7 @@ export interface ISelect {
     showResultInfoText?: boolean;
 
     /** Событие при клике на кнопку */
-    onButtonClick?(): void
+    onOpenLookupDialogClick?(): void
 
     /** значение свойства 
      * в настройки лукап поля необходимо передать значения берутся из useHistorySlim().getStateByName( "LookupDialogResult" )
@@ -336,7 +336,7 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect) => {
                 >
                     {getOptionList()}
                 </RcSelect>
-                {props.onButtonClick && <Button onClick={props.onButtonClick}>
+                {props.onOpenLookupDialogClick && <Button onClick={props.onOpenLookupDialogClick}>
                     <DirectoryBookIcon />
                 </Button>}
             </div>

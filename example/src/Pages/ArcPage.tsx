@@ -157,7 +157,7 @@ const ArcPage: FunctionComponent = () => {
                     dataService: getDataService(),
                     // valueProperty: "name",
                     // keyProperty: "isnKeepClause",
-                    // onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
+                    // onOpenLookupDialogClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
                 },
                 {
                     type: "FieldLookup",
@@ -169,7 +169,7 @@ const ArcPage: FunctionComponent = () => {
                     dataService: getDataServiceIsnKeepPeriod(),
                     valueProperty: "name",
                     keyProperty: "isnKeepPeriod",
-                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
+                    onOpenLookupDialogClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
                 },
                 { type: "FieldMultiText", name: Fields.NAME, label: "arc:fields.name", rows: 3, maxLength: 2000, required: false, requiredMessage: t("arc:errors.name") } as FieldMultiText.IMultiText,
                 { type: "FieldInteger", name: Fields.VOLUME_NUM, label: "arc:fields.volumeNum", showCounter: false, max: 999 },
@@ -348,7 +348,7 @@ const ArcPage: FunctionComponent = () => {
                     dataService: getDataService(),
                     // valueProperty: "name",
                     // keyProperty: "isnKeepClause",
-                    // onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
+                    // onOpenLookupDialogClick: () => { pushPrevious("/lookupPage?f=isnKeepClause") }
                 },
                 {
                     type: "FieldLookup",
@@ -360,7 +360,7 @@ const ArcPage: FunctionComponent = () => {
                     dataService: getDataServiceIsnKeepPeriod(),
                     valueProperty: "name",
                     keyProperty: "isnKeepPeriod",
-                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
+                    onOpenLookupDialogClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
                 },
                 { type: "FieldMultiText", name: Fields.NAME, label: "arc:fields.name", rows: 3, maxLength: 2000, required: false, requiredMessage: t("arc:errors.name") } as FieldMultiText.IMultiText,
                 { type: "FieldInteger", name: Fields.VOLUME_NUM, label: "arc:fields.volumeNum", showCounter: false, max: 999 },
@@ -377,7 +377,7 @@ const ArcPage: FunctionComponent = () => {
                     dataService: getDataService(),
                     valueProperty: "name",
                     keyProperty: "isnKeepPeriod",
-                    onButtonClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
+                    onOpenLookupDialogClick: () => { pushPrevious("/lookupPage?f=isnKeepPeriod") }
                 },
                 { type: "FieldText", name: Fields.ARCHIVAL_CODE, label: "arc:fields.archivalCode", maxLength: 300 },
                 { type: "FieldDateTime", name: Fields.MIN_DOC_DATE, label: "arc:fields.minDocDate" },
