@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Menu, Table, PlusIcon, BinIcon, Collapse, SmartBadge, message, modalMessage, SmartButton } from "@eos/rc-controls";
+import { Menu, Table, PlusIcon, BinIcon, Collapse, SmartBadge, message, modalMessage, SmartButton, ReceptionIcon } from "@eos/rc-controls";
 import { FormMode } from "../../ClientForms/FormMode";
 import { IValue, IColumn, 
     //IOtherValue 
@@ -10,14 +10,25 @@ import { IDataService,
 } from "./AjaxSelect";
 import useHistorySlim from '../../Hooks/useHistorySlim';
 export interface ITableMenuTool {
+    /**ключ */
     key: string | number;
+    /**иконка */
     component?: JSX.Element;
+    /**заголовок кнопки */
     title?: string;
+    /**событие по клику */
     onClick?: () => void;
+    /**спрятать заголовок */
     hiddenTitle?: boolean;
-    disabled?: boolean;
+    /**условие для отключения кнопки */
+    disabled: (selectedRowKeysLength: number) => boolean;
+    /**дочерние кнопки */
     children?: ITableMenuTool[];
     inMoreBlock?: boolean;
+    /** индекс элемнта в тулбаре */
+    index?: number;
+    /** имя иконки */
+    icon?: string;
 };
 
 export interface IDisplayTable {
@@ -102,6 +113,8 @@ export interface IDisplayTable {
      * onOpenLookupDialogClick - событие при нажатии на кнопку "Добавить".
      * */  
     keyProperty?: string;
+    /** Дополнительные копки в тулбаре */
+    addTools?: ITableMenuTool[];
 }
 
 const DisplayTable = React.forwardRef<any, IDisplayTable>(({
@@ -129,7 +142,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     deleteRowsToolbarWarning,
     hiddenDeleteToolTitle,
     hiddenAddRowToolTitle,
-    onOpenLookupDialogClick
+    onOpenLookupDialogClick,
+    addTools
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
@@ -159,7 +173,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         {
             component: <PlusIcon />,
             title: addRowToolbarTitle || 'Добавить строку',
-            disabled: isDisplay(),
+            disabled: () => isDisplay(),
             onClick: onOpenLookupDialogClick || showModalLookup,
             hiddenTitle: hiddenDeleteToolTitle || false,
             key: addRowToolbarTitle || 'PlusIcon'
@@ -167,7 +181,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         {
             component: <BinIcon />,
             title:  deleteRowsToolbarTitle || 'Удалить строки',
-            disabled: (isDisplay() || selectedRowKeys.length < 1),
+            disabled: () => (isDisplay() || selectedRowKeys.length < 1),
             onClick: deleteRowsToolbarWarning ? showDeleteModalMessage : deleteMultiLookupLookupRows,
             hiddenTitle: hiddenAddRowToolTitle || false,
             key: deleteRowsToolbarTitle || 'BinIcon'
@@ -182,6 +196,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                 onChange(newFormData);
             }
         }
+        console.log()
     }, []);
 
     useEffect(() => {
@@ -279,6 +294,28 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         return FormMode.display === mode;
     };
     function getMenuItemsList(toolsList: ITableMenuTool[]) {
+
+        if(addTools) {
+            addTools.forEach(tool => {
+                let newTool =  {
+                    component: getComponent(tool?.icon || ""),
+                    title: tool?.title,
+                    disabled: tool?.disabled,
+                    onClick: tool?.onClick,
+                    hiddenTitle: tool?.hiddenTitle,
+                    key: tool?.key
+                }
+
+                if(tool?.index !== undefined) {
+                    toolsList = [...toolsList.slice(0, tool?.index),
+                                newTool, 
+                                ...toolsList.slice(tool?.index)];
+                }
+                else {
+                    toolsList = [...toolsList, newTool];
+                }
+             });
+        }
         return (
             toolsList.map(({ component, onClick, disabled, title, children, key, hiddenTitle, inMoreBlock }) => {
                 if (children) return (
@@ -287,13 +324,13 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                         morePanelElement={inMoreBlock}
                         title={hiddenTitle ? title : undefined}
                         key={key}
-                        disabled={disabled}
+                        disabled={disabled(selectedRowKeys.length)}
                     >
-                        {getMenuItemsList(children)}
+                        { getMenuItemsList(children) }
                     </Menu.SubMenu>
                 )
                 return (
-                    <Menu.Item title={hiddenTitle ? title : undefined} key={key} onClick={onClick} disabled={disabled} morePanelElement={inMoreBlock}>
+                    <Menu.Item title={hiddenTitle ? title : undefined} key={key} onClick={onClick} disabled={disabled(selectedRowKeys.length)} morePanelElement={inMoreBlock}>
                         {component}
                         {!hiddenTitle && <span className="costil-margin" style={{ marginLeft: 5 }}>{title}</span>}
                     </Menu.Item>
@@ -301,6 +338,12 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             })
         );
     };
+    function getComponent(name: string) {
+        if ("ReceptionIcon" === name) {
+            return <ReceptionIcon />;
+        }
+        return <div></div>;
+    }
     function deleteMultiLookupLookupRows() {
         if (formData.current && selectedRowKeys) {
             let deleteIndexes: number[] = [];

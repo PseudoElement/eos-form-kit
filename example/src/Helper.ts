@@ -74,6 +74,15 @@ class Helper {
                 "notFoundContent": "Нет элементов",
                 "valueProperty": "name",
                 "keyProperty": "isnKeepPeriod",
+                "addTools": [{
+                    icon: "ReceptionIcon",
+                    title: 'Добавить строку',
+                    disabled: (selectedRowsLength: number) => selectedRowsLength < 1,
+                    onClick: () => console.log('Добавить строку'),
+                    hiddenTitle: false,
+                    key: 'PlusIcon',
+                    index: 0
+                }],
                 "onOpenLookupDialogClick": () => onMultiLookupAddClick && onMultiLookupAddClick('/lookupPage?f=multiLookup1'),
                 "dataService": {
                     loadData2Async: async () => {
