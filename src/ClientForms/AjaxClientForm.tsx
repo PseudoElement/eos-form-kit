@@ -196,10 +196,10 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
 
     const [loadSchema, setLoadSchema] = useState(false);
     const [isLoadingSchema, setLoadingSchema] = useState(false);
-    // const [loadItem, setLoadItem] = useState(false);
-    const loadItem = useRef<boolean>(false);
+    const [loadItem, setLoadItem] = useState(false);
+    // const loadItem = useRef<boolean>(false);
     // const [counter, setCounter] = useState<number>((prevState: number) => { return prevState + 1; });
-    const [counter, setCount] = useState(0);
+    // const [counter, setCount] = useState(0);
 
     const [isLoadingItem, setLoadingItem] = useState(false);
     const [clientFormProps, setClientFormProps] = useState<IClientFormProps>({ mode: props.mode });
@@ -229,9 +229,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             reloadItem() {
                 clientFormApi?.current?.reset();
                 if (schema) {
-                    // setLoadItem(true);
-                    loadItem.current = true;
-                    setCount(prev => { return prev + 1 });
+                    setLoadItem(true);
+                    // loadItem.current = true;
+                    // setCount(prev => { return prev + 1 });
                     // loadItemAsync();
                 }
             },
@@ -307,14 +307,22 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setLoadSchema(true);
     }, [props.mode]);
 
+    // useEffect(() => {
+    //     if (loadSchema)
+    //         loadSchemaAsync(props.mode);
+    // }, [loadSchema, counter]);
+    // useEffect(() => {
+    //     if (loadItem?.current === true)
+    //         loadItemAsync();
+    // }, [counter]); 
     useEffect(() => {
         if (loadSchema)
             loadSchemaAsync(props.mode);
-    }, [loadSchema, counter]);
-    useEffect(() => {
-        if (loadItem?.current === true)
+    }, [loadSchema]);
+     useEffect(() => {
+        if (loadItem === true)
             loadItemAsync();
-    }, [counter]);
+    }, [loadItem]);
 
     const loadSchemaAsync = async function (mode: FormMode) {
         setLoadSchema(false);
@@ -323,9 +331,9 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         setSchema(context);
         if (props.onContextLoaded)
             props.onContextLoaded(context);
-        // setLoadItem(true);
-        loadItem.current = true;
-        setCount(prev => { return prev + 1 });
+        setLoadItem(true);
+        // loadItem.current = true;
+        // setCount(prev => { return prev + 1 });
         setLoadingSchema(false);
     }
     const loadItemAsync = async function () {
@@ -345,8 +353,8 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         //     onLoadItemSucceeded(prepareValuesForRestore(currentState));
         // }
 
-        // setLoadItem(false);
-        loadItem.current = false;
+        setLoadItem(false);
+        // loadItem.current = false;
         setLoadingItem(true);
         if (props.dataService.getInitialValuesAsync)
             props.dataService.getInitialValuesAsync()
