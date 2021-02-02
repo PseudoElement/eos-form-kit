@@ -5,7 +5,7 @@ import React, {
 import { Form, SmartInput } from "@eos/rc-controls";
 import IField from "./IField";
 import { IDataService } from "./LookupComponents/AjaxSelect";
-import DisplayTable from "./LookupComponents/DisplayTable";
+import DisplayTable, { ITableMenuTool } from "./LookupComponents/DisplayTable";
 import { FormContext, IFormContext } from "../Context/Context";
 import { Rule } from "rc-field-form/lib/interface";
 import { BaseField } from "./BaseField";
@@ -110,6 +110,8 @@ export interface ILookupMulti extends IField {
      * onOpenLookupDialogClick - событие при нажатии на кнопку "Добавить".
      * */ 
     keyProperty?: string;
+    /** Дополнительные копки в тулбаре */
+    addTools?: ITableMenuTool[];
 }
 
 /**
@@ -161,6 +163,7 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         otherColumns={props.otherColumns}
                         hideDefaultColumn={props.hideDefaultColumn}
                         onChange={props.onChange}
+                        addTools={props.addTools}
                         onDataChange={(row: any) => {
                             context.setFieldValue(props.name || '', row)
                         }}
