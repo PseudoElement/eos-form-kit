@@ -375,7 +375,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
 
         const context: IContext | null = schema as IContext;
         const prps: IClientFormProps = {
-            initialValues: values,
+            initialValues: values ? { ...values } : values,
             mode: props.mode,
             tabsComponent: context && context.Tabs ? InternalHelper.createTabsComponent(context, props.getResourceText, props.getCustomtab) : undefined,
             rows: context && context.Rows ? InternalHelper.createFormRows(context, props.getResourceText) : undefined,
