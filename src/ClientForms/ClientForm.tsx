@@ -54,6 +54,8 @@ export interface IFormApi {
     enableField(name: string): void;
     hideField(name: string): void;
     showField(name: string): void;
+    setRequiredField(name: string): void;
+    unsetRequiredField(name: string): void;
     getFieldsValue(): Store;
     reset(): void;
     setDisabledMenuButton(disable: boolean, name: string): void
@@ -231,7 +233,6 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
 
             field.disabled = false;
             setFormContext({ ...formContext });
-
         }, []),
         reset: useCallback(() => {
             formContext.fields = [];
@@ -320,6 +321,42 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             formContext.menuButtons = buttons
             setFormContext({ ...formContext });
         }, []),
+        setRequiredField: useCallback((name: string) => {
+            if (!formContext.fields)
+                formContext.fields = [];
+            let field: IField | null = null;
+            for (let i = 0; i < formContext.fields.length; i++) {
+                if (formContext.fields[i].name === name) {
+                    field = formContext.fields[i];
+                    break;
+                }
+            }
+            if (!field) {
+                field = { name: name };
+                formContext.fields.push(field);
+            }
+
+            field.required = true;
+            setFormContext({ ...formContext });
+        }, []),
+        unsetRequiredField: useCallback((name: string) => {
+            if (!formContext.fields)
+                formContext.fields = [];
+            let field: IField | null = null;
+            for (let i = 0; i < formContext.fields.length; i++) {
+                if (formContext.fields[i].name === name) {
+                    field = formContext.fields[i];
+                    break;
+                }
+            }
+            if (!field) {
+                field = { name: name };
+                formContext.fields.push(field);
+            }
+
+            field.required = false;
+            setFormContext({ ...formContext });
+        }, [])
     });
 
     const selfRef = useRef();
@@ -372,6 +409,12 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             showField(name: string) {
                 formContext.showField(name);
             },
+            setRequiredField(name: string) {
+                formContext.setRequiredField(name);
+            },
+            unsetRequiredField(name: string) {
+                formContext.unsetRequiredField(name);
+            },
             getFieldsValue(): Store {
                 rcFormForm?.getFieldsValue();
                 return rcFormForm?.getFieldsValue() || {};
@@ -379,8 +422,12 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
             reset() {
                 formContext?.reset();
             },
-            setDisabledMenuButton: formContext?.setDisabledMenuButton,
-            setVisibleMenuButton: formContext?.setVisibleMenuButton
+            setDisabledMenuButton(disable: boolean, name: string) {
+                formContext?.setDisabledMenuButton?.(disable, name);
+            },
+            setVisibleMenuButton(disable: boolean, name: string) {
+                formContext?.setVisibleMenuButton?.(disable, name);
+            }
         }
         return api;
     });
@@ -413,66 +460,66 @@ export const Form = forwardRef<any, IForm>((props: IForm, ref) => {
 
     const memoizedForm = useMemo(() => {
         return (
-                <RcForm
-                    form={rcFormForm}
-                    ref={rcFormRef}
-                    // style={{ height: "100%", display: rcFormDisplayStyle }}
-                    style={{ height: "100%" }}
-                    name="basic" layout="vertical"
-                    initialValues={props.initialValues}
-                    onFinish={(values: Store) => {
-                        let formValues: Store;
-                        if (props.noTrimFieldValues)
-                            formValues = values;
-                        else
-                            formValues = trim(values);
+            <RcForm
+                form={rcFormForm}
+                ref={rcFormRef}
+                // style={{ height: "100%", display: rcFormDisplayStyle }}
+                style={{ height: "100%" }}
+                name="basic" layout="vertical"
+                initialValues={props.initialValues}
+                onFinish={(values: Store) => {
+                    let formValues: Store;
+                    if (props.noTrimFieldValues)
+                        formValues = values;
+                    else
+                        formValues = trim(values);
 
-                        if (props?.onFinish)
-                            props?.onFinish(formValues);
+                    if (props?.onFinish)
+                        props?.onFinish(formValues);
+                }}
+                onFinishFailed={onFinishFailed}
+                onValuesChange={(changedValues: any, values: any) => {
+                    setWasModified(true);
+                    if (props.onValuesChange)
+                        props.onValuesChange(changedValues, values);
+                }} >
+                {!props.disableHeader &&
+                    <FormTitle
+                        ref={formTitleApi}
+                        formTitle={props.formTitle}
+                        mode={mode}
+                        title={props.title}
+                        onCancelClick={(e) => onCancelClick(e)}
+                        onEditClick={props.onEditClick}
+                        enableLeftIcon={props.enableLeftIcon}
+                        isHiddenLeftIcon={props.isHiddenLeftIcon}
+                        leftIconTitle={props.leftIconTitle}
+                        disableEditButton={props.disableEditButton}
+                        disableCloseButton={props.disableCloseButton}
+                        additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
+                        closeTitle={props.closeTitle}
+                        finishTitle={props.finishTitle}
+                        editTitle={props.editTitle}
+                    />}
+                <ToolBar {...props.toolbar}></ToolBar>
+                <ClientTabs ref={clientTabsApi}
+                    className={props?.tabsComponent?.className}
+                    tabBarStyle={props?.tabsComponent?.tabBarStyle}
+                    defaultActiveKey={currentState ?? props.tabsComponent?.defaultActiveKey}
+                    tabs={props?.tabsComponent?.tabs}
+                    fields={props?.tabsComponent?.fields}
+                    invalidFields={invalidFields}
+                    onChange={(activeKey: string) => {
+                        setState("activeKey", activeKey);
+                        if (props.tabsComponent && props.tabsComponent.onChange)
+                            props.tabsComponent.onChange(activeKey);
+                        if (props.onTabsChange)
+                            props.onTabsChange(activeKey);
                     }}
-                    onFinishFailed={onFinishFailed}
-                    onValuesChange={(changedValues: any, values: any) => {
-                        setWasModified(true);
-                        if (props.onValuesChange)
-                            props.onValuesChange(changedValues, values);
-                    }} >
-                    {!props.disableHeader &&
-                        <FormTitle
-                            ref={formTitleApi}
-                            formTitle={props.formTitle}
-                            mode={mode}
-                            title={props.title}
-                            onCancelClick={(e) => onCancelClick(e)}
-                            onEditClick={props.onEditClick}
-                            enableLeftIcon={props.enableLeftIcon}
-                            isHiddenLeftIcon={props.isHiddenLeftIcon}
-                            leftIconTitle={props.leftIconTitle}
-                            disableEditButton={props.disableEditButton}
-                            disableCloseButton={props.disableCloseButton}
-                            additionalDispFormTitleButtons={props.additionalDispFormTitleButtons}
-                            closeTitle={props.closeTitle}
-                            finishTitle={props.finishTitle}
-                            editTitle={props.editTitle}
-                        />}
-                    <ToolBar {...props.toolbar}></ToolBar>
-                    <ClientTabs ref={clientTabsApi}
-                        className={props?.tabsComponent?.className}
-                        tabBarStyle={props?.tabsComponent?.tabBarStyle}
-                        defaultActiveKey={currentState ?? props.tabsComponent?.defaultActiveKey}
-                        tabs={props?.tabsComponent?.tabs}
-                        fields={props?.tabsComponent?.fields}
-                        invalidFields={invalidFields}
-                        onChange={(activeKey: string) => {
-                            setState("activeKey", activeKey);
-                            if (props.tabsComponent && props.tabsComponent.onChange)
-                                props.tabsComponent.onChange(activeKey);
-                            if (props.onTabsChange)
-                                props.onTabsChange(activeKey);
-                        }}
-                        getCustomRow={props.getCustomRow}
-                    />
-                    {props.rows && <FormRows rows={props?.rows?.rows} getCustomRow={props.getCustomRow} />}
-                </RcForm>
+                    getCustomRow={props.getCustomRow}
+                />
+                {props.rows && <FormRows rows={props?.rows?.rows} getCustomRow={props.getCustomRow} />}
+            </RcForm>
         );
     }, [props.initialValues, mode]);
 

@@ -30,15 +30,15 @@ export const Integer = React.forwardRef<any, IInteger>((props: IInteger, ref) =>
         rules={[FieldsHelper.getIntegerRule()]}
     />);
 
-    function getNew(props: IInteger, ref: any, rules?: Rule[]) {
+    function getNew(props: IInteger, ref: any, rules?: Rule[], required?: boolean) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <SmartNumber placeholder={props.placeholder} ref={ref} width={"100%"} required={props.required} defaultValue={props.defaultValue} min={props.min} max={props.max} counter={props.showCounter} />
+                <SmartNumber placeholder={props.placeholder} ref={ref} width={"100%"} required={required} defaultValue={props.defaultValue} min={props.min} max={props.max} counter={props.showCounter} />
             </Form.Item>
         );
     }
-    function getEdit(props: IInteger, ref: any, rules?: Rule[]) {
-        return getNew(props, ref, rules);
+    function getEdit(props: IInteger, ref: any, rules?: Rule[], required?: boolean) {
+        return getNew(props, ref, rules, required);
     }
     function getDisplay(props: IInteger) {
         return FieldsHelper.getDisplayField(props.label, props.name);

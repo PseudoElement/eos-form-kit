@@ -170,10 +170,12 @@ export interface IFormApi {
     getFieldsValue(): Store;
     setDisabledMenuButton(disable: boolean, name: string): void;
     setVisibleMenuButton(visible: boolean, name: string): void;
-    /**Включает анимация загрузки данных. */
+    /**Включает анимацию загрузки данных. */
     enableAnimation(): void;
-    /**Выключает анимация загрузки данных. */
+    /**Выключает анимацию загрузки данных. */
     disableAnimation(): void;
+    setRequiredField(name: string): void;
+    unsetRequiredField(name: string): void;
 }
 
 
@@ -285,6 +287,12 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
             },
             disableAnimation() {
                 stopAnimation.current = true;
+            },
+            setRequiredField(name: string) {
+                clientFormApi?.current?.setRequiredField(name);
+            },
+            unsetRequiredField(name: string) {
+                clientFormApi?.current?.unsetRequiredField(name);
             }
         }
         return api;
@@ -319,7 +327,7 @@ export const Form = React.forwardRef<any, IForm>((props: IForm, ref) => {
         if (loadSchema)
             loadSchemaAsync(props.mode);
     }, [loadSchema]);
-     useEffect(() => {
+    useEffect(() => {
         if (loadItem === true)
             loadItemAsync();
     }, [loadItem]);
