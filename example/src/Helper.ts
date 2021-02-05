@@ -7,26 +7,26 @@ const secondItem = {
         { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }] }
     ],
     "multiLookup1": [{
-            code: null,
-            deleted: "N",
-            isEpk: "N",
-            isPersonal: "N",
-            isnKeepPeriod: 10,
-            keepYears: 5,
-            name: "8 лет",
-            note: null,
-            protected: "N"
+        code: null,
+        deleted: "N",
+        isEpk: "N",
+        isPersonal: "N",
+        isnKeepPeriod: 10,
+        keepYears: 5,
+        name: "8 лет",
+        note: null,
+        protected: "N"
     },
     {
-            code: null,
-            deleted: "F",
-            isEpk: "N",
-            isPersonal: "N",
-            isnKeepPeriod: 11,
-            keepYears: 5,
-            name: "7 лет",
-            note: null,
-            protected: "N"
+        code: null,
+        deleted: "F",
+        isEpk: "N",
+        isPersonal: "N",
+        isnKeepPeriod: 11,
+        keepYears: 5,
+        name: "7 лет",
+        note: null,
+        protected: "N"
     }],
     "multiLookup2": [
         { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }, { value: "двадцать шесть", name: "anotherColumn" }] },
