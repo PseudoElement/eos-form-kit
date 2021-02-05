@@ -80,7 +80,7 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
     fieldName,
     value,
     notFoundContent,
-    // required,
+    required,
     dataService: getDataService,
     ctx,
     onButtonClick
@@ -244,6 +244,7 @@ export const AutoComplete = React.forwardRef<any, IAutoComplete>(({
                     onFocus={onFocus}
                     delay={DEFAULT_SEARCH_DELAY_MS_VALUE}
                     onClear={onClear}
+                    required={required}
                     onSearch={handleSearch}
                     options={
                         queryAmountInfo === ''

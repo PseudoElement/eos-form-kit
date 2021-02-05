@@ -40,15 +40,26 @@ export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
             FieldsHelper.getInputSuffix(props.additionalText, props.icon) :
             undefined;
     }
-    function getNew(props: IText, ref: any, rules?: Rule[]) {
+    function getNew(props: IText, ref: any, rules?: Rule[], required?: boolean) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <SmartInput placeholder={props.placeholder} onChange={onChange} value={props.value} defaultValue={props.defaultValue} iconType={(getSuffix(props) === undefined) ? "none" : undefined} suffix={getSuffix(props)} width={"100%"} ref={ref} required={props.required} allowClear={props.allowClear} maxLength={props.maxLength} />
+                <SmartInput
+                    placeholder={props.placeholder}
+                    onChange={onChange}
+                    value={props.value}
+                    defaultValue={props.defaultValue}
+                    iconType={(getSuffix(props) === undefined) ? "none" : undefined}
+                    suffix={getSuffix(props)}
+                    width={"100%"}
+                    ref={ref}
+                    required={required}
+                    allowClear={props.allowClear}
+                    maxLength={props.maxLength} />
             </Form.Item>
         );
     }
-    function getEdit(props: IText, ref: any, rules?: Rule[]) {
-        return getNew(props, ref, rules);
+    function getEdit(props: IText, ref: any, rules?: Rule[], required?: boolean) {
+        return getNew(props, ref, rules, required);
     }
     function getDisplay(props: IText) {
         return FieldsHelper.getDisplayField(props.label, props.name, props.value, getSuffix(props), props.defaultValue, props.onChange);

@@ -25,15 +25,15 @@ export const MultiText = React.forwardRef<any, IMultiText>((props: IMultiText, r
         getDisplayField={getDisplay}
     />);
 
-    function getNew(props: IMultiText, ref: any, rules?: Rule[]) {
+    function getNew(props: IMultiText, ref: any, rules?: Rule[], required?: boolean) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
-                <SmartTextArea placeholder={props.placeholder} width={"100%"} ref={ref} required={props.required} rows={props.rows ?? DEFAULT_ROWS} maxLength={props.maxLength} />
+                <SmartTextArea placeholder={props.placeholder} width={"100%"} ref={ref} required={required} rows={props.rows ?? DEFAULT_ROWS} maxLength={props.maxLength} />
             </Form.Item>
         );
     }
-    function getEdit(props: IMultiText, ref: any, rules?: Rule[]) {
-        return getNew(props, ref, rules);
+    function getEdit(props: IMultiText, ref: any, rules?: Rule[], required?: boolean) {
+        return getNew(props, ref, rules,required);
     }
     function getDisplay(props: IMultiText, ref: any, rules?: Rule[]) {
         return (

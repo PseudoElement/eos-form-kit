@@ -37,14 +37,14 @@ export const DateTime = React.forwardRef<any, IDateTime>((props: IDateTime, ref)
         getDisplayField={getDisplay}
     />);
 
-    function getNew(props: IDateTime, ref: any, rules?: Rule[]) {
+    function getNew(props: IDateTime, ref: any, rules?: Rule[], required?: boolean) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules} >
                 <SmartDatePicker
                     placeholder={props.placeholder}
                     ref={ref}
                     picker={getPickerMode(props.dateTimeMode)}
-                    required={props.required}
+                    required={required}
                     width={"100%"}
                     disabledDate={(e) => {
                         if (props.minDate || props.maxDate) {
@@ -67,8 +67,8 @@ export const DateTime = React.forwardRef<any, IDateTime>((props: IDateTime, ref)
             </Form.Item>
         );
     }
-    function getEdit(props: IDateTime, ref: any, rules?: Rule[]) {
-        return getNew(props, ref, rules);
+    function getEdit(props: IDateTime, ref: any, rules?: Rule[], required?: boolean) {
+        return getNew(props, ref, rules, required);
     }
     function getDisplay(props: IDateTime, ref: any, rules?: Rule[]) {
         return (

@@ -8,8 +8,8 @@ import { FieldsHelper } from "./FieldsHelper";
 export interface IBaseField {
     field: IField;
     getDisplayField(props: IField, ref: any, rules?: Rule[]): JSX.Element;
-    getEditField(props: IField, ref: any, rules?: Rule[]): JSX.Element;
-    getNewField(props: IField, ref: any, rules?: Rule[]): JSX.Element;
+    getEditField(props: IField, ref: any, rules?: Rule[], required?: boolean): JSX.Element;
+    getNewField(props: IField, ref: any, rules?: Rule[], required?: boolean): JSX.Element;
     rules?: Rule[];
 }
 
@@ -17,67 +17,52 @@ export const BaseField = React.forwardRef<any, IBaseField>((props: IBaseField, r
     const context = useContext(FormContext);
     const [mode, setMode] = useState(props.field.mode);
     const [hidden, setHidden] = useState(false);
+    const [required, setRequired] = useState(props.field.required);
 
-    // useEffect(() => {
-    //     const formMode: FormMode = getFormMode();
-    //     setMode(formMode);
-    // }, [props.field.mode]);
-    // useEffect(() => {
-    //     const formMode: FormMode = getFormMode();
-    //     setMode(formMode);
-    // }, [context]);
     useEffect(() => {
+        //  Простановка нового типа отрисовки поля.
         const formMode: FormMode = getFormMode();
         if (formMode != mode)
             setMode(formMode);
+
+        //  Простановка видимости поля.
         const hiddenFromContext = getHidden();
         if (hiddenFromContext != hidden)
             setHidden(hiddenFromContext);
+            
+        //  Простановка обязательности поля.
+        const requiredFromContext = getRequired();
+        if (requiredFromContext !== undefined && requiredFromContext !== required)
+            setRequired(requiredFromContext);
     }, [context, props.field.mode]);
 
 
-    let rules: Rule[] = [];
-    if (props.field.required)
-        rules.push(FieldsHelper.getRequiredRule(props.field.requiredMessage));
-    if (props.rules)
-        for (let rule of props.rules)
-            rules.push(rule);
-
-    // return useMemo(() => {
-
-    // let fieldHtml;
-    // switch (mode) {
-    //     case FormMode.display:
-    //         fieldHtml = props.getDisplayField(props.field, ref, rules);
-    //         break;
-    //     case FormMode.edit:
-    //         fieldHtml = props.getEditField(props.field, ref, rules);
-    //         break;
-    //     case FormMode.new:
-    //     default:
-    //         fieldHtml = props.getNewField(props.field, ref, rules);
-    //         break;
-    // }
-
     const memoized = useMemo(() => {
+        let rules: Rule[] = [];
+        if (required)
+            rules.push(FieldsHelper.getRequiredRule(props.field.requiredMessage));
+        if (props.rules)
+            for (let rule of props.rules)
+                rules.push(rule);
+
         let fieldHtml;
         switch (mode) {
             case FormMode.display:
                 fieldHtml = props.getDisplayField(props.field, ref, rules);
                 break;
             case FormMode.edit:
-                fieldHtml = props.getEditField(props.field, ref, rules);
+                fieldHtml = props.getEditField(props.field, ref, rules, required);
                 break;
             case FormMode.new:
             default:
-                fieldHtml = props.getNewField(props.field, ref, rules);
+                fieldHtml = props.getNewField(props.field, ref, rules, required);
                 break;
         }
         return (
             <div style={{ display: (hidden ? "none" : "") }}>
                 {fieldHtml}
             </div>);
-    }, [hidden, mode]);
+    }, [hidden, mode, required]);
 
     return memoized;
 
@@ -95,6 +80,11 @@ export const BaseField = React.forwardRef<any, IBaseField>((props: IBaseField, r
         const field = getFieldFromContext();
         return field?.hidden === true;
     }
+    function getRequired(): boolean | undefined {
+        const field = getFieldFromContext();
+        return field?.required;
+    }
+
     function getFieldFromContext() {
         if (context?.fields) {
             for (let field of context.fields) {

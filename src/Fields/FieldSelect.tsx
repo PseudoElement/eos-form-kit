@@ -52,13 +52,13 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect, ref) => {
         getDisplayField={getDisplay}
     />);
 
-    function getNew(props: ISelect, ref: any, rules?: Rule[]) {
+    function getNew(props: ISelect, ref: any, rules?: Rule[], required?: boolean) {
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules} >
                 <RcSelect
                     placeholder={props.placeholder}
                     ref={ref}
-                    required={props.required}
+                    required={required}
                     defaultValue={props.defaultValue}
                     onChange={props.onChange}
                 >
@@ -75,8 +75,8 @@ export const Select = React.forwardRef<any, ISelect>((props: ISelect, ref) => {
             </Form.Item >
         );
     }
-    function getEdit(props: ISelect, ref: any, rules?: Rule[]) {
-        return getNew(props, ref, rules);
+    function getEdit(props: ISelect, ref: any, rules?: Rule[], required?: boolean) {
+        return getNew(props, ref, rules, required);
     }
     function getDisplay(props: ISelect, ref: any, rules?: Rule[]) {
         return (

@@ -11,6 +11,8 @@ export interface IFormContext {
     enableField(name: string): void;
     hideField(name: string): void;
     showField(name: string): void;
+    setRequiredField(name: string): void;
+    unsetRequiredField(name: string): void;
     hideLeftIcon(): void;
     showLeftIcon(): void;
     setLeftIconTitle(title?: string): void;
@@ -26,6 +28,7 @@ export interface IField {
     name: string;
     disabled?: boolean;
     hidden?: boolean;
+    required?: boolean;
 }
 
 export interface IFormHeader {
@@ -46,6 +49,8 @@ export const defaultContext: IFormContext = {
     enableField() { },
     hideField() { },
     showField() { },
+    setRequiredField() { },
+    unsetRequiredField() { },
     reset() { },
     hideLeftIcon() { },
     showLeftIcon() { },

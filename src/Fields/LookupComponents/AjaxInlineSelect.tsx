@@ -20,12 +20,14 @@ export interface IInlineSelect {
 
     /**вызовется при выборе элемента списка */
     onValueSelected(item?: any): void;
-    
+
     /** Событие при клике на кнопку */
     onOpenLookupDialogClick?(): void
-    
+
     /**html атрибут placeholder. */
     placeholder?: string;
+    /**Обязательность поля. */
+    required?: boolean;
 }
 
 /** Структура элемента выпадающего списка */
@@ -71,8 +73,9 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
     showResultInfoText,
     resultInfoText,
     onValueSelected,
-    onOpenLookupDialogClick,    
-    placeholder
+    onOpenLookupDialogClick,
+    placeholder,
+    required
 }) => {
     /** Объект индикатор загрузки */
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -123,7 +126,7 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
                         }
                         setIsSingleElem([...shortArray].length === 1);
                         setItems([...shortArray]);
-                    } 
+                    }
                     else {
                         setShowInfo(false)
                         setIsSingleElem(items.length === 1);
@@ -133,8 +136,8 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
                 else {
                     if (showResultInfoText === true || showResultInfoText === undefined) {
                         setShowInfo(true);
-                    }      
-                    setIsSingleElem(items.length === 1);       
+                    }
+                    setIsSingleElem(items.length === 1);
                     setItems(items);
                 }
                 setIsLoading(false);
@@ -176,7 +179,7 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
      */
     let onSelect = (value: any, option: any) => {
         if (value) {
-            loadItemById(value?.trim() ?? ''); 
+            loadItemById(value?.trim() ?? '');
         }
         if (onValueSelected) {
             onValueSelected(option?.item);
@@ -202,10 +205,10 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
 
     return (
         <Spin spinning={isLoading}>
-            <div style={{display: "flex"}}>
+            <div style={{ display: "flex" }}>
                 <RcSelect ref={focusRef}
                     placeholder={placeholder}
-                    showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true }
+                    showSearch={manualInputAllowed !== undefined && manualInputAllowed !== null ? manualInputAllowed : true}
                     value={''}
                     notFoundContent={notFoundContent}
                     onSearch={handleSearch}
@@ -218,6 +221,7 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
                     allowClear={true}
                     filterOption={false}
                     defaultActiveFirstOption={isSingleElem}
+                    required={required}
                 >
                     {getOptionList()}
                 </RcSelect>
@@ -231,30 +235,30 @@ export const InlineSelect = React.forwardRef<any, IInlineSelect>(({
     // Получить список элементов для отрисовки
     function getOptionList(): ReactNode | ReactNode[] {
         if (showInfo) {
-            return [<RcSelect.Option key={INFO_ELEM_KEY_VALUE} value={INFO_ELEM_KEY_VALUE} disabled style={{cursor: INFO_ELEM_CURSOR_VALUE}}>{INFO_ELEM_TEXT_VALUE}</RcSelect.Option>,
-                ...items.map((item: IOptionItem) => {
-                    return <RcSelect.Option 
-                                key={`${item?.key}`} 
-                                value={item?.value ?? `${item?.key}`}
-                                disabled={item?.disabled}
-                                item={item}
-                                style={item?.disabled ? {color: DISABLED_ELEM_COLOR_VALUE} : item?.isSpecific ? {color: SPECIFIC_ELEM_COLOR_VALUE} : {}}
-                                >
-                                    {item?.value ?? `${item?.key}`}
-                            </RcSelect.Option>
+            return [<RcSelect.Option key={INFO_ELEM_KEY_VALUE} value={INFO_ELEM_KEY_VALUE} disabled style={{ cursor: INFO_ELEM_CURSOR_VALUE }}>{INFO_ELEM_TEXT_VALUE}</RcSelect.Option>,
+            ...items.map((item: IOptionItem) => {
+                return <RcSelect.Option
+                    key={`${item?.key}`}
+                    value={item?.value ?? `${item?.key}`}
+                    disabled={item?.disabled}
+                    item={item}
+                    style={item?.disabled ? { color: DISABLED_ELEM_COLOR_VALUE } : item?.isSpecific ? { color: SPECIFIC_ELEM_COLOR_VALUE } : {}}
+                >
+                    {item?.value ?? `${item?.key}`}
+                </RcSelect.Option>
             })]
-        } 
+        }
         else {
             return items.map((item: IOptionItem) => {
-                return <RcSelect.Option 
-                            key={`${item?.key}`} 
-                            value={item?.value ?? `${item?.key}`}
-                            disabled={item?.disabled}
-                            item={item}
-                            style={item?.disabled ? {color: DISABLED_ELEM_COLOR_VALUE} : item?.isSpecific ? {color: SPECIFIC_ELEM_COLOR_VALUE} : {}}
-                            >
-                                {item?.value ?? `${item?.key}`}
-                        </RcSelect.Option>
+                return <RcSelect.Option
+                    key={`${item?.key}`}
+                    value={item?.value ?? `${item?.key}`}
+                    disabled={item?.disabled}
+                    item={item}
+                    style={item?.disabled ? { color: DISABLED_ELEM_COLOR_VALUE } : item?.isSpecific ? { color: SPECIFIC_ELEM_COLOR_VALUE } : {}}
+                >
+                    {item?.value ?? `${item?.key}`}
+                </RcSelect.Option>
             })
         }
     }

@@ -226,6 +226,22 @@ const AjaxClientFormApi: FunctionComponent = () => {
                     formApi?.current?.showField("ind");
                     formApi?.current?.showField("name");
                 }}
+                onDisableTitleClick={() => { formApi?.current?.disableField("name2"); }}
+                onEnableTitleClick={() => { formApi?.current?.enableField("name2"); }}
+                onShowTitleClick={() => { formApi?.current?.showField("name2"); }}
+                onHideTitleClick={() => { formApi?.current?.hideField("name2"); }}
+                onSetRquiredTitleClick={() => { formApi?.current?.setRequiredField("name2"); }}
+                onUnsetRquiredTitleClick={() => { formApi?.current?.unsetRequiredField("name2"); }}
+                onSetRquiredFieldsClick={() => {
+                    const fields = Helper.getFields(mode, (path) => pushPrevious(path));
+                    for (let field of fields)
+                        formApi?.current?.setRequiredField(field.name);
+                }}
+                onUnsetRquiredFieldsClick={() => {
+                    const fields = Helper.getFields(mode, (path) => pushPrevious(path));
+                    for (let field of fields)
+                        formApi?.current?.unsetRequiredField(field.name);
+                }}
             />
             <AjaxClientForm.Form
                 toolbar={toolbar}
@@ -312,6 +328,14 @@ interface IButtonsPanel {
     onHideFieldsClick?(): void;
     onShowFieldsClick?(): void;
 
+    onDisableTitleClick?(): void;
+    onEnableTitleClick?(): void;
+    onShowTitleClick?(): void;
+    onHideTitleClick?(): void;
+    onSetRquiredTitleClick?(): void;
+    onUnsetRquiredTitleClick?(): void;
+    onSetRquiredFieldsClick?(): void;
+    onUnsetRquiredFieldsClick?(): void;
 }
 interface IButtonsPanelApi {
     setText(text?: string): void;
@@ -350,6 +374,14 @@ const ButtonsPanel = forwardRef<any, IButtonsPanel>((props: IButtonsPanel, ref: 
             <SmartButton onClick={props.onDisableFieldsClick}>Disable fields</SmartButton>
             <SmartButton onClick={props.onHideFieldsClick}>Hide fields</SmartButton>
             <SmartButton onClick={props.onShowFieldsClick}>Show fields</SmartButton>
+            <SmartButton onClick={props.onDisableTitleClick}>Disable Title</SmartButton>
+            <SmartButton onClick={props.onEnableTitleClick}>EnableTitle</SmartButton>
+            <SmartButton onClick={props.onShowTitleClick}>Show Title</SmartButton>
+            <SmartButton onClick={props.onHideTitleClick}>Hide Title</SmartButton>
+            <SmartButton onClick={props.onSetRquiredTitleClick}>Set Rquired Title</SmartButton>
+            <SmartButton onClick={props.onUnsetRquiredTitleClick}>Unset Rquired Title</SmartButton>
+            <SmartButton onClick={props.onSetRquiredFieldsClick}>Set required fields</SmartButton>
+            <SmartButton onClick={props.onUnsetRquiredFieldsClick}>Unset required fields</SmartButton>
         </div>
         <div>{text}</div>
     </div>);
