@@ -115,6 +115,8 @@ export interface IDisplayTable {
     keyProperty?: string;
     /** Дополнительные копки в тулбаре */
     addTools?: ITableMenuTool[];
+    /** Событие по двойному клику по записи*/
+    onRowDoubleClick?: (selectedRowKey?: number) => void;
 }
 
 const DisplayTable = React.forwardRef<any, IDisplayTable>(({
@@ -143,7 +145,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     hiddenDeleteToolTitle,
     hiddenAddRowToolTitle,
     onOpenLookupDialogClick,
-    addTools
+    addTools,
+    onRowDoubleClick
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
@@ -189,8 +192,23 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     ];
 
     useEffect(() => {    
-        if (name && historyState  && historyState[name]) {
-            let newFormData = [...value, ...getHistoryStateData(historyState[name])];
+        if (name && historyState && keyProperty && valueProperty && historyState[name]) {
+            let historyData = getHistoryStateData(historyState[name]);
+
+            let isInData = formData.current?.find((stateRecord: any) => {
+                return historyData.find((historyRecord: any) => {
+                   return stateRecord[keyProperty] === historyRecord[keyProperty];
+                })
+            });
+            
+            if(!allowDuplication && isInData)  {
+                if (addRowToolbarWarning) {
+                    message("warning", addRowToolbarWarning);
+                } 
+                return;
+            }
+
+            let newFormData = [...value, ...historyData];
             formData.current = newFormData;        
             if (onChange) {
                 onChange(newFormData);
@@ -216,6 +234,12 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         setSelectedRowKeys([]);
     }, [value]);
 
+    const onRow = (row: any) => {
+        return {
+            onDoubleClick: onRowDoubleClick ? () => onRowDoubleClick(row?.key) : undefined
+        };
+    };
+
     return (
         <div>
             <Collapse key={'1'} expandIconPosition={'right'} ghost bordered={true}  >
@@ -239,6 +263,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                             showHeader={showHeader}
                             settings={{ isDraggable: false }}
                             pagination={pagination}
+                            onRow={onRow}
                         />
                     </Table.Menu>
                     <TableModal
@@ -365,7 +390,12 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     };
     function getDataSource(values?: any[]) {
         let data = values?.map((value: any) => {
-            let row = { key: getRowKey(), defaultColumn: value.value };
+            let row;
+            if(keyProperty && valueProperty) {
+                row = { key: value.key, defaultColumn: value.value };   
+            } else {
+                row = { key: getRowKey(), defaultColumn: value.value };
+            }
             if (value.other) {
                 for (let column of value.other) {
                     row[column.name] = column.value;
@@ -505,7 +535,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         return newData;
     }
     function getHistoryStateData(data: any) {
-        return data.map((item: any) => item?.data)
+        return data.map((item: any) => {
+            return (item?.data) ? item?.data : item;
+        });
     }
     // function checkBackUrl(backUrl: string) {
     //     backUrl = backUrl;
