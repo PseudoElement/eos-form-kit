@@ -197,7 +197,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
             let isInData = formData.current?.find((stateRecord: any) => {
                 return historyData.find((historyRecord: any) => {
-                   return stateRecord[keyProperty] === historyRecord[keyProperty];
+                   return stateRecord.key === historyRecord[keyProperty];
                 })
             });
             
@@ -209,12 +209,16 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             }
 
             let newFormData = [...value, ...historyData];
-            formData.current = newFormData;        
+            formData.current = getInitialValue(newFormData);        
             if (onChange) {
-                onChange(newFormData);
+                onChange(getInitialValue(newFormData));
+            }
+        } 
+        else if (keyProperty && valueProperty) {
+            if (onChange) {
+                onChange(getInitialValue(value));
             }
         }
-        console.log()
     }, []);
 
     useEffect(() => {
@@ -224,7 +228,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     }, [rowFromLookup]);
     useEffect(() => {
         if (value) {
-            setDataSource(getDataSource(getInitialValue(value)));
+            setDataSource(getDataSource(value));
             formData.current = value;
         } 
         else {
@@ -513,6 +517,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         let newData
         if(otherColumns) {
             newData = data.map((item) => {
+                if(item?.key && item?.value && item?.other) {
+                    return item;
+                }
                 return { 
                     key: item?.[key],
                     value: item?.[value],
