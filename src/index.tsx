@@ -5,8 +5,7 @@ export * as SearchForm from './Search/SearchForm';
 export { default as useBackUrlHistory, IBackPageInfo } from './Hooks/useBackUrlHistory';
 export { default as useHistorySlim, IHistorySlimState, IHistorySlimItem } from './Hooks/useHistorySlim';
 export { default as useHistoryWriter } from './Hooks/useHistoryState';
-export { default as useHistoryListener, HistoryActionType } from './Hooks/useHistoryListener';
-export { default as useTitleChanger } from './Hooks/useTitleChanger';
+export { default as useHistoryListener } from './Hooks/useHistoryListener';
 
 export { default as ClientTabs, IClientTabs, IClientTab, IClientTabsApi, IFieldsInfo } from './ClientForms/ClientTabs';
 export { default as FormCell, IFormCell, IWidthCell, IAutoCell, IThreeFieldsCell, IWidthAutoCell, CellType, WidthType } from './ClientForms/FormCell';
