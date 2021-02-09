@@ -213,11 +213,6 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             if (onChange) {
                 onChange(getInitialValue(newFormData));
             }
-        } 
-        else if (keyProperty && valueProperty) {
-            if (onChange) {
-                onChange(getInitialValue(value));
-            }
         }
     }, []);
 
@@ -228,7 +223,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     }, [rowFromLookup]);
     useEffect(() => {
         if (value) {
-            setDataSource(getDataSource(value));
+            setDataSource(getDataSource(getInitialValue(value)));
             formData.current = value;
         } 
         else {
