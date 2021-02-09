@@ -7,26 +7,26 @@ const secondItem = {
         { key: "3", value: "три", other: [{ value: "тридцать три", name: "secondColumn" }] }
     ],
     "multiLookup1": [{
-            code: null,
-            deleted: "N",
-            isEpk: "N",
-            isPersonal: "N",
-            isnKeepPeriod: 10,
-            keepYears: 5,
-            name: "8 лет",
-            note: null,
-            protected: "N"
+        code: null,
+        deleted: "N",
+        isEpk: "N",
+        isPersonal: "N",
+        isnKeepPeriod: 10,
+        keepYears: 5,
+        name: "8 лет",
+        note: null,
+        protected: "N"
     },
     {
-            code: null,
-            deleted: "F",
-            isEpk: "N",
-            isPersonal: "N",
-            isnKeepPeriod: 11,
-            keepYears: 5,
-            name: "7 лет",
-            note: null,
-            protected: "N"
+        code: null,
+        deleted: "F",
+        isEpk: "N",
+        isPersonal: "N",
+        isnKeepPeriod: 11,
+        keepYears: 5,
+        name: "7 лет",
+        note: null,
+        protected: "N"
     }],
     "multiLookup2": [
         { key: "2", value: "два", other: [{ value: "двадцать два", name: "secondColumn" }, { value: "двадцать шесть", name: "anotherColumn" }] },
@@ -231,7 +231,8 @@ class Helper {
                     { "label": "anotherColumn", "name": "anotherColumn", "disabled": false }
                 ]
             },
-            { type: "FieldCheckbox", name: "E_DOCUMENT", label: " ", description: "Для электронных документов" },
+            { type: "FieldCheckbox", name: "E_DOCUMENT", description: "Для электронных документов" },
+            // { type: "FieldCheckbox", name: "E_DOCUMENT", label: " ", description: "Для электронных документов" },
             { "disabled": true, "label": "Находится в", "name": "parentName", "required": false, "requiredMessage": null, "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
             { "disabled": false, "label": "Номер", "name": "ind", "required": true, "requiredMessage": "inventory:formErrors.ind", "type": "FieldText", "value": null, "additionalText": null, "allowClear": true, "maxLength": 24 },
             { "disabled": false, "label": "Том", "name": "volumeNum", "required": false, "requiredMessage": null, "type": "FieldInteger", "value": null, "max": 32767, "min": 0, "showCounter": false },
@@ -259,6 +260,7 @@ class Helper {
                     { "key": "9", "value": "Обычный со св-вами.", "disabled": false, "isSpecific": false, "other": [{ "value": "четыре три", "name": "secondColumn" }, { "value": "девять три", "name": "anotherColumn" }] },
                 ]
             },
+            { "disabled": false, "label": "Наименование2", "name": "name2", "required": true, "requiredMessage": "Наименование2 обязательно", "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
             { "disabled": false, "label": "Наименование", "name": "name", "required": true, "requiredMessage": "inventory:formErrors.name", "type": "FieldText", "value": null, "additionalText": null, "allowClear": false, "maxLength": null },
             { "disabled": false, "label": "Примечание", "name": "note", "required": false, "requiredMessage": null, "type": "FieldMultiText", "value": null, "maxLength": null, "rows": null },
             { "disabled": false, "label": "Год начала", "name": "startYear", "required": true, "requiredMessage": "inventory:formErrors.startYear", "type": "FieldDateTime", "value": null, "dateTimeMode": 1, "maxDate": "2999", "minDate": "1753" },
@@ -429,6 +431,7 @@ class Helper {
                         { "Type": 0, "Fields": ["volumeNum"], "Width": 4 },
                         { "Type": 0, "Fields": ["keepCategory"], "Width": 12 }]
                     },
+                    { "Cells": [{ "Type": 0, "Fields": ["name2"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["name"], "Width": 24 }] },
                     { "Cells": [{ "Type": 0, "Fields": ["note"], "Width": 24 }] },
                     {

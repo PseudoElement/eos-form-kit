@@ -1,6 +1,6 @@
 {
   "name": "@eos/form-generator",
-  "version": "1.4.14",
+  "version": "1.4.15",
   "description": "Generator for new, edit, disp forms",
   "author": "Soldatov",
   "license": "MIT",
@@ -21,7 +21,8 @@
     "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
     "predeploy": "cd example && npm install && npm run build",
-    "deploy": "gh-pages -d example/build"
+    "deploy": "gh-pages -d example/build",
+    "bundle": "node bundle.js"
   },
   "peerDependencies": {
     "@eos/rc-controls": "1.6.1",
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "@eos/rc-controls": "1.6.1",
+    "@svgr/rollup": "^5.5.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -63,10 +65,19 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.1",
+    "rollup": "^2.38.5",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.0",
+    "rollup-plugin-typescript2": "^0.29.0",
+    "rollup-plugin-url": "^3.0.1",
     "typescript": "^3.7.5"
   },
   "files": [
     "dist"
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "type": "module"
 }

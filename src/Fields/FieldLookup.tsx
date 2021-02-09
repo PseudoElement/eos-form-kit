@@ -93,7 +93,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
 
     return memoLookup;
 
-    function getNew(props: ILookup, ref: any, rules?: Rule[]) {
+    function getNew(props: ILookup, ref: any, rules?: Rule[], required?: boolean) {
         const ctx: IFormContext = useContext(FormContext);
         // реф поставлен на инпут для установления фокуса при незаполненном поле
         if (props.inlineMode === true && props.onValueSelected) {
@@ -113,6 +113,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             showResultInfoText={props.showResultInfoText}
                             onOpenLookupDialogClick={props.onOpenLookupDialogClick}
                             placeholder={props.placeholder}
+                            required={required}
                         />
                     </Form.Item>
                 </React.Fragment>
@@ -130,7 +131,7 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
                             ref={ref}
                             ctx={ctx}
                             fieldName={props?.name}
-                            required={props.required}
+                            required={required}
                             onChange={props.onChange}
                             notFoundContent={props.notFoundContent}
                             manualInputAllowed={props.manualInputAllowed}
@@ -148,8 +149,8 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
         }
 
     }
-    function getEdit(props: ILookup, ref: any, rules?: Rule[]) {
-        return getNew(props, ref, rules);
+    function getEdit(props: ILookup, ref: any, rules?: Rule[], required?: boolean) {
+        return getNew(props, ref, rules, required);
     }
     function getDisplay(props: ILookup, ref: any, rules?: Rule[]) {
         return (

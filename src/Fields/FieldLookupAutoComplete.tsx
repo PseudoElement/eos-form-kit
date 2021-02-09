@@ -62,7 +62,7 @@ export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((pr
 
     return memoLookupAutoComplete;
 
-    function getNew(props: ILookupAutoComplete, ref: any, rules?: Rule[]) {
+    function getNew(props: ILookupAutoComplete, ref: any, rules?: Rule[], required?: boolean) {
         const ctx: IFormContext = useContext(FormContext)
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
@@ -71,7 +71,7 @@ export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((pr
                     ref={ref}
                     ctx={ctx}
                     fieldName={props.name}
-                    required={props.required}
+                    required={required}
                     onChange={props.onChange}
                     notFoundContent={props.notFoundContent}
                     onButtonClick={props.onButtonClick}
@@ -79,8 +79,8 @@ export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((pr
             </Form.Item>
         );
     }
-    function getEdit(props: ILookupAutoComplete, ref: any, rules?: Rule[]) {
-        return getNew(props, ref, rules);
+    function getEdit(props: ILookupAutoComplete, ref: any, rules?: Rule[], required?: boolean) {
+        return getNew(props, ref, rules, required);
     }
     function getDisplay(props: ILookupAutoComplete, ref: any, rules?: Rule[]) {
         return (
