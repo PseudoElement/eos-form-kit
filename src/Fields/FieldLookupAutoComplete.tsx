@@ -50,6 +50,8 @@ export function getFieldValueForPost(value: any) {
  * ЛукапАвтокомплит поле.
  */
 export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((props: ILookupAutoComplete, ref) => {
+    const ctx: IFormContext = useContext(FormContext);
+
     const memoLookupAutoComplete = useMemo(() => {
         return (<BaseField
             ref={ref}
@@ -63,7 +65,6 @@ export const LookupAutoComplete = React.forwardRef<any, ILookupAutoComplete>((pr
     return memoLookupAutoComplete;
 
     function getNew(props: ILookupAutoComplete, ref: any, rules?: Rule[], required?: boolean) {
-        const ctx: IFormContext = useContext(FormContext)
         return (
             <Form.Item label={props.label} name={props.name} style={{ marginBottom: 0, textTransform: "uppercase" }} rules={rules}>
                 <AjaxAutoComplete
