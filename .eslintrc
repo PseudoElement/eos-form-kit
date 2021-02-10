@@ -33,7 +33,8 @@
     "react/no-unused-prop-types": 0,
     "import/export": 0,
     "no-unused-vars": "warn",
-    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/rules-of-hooks": "error", 
+    "react-hooks/exhaustive-deps": "warn",
     "no-var": "off",
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
@@ -46,9 +47,6 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/member-delimiter-style": "off",
     "@typescript-eslint/interface-name-prefix": "off",
-    "no-unused-expressions": "off",
-    "react-hooks/exhaustive-deps": ["warn", {
-      "additionalHooks": "(useContext|useMyOtherCustomHook)"
-    }]
+    "no-unused-expressions": "off"
   }
 }
