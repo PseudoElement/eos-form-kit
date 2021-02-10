@@ -207,8 +207,14 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                 } 
                 return;
             }
+            
+            let newFormData;
+            if(value) {
+                newFormData = [...value, ...historyData];
+            }  else {
+                newFormData = [...historyData];
+            }
 
-            let newFormData = [...value, ...historyData];
             formData.current = getInitialValue(newFormData);        
             if (onChange) {
                 onChange(getInitialValue(newFormData));

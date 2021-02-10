@@ -120,6 +120,8 @@ export interface ILookupMulti extends IField {
  * Мульти Лукап поле.
  */
 export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMulti, ref) => {
+    const context: IFormContext = useContext(FormContext);
+    
     const memoLookupMulti = useMemo(() => {
         return (<BaseField
             ref={ref}
@@ -133,7 +135,6 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
     return memoLookupMulti;
 
     function getNew(props: ILookupMulti, ref: any, rules?: Rule[]) {
-        const context: IFormContext = useContext(FormContext);
         return (
             <div>
                  <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
