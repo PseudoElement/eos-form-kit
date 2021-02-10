@@ -81,6 +81,8 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
     /** если значение из справочника не получено, то будет undefined для предотвращения перерисовки */
     let receivedValue = tempUseHistorySlimState !== null && tempUseHistorySlimState !== undefined ? tempUseHistorySlimState : undefined;
 
+    const ctx: IFormContext = useContext(FormContext);
+
     const memoLookup = useMemo(() => {
         return (<BaseField
             ref={ref}
@@ -94,7 +96,6 @@ export const Lookup = React.forwardRef<any, ILookup>((props: ILookup, ref) => {
     return memoLookup;
 
     function getNew(props: ILookup, ref: any, rules?: Rule[], required?: boolean) {
-        const ctx: IFormContext = useContext(FormContext);
         // реф поставлен на инпут для установления фокуса при незаполненном поле
         if (props.inlineMode === true && props.onValueSelected) {
             return (

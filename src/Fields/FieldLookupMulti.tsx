@@ -112,6 +112,8 @@ export interface ILookupMulti extends IField {
     keyProperty?: string;
     /** Дополнительные копки в тулбаре */
     addTools?: ITableMenuTool[];
+    /** Событие по двойному клику по записи */
+    onRowDoubleClick?: (selectedRowKey?: number) => void;
 }
 
 /**
@@ -164,6 +166,7 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         hideDefaultColumn={props.hideDefaultColumn}
                         onChange={props.onChange}
                         addTools={props.addTools}
+                        onRowDoubleClick={props.onRowDoubleClick}
                         onDataChange={(row: any) => {
                             context.setFieldValue(props.name || '', row)
                         }}

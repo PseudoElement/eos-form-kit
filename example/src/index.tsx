@@ -24,7 +24,7 @@ interface IMenuItem {
 function getArchivist() {
     return [
         {
-            title: "Создание с вкладками",
+            title: "Создание с вкладками ",
             key: 'formNew',
             url: '/form/new'
         },
