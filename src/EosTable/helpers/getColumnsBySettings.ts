@@ -5,6 +5,28 @@ import { FetchControlRender } from "../types/ITableProvider";
 import { ITableColumnGroupSettings, ITableColumnSettings, ITableSettings, TableColumn } from "../types/ITableSettings";
 import { ITableUserColumnGroupSettings, ITableUserSettings, TableUserColumn } from "../types/ITableUserSettings";
 
+function getSorterColumnByUserSetting(tableUserSettings: ITableUserSettings, listPossibleSorting?: ISorterType[]) {
+    const sorterColumns: ISorterType[] = []
+    if (!listPossibleSorting)
+        return sorterColumns
+
+    tableUserSettings.defaultSort?.forEach(defSort => {
+        let direction: DirectionSort
+        const possSort = listPossibleSorting.find(s => s.json === JSON.stringify(defSort, (_key, value) => {
+            if (value === "Asc" || value === "Desc") {
+                direction = value
+                return {}
+            }
+            return value
+        }))
+
+        if (possSort) {
+            sorterColumns.push({ ...possSort, direction })
+        }
+    })
+    return sorterColumns
+}
+
 export function getColumnsBySettings(tableSettings: ITableSettings,
     tableUserSettings: ITableUserSettings,
     fetchControl?: FetchControlRender,
@@ -56,7 +78,7 @@ export function getColumnsBySettings(tableSettings: ITableSettings,
                                 width = title.length * 20
                             }
                             let sorter: any = false
-                            let direction: any = undefined
+                            let direction: any
                             if (tableColumnSettings.sortable) {
                                 const defaultSortIndex = defaultSortings?.findIndex(s => s.columnName === c.name)
                                 if (defaultSortIndex > -1) {
@@ -94,27 +116,4 @@ export function getColumnsBySettings(tableSettings: ITableSettings,
     }
 
     return pushColumns(tableUserSettings.columns, tableSettings.columns)
-}
-
-function getSorterColumnByUserSetting(tableUserSettings: ITableUserSettings, listPossibleSorting?: ISorterType[]) {
-    const sorterColumns: ISorterType[] = []
-    if (!listPossibleSorting)
-        return sorterColumns
-
-    tableUserSettings.defaultSort?.forEach((defSort) => {
-        let direction: DirectionSort = undefined
-        const possSort = listPossibleSorting.find(s => s.json === JSON.stringify(defSort, (_key, value) => {
-            if (value === "Asc" || value === "Desc") {
-                direction = value
-                return {}
-            }
-            return value
-        }))
-
-        if (possSort) {
-            sorterColumns.push({ ...possSort, direction })
-        }
-    })
-    return sorterColumns
-
 }

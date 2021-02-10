@@ -6,6 +6,7 @@ import external from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
 import resolve from 'rollup-plugin-node-resolve';
 import url from 'rollup-plugin-url';
+import eslintPlugin from 'rollup-plugin-eslint'
 // import svgr from '@svgr/rollup';
 import json from "@rollup/plugin-json";
 import babel from "rollup-plugin-babel";
@@ -14,6 +15,7 @@ import fs from "fs-extra";
 const inputOptions = {
     input: "./src/index.tsx",
     plugins: [
+        eslintPlugin.eslint(),
         json(),
         external(),
         postcss({
@@ -33,7 +35,7 @@ const inputOptions = {
             clean: true,
             exclude: 'node_modules/**'
         }),
-        commonjs()
+        commonjs()        
     ]
 };
 const outputOptions = {

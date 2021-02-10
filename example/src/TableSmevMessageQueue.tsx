@@ -24,7 +24,7 @@ const TableMessageQueue = () => {
                 switch (filterTypeName) {
                     case "quickSearchFilter":
                         return tableSettings.quickSearchFilter
-                            && EosTableHelper.generateQuickSearchFilterFragment_OldStyle(tableSettings.quickSearchFilter, tableState.filterValueObjects?.quickSearchFilter)
+                            && EosTableHelper.generateQuickSearchFilterFragment(tableSettings.quickSearchFilter, tableState.filterValueObjects?.quickSearchFilter)
                     default:
                         return undefined
                 }

@@ -1,5 +1,5 @@
 import { FabIcon, Menu } from '@eos/rc-controls'
-import React, { useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import React, { createRef, useCallback, useImperativeHandle, useMemo, useState } from 'react'
 import { IControlRenderProps } from '../EosTable/types'
 import {
   useEosComponentsStore
@@ -41,7 +41,7 @@ const EosMenu = React.forwardRef<any, IMenuProps>(
     }, [refApi, menuItems])
 
     const [menuButtonsState, setMenuButtonsState] = useState<IMenuButton[]>(() => {
-      let menuButtons: IMenuButton[] = []
+      const menuButtons: IMenuButton[] = []
       function setMenuButtons(menuItems: IMenuItem[]) {
         menuItems.forEach((menuItem) => {
           if (menuItem.children) {
@@ -61,7 +61,7 @@ const EosMenu = React.forwardRef<any, IMenuProps>(
       return menuButtons
     })
 
-    const currentRef = ref ?? useRef<IEosMenuApi>()
+    const currentRef = ref ?? createRef<IEosMenuApi>()
     useImperativeHandle(currentRef, (): IEosMenuApi => {
       const api: IEosMenuApi = {
         setButtonDisabled: (name: string, disabled?: boolean) => {
