@@ -211,7 +211,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
             let newFormData;
             if(value) {
                 newFormData = [...value, ...historyData];
-            }  else {
+            } 
+            else {
                 newFormData = [...historyData];
             }
 
