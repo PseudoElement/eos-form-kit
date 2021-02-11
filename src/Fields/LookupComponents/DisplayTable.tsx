@@ -519,7 +519,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         let newData
         if(otherColumns) {
             newData = data.map((item) => {
-                if(item?.key && item?.value && item?.other) {
+                if(item?.key && item?.value) {
                     return item;
                 }
                 return { 
