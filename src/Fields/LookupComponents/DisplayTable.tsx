@@ -195,17 +195,17 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         if (name && historyState && keyProperty && valueProperty && historyState[name]) {
             let historyData = getHistoryStateData(historyState[name]);
 
-            let isInData = formData.current?.find((stateRecord: any) => {
-                return historyData.find((historyRecord: any) => {
+            let newData = historyData.filter((historyRecord: any) => {
+                return !formData.current?.find((stateRecord: any) => {
                    return stateRecord.key === historyRecord[keyProperty];
                 })
             });
             
-            if(!allowDuplication && isInData)  {
+            if(!allowDuplication && newData.length > 0)  {
+                historyData = newData;
                 if (addRowToolbarWarning) {
                     message("warning", addRowToolbarWarning);
-                } 
-                return;
+                }
             }
             
             let newFormData;
