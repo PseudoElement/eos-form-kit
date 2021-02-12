@@ -1,6 +1,6 @@
 {
   "name": "@eos/form-generator",
-  "version": "1.4.17",
+  "version": "2.0.0",
   "description": "Generator for new, edit, disp forms",
   "author": "Soldatov",
   "license": "MIT",
@@ -12,36 +12,23 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "prepare": "run-s build",
-    "test": "run-s test:unit test:lint test:build",
-    "test:build": "run-s build",
-    "test:lint": "eslint .",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
-    "predeploy": "cd example && npm install && npm run build",
-    "deploy": "gh-pages -d example/build",
-    "bundle": "node bundle.js"
+    "start": "node start.js",
+    "build": "node build.js"
   },
   "peerDependencies": {
     "@eos/rc-controls": "1.6.1",
-    "@types/react-router-dom": "^5.1.5",
-    "rc-animate": "^3.1.1",
     "react": "^16.0.0",
+    "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
-    "@eos/rc-controls": "1.6.1",
+    "@eos/rc-controls": "^1.6.1",
     "@svgr/rollup": "^5.5.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "@types/jest": "^25.1.4",
     "@types/node": "^12.12.38",
-    "@types/react": "^16.9.27",
-    "@types/react-dom": "^16.9.7",
-    "@types/react-router-dom": "^5.1.5",
     "@typescript-eslint/eslint-plugin": "^2.26.0",
     "@typescript-eslint/parser": "^2.26.0",
     "babel-eslint": "^10.0.3",
@@ -60,9 +47,9 @@
     "microbundle-crl": "^0.13.10",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.4",
-    "rc-animate": "^3.1.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^3.4.1",
     "rollup": "^2.38.5",
@@ -78,6 +65,11 @@
   "files": [
     "dist"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "rc-animate": "^3.1.1",
+    "@types/react": "^16.9.27",
+    "@types/react-dom": "^16.9.7",
+    "@types/react-router-dom": "^5.1.5"
+  },
   "type": "module"
 }
