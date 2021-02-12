@@ -63,6 +63,8 @@ import React, {
   * Мульти Лукап с редактированием полей.
   */
  export const LookupMultiRow = React.forwardRef<any, ILookupMultiRow>((props: ILookupMultiRow, ref) => {
+    const context: IFormContext = useContext(FormContext);
+
      const memoLookupMulti = useMemo(() => {
          return (<BaseField
              ref={ref}
@@ -77,7 +79,6 @@ import React, {
      return memoLookupMulti;
  
      function getNew(props: ILookupMultiRow, ref: any, rules?: Rule[]) {
-         const context: IFormContext = useContext(FormContext);
          return (
              <div>
                  <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>

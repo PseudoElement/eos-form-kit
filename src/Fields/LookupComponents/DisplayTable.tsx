@@ -193,22 +193,21 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
     useEffect(() => {    
         if (name && historyState && keyProperty && valueProperty && historyState[name]) {
-            let historyData = getHistoryStateData(historyState[name]);
-
-            let isInData = formData.current?.find((stateRecord: any) => {
-                return historyData.find((historyRecord: any) => {
-                   return stateRecord.key === historyRecord[keyProperty];
-                })
-            });
+            let historyData = getInitialValue(getHistoryStateData(historyState[name]));
+            let initialValue = getInitialValue(value);
             
-            if(!allowDuplication && isInData)  {
-                if (addRowToolbarWarning) {
-                    message("warning", addRowToolbarWarning);
-                } 
-                return;
+            let newFormData;
+            if(value) {
+                newFormData = [...initialValue, ...historyData];
+            } 
+            else {
+                newFormData = [...historyData];
             }
 
-            let newFormData = [...value, ...historyData];
+            if(!allowDuplication) {
+                newFormData = getDistinct(newFormData);
+            }
+
             formData.current = getInitialValue(newFormData);        
             if (onChange) {
                 onChange(getInitialValue(newFormData));
@@ -528,6 +527,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
              });
         } else {
             newData = data.map((item) => {
+            if(item?.key && item?.value) {
+                return item;
+            }
             return { 
                key: item?.[key],
                value: item?.[value],
@@ -536,6 +538,30 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         }
         return newData;
     }
+    function getDistinct(array: any[]) {
+        if(array?.length < 0) {
+            return array;
+        }
+
+        let newArray = [array[0]];
+
+        for (let i = 0; i <= array.length; i++) {
+            let unique = true;
+
+            for(let j = 0; j <= newArray.length; j++) {
+                if(array[i]?.key === newArray[j]?.key) {
+                    unique = false;
+                    break;
+                }
+            }
+            
+            if(unique) {
+                newArray.push(array[i])
+            }
+        }
+
+        return newArray;
+    } 
     function getHistoryStateData(data: any) {
         return data.map((item: any) => {
             return (item?.data) ? item?.data : item;
