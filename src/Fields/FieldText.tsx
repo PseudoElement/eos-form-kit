@@ -27,6 +27,10 @@ export interface IText extends IField {
  * Текстовое поле.
  */
 export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
+    /** Получение иконки  */
+    let suffix = getSuffix(props);
+    /** Показывать ли иконку (используется только на форме просмотра) */
+    let isSuffixVisible = (suffix ?? false) ? true : false;
     return (<BaseField
         ref={ref}
         field={props}
@@ -48,8 +52,8 @@ export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
                     onChange={onChange}
                     value={props.value}
                     defaultValue={props.defaultValue}
-                    iconType={(getSuffix(props) === undefined) ? "none" : undefined}
-                    suffix={getSuffix(props)}
+                    iconType={(suffix === undefined) ? "none" : undefined}
+                    suffix={suffix}
                     width={"100%"}
                     ref={ref}
                     required={required}
@@ -62,7 +66,7 @@ export const Text = React.forwardRef<any, IText>((props: IText, ref) => {
         return getNew(props, ref, rules, required);
     }
     function getDisplay(props: IText) {
-        return FieldsHelper.getDisplayField(props.label, props.name, props.value, getSuffix(props), props.defaultValue, props.onChange);
+        return FieldsHelper.getDisplayField(props.label, props.name, props.value, getSuffix(props), props.defaultValue, props.onChange, isSuffixVisible);
     }
     function onChange(event?: any) {
         if (props.onChange) {
