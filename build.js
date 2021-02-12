@@ -51,7 +51,10 @@ export default async function build() {
     console.log("Bundle start")
     let bundle = await rollup(inputOptions);
     console.log("Bundled")
+    await bundle.generate(outputOptions);
+    console.log("Generated")
     await bundle.write(outputOptions);
+    console.log("Wrote");
     await bundle.close();
     console.log("Completed");
 }
