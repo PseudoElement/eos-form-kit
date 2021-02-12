@@ -1,7 +1,7 @@
 import React, { forwardRef, FunctionComponent, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 
-import "eos-webui-controls/dist/main.css";
+import "@eos/rc-controls/dist/main.css";
 import { AjaxClientForm, FormMode, IToolBar, parseFormMode, EosMenu, EosTableTypes, useEosComponentsStore, EosMenuTypes, useBackUrlHistory } from "eos-webui-formgen";
 import { Helper } from './Helper';
 import { useRouteMatch } from 'react-router-dom';

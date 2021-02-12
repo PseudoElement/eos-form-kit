@@ -2,7 +2,7 @@ import React, { FunctionComponent, useEffect, useRef } from 'react'
 import { useHistory } from "react-router-dom";
 
 
-import "eos-webui-controls/dist/main.css";
+import "@eos/rc-controls/dist/main.css";
 import { AjaxClientForm, FormMode, parseFormMode } from "eos-webui-formgen";
 import { Helper } from './Helper';
 import { useRouteMatch } from 'react-router-dom';
