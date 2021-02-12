@@ -29,11 +29,14 @@ export const BaseField = React.forwardRef<any, IBaseField>((props: IBaseField, r
         const hiddenFromContext = getHidden();
         if (hiddenFromContext != hidden)
             setHidden(hiddenFromContext);
-            
+
         //  Простановка обязательности поля.
         const requiredFromContext = getRequired();
         if (requiredFromContext !== undefined && requiredFromContext !== required)
             setRequired(requiredFromContext);
+        else if (props.field.required !== required) {
+            setRequired(props.field.required);
+        }
     }, [context, props.field.mode]);
 
 
