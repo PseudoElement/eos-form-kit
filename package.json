@@ -1,6 +1,6 @@
 {
   "name": "@eos/form-generator",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Generator for new, edit, disp forms",
   "author": "Soldatov",
   "license": "MIT",
