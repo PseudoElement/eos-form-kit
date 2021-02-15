@@ -117,6 +117,8 @@ export interface IDisplayTable {
     addTools?: ITableMenuTool[];
     /** Событие по двойному клику по записи*/
     onRowDoubleClick?: (selectedRowKey?: number) => void;
+    /** Событие при выборе записей таблицы */
+    onRowSelect?(selectedRowKeys?: (string | number)[], selectedRow?: any[]): void;
 }
 
 const DisplayTable = React.forwardRef<any, IDisplayTable>(({
@@ -146,7 +148,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     hiddenAddRowToolTitle,
     onOpenLookupDialogClick,
     addTools,
-    onRowDoubleClick
+    onRowDoubleClick,
+    onRowSelect
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
@@ -168,7 +171,10 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     };
     const rowSelection = {
         selectedRowKeys,
-        onChange: (selectedRowKeys: (string | number)[]) => {
+        onChange: (selectedRowKeys: (string | number)[], selectedRows: any[]) => {
+            if(onRowSelect) {
+                onRowSelect(selectedRowKeys, selectedRows);
+            }
             setSelectedRowKeys(selectedRowKeys);
         }
     };
@@ -226,7 +232,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
     const onRow = (row: any) => {
         return {
-            onDoubleClick: onRowDoubleClick ? () => onRowDoubleClick(row?.key) : undefined
+            onDoubleClick: onRowDoubleClick ? () => onRowDoubleClick(row?.key) : undefined,
         };
     };
 
