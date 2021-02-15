@@ -192,11 +192,12 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     ];
 
     useEffect(() => {    
+        let newFormData;
+
         if (name && historyState && keyProperty && valueProperty && historyState[name]) {
             let historyData = getInitialValue(getHistoryStateData(historyState[name]));
             let initialValue = getInitialValue(value);
             
-            let newFormData;
             if(value) {
                 newFormData = [...initialValue, ...historyData];
             } 
@@ -213,6 +214,15 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
                 onChange(getInitialValue(newFormData));
             }
         }
+
+        if (dataService?.editDataAsync) {
+            dataService.editDataAsync(newFormData || [])
+                .then((res: any) => {
+                    setDataSource(getDataSource(getInitialValue(res)));
+                    formData.current = res;
+                    setSelectedRowKeys([]);
+                });
+        }
     }, []);
 
     useEffect(() => {
@@ -221,6 +231,10 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         }
     }, [rowFromLookup]);
     useEffect(() => {
+        if(dataService?.editDataAsync) {
+            return;
+        }
+
         if (value) {
             setDataSource(getDataSource(getInitialValue(value)));
             formData.current = value;
