@@ -70,7 +70,7 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
         goBack: slimGoBack,
         pushRecover: slimPushRecover,
         pushPrevious: slimPushPrevious,
-        pushKeepPrevious: slimPushKeepPrevious,
+        // pushKeepPrevious: slimPushKeepPrevious,
         pushPopPrevious: slimPushPopPrevious,
         getState: slimGetState,
         getPreviousState: slimGetPreviousState,
@@ -123,7 +123,10 @@ function useBackUrlHistory(safeBackUrl?: string): IBackUrlHistory {
     */
     const pushKeepPrevious = (path: string, state?: IHistorySlimItem | IHistorySlimItem[]) => {
         // const state: any = history.location.state;
-        slimPushKeepPrevious(path, state);
+        let currState = slimGetState();
+        let myState: IHistorySlimItem = joinState(currState?.[backStateName], state);
+        // slimPushKeepPrevious(path, state);
+        slimPush(path, myState);
     }
 
     /**
