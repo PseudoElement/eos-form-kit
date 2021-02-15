@@ -193,24 +193,16 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
     useEffect(() => {    
         if (name && historyState && keyProperty && valueProperty && historyState[name]) {
-            let historyData = getInitialValue(getHistoryStateData(historyState[name]));
             let initialValue = getInitialValue(value);
+            let historyData = getInitialValue(getHistoryStateData(historyState[name]));
             
-            let newFormData;
-            if(value) {
-                newFormData = [...initialValue, ...historyData];
-            } 
-            else {
-                newFormData = [...historyData];
-            }
-
-            if(!allowDuplication) {
-                newFormData = getDistinct(newFormData);
-            }
-
-            formData.current = getInitialValue(newFormData);        
-            if (onChange) {
-                onChange(getInitialValue(newFormData));
+            if (dataService?.editDataAsync) {
+                dataService.editDataAsync(historyData || [])
+                .then((res: any) => {
+                    addHistoryStateToValue(initialValue, res)
+                });
+            } else {
+                addHistoryStateToValue(initialValue, historyData);
             }
         }
     }, []);
@@ -566,6 +558,25 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         return data.map((item: any) => {
             return (item?.data) ? item?.data : item;
         });
+    }
+    function addHistoryStateToValue(value: any, historyState: any) {
+        let newFormData;
+
+        if(value) {
+            newFormData = [...value, ...historyState];
+        } 
+        else {
+            newFormData = [...historyState];
+        }
+
+        if(!allowDuplication) {
+            newFormData = getDistinct(newFormData);
+        }
+
+        formData.current = getInitialValue(newFormData);        
+        if (onChange) {
+            onChange(getInitialValue(newFormData));
+        }
     }
     // function checkBackUrl(backUrl: string) {
     //     backUrl = backUrl;

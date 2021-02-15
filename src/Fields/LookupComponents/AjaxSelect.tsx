@@ -96,6 +96,10 @@ export interface IDataService {
     */
     loadData2Async?(search?: string): Promise<any[]>;
 
+    /** Метод для изменения данных полученых при выборе из справочников
+    */
+   editDataAsync?(historyData?: any): Promise<any[]>;
+
     /** Количество запрашивамых результатов */
     resultsAmount?: number;
 }
