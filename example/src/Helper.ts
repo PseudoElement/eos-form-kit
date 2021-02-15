@@ -121,6 +121,7 @@ class Helper {
                 "onRowDoubleClick": (row: any) => console.log(row),
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMulti",
+                "onRowSelect": (row: any) => console.log(row),
                 "value": null,
                 "notFoundContent": "Нет элементов",
                 "valueProperty": "name",
