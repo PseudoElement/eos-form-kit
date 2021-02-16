@@ -114,12 +114,16 @@ export interface ILookupMulti extends IField {
     addTools?: ITableMenuTool[];
     /** Событие по двойному клику по записи */
     onRowDoubleClick?: (selectedRowKey?: number) => void;
+    /** Событие при выборе записей таблицы */
+    onRowSelect?(selectedRowKeys?: (string | number)[], selectedRow?: any[]): void;
 }
 
 /**
  * Мульти Лукап поле.
  */
 export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMulti, ref) => {
+    const context: IFormContext = useContext(FormContext);
+    
     const memoLookupMulti = useMemo(() => {
         return (<BaseField
             ref={ref}
@@ -133,7 +137,6 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
     return memoLookupMulti;
 
     function getNew(props: ILookupMulti, ref: any, rules?: Rule[]) {
-        const context: IFormContext = useContext(FormContext);
         return (
             <div>
                  <Form.Item label={props.label} name={props.name} style={{ display: "none" }} rules={rules}>
@@ -166,6 +169,7 @@ export const LookupMulti = React.forwardRef<any, ILookupMulti>((props: ILookupMu
                         hideDefaultColumn={props.hideDefaultColumn}
                         onChange={props.onChange}
                         addTools={props.addTools}
+                        onRowSelect={props.onRowSelect}
                         onRowDoubleClick={props.onRowDoubleClick}
                         onDataChange={(row: any) => {
                             context.setFieldValue(props.name || '', row)

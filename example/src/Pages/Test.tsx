@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { SmartButton } from "eos-webui-controls";
+import { SmartButton } from "@eos/rc-controls";
 import { useHistorySlim } from "eos-webui-formgen";
 
 

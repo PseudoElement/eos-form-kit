@@ -121,6 +121,7 @@ class Helper {
                 "onRowDoubleClick": (row: any) => console.log(row),
                 "requiredMessage": "Поле обязательное к заполнению",
                 "type": "FieldLookupMulti",
+                "onRowSelect": (row: any) => console.log(row),
                 "value": null,
                 "notFoundContent": "Нет элементов",
                 "valueProperty": "name",
@@ -136,6 +137,14 @@ class Helper {
                 }],
                 "onOpenLookupDialogClick": () => onMultiLookupAddClick && onMultiLookupAddClick('/lookupPage?f=multiLookup1'),
                 "dataService": {
+                    editDataAsync: async (historyData: any[]) => {
+                        return historyData.map(item => {
+                            return {
+                                ...item,
+                                value: "name: " + item.value
+                            }
+                        })
+                    },  
                     loadData2Async: async () => {
                         return [{
                             code: null,

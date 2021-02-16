@@ -8,8 +8,8 @@ import AjaxClientFormPage from "./AjaxClientFormPage";
 import AjaxClientFormPage2 from "./AjaxClientFormPage2";
 import AjaxClientFormApi from "./AjaxClientFormApi";
 import NotFoundPage from "./NotFoundPage";
-import { ConfigProvider } from 'eos-webui-controls';
-import { EosComponentsProvider, useBackUrlHistory, useHistoryListener, useTitleChanger } from 'eos-webui-formgen';
+import { ConfigProvider } from '@eos/rc-controls';
+import { EosComponentsProvider, useBackUrlHistory, useHistoryListener } from 'eos-webui-formgen';
 import ArcPage from './Pages/ArcPage';
 import TestPage from './Pages/Test';
 import LookupPage from './Pages/LookupPage';
@@ -105,7 +105,6 @@ const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
     const { toBack, getBackPageStateAsArray, pushRecover } = useBackUrlHistory()
     const backStory: any[] = getBackPageStateAsArray();
 
-    let { pageTitle } = useTitleChanger();
     // useEffect(() => {
     //     console.log(pageTitle);
     // }, [pageTitle])
@@ -137,7 +136,6 @@ const MainMenu: FunctionComponent<IMainMenu> = (props: IMainMenu) => {
                     event.preventDefault();
                 }}>{item.state.title}</a></div>);
             })}</div>) : (<></>)}
-            <div>{pageTitle}</div>
         </div>
     );
 }

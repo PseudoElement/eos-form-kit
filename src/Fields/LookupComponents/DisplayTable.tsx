@@ -117,6 +117,8 @@ export interface IDisplayTable {
     addTools?: ITableMenuTool[];
     /** Событие по двойному клику по записи*/
     onRowDoubleClick?: (selectedRowKey?: number) => void;
+    /** Событие при выборе записей таблицы */
+    onRowSelect?(selectedRowKeys?: (string | number)[], selectedRow?: any[]): void;
 }
 
 const DisplayTable = React.forwardRef<any, IDisplayTable>(({
@@ -146,7 +148,8 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     hiddenAddRowToolTitle,
     onOpenLookupDialogClick,
     addTools,
-    onRowDoubleClick
+    onRowDoubleClick,
+    onRowSelect
 }) => {
     const [dataSource, setDataSource] = useState<object[] | undefined>();
     const formData = useRef(value);
@@ -168,7 +171,10 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
     };
     const rowSelection = {
         selectedRowKeys,
-        onChange: (selectedRowKeys: (string | number)[]) => {
+        onChange: (selectedRowKeys: (string | number)[], selectedRows: any[]) => {
+            if(onRowSelect) {
+                onRowSelect(selectedRowKeys, selectedRows);
+            }
             setSelectedRowKeys(selectedRowKeys);
         }
     };
@@ -193,25 +199,16 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
     useEffect(() => {    
         if (name && historyState && keyProperty && valueProperty && historyState[name]) {
-            let historyData = getHistoryStateData(historyState[name]);
-
-            let isInData = formData.current?.find((stateRecord: any) => {
-                return historyData.find((historyRecord: any) => {
-                   return stateRecord.key === historyRecord[keyProperty];
-                })
-            });
+            let initialValue = getInitialValue(value);
+            let historyData = getInitialValue(getHistoryStateData(historyState[name]));
             
-            if(!allowDuplication && isInData)  {
-                if (addRowToolbarWarning) {
-                    message("warning", addRowToolbarWarning);
-                } 
-                return;
-            }
-
-            let newFormData = [...value, ...historyData];
-            formData.current = getInitialValue(newFormData);        
-            if (onChange) {
-                onChange(getInitialValue(newFormData));
+            if (dataService?.editDataAsync) {
+                dataService.editDataAsync(historyData || [])
+                .then((res: any) => {
+                    addHistoryStateToValue(initialValue, res)
+                });
+            } else {
+                addHistoryStateToValue(initialValue, historyData);
             }
         }
     }, []);
@@ -235,7 +232,7 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
 
     const onRow = (row: any) => {
         return {
-            onDoubleClick: onRowDoubleClick ? () => onRowDoubleClick(row?.key) : undefined
+            onDoubleClick: onRowDoubleClick ? () => onRowDoubleClick(row?.key) : undefined,
         };
     };
 
@@ -528,6 +525,9 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
              });
         } else {
             newData = data.map((item) => {
+            if(item?.key && item?.value) {
+                return item;
+            }
             return { 
                key: item?.[key],
                value: item?.[value],
@@ -536,10 +536,53 @@ const DisplayTable = React.forwardRef<any, IDisplayTable>(({
         }
         return newData;
     }
+    function getDistinct(array: any[]) {
+        if(array?.length < 0) {
+            return array;
+        }
+
+        let newArray = [array[0]];
+
+        for (let i = 0; i <= array.length; i++) {
+            let unique = true;
+
+            for(let j = 0; j <= newArray.length; j++) {
+                if(array[i]?.key === newArray[j]?.key) {
+                    unique = false;
+                    break;
+                }
+            }
+            
+            if(unique) {
+                newArray.push(array[i])
+            }
+        }
+
+        return newArray;
+    } 
     function getHistoryStateData(data: any) {
         return data.map((item: any) => {
             return (item?.data) ? item?.data : item;
         });
+    }
+    function addHistoryStateToValue(value: any, historyState: any) {
+        let newFormData;
+
+        if(value) {
+            newFormData = [...value, ...historyState];
+        } 
+        else {
+            newFormData = [...historyState];
+        }
+
+        if(!allowDuplication) {
+            newFormData = getDistinct(newFormData);
+        }
+
+        formData.current = getInitialValue(newFormData);        
+        if (onChange) {
+            onChange(getInitialValue(newFormData));
+        }
     }
     // function checkBackUrl(backUrl: string) {
     //     backUrl = backUrl;
