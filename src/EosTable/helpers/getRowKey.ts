@@ -21,10 +21,7 @@ export function getRecordsByKeys(records: any[], keyValues: string[], keyColumns
 
 export function getRecordsByKeysStr(records: any[], keyValues: string[], keyColumn: string) {
     const filterRecords = keyValues.map((keyValue) => {
-        const record = records.find((record) => {
-            record[keyColumn].toString() === keyValue
-        })
-        return record
-    })   
-    return filterRecords    
+        return records.find((record) => record[keyColumn].toString() === keyValue)        
+    })
+    return filterRecords
 }

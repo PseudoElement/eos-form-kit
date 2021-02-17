@@ -1,8 +1,6 @@
 import { Spin } from '@eos/rc-controls'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import EosTableGen from './EosTableGen'
-
-import { ITableApi } from '../types/ITableApi'
 import { ITableProvider } from '../types/ITableProvider'
 import { ITableSettings } from '../types/ITableSettings'
 import { ITableState } from '../types/ITableState'
@@ -26,26 +24,26 @@ const EosTable = React.forwardRef<any, ITableProps>(({
     initTableState,
     getResourceText
 }: ITableProps, ref) => {
-    const currentRef = ref ?? useRef<ITableApi>();
-
     const [tableSettings, setGridSettings] = useState<ITableSettings>()
     const [gridUserSettings, setGridUserSettings] = useState<ITableUserSettings>()
 
+    const { tableUserSettingLoad, tableSettingLoad } = provider
+
     useEffect(() => {
-        provider && provider.tableSettingLoad && provider.tableSettingLoad(tableId).then((data) => setGridSettings(data))
-        provider && provider.tableUserSettingLoad && provider.tableUserSettingLoad(tableId).then((data) => setGridUserSettings(data))
-    }, [provider.tableSettingLoad, provider.tableUserSettingLoad])
+        tableSettingLoad && tableSettingLoad(tableId).then((data) => setGridSettings(data))
+        tableUserSettingLoad && tableUserSettingLoad(tableId).then((data) => setGridUserSettings(data))
+    }, [tableSettingLoad, tableUserSettingLoad, setGridSettings, setGridUserSettings, tableId])
 
 
     if (!tableSettings || !gridUserSettings) {
-        return <Spin size={"large"}></Spin>
+        return <Spin size="large" />
     }
 
     return <EosTableGen tableSettings={tableSettings}
         tableUserSetiings={gridUserSettings}
         initTableState={initTableState}
         provider={provider}
-        ref={currentRef}
+        ref={ref}
         getResourceText={getResourceText} />
 })
 EosTableGen.displayName = "EosTable"

@@ -5,7 +5,7 @@ import { IControlRenderProps } from "../../types/IControlRenderProps";
 
     if (valueInCell !== null && valueInCell !== undefined) {
         if (typeof valueInCell === 'object') {
-            let values: string[] = []
+            const values: string[] = []
             const setValue = (object: any) => {
                 if (object && typeof object === 'object') {
                     const keys = Object.keys(object).filter(k => k !== "__typename")

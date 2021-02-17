@@ -1,6 +1,6 @@
 import { Table } from '@eos/rc-controls'
 import { PaginationProps } from '@eos/rc-controls/lib/pagination'
-import React, { Fragment, ReactElement, SyntheticEvent, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import React, { createRef, Fragment, ReactElement, SyntheticEvent, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { Form as SearchForm, IFormApi } from '../../Search/SearchForm'
 import { useEosComponentsStore } from '../../Hooks/useEosComponentsStore'
 import GenMenuItems from '../components/GenMenuItems'
@@ -21,6 +21,12 @@ import { ITableUserColumnGroupSettings, ITableUserSettings, TableUserColumn } fr
 import { Store } from 'rc-field-form/lib/interface';
 import { IFilterValueObjects } from '../types/IFilterValueObjects'
 import GenerateContextMenu from '../helpers/generateContextMenu'
+
+const DEFAULT_PAGE_SIZE = 10
+const DEFAULT_CURRENT_PAGE = 1
+const DEFAULT_FILTER_AREA_HEIGHT = 200
+const FILTER_AREA_MAX_HEIGHT = 400
+const FILTER_AREA_MIN_HEIGHT = 100
 
 interface ITableGenProps {
     tableSettings: ITableSettings
@@ -50,7 +56,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     const { fetchControlFromStore, fetchActionFromStore, fetchConditionFromStore } = useEosComponentsStore()
 
     //#region ref
-    const currentRef = (ref ?? useRef<ITableApi>()) as React.MutableRefObject<ITableApi>;
+    const currentRef = (ref ?? createRef<ITableApi>()) as React.MutableRefObject<ITableApi>;
     useImperativeHandle(currentRef, (): ITableApi => {
         const api: ITableApi = {
             setTableState: setTableState,
@@ -60,13 +66,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
         }
         return api;
     });
-    //#endregion
-
-    const DEFAULT_PAGE_SIZE = 10
-    const DEFAULT_CURRENT_PAGE = 1
-    const DEFAULT_FILTER_AREA_HEIGHT = 200
-    const FILTER_AREA_MAX_HEIGHT = 400
-    const FILTER_AREA_MIN_HEIGHT = 100
+    //#endregion    
 
     const initState: ITableState = useMemo(() => {
         const init: ITableState =
@@ -100,7 +100,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
     }
 
     const selectRecordsAndKeys = (selected: boolean, rowKeyVaulues?: string[], recordValues?: any[]) => {
-        let keyValues: string[] | undefined = undefined
+        let keyValues: string[] | undefined
         if (rowKeyVaulues) {
             keyValues = rowKeyVaulues
         }
@@ -731,14 +731,13 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
 
                             case E_KEY_CODE.ENTER:
                                 e.preventDefault();
-                                onRowDoubleClick(record)
-                                return
+                                onRowDoubleClick(record)                                
                         }
                     },
                 }
             }}
-        >
-        </Table>)
+        />
+    )
 
     const onResize: any = (_e: SyntheticEvent, resizeData: any) => {
         setFilterAreaHeight(resizeData.size.height)
@@ -760,7 +759,7 @@ const EosTableGen = React.forwardRef<any, ITableGenProps>(({ tableSettings,
                     minFilterHeight: tableSettings.visual?.filterAreaMinHeight || FILTER_AREA_MIN_HEIGHT,
                     isFilterVisible: showFormFilter === true,
                     onResize: onResize,
-                    tableFilterContent: searchFormService && <SearchForm getResourceText={getResourceText} ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService}></SearchForm>
+                    tableFilterContent: searchFormService && <SearchForm getResourceText={getResourceText} ref={searchFormApi} onCloseClick={onCloseClick} onSearchAsync={onSearchAsync} dataService={searchFormService} />
                 }}
             >
                 {children}

@@ -9,8 +9,10 @@ import url from 'rollup-plugin-url';
 import json from "@rollup/plugin-json";
 import babel from "rollup-plugin-babel";
 import fs from "fs-extra";
+import eslintPlugin from 'rollup-plugin-eslint'
 
 const plugins = [
+    eslintPlugin.eslint(),
     external({
         includeDependencies: true
     }),

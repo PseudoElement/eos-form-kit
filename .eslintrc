@@ -5,17 +5,19 @@
     "standard-react",
     "plugin:prettier/recommended",
     "prettier/standard",
-    "prettier/react",
-    "plugin:@typescript-eslint/eslint-recommended"
+    "prettier/react",    
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
+  "plugins": ["react", "import", "react-hooks", "@typescript-eslint"],
   "env": {
     "node": true
   },
   "parserOptions": {
-    "ecmaVersion": 2020,
+    "ecmaVersion": 2015,
+    "sourceType": "module",
     "ecmaFeatures": {
-      "legacyDecorators": true,
-      "jsx": true
+      "legacyDecorators": true      
     }
   },
   "settings": {
@@ -29,6 +31,22 @@
     "react/jsx-handler-names": 0,
     "react/jsx-fragments": 0,
     "react/no-unused-prop-types": 0,
-    "import/export": 0
+    "import/export": 0,
+    "no-unused-vars": "warn",
+    "react-hooks/rules-of-hooks": "error", 
+    "react-hooks/exhaustive-deps": "warn",
+    "no-var": "off",
+    "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    "prefer-spread": "off",
+    "prettier/prettier": "off",
+    "spaced-comment": "off",
+    "dot-notation": "off",
+    "no-void": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/interface-name-prefix": "off",
+    "no-unused-expressions": "off"
   }
 }

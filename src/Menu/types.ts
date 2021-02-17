@@ -4,14 +4,10 @@ export interface IMenuItem {
     key: string
     title?: string
     description?: string
-    render: IMenuRender
+    render: IRender
     children?: IMenuItem[]
     fold?: boolean
     handlers?: MenuItemHandler[]
-}
-
-
-export interface IMenuRender extends IRender {    
 }
 
 export enum MenuRenderTypes {
